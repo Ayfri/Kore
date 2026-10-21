@@ -2,7 +2,9 @@ package io.github.ayfri.kore.helpers
 
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.components.item.MannequinModel
+import io.github.ayfri.kore.arguments.enums.SwingAnimationType
 import io.github.ayfri.kore.arguments.maths.vec3
+import io.github.ayfri.kore.arguments.numbers.ticks
 import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.commands.SwingHand
 import io.github.ayfri.kore.dataPack
@@ -51,6 +53,7 @@ fun Function.mannequinEntityTests() {
 	entity.kill() assertsIs "kill @e[limit=1,nbt={UUID:[I;0,0,0,1]},type=minecraft:mannequin]"
 	entity.swing(SwingHand.MAINHAND) assertsIs "swing @e[limit=1,nbt={UUID:[I;0,0,0,1]},type=minecraft:mannequin] mainhand"
 	entity.swing(SwingHand.OFFHAND) assertsIs "swing @e[limit=1,nbt={UUID:[I;0,0,0,1]},type=minecraft:mannequin] offhand"
+	entity.swing(SwingHand.MAINHAND, SwingAnimationType.STAB, 10.ticks) assertsIs "swing @e[limit=1,nbt={UUID:[I;0,0,0,1]},type=minecraft:mannequin] mainhand stab 10"
 }
 
 fun Function.mannequinSummonTests() {

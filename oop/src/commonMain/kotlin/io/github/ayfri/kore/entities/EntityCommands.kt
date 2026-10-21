@@ -3,7 +3,9 @@ package io.github.ayfri.kore.entities
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.enums.Gamemode
+import io.github.ayfri.kore.arguments.enums.SwingAnimationType
 import io.github.ayfri.kore.arguments.maths.Vec3
+import io.github.ayfri.kore.arguments.numbers.TimeNumber
 import io.github.ayfri.kore.arguments.numbers.Xp
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.commands.*
@@ -76,3 +78,7 @@ fun Entity.showTitle(title: String, subtitle: String? = null) {
 
 context(fn: Function)
 fun Entity.swing(hand: SwingHand) = fn.swing(asSelector(), hand)
+
+context(fn: Function)
+fun Entity.swing(hand: SwingHand, animation: SwingAnimationType, duration: TimeNumber? = null) =
+	fn.swing(asSelector(), hand, animation, duration)

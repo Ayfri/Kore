@@ -653,6 +653,27 @@ spectate @s
 spectate @s @s
 ```
 
+### Swing Command
+
+The `swing` command plays the arm-swing animation of entities. An animation (`whack` by default, or `stab`) needs an explicit hand,
+and a duration (at least 1 tick, 6 by default) needs an animation.
+
+```kotlin
+function("swing_examples") {
+	swing(self(), SwingHand.MAINHAND)
+	swing(self(), SwingHand.OFFHAND, SwingAnimationType.WHACK)
+	swing(self(), SwingHand.MAINHAND, SwingAnimationType.STAB, 10.ticks)
+}
+```
+
+Generated output:
+
+```mcfunction
+swing @s mainhand
+swing @s offhand whack
+swing @s mainhand stab 10
+```
+
 ### PostEffect Command
 
 The `posteffect` command applies, lists and removes client-side post-processing shaders on players. Vanilla ships the

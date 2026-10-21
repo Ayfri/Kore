@@ -5,7 +5,7 @@ nav-title: Entities & Players
 description: Create and manage entities and players with the Kore OOP module - selectors, execute helpers, batch commands, entity commands, and entity effects.
 keywords: minecraft, datapack, kore, oop, entity, player, commands, execute, batch, effects, teleport, kill, damage
 date-created: 2026-03-03
-date-modified: 2026-10-07
+date-modified: 2026-10-22
 routeOverride: /docs/oop/entities-and-players
 ---
 
@@ -82,6 +82,7 @@ function("spawn_display") {
 
 	val statue = mannequin { pose = MannequinPose.STANDING }.summon(vec3(0, 64, 0))
 	statue.swing(SwingHand.MAINHAND)
+	statue.swing(SwingHand.MAINHAND, SwingAnimationType.STAB, 10.ticks)
 }
 ```
 
@@ -218,26 +219,26 @@ function("commands_demo") {
 
 {{{ .components.mc.TitleMockup }}}
 
-| Function        | Description                               |
-|-----------------|-------------------------------------------|
-| `addTag`        | Add a scoreboard tag                      |
-| `clearItems`    | Clear inventory (optionally filtered)     |
-| `damage`        | Deal damage with optional damage type     |
-| `dismount`      | Dismount from current vehicle             |
-| `giveItem`      | Give an item stack                        |
-| `giveXp`        | Add experience (levels or points)         |
-| `kill`          | Kill the entity                           |
-| `mount`         | Mount another entity                      |
-| `playSound`     | Play a sound at the entity                |
-| `removeTag`     | Remove a scoreboard tag                   |
-| `replaceItem`   | Replace an item in a specific slot        |
-| `sendMessage`   | Send a tellraw message                    |
-| `setGamemode`   | Change the player's gamemode              |
-| `setXp`         | Set experience to an exact value          |
-| `showActionBar` | Display text on the action bar            |
-| `showTitle`     | Display a title and optional subtitle     |
-| `swing`         | Swing the left or right hand              |
-| `teleportTo`    | Teleport to coordinates or another entity |
+| Function        | Description                                                               |
+|-----------------|---------------------------------------------------------------------------|
+| `addTag`        | Add a scoreboard tag                                                      |
+| `clearItems`    | Clear inventory (optionally filtered)                                     |
+| `damage`        | Deal damage with optional damage type                                     |
+| `dismount`      | Dismount from current vehicle                                             |
+| `giveItem`      | Give an item stack                                                        |
+| `giveXp`        | Add experience (levels or points)                                         |
+| `kill`          | Kill the entity                                                           |
+| `mount`         | Mount another entity                                                      |
+| `playSound`     | Play a sound at the entity                                                |
+| `removeTag`     | Remove a scoreboard tag                                                   |
+| `replaceItem`   | Replace an item in a specific slot                                        |
+| `sendMessage`   | Send a tellraw message                                                    |
+| `setGamemode`   | Change the player's gamemode                                              |
+| `setXp`         | Set experience to an exact value                                          |
+| `showActionBar` | Display text on the action bar                                            |
+| `showTitle`     | Display a title and optional subtitle                                     |
+| `swing`         | Swing the left or right hand, optionally with an animation and a duration |
+| `teleportTo`    | Teleport to coordinates or another entity                                 |
 
 ## Scores, teams, and counts
 
