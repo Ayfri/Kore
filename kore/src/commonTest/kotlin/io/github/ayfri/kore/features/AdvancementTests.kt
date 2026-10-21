@@ -5,7 +5,10 @@ import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.components.matchers.enchantmentPredicate
+import io.github.ayfri.kore.arguments.components.contains
+import io.github.ayfri.kore.arguments.components.matchers.effects
 import io.github.ayfri.kore.arguments.components.matchers.enchantments
+import io.github.ayfri.kore.arguments.components.matchers.potions
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntStart
 import io.github.ayfri.kore.arguments.types.literals.self
@@ -26,6 +29,7 @@ import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Advancements
 import io.github.ayfri.kore.generated.Enchantments
+import io.github.ayfri.kore.generated.arguments.tagged.PotionTagArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
@@ -332,6 +336,89 @@ private fun DataPack.allTriggersTests() {
 			"criteria": {
 				"brewed_potion": {
 					"trigger": "minecraft:brewed_potion"
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("brewed_swiftness") {
+		criteria {
+			brewedPotion("brewed_swiftness") {
+				potion(Potions.SWIFTNESS)
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"brewed_swiftness": {
+					"trigger": "minecraft:brewed_potion",
+					"conditions": {
+						"potion": {
+							"potions": "minecraft:swiftness"
+						}
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("brewed_tag") {
+		criteria {
+			brewedPotion("brewed_tag") {
+				potion(PotionTagArgument("tradeable", "my_pack"))
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"brewed_tag": {
+					"trigger": "minecraft:brewed_potion",
+					"conditions": {
+						"potion": {
+							"potions": "#my_pack:tradeable"
+						}
+					}
+				}
+			}
+		}
+	""".trimIndent()
+
+	advancement("brewed_speed") {
+		criteria {
+			brewedPotion("brewed_speed") {
+				potion {
+					potions(Potions.SWIFTNESS, Potions.LONG_SWIFTNESS)
+					effects {
+						contains(mapOf(Effects.SPEED to mobEffectPredicate { amplifier = rangeOrInt(1) }))
+					}
+				}
+			}
+		}
+	}
+	advancements.last() assertsIs """
+		{
+			"criteria": {
+				"brewed_speed": {
+					"trigger": "minecraft:brewed_potion",
+					"conditions": {
+						"potion": {
+							"effects": {
+								"contains": [
+									{
+										"minecraft:speed": {
+											"amplifier": 1
+										}
+									}
+								]
+							},
+							"potions": [
+								"minecraft:swiftness",
+								"minecraft:long_swiftness"
+							]
+						}
+					}
 				}
 			}
 		}

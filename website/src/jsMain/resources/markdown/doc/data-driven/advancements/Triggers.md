@@ -195,12 +195,23 @@ Triggers when a potion is brewed (player takes item from brewing stand).
 
 **Properties:**
 
-- `potion`: The potion that was brewed.
+- `potion`: A `potion_contents` predicate on the brewed potion, with `potions` (potion IDs, a list or a `#tag`) and `effects`. `potion(...)` takes the potions, `potion { }` the whole predicate.
 
 **Example:**
 
 ```kotlin
-brewedPotion("brewed_potion")
+brewedPotion("brewed_swiftness") {
+	potion(Potions.SWIFTNESS)  // "potion": { "potions": "minecraft:swiftness" }
+}
+
+brewedPotion("brewed_speed") {
+	potion {
+		potions(Potions.SWIFTNESS, Potions.LONG_SWIFTNESS)
+		effects {
+			contains(mapOf(Effects.SPEED to mobEffectPredicate { amplifier = rangeOrInt(1) }))
+		}
+	}
+}
 ```
 
 ---
