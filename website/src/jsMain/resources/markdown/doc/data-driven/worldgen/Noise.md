@@ -102,8 +102,8 @@ val terrain = with(dp.densityFunctionsBuilder) {
 Most builders accept either a `Double` or a `DensityFunctionArgument` for their inputs, in every combination. `constant` takes a `Double`
 only, and `noise`, `shift`, `shiftA`, `shiftB` and `shiftedNoise` take a `NoiseArgument`, since they sample a noise definition directly.
 
-The JSON fields follow the game: single-input nodes (`abs`, `cube`, `reciprocal`...) write `input`, two-input nodes (`add`, `max`, `min`,
-`mul`) write `left` and `right`, `constant` writes `value` and the shift nodes write `noise`. The same names are the properties of the
+The JSON fields follow the game: single-input nodes (`abs`, `cube`, `negate`, `reciprocal`...) write `input`, two-input nodes (`add`, `div`,
+`max`, `min`, `mul`, `sub`) write `left` and `right`, `constant` writes `value` and the shift nodes write `noise`. The same names are the properties of the
 node classes.
 
 ### Density Function Types
@@ -119,23 +119,29 @@ node classes.
 | `cache_2d`             | `cache2D(...)`            | Caches the input once per horizontal (X/Z) position.                          |
 | `cache_all_in_cell`    | `cacheAllInCell(...)`     | Caches the input for the duration of its interpolation cell.                  |
 | `cache_once`           | `cacheOnce(...)`          | Caches the input once per block position, even if referenced multiple times.  |
+| `ceil`                 | `ceil(...)`               | Rounds the input up to a multiple of `multiple` (1 by default).               |
 | `clamp`                | `clamp(...)`              | Restricts the input between `min` and `max`.                                  |
 | `constant`             | `constant(...)`           | A fixed value, ignoring the input position.                                   |
 | `cube`                 | `cube(...)`               | Raises the input to the power of 3 (x³).                                      |
+| `div`                  | `div(...)`                | Divides the first input by the second.                                        |
 | `end_islands`          | `endIslands(...)`         | Samples the End's island noise. No parameters.                                |
 | `find_top_surface`     | `findTopSurface(...)`     | Scans a column for the topmost position where a density is above zero.        |
 | `flat_cache`           | `flatCache(...)`          | Caches the input per 4x4 column, computed once at Y=0.                        |
+| `floor`                | `floor(...)`              | Rounds the input down to a multiple of `multiple` (1 by default).             |
 | `half_negative`        | `halfNegative(...)`       | Halves the input when negative, otherwise leaves it unchanged.                |
 | `interpolated`         | `interpolated(...)`       | Interpolates the input across the surrounding grid cells.                     |
 | `interval_select`      | `intervalSelect(...)`     | Picks one of several functions from where the input falls between thresholds. |
+| `lerp`                 | `lerp(...)`               | Interpolates from `first` to `second` by `alpha`.                             |
 | `max`                  | `max(...)`                | Larger of two inputs.                                                         |
 | `min`                  | `min(...)`                | Smaller of two inputs.                                                        |
 | `mul`                  | `mul(...)`                | Multiplies two inputs.                                                        |
+| `negate`               | `negate(...)`             | Flips the sign of the input.                                                  |
 | `noise`                | `noise(...)`              | Samples a noise definition, scaled horizontally and vertically.               |
 | `old_blended_noise`    | `oldBlendedNoise(...)`    | Legacy blended noise used before the 1.18 terrain rewrite.                    |
 | `quarter_negative`     | `quarterNegative(...)`    | Quarters the input when negative, otherwise leaves it unchanged.              |
 | `range_choice`         | `rangeChoice(...)`        | Picks between two inputs based on whether a value falls within a range.       |
 | `reciprocal`           | `reciprocal(...)`         | Reciprocal (1 / x) of the input.                                              |
+| `round`                | `round(...)`              | Rounds the input to the nearest multiple of `multiple` (1 by default).        |
 | `shift`                | `shift(...)`              | Samples a noise at `(x/4, y/4, z/4)`, scaled back up by 4.                    |
 | `shift_a`              | `shiftA(...)`             | Samples a noise at `(x/4, 0, z/4)`, scaled back up by 4.                      |
 | `shift_b`              | `shiftB(...)`             | Samples a noise at `(z/4, x/4, 0)`, scaled back up by 4.                      |
@@ -143,9 +149,22 @@ node classes.
 | `spline`               | `spline(...)`             | Cubic spline interpolating control points over a coordinate.                  |
 | `square`               | `square(...)`             | Raises the input to the power of 2 (x²).                                      |
 | `squeeze`              | `squeeze(...)`            | Clamps the input to [-1, 1], then applies `x/2 - x³/24`.                      |
+| `sub`                  | `sub(...)`                | Subtracts the second input from the first.                                    |
+| `truncate`             | `truncate(...)`           | Rounds the input towards zero to a multiple of `multiple` (1 by default).     |
 | `y_clamped_gradient`   | `yClampedGradient(...)`   | Linear gradient between two values as Y goes from one bound to another.       |
 
 All builders live in `io.github.ayfri.kore.features.worldgen.densityfunction.types` and take the file's name as their first argument.
+
+`lerp` takes the `alpha` density function, then `first` and `second` as a `Double` or a `DensityFunctionArgument`. `floor`, `round`, `ceil`
+and `truncate` snap `input / multiple` to an integer and multiply back, so `multiple` is the step. It is optional, defaults to `1` and isn't
+written when left out. `round` rounds halves up, and `truncate` rounds towards zero where `floor` rounds down:
+
+```kotlin
+dp.densityFunctions {
+	val snapped = floor("snapped_depth", DensityFunctions.Overworld.DEPTH, 0.25)
+	lerp("blended_depth", DensityFunctions.Overworld.CONTINENTS, snapped, 1.0)
+}
+```
 
 `beardifier`, `blend_alpha`, `blend_offset`, `blend_density` and `cache_all_in_cell` are internal to vanilla generation and are not meant to
 be referenced from a datapack, even though the builders exist.
