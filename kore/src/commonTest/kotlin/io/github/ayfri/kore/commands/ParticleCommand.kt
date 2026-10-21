@@ -45,13 +45,13 @@ fun Function.particleTests() {
 	) assertsIs "particle minecraft:ash ~ ~ ~ ~ ~ ~ 1 2 normal @e"
 
 	particles {
-		block(Blocks.STONE_SLAB(states = mapOf("half" to "top"))) assertsIs "particle block{block_state:{Name:\"minecraft:stone_slab\",Properties:{half:\"top\"}}}"
+		block(Blocks.STONE_SLAB(states = mapOf("half" to "top"))) assertsIs "particle block{block_state:{id:\"minecraft:stone_slab\",properties:{half:\"top\"}}}"
 
-		blockCrumble(Blocks.STONE) assertsIs "particle block_crumble{block_state:{Name:\"minecraft:stone\"}}"
-		blockCrumble(Blocks.STONE_SLAB(states = mapOf("half" to "top"))) assertsIs "particle block_crumble{block_state:{Name:\"minecraft:stone_slab\",Properties:{half:\"top\"}}}"
+		blockCrumble(Blocks.STONE) assertsIs "particle block_crumble{block_state:\"minecraft:stone\"}"
+		blockCrumble(Blocks.STONE_SLAB(states = mapOf("half" to "top"))) assertsIs "particle block_crumble{block_state:{id:\"minecraft:stone_slab\",properties:{half:\"top\"}}}"
 
-		blockMarker(Blocks.STONE) assertsIs "particle block_marker{block_state:{Name:\"minecraft:stone\"}}"
-		fallingDust(Blocks.STONE) assertsIs "particle falling_dust{block_state:{Name:\"minecraft:stone\"}}"
+		blockMarker(Blocks.STONE) assertsIs "particle block_marker{block_state:\"minecraft:stone\"}"
+		fallingDust(Blocks.STONE) assertsIs "particle falling_dust{block_state:\"minecraft:stone\"}"
 
 		dust(Color.PURPLE, 2.0) assertsIs "particle dust{color:11141375,scale:2.0d}"
 		dust(rgb(0xabcdef), 2.0) assertsIs "particle dust{color:11259375,scale:2.0d}"

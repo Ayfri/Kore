@@ -5,7 +5,7 @@ nav-title: "Architecture and Patterns"
 description: Detailed internal architecture, project layout, module responsibilities, and recurring implementation patterns for Kore contributors.
 keywords: architecture, bindings, commands, generator, kore, patterns, serializers, website
 date-created: 2026-04-10
-date-modified: 2026-10-21
+date-modified: 2026-10-22
 routeOverride: /docs/contributing/architecture-and-patterns
 ---
 
@@ -169,9 +169,9 @@ subtype's simple name, so serializing one subtype only loads that subtype, not t
 ### Property names
 
 Properties are written in snake_case in both JSON and SNBT, so `maxDamage` becomes `max_damage` with no annotation.
-`@JsonSerialName("Name")` overrides the key in both formats, as `BlockState` does for `Name` and `Properties`.
+`@JsonSerialName("offsetX")` overrides the key in both formats, as `LocationCheck` does for its camel-case offsets.
 A `@SerialName` is only needed on a sealed subtype (its `type` name) or when the key isn't the snake_case of the
-property, and in SNBT it is snake_cased as well, so a key such as `Name` needs `@JsonSerialName`.
+property, and in SNBT it is snake_cased as well, so a key such as `offsetX` needs `@JsonSerialName`.
 Map keys and raw `NbtCompound` content are never renamed.
 
 SNBT is read the same way: `decodeFromSnbt` and `decodeFromNbtTag` look the keys of a class up under their snake_case

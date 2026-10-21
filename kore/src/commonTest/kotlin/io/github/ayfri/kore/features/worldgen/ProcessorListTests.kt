@@ -54,20 +54,16 @@ fun DataPack.processorListTests() {
 				{
 					"processor_type": "minecraft:block_ignore",
 					"blocks": [
-						{
-							"Name": "minecraft:air"
-						},
-						{
-							"Name": "minecraft:structure_block"
-						}
+						"minecraft:air",
+						"minecraft:structure_block"
 					]
 				},
 				{
 					"processor_type": "minecraft:block_ignore",
 					"blocks": [
 						{
-							"Name": "minecraft:chest",
-							"Properties": {
+							"id": "minecraft:chest",
+							"properties": {
 								"facing": "north"
 							}
 						}
@@ -197,9 +193,7 @@ fun DataPack.processorListTests() {
 								"predicate_type": "minecraft:block_match",
 								"block": "minecraft:stone_bricks"
 							},
-							"output_state": {
-								"Name": "minecraft:mossy_stone_bricks"
-							},
+							"output_state": "minecraft:mossy_stone_bricks",
 							"block_entity_modifier": {
 								"type": "minecraft:clear"
 							}
@@ -218,15 +212,13 @@ fun DataPack.processorListTests() {
 							"input_predicate": {
 								"predicate_type": "minecraft:blockstate_match",
 								"block_state": {
-									"Name": "minecraft:chest",
-									"Properties": {
+									"id": "minecraft:chest",
+									"properties": {
 										"facing": "north"
 									}
 								}
 							},
-							"output_state": {
-								"Name": "minecraft:barrel"
-							},
+							"output_state": "minecraft:barrel",
 							"block_entity_modifier": {
 								"type": "minecraft:append_loot",
 								"loot_table": "minecraft:chests/simple_dungeon"
@@ -246,14 +238,10 @@ fun DataPack.processorListTests() {
 							},
 							"input_predicate": {
 								"predicate_type": "minecraft:random_blockstate_match",
-								"block_state": {
-									"Name": "minecraft:stone"
-								},
+								"block_state": "minecraft:stone",
 								"probability": 0.5
 							},
-							"output_state": {
-								"Name": "minecraft:chiseled_stone_bricks"
-							},
+							"output_state": "minecraft:chiseled_stone_bricks",
 							"block_entity_modifier": {
 								"type": "minecraft:append_static",
 								"data": {
@@ -268,9 +256,7 @@ fun DataPack.processorListTests() {
 							"input_predicate": {
 								"predicate_type": "minecraft:always_true"
 							},
-							"output_state": {
-								"Name": "minecraft:stone"
-							},
+							"output_state": "minecraft:stone",
 							"block_entity_modifier": {
 								"type": "minecraft:passthrough"
 							}
@@ -287,9 +273,7 @@ fun DataPack.processorListTests() {
 							"input_predicate": {
 								"predicate_type": "minecraft:always_true"
 							},
-							"output_state": {
-								"Name": "minecraft:granite"
-							}
+							"output_state": "minecraft:granite"
 						}
 					]
 				}

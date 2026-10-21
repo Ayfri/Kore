@@ -5,7 +5,7 @@ nav-title: Commands
 description: Every Minecraft command in a type-safe Kotlin DSL. From /say, /teleport, and /give to /execute, /data, /scoreboard, and /summon -- all with code examples and generated mcfunction output.
 keywords: minecraft commands, kore commands, kotlin commands dsl, mcfunction generator, execute command, data command, teleport command, summon command, minecraft command builder, type-safe commands
 date-created: 2026-02-03
-date-modified: 2026-10-21
+date-modified: 2026-10-22
 routeOverride: /docs/commands/commands
 ---
 
@@ -505,7 +505,7 @@ Generated output:
 
 ```mcfunction
 place feature minecraft:bonus_chest ~ ~ ~
-place feature {type:"minecraft:simple_block",to_place:{type:"minecraft:simple_state_provider",state:{Name:"minecraft:diamond_block"}},schedule_tick:1b} 0 64 0
+place feature {type:"minecraft:simple_block",to_place:{type:"minecraft:simple_state_provider",state:"minecraft:diamond_block"},schedule_tick:1b} 0 64 0
 place structure minecraft:mineshaft ~ ~ ~
 ```
 
@@ -1264,10 +1264,10 @@ function("special_particles") {
 Generated output:
 
 ```mcfunction
-particle block{block_state:{Name:"minecraft:stone_slab",Properties:{half:"top"}}}
-particle block_crumble{block_state:{Name:"minecraft:stone"}}
-particle block_marker{block_state:{Name:"minecraft:stone"}}
-particle falling_dust{block_state:{Name:"minecraft:stone"}}
+particle block{block_state:{id:"minecraft:stone_slab",properties:{half:"top"}}}
+particle block_crumble{block_state:"minecraft:stone"}
+particle block_marker{block_state:"minecraft:stone"}
+particle falling_dust{block_state:"minecraft:stone"}
 particle dust{color:11141375,scale:2.0d}
 particle dust{color:11259375,scale:2.0d}
 particle dust_color_transition{from_color:5592575,to_color:16733525,scale:2.0d}

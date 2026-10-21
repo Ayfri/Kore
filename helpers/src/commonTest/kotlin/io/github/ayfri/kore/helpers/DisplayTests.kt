@@ -138,6 +138,18 @@ fun Function.displayNbtTests() {
 	}
 
 	summon(textDisplay.entityType, vec3(), textDisplay.toNbt()) assertsIs """summon minecraft:text_display ~ ~ ~ {background:-2130771968,text:"hi",billboard:"center",brightness:{block:15,sky:10},glow_color_override:16711680}"""
+
+	val stoneDisplay = blockDisplay { blockState(Blocks.STONE) }
+	summon(stoneDisplay.entityType, vec3(), stoneDisplay.toNbt()) assertsIs """summon minecraft:block_display ~ ~ ~ {block_state:"minecraft:stone"}"""
+
+	val snowyDisplay = blockDisplay {
+		blockState(Blocks.GRASS_BLOCK) {
+			properties {
+				this["snowy"] = true
+			}
+		}
+	}
+	summon(snowyDisplay.entityType, vec3(), snowyDisplay.toNbt()) assertsIs """summon minecraft:block_display ~ ~ ~ {block_state:{id:"minecraft:grass_block",properties:{snowy:"true"}}}"""
 }
 
 fun Function.displayEntitySelectorTests() {

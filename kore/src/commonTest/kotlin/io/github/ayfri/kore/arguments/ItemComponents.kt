@@ -172,7 +172,7 @@ fun itemComponentsTests() {
 			}
 		}
 	}
-	blockTransformerTest.asString() assertsIs """minecraft:copper_axe[block_transformer=[{block_state_provider:{type:"minecraft:rule_based_state_provider",rules:[{if_true:{type:"minecraft:matching_blocks",blocks:"minecraft:oak_log"},then:{type:"minecraft:copy_properties_provider",source:{type:"minecraft:simple_state_provider",state:{Name:"minecraft:stripped_oak_log",Properties:{axis:"y"}}}}}]},item_damage_per_use:1,sound:"minecraft:item.axe.strip"},{block_state_provider:{type:"minecraft:simple_state_provider",state:{Name:"minecraft:dirt"}},consume_on_use:0b,disallowed_faces:["down","up"],drop_strategy:"clicked_face",loot:"minecraft:till/rooted_dirt",particle:"wax_off",transform_type:"copper_chest",update_from_neighbors:0b}]]"""
+	blockTransformerTest.asString() assertsIs """minecraft:copper_axe[block_transformer=[{block_state_provider:{type:"minecraft:rule_based_state_provider",rules:[{if_true:{type:"minecraft:matching_blocks",blocks:"minecraft:oak_log"},then:{type:"minecraft:copy_properties_provider",source:{type:"minecraft:simple_state_provider",state:{id:"minecraft:stripped_oak_log",properties:{axis:"y"}}}}}]},item_damage_per_use:1,sound:"minecraft:item.axe.strip"},{block_state_provider:{type:"minecraft:simple_state_provider",state:"minecraft:dirt"},consume_on_use:0b,disallowed_faces:["down","up"],drop_strategy:"clicked_face",loot:"minecraft:till/rooted_dirt",particle:"wax_off",transform_type:"copper_chest",update_from_neighbors:0b}]]"""
 
 	val blockTransformerNumbersTest = Items.COPPER_AXE {
 		blockTransformer {
@@ -189,7 +189,7 @@ fun itemComponentsTests() {
 			})
 		}
 	}
-	blockTransformerNumbersTest.asString() shouldBe """minecraft:copper_axe[block_transformer=[{block_state_provider:{type:"minecraft:noise_provider",seed:0,noise:{amplitude_modifiers:[0.5d,0.25d],base_octave:-3,octave_count:2},scale:1,states:[{Name:"minecraft:moss_block"},{Name:"minecraft:stone"}]}},{block_state_provider:{type:"minecraft:noise_provider",seed:3000000000L,noise:{amplitude_modifiers:[1,1],base_octave:2,octave_count:2},scale:0.5d,states:[{Name:"minecraft:dirt"}]}}]]"""
+	blockTransformerNumbersTest.asString() shouldBe """minecraft:copper_axe[block_transformer=[{block_state_provider:{type:"minecraft:noise_provider",seed:0,noise:{amplitude_modifiers:[0.5d,0.25d],base_octave:-3,octave_count:2},scale:1,states:["minecraft:moss_block","minecraft:stone"]}},{block_state_provider:{type:"minecraft:noise_provider",seed:3000000000L,noise:{amplitude_modifiers:[1,1],base_octave:2,octave_count:2},scale:0.5d,states:["minecraft:dirt"]}}]]"""
 
 	val breakSoundTest = Items.DIAMOND_SWORD {
 		breakSound(SoundEvents.Ambient.CAVE)

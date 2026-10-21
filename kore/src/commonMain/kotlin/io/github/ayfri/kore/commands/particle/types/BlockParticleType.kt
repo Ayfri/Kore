@@ -22,7 +22,7 @@ data class BlockParticleType(
 ) : ParticleData()
 
 fun BlockParticleType.blockState(block: BlockArgument, properties: Map<String, String>? = null) = apply {
-	blockState = BlockState(name = block, properties = properties)
+	blockState = BlockState(id = block, properties = properties)
 }
 
 private fun Particles.blockParticleType(

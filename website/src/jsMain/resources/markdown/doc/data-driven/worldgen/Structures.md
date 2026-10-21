@@ -5,7 +5,7 @@ nav-title: Structures
 description: Build Minecraft structures with Kore - configured structures, jigsaw template pools, block processors and structure set placement.
 keywords: minecraft, datapack, kore, worldgen, structure, template pool, processor list, jigsaw, structure set
 date-created: 2026-02-03
-date-modified: 2026-10-08
+date-modified: 2026-10-22
 routeOverride: /docs/data-driven/worldgen/structures
 ---
 
@@ -49,8 +49,8 @@ val processors = dp.processorList("my_processors") {
 		{
 			"processor_type": "minecraft:block_ignore",
 			"blocks": [
-				{ "Name": "minecraft:structure_block" },
-				{ "Name": "minecraft:jigsaw" }
+				"minecraft:structure_block",
+				"minecraft:jigsaw"
 			]
 		},
 		{ "processor_type": "minecraft:block_age", "mossiness": 0.5 },

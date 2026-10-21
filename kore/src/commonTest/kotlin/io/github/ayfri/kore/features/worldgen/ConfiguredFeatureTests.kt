@@ -87,9 +87,7 @@ fun DataPack.configuredFeatureTests() {
 			"can_place_on": {
 				"type": "minecraft:solid"
 			},
-			"state": {
-				"Name": "minecraft:stone"
-			}
+			"state": "minecraft:stone"
 		}
 	""".trimIndent()
 
@@ -102,9 +100,7 @@ fun DataPack.configuredFeatureTests() {
 			"type": "minecraft:block_pile",
 			"state_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:gravel"
-				}
+				"state": "minecraft:gravel"
 			}
 		}
 	""".trimIndent()
@@ -178,12 +174,8 @@ fun DataPack.configuredFeatureTests() {
 						},
 						"slow_scale": 1.0,
 						"states": [
-							{
-								"Name": "minecraft:stone"
-							},
-							{
-								"Name": "minecraft:dirt"
-							}
+							"minecraft:stone",
+							"minecraft:dirt"
 						]
 					}
 				}
@@ -282,9 +274,7 @@ fun DataPack.configuredFeatureTests() {
 						},
 						"then": {
 							"type": "minecraft:simple_state_provider",
-							"state": {
-								"Name": "minecraft:dirt"
-							}
+							"state": "minecraft:dirt"
 						}
 					}
 				]
@@ -300,8 +290,8 @@ fun DataPack.configuredFeatureTests() {
 			"trunk_provider": {
 				"type": "minecraft:simple_state_provider",
 				"state": {
-					"Name": "minecraft:dark_oak_log",
-					"Properties": {
+					"id": "minecraft:dark_oak_log",
+					"properties": {
 						"axis": "y"
 					}
 				}
@@ -309,8 +299,8 @@ fun DataPack.configuredFeatureTests() {
 			"foliage_provider": {
 				"type": "minecraft:simple_state_provider",
 				"state": {
-					"Name": "minecraft:dark_oak_leaves",
-					"Properties": {
+					"id": "minecraft:dark_oak_leaves",
+					"properties": {
 						"distance": "7",
 						"persistent": "false",
 						"waterlogged": "false"
@@ -337,12 +327,8 @@ fun DataPack.configuredFeatureTests() {
 	configuredFeatures.last() assertsIs """
 		{
 			"type": "minecraft:delta_feature",
-			"contents": {
-				"Name": "minecraft:stone"
-			},
-			"rim": {
-				"Name": "minecraft:stone"
-			},
+			"contents": "minecraft:stone",
+			"rim": "minecraft:stone",
 			"size": 3,
 			"rim_size": 1
 		}
@@ -366,9 +352,7 @@ fun DataPack.configuredFeatureTests() {
 			"type": "minecraft:disk",
 			"state_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:gravel"
-				}
+				"state": "minecraft:gravel"
 			},
 			"target": {
 				"type": "minecraft:solid"
@@ -419,12 +403,8 @@ fun DataPack.configuredFeatureTests() {
 			"chance_of_speleothem_at_max_distance_from_center": 0.1,
 			"max_distance_from_edge_affecting_chance_of_speleothem": 4,
 			"max_distance_from_center_affecting_height_bias": 6,
-			"base_block": {
-				"Name": "minecraft:dripstone_block"
-			},
-			"pointed_block": {
-				"Name": "minecraft:pointed_dripstone"
-			},
+			"base_block": "minecraft:dripstone_block",
+			"pointed_block": "minecraft:pointed_dripstone",
 			"replaceable_blocks": [
 				"minecraft:stone",
 				"minecraft:dirt"
@@ -493,9 +473,7 @@ fun DataPack.configuredFeatureTests() {
 	configuredFeatures.last() assertsIs """
 		{
 			"type": "minecraft:fill_layer",
-			"state": {
-				"Name": "minecraft:stone"
-			},
+			"state": "minecraft:stone",
 			"height": 32
 		}
 	""".trimIndent()
@@ -552,33 +530,23 @@ fun DataPack.configuredFeatureTests() {
 			"blocks": {
 				"filling": {
 					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:stone"
-					}
+					"state": "minecraft:stone"
 				},
 				"inner_layer": {
 					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:stone"
-					}
+					"state": "minecraft:stone"
 				},
 				"alternate_inner_layer": {
 					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:stone"
-					}
+					"state": "minecraft:stone"
 				},
 				"middle_layer": {
 					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:stone"
-					}
+					"state": "minecraft:stone"
 				},
 				"outer_layer": {
 					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:stone"
-					}
+					"state": "minecraft:stone"
 				},
 				"inner_placements": [],
 				"cannot_replace": "#minecraft:features_cannot_replace",
@@ -611,15 +579,11 @@ fun DataPack.configuredFeatureTests() {
 			},
 			"cap_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"stem_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			}
 		}
 	""".trimIndent()
@@ -634,21 +598,15 @@ fun DataPack.configuredFeatureTests() {
 	configuredFeatures.last() assertsIs """
 		{
 			"type": "minecraft:huge_fungus",
-			"hat_state": {
-				"Name": "minecraft:dirt"
-			},
-			"decor_state": {
-				"Name": "minecraft:stone"
-			},
+			"hat_state": "minecraft:dirt",
+			"decor_state": "minecraft:stone",
 			"stem_state": {
-				"Name": "minecraft:crimson_stem",
-				"Properties": {
+				"id": "minecraft:crimson_stem",
+				"properties": {
 					"axis": "y"
 				}
 			},
-			"valid_base_block": {
-				"Name": "minecraft:crimson_nylium"
-			},
+			"valid_base_block": "minecraft:crimson_nylium",
 			"replaceable_blocks": {
 				"type": "minecraft:true"
 			},
@@ -668,15 +626,11 @@ fun DataPack.configuredFeatureTests() {
 			},
 			"cap_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"stem_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			}
 		}
 	""".trimIndent()
@@ -686,9 +640,7 @@ fun DataPack.configuredFeatureTests() {
 	configuredFeatures.last() assertsIs """
 		{
 			"type": "minecraft:iceberg",
-			"state": {
-				"Name": "minecraft:dirt"
-			}
+			"state": "minecraft:dirt"
 		}
 	""".trimIndent()
 
@@ -705,12 +657,8 @@ fun DataPack.configuredFeatureTests() {
 	configuredFeatures.last() assertsIs """
 		{
 			"type": "minecraft:lake",
-			"fluid": {
-				"Name": "minecraft:stone"
-			},
-			"barrier": {
-				"Name": "minecraft:gravel"
-			},
+			"fluid": "minecraft:stone",
+			"barrier": "minecraft:gravel",
 			"can_place_feature": {
 				"type": "minecraft:matching_blocks",
 				"blocks": "minecraft:stone"
@@ -802,12 +750,8 @@ fun DataPack.configuredFeatureTests() {
 	configuredFeatures.last() assertsIs """
 		{
 			"type": "minecraft:netherrack_replace_blobs",
-			"state": {
-				"Name": "minecraft:gravel"
-			},
-			"target": {
-				"Name": "minecraft:stone"
-			},
+			"state": "minecraft:gravel",
+			"target": "minecraft:stone",
 			"radius": 3
 		}
 	""".trimIndent()
@@ -844,18 +788,14 @@ fun DataPack.configuredFeatureTests() {
 						"block": "minecraft:stone",
 						"probability": 0.5
 					},
-					"state": {
-						"Name": "minecraft:stone"
-					}
+					"state": "minecraft:stone"
 				},
 				{
 					"target": {
 						"predicate_type": "minecraft:tag_match",
 						"tag": "minecraft:deepslate_ore_replaceables"
 					},
-					"state": {
-						"Name": "minecraft:deepslate"
-					}
+					"state": "minecraft:deepslate"
 				}
 			]
 		}
@@ -890,9 +830,7 @@ fun DataPack.configuredFeatureTests() {
 							}
 						]
 					},
-					"state": {
-						"Name": "minecraft:iron_ore"
-					}
+					"state": "minecraft:iron_ore"
 				}
 			]
 		}
@@ -929,9 +867,7 @@ fun DataPack.configuredFeatureTests() {
 							}
 						]
 					},
-					"state": {
-						"Name": "minecraft:iron_ore"
-					}
+					"state": "minecraft:iron_ore"
 				}
 			]
 		}
@@ -959,9 +895,7 @@ fun DataPack.configuredFeatureTests() {
 							"block": "minecraft:bedrock"
 						}
 					},
-					"state": {
-						"Name": "minecraft:iron_ore"
-					}
+					"state": "minecraft:iron_ore"
 				}
 			]
 		}
@@ -985,12 +919,8 @@ fun DataPack.configuredFeatureTests() {
 			"chance_of_directional_spread": 0.5,
 			"chance_of_spread_radius2": 0.5,
 			"chance_of_spread_radius3": 0.5,
-			"base_block": {
-				"Name": "minecraft:dripstone_block"
-			},
-			"pointed_block": {
-				"Name": "minecraft:pointed_dripstone"
-			},
+			"base_block": "minecraft:dripstone_block",
+			"pointed_block": "minecraft:pointed_dripstone",
 			"replaceable_blocks": [
 				"minecraft:stone",
 				"minecraft:dirt"
@@ -1054,9 +984,7 @@ fun DataPack.configuredFeatureTests() {
 			"type": "minecraft:projected_random_patchy_square",
 			"block": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:basalt"
-				}
+				"state": "minecraft:basalt"
 			},
 			"max_projection_height": 3,
 			"project_through": {
@@ -1086,9 +1014,7 @@ fun DataPack.configuredFeatureTests() {
 			"attempts": 1500,
 			"block": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:glowstone"
-				}
+				"state": "minecraft:glowstone"
 			},
 			"can_replace": {
 				"type": "minecraft:matching_blocks",
@@ -1142,9 +1068,7 @@ fun DataPack.configuredFeatureTests() {
 						"block": "minecraft:stone",
 						"probability": 0.5
 					},
-					"state": {
-						"Name": "minecraft:stone"
-					}
+					"state": "minecraft:stone"
 				}
 			]
 		}
@@ -1180,15 +1104,11 @@ fun DataPack.configuredFeatureTests() {
 			"allowed_vertical_water_for_tree": 1,
 			"root_state_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:dirt"
-				}
+				"state": "minecraft:dirt"
 			},
 			"hanging_root_state_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:dirt"
-				}
+				"state": "minecraft:dirt"
 			},
 			"allowed_tree_position": {
 				"type": "minecraft:true"
@@ -1215,15 +1135,11 @@ fun DataPack.configuredFeatureTests() {
 			"allowed_vertical_water_for_tree": 1,
 			"root_state_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"hanging_root_state_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"allowed_tree_position": {
 				"type": "minecraft:true"
@@ -1253,9 +1169,7 @@ fun DataPack.configuredFeatureTests() {
 				"type": "minecraft:rule_based_state_provider",
 				"fallback": {
 					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:stone"
-					}
+					"state": "minecraft:stone"
 				},
 				"rules": [
 					{
@@ -1264,9 +1178,7 @@ fun DataPack.configuredFeatureTests() {
 						},
 						"then": {
 							"type": "minecraft:simple_state_provider",
-							"state": {
-								"Name": "minecraft:gravel"
-							}
+							"state": "minecraft:gravel"
 						}
 					},
 					{
@@ -1275,9 +1187,7 @@ fun DataPack.configuredFeatureTests() {
 						},
 						"then": {
 							"type": "minecraft:simple_state_provider",
-							"state": {
-								"Name": "minecraft:sand"
-							}
+							"state": "minecraft:sand"
 						}
 					}
 				]
@@ -1313,9 +1223,7 @@ fun DataPack.configuredFeatureTests() {
 				"type": "minecraft:rule_based_state_provider",
 				"fallback": {
 					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:stone"
-					}
+					"state": "minecraft:stone"
 				},
 				"rules": [
 					{
@@ -1324,9 +1232,7 @@ fun DataPack.configuredFeatureTests() {
 						},
 						"then": {
 							"type": "minecraft:simple_state_provider",
-							"state": {
-								"Name": "minecraft:dirt"
-							}
+							"state": "minecraft:dirt"
 						}
 					},
 					{
@@ -1336,9 +1242,7 @@ fun DataPack.configuredFeatureTests() {
 						},
 						"then": {
 							"type": "minecraft:simple_state_provider",
-							"state": {
-								"Name": "minecraft:gravel"
-							}
+							"state": "minecraft:gravel"
 						}
 					},
 					{
@@ -1351,9 +1255,7 @@ fun DataPack.configuredFeatureTests() {
 						},
 						"then": {
 							"type": "minecraft:simple_state_provider",
-							"state": {
-								"Name": "minecraft:sand"
-							}
+							"state": "minecraft:sand"
 						}
 					}
 				]
@@ -1382,9 +1284,7 @@ fun DataPack.configuredFeatureTests() {
 						"block": "minecraft:stone",
 						"probability": 0.5
 					},
-					"state": {
-						"Name": "minecraft:stone"
-					}
+					"state": "minecraft:stone"
 				}
 			]
 		}
@@ -1430,9 +1330,7 @@ fun DataPack.configuredFeatureTests() {
 			"type": "minecraft:simple_block",
 			"to_place": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"schedule_tick": true
 		}
@@ -1461,9 +1359,7 @@ fun DataPack.configuredFeatureTests() {
 			"type": "minecraft:single_block_pillar",
 			"block": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"direction": "up"
 		}
@@ -1481,9 +1377,7 @@ fun DataPack.configuredFeatureTests() {
 			"type": "minecraft:single_block_pillar",
 			"block": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:basalt"
-				}
+				"state": "minecraft:basalt"
 			},
 			"can_replace": {
 				"type": "minecraft:replaceable"
@@ -1508,9 +1402,7 @@ fun DataPack.configuredFeatureTests() {
 			"can_replace": {
 				"type": "minecraft:solid"
 			},
-			"state": {
-				"Name": "minecraft:stone"
-			}
+			"state": "minecraft:stone"
 		}
 	""".trimIndent()
 
@@ -1525,9 +1417,7 @@ fun DataPack.configuredFeatureTests() {
 	configuredFeatures.last() assertsIs """
 		{
 			"type": "minecraft:spring_feature",
-			"state": {
-				"Name": "minecraft:stone"
-			},
+			"state": "minecraft:stone",
 			"rock_count": 4,
 			"hole_count": 1,
 			"requires_block_below": true,
@@ -1554,9 +1444,7 @@ fun DataPack.configuredFeatureTests() {
 			"type": "minecraft:stepped_column_cluster",
 			"block": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:basalt"
-				}
+				"state": "minecraft:basalt"
 			},
 			"can_replace": {
 				"type": "minecraft:matching_blocks",
@@ -1659,15 +1547,11 @@ fun DataPack.configuredFeatureTests() {
 			},
 			"trunk_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"foliage_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"trunk_placer": {
 				"type": "minecraft:cherry_trunk_placer",
@@ -1701,9 +1585,7 @@ fun DataPack.configuredFeatureTests() {
 					"required_empty_blocks": 3,
 					"block_provider": {
 						"type": "minecraft:simple_state_provider",
-						"state": {
-							"Name": "minecraft:dirt"
-						}
+						"state": "minecraft:dirt"
 					},
 					"directions": [
 						"down"
@@ -1742,15 +1624,11 @@ fun DataPack.configuredFeatureTests() {
 			},
 			"trunk_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"foliage_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"trunk_placer": {
 				"type": "minecraft:cherry_trunk_placer",
@@ -1782,9 +1660,7 @@ fun DataPack.configuredFeatureTests() {
 						"type": "minecraft:rule_based_state_provider",
 						"fallback": {
 							"type": "minecraft:simple_state_provider",
-							"state": {
-								"Name": "minecraft:dirt"
-							}
+							"state": "minecraft:dirt"
 						},
 						"rules": [
 							{
@@ -1794,9 +1670,7 @@ fun DataPack.configuredFeatureTests() {
 								},
 								"then": {
 									"type": "minecraft:simple_state_provider",
-									"state": {
-										"Name": "minecraft:grass_block"
-									}
+									"state": "minecraft:grass_block"
 								}
 							}
 						]
@@ -1828,9 +1702,7 @@ fun DataPack.configuredFeatureTests() {
 				"type": "minecraft:rule_based_state_provider",
 				"fallback": {
 					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:dirt"
-					}
+					"state": "minecraft:dirt"
 				},
 				"rules": [
 					{
@@ -1840,9 +1712,7 @@ fun DataPack.configuredFeatureTests() {
 						},
 						"then": {
 							"type": "minecraft:simple_state_provider",
-							"state": {
-								"Name": "minecraft:grass_block"
-							}
+							"state": "minecraft:grass_block"
 						}
 					}
 				]
@@ -1852,15 +1722,11 @@ fun DataPack.configuredFeatureTests() {
 			},
 			"trunk_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"foliage_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"trunk_placer": {
 				"type": "minecraft:cherry_trunk_placer",
@@ -1913,15 +1779,11 @@ fun DataPack.configuredFeatureTests() {
 			},
 			"trunk_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"foliage_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"trunk_placer": {
 				"type": "minecraft:upwards_branching_trunk_placer",
@@ -2045,9 +1907,7 @@ fun DataPack.configuredFeatureTests() {
 						},
 						"then": {
 							"type": "minecraft:simple_state_provider",
-							"state": {
-								"Name": "minecraft:dirt"
-							}
+							"state": "minecraft:dirt"
 						}
 					}
 				]
@@ -2060,8 +1920,8 @@ fun DataPack.configuredFeatureTests() {
 			"trunk_provider": {
 				"type": "minecraft:simple_state_provider",
 				"state": {
-					"Name": "minecraft:mangrove_log",
-					"Properties": {
+					"id": "minecraft:mangrove_log",
+					"properties": {
 						"axis": "y"
 					}
 				}
@@ -2069,8 +1929,8 @@ fun DataPack.configuredFeatureTests() {
 			"foliage_provider": {
 				"type": "minecraft:simple_state_provider",
 				"state": {
-					"Name": "minecraft:mangrove_leaves",
-					"Properties": {
+					"id": "minecraft:mangrove_leaves",
+					"properties": {
 						"distance": "7",
 						"persistent": "false",
 						"waterlogged": "false"
@@ -2082,8 +1942,8 @@ fun DataPack.configuredFeatureTests() {
 				"root_provider": {
 					"type": "minecraft:simple_state_provider",
 					"state": {
-						"Name": "minecraft:mangrove_roots",
-						"Properties": {
+						"id": "minecraft:mangrove_roots",
+						"properties": {
 							"waterlogged": "false"
 						}
 					}
@@ -2096,9 +1956,7 @@ fun DataPack.configuredFeatureTests() {
 				"above_root_placement": {
 					"above_root_provider": {
 						"type": "minecraft:simple_state_provider",
-						"state": {
-							"Name": "minecraft:moss_carpet"
-						}
+						"state": "minecraft:moss_carpet"
 					},
 					"above_root_placement_chance": 0.5
 				},
@@ -2114,8 +1972,8 @@ fun DataPack.configuredFeatureTests() {
 					"muddy_roots_provider": {
 						"type": "minecraft:simple_state_provider",
 						"state": {
-							"Name": "minecraft:muddy_mangrove_roots",
-							"Properties": {
+							"id": "minecraft:muddy_mangrove_roots",
+							"properties": {
 								"axis": "y"
 							}
 						}
@@ -2169,8 +2027,8 @@ fun DataPack.configuredFeatureTests() {
 						"source": {
 							"type": "minecraft:simple_state_provider",
 							"state": {
-								"Name": "minecraft:mangrove_propagule",
-								"Properties": {
+								"id": "minecraft:mangrove_propagule",
+								"properties": {
 									"age": "0",
 									"hanging": "true",
 									"stage": "0",
@@ -2235,9 +2093,7 @@ fun DataPack.configuredFeatureTests() {
 						},
 						"then": {
 							"type": "minecraft:simple_state_provider",
-							"state": {
-								"Name": "minecraft:dirt"
-							}
+							"state": "minecraft:dirt"
 						}
 					}
 				]
@@ -2249,8 +2105,8 @@ fun DataPack.configuredFeatureTests() {
 			"trunk_provider": {
 				"type": "minecraft:simple_state_provider",
 				"state": {
-					"Name": "minecraft:pale_oak_log",
-					"Properties": {
+					"id": "minecraft:pale_oak_log",
+					"properties": {
 						"axis": "y"
 					}
 				}
@@ -2258,8 +2114,8 @@ fun DataPack.configuredFeatureTests() {
 			"foliage_provider": {
 				"type": "minecraft:simple_state_provider",
 				"state": {
-					"Name": "minecraft:pale_oak_leaves",
-					"Properties": {
+					"id": "minecraft:pale_oak_leaves",
+					"properties": {
 						"distance": "7",
 						"persistent": "false",
 						"waterlogged": "false"
@@ -2311,15 +2167,11 @@ fun DataPack.configuredFeatureTests() {
 			},
 			"trunk_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"foliage_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"trunk_placer": {
 				"type": "minecraft:dark_oak_trunk_placer",
@@ -2381,15 +2233,11 @@ fun DataPack.configuredFeatureTests() {
 			},
 			"trunk_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"foliage_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"trunk_placer": {
 				"type": "minecraft:fancy_trunk_placer",
@@ -2414,8 +2262,8 @@ fun DataPack.configuredFeatureTests() {
 								"data": {
 									"type": "minecraft:simple_state_provider",
 									"state": {
-										"Name": "minecraft:leaf_litter",
-										"Properties": {
+										"id": "minecraft:leaf_litter",
+										"properties": {
 											"facing": "north",
 											"segment_amount": "1"
 										}
@@ -2427,8 +2275,8 @@ fun DataPack.configuredFeatureTests() {
 								"data": {
 									"type": "minecraft:simple_state_provider",
 									"state": {
-										"Name": "minecraft:leaf_litter",
-										"Properties": {
+										"id": "minecraft:leaf_litter",
+										"properties": {
 											"facing": "east",
 											"segment_amount": "1"
 										}
@@ -2440,8 +2288,8 @@ fun DataPack.configuredFeatureTests() {
 								"data": {
 									"type": "minecraft:simple_state_provider",
 									"state": {
-										"Name": "minecraft:leaf_litter",
-										"Properties": {
+										"id": "minecraft:leaf_litter",
+										"properties": {
 											"facing": "south",
 											"segment_amount": "1"
 										}
@@ -2453,8 +2301,8 @@ fun DataPack.configuredFeatureTests() {
 								"data": {
 									"type": "minecraft:simple_state_provider",
 									"state": {
-										"Name": "minecraft:leaf_litter",
-										"Properties": {
+										"id": "minecraft:leaf_litter",
+										"properties": {
 											"facing": "west",
 											"segment_amount": "1"
 										}
@@ -2477,8 +2325,8 @@ fun DataPack.configuredFeatureTests() {
 								"data": {
 									"type": "minecraft:simple_state_provider",
 									"state": {
-										"Name": "minecraft:leaf_litter",
-										"Properties": {
+										"id": "minecraft:leaf_litter",
+										"properties": {
 											"facing": "north",
 											"segment_amount": "4"
 										}
@@ -2510,15 +2358,11 @@ fun DataPack.configuredFeatureTests() {
 			},
 			"trunk_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"foliage_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"trunk_placer": {
 				"type": "minecraft:fancy_trunk_placer",
@@ -2537,9 +2381,7 @@ fun DataPack.configuredFeatureTests() {
 					"type": "minecraft:place_on_ground",
 					"block_state_provider": {
 						"type": "minecraft:simple_state_provider",
-						"state": {
-							"Name": "minecraft:stone"
-						}
+						"state": "minecraft:stone"
 					}
 				}
 			]
@@ -2570,15 +2412,11 @@ fun DataPack.configuredFeatureTests() {
 			},
 			"trunk_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"foliage_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"trunk_placer": {
 				"type": "minecraft:fancy_trunk_placer",
@@ -2602,18 +2440,14 @@ fun DataPack.configuredFeatureTests() {
 								"weight": 2,
 								"data": {
 									"type": "minecraft:simple_state_provider",
-									"state": {
-										"Name": "minecraft:red_mushroom"
-									}
+									"state": "minecraft:red_mushroom"
 								}
 							},
 							{
 								"weight": 1,
 								"data": {
 									"type": "minecraft:simple_state_provider",
-									"state": {
-										"Name": "minecraft:brown_mushroom"
-									}
+									"state": "minecraft:brown_mushroom"
 								}
 							}
 						]
@@ -2655,18 +2489,14 @@ fun DataPack.configuredFeatureTests() {
 								"weight": 2,
 								"data": {
 									"type": "minecraft:simple_state_provider",
-									"state": {
-										"Name": "minecraft:red_mushroom"
-									}
+									"state": "minecraft:red_mushroom"
 								}
 							},
 							{
 								"weight": 1,
 								"data": {
 									"type": "minecraft:simple_state_provider",
-									"state": {
-										"Name": "minecraft:brown_mushroom"
-									}
+									"state": "minecraft:brown_mushroom"
 								}
 							}
 						]
@@ -2690,8 +2520,8 @@ fun DataPack.configuredFeatureTests() {
 			"trunk_provider": {
 				"type": "minecraft:simple_state_provider",
 				"state": {
-					"Name": "minecraft:oak_log",
-					"Properties": {
+					"id": "minecraft:oak_log",
+					"properties": {
 						"axis": "y"
 					}
 				}
@@ -2719,9 +2549,7 @@ fun DataPack.configuredFeatureTests() {
 					"type": "minecraft:attached_to_logs",
 					"block_provider": {
 						"type": "minecraft:simple_state_provider",
-						"state": {
-							"Name": "minecraft:brown_mushroom"
-						}
+						"state": "minecraft:brown_mushroom"
 					},
 					"directions": [
 						"up"
@@ -2742,8 +2570,8 @@ fun DataPack.configuredFeatureTests() {
 			"trunk_provider": {
 				"type": "minecraft:simple_state_provider",
 				"state": {
-					"Name": "minecraft:poplar_log",
-					"Properties": {
+					"id": "minecraft:poplar_log",
+					"properties": {
 						"axis": "y"
 					}
 				}
@@ -2761,9 +2589,7 @@ fun DataPack.configuredFeatureTests() {
 			"stump_decorators": [],
 			"trunk_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			}
 		}
 	""".trimIndent()
@@ -2778,9 +2604,7 @@ fun DataPack.configuredFeatureTests() {
 		{
 			"root_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"trunk_offset_y": 0,
 			"mangrove_root_placement": {
@@ -2791,9 +2615,7 @@ fun DataPack.configuredFeatureTests() {
 				"muddy_roots_in": [],
 				"muddy_roots_provider": {
 					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:stone"
-					}
+					"state": "minecraft:stone"
 				}
 			}
 		}
@@ -2843,15 +2665,11 @@ fun DataPack.configuredFeatureTests() {
 			},
 			"trunk_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"foliage_provider": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"trunk_placer": {
 				"type": "minecraft:poplar_trunk_placer",
@@ -2924,9 +2742,7 @@ fun DataPack.configuredFeatureTests() {
 			"replaceable": "#minecraft:dirt",
 			"ground_state": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"vegetation_feature": "minecraft:acacia"
 		}
@@ -2976,9 +2792,7 @@ fun DataPack.configuredFeatureTests() {
 			"replaceable": "#minecraft:dirt",
 			"ground_state": {
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:stone"
-				}
+				"state": "minecraft:stone"
 			},
 			"vegetation_feature": "minecraft:acacia"
 		}

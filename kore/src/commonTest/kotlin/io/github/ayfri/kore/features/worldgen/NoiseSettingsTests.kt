@@ -117,14 +117,14 @@ fun DataPack.noiseSettingsTests() {
 				"surface_level": "minecraft:overworld/preliminary_surface_level"
 			},
 			"default_block": {
-				"Name": "minecraft:redstone_lamp",
-				"Properties": {
+				"id": "minecraft:redstone_lamp",
+				"properties": {
 					"lit": "true"
 				}
 			},
 			"default_fluid": {
-				"Name": "minecraft:water",
-				"Properties": {
+				"id": "minecraft:water",
+				"properties": {
 					"level": "0"
 				}
 			},
@@ -138,9 +138,7 @@ fun DataPack.noiseSettingsTests() {
 					},
 					{
 						"type": "minecraft:block",
-						"result_state": {
-							"Name": "minecraft:stone"
-						}
+						"result_state": "minecraft:stone"
 					},
 					{
 						"type": "minecraft:condition",
@@ -149,9 +147,7 @@ fun DataPack.noiseSettingsTests() {
 						},
 						"then_run": {
 							"type": "minecraft:block",
-							"result_state": {
-								"Name": "minecraft:andesite"
-							}
+							"result_state": "minecraft:andesite"
 						}
 					},
 					{
@@ -164,9 +160,7 @@ fun DataPack.noiseSettingsTests() {
 						},
 						"then_run": {
 							"type": "minecraft:block",
-							"result_state": {
-								"Name": "minecraft:red_sand"
-							}
+							"result_state": "minecraft:red_sand"
 						}
 					},
 					{
@@ -176,9 +170,7 @@ fun DataPack.noiseSettingsTests() {
 						},
 						"then_run": {
 							"type": "minecraft:block",
-							"result_state": {
-								"Name": "minecraft:diorite"
-							}
+							"result_state": "minecraft:diorite"
 						}
 					},
 					{
@@ -192,9 +184,7 @@ fun DataPack.noiseSettingsTests() {
 						},
 						"then_run": {
 							"type": "minecraft:block",
-							"result_state": {
-								"Name": "minecraft:granite"
-							}
+							"result_state": "minecraft:granite"
 						}
 					},
 					{
@@ -207,9 +197,7 @@ fun DataPack.noiseSettingsTests() {
 						},
 						"then_run": {
 							"type": "minecraft:block",
-							"result_state": {
-								"Name": "minecraft:gravel"
-							}
+							"result_state": "minecraft:gravel"
 						}
 					},
 					{
@@ -219,9 +207,7 @@ fun DataPack.noiseSettingsTests() {
 						},
 						"then_run": {
 							"type": "minecraft:block",
-							"result_state": {
-								"Name": "minecraft:stone"
-							}
+							"result_state": "minecraft:stone"
 						}
 					},
 					{
@@ -235,9 +221,7 @@ fun DataPack.noiseSettingsTests() {
 						},
 						"then_run": {
 							"type": "minecraft:block",
-							"result_state": {
-								"Name": "minecraft:dirt"
-							}
+							"result_state": "minecraft:dirt"
 						}
 					},
 					{
@@ -247,9 +231,7 @@ fun DataPack.noiseSettingsTests() {
 						},
 						"then_run": {
 							"type": "minecraft:block",
-							"result_state": {
-								"Name": "minecraft:snow_block"
-							}
+							"result_state": "minecraft:snow_block"
 						}
 					},
 					{
@@ -266,9 +248,7 @@ fun DataPack.noiseSettingsTests() {
 						},
 						"then_run": {
 							"type": "minecraft:block",
-							"result_state": {
-								"Name": "minecraft:bedrock"
-							}
+							"result_state": "minecraft:bedrock"
 						}
 					},
 					{
@@ -281,9 +261,7 @@ fun DataPack.noiseSettingsTests() {
 						},
 						"then_run": {
 							"type": "minecraft:block",
-							"result_state": {
-								"Name": "minecraft:grass_block"
-							}
+							"result_state": "minecraft:grass_block"
 						}
 					},
 					{
@@ -298,9 +276,7 @@ fun DataPack.noiseSettingsTests() {
 						},
 						"then_run": {
 							"type": "minecraft:block",
-							"result_state": {
-								"Name": "minecraft:calcite"
-							}
+							"result_state": "minecraft:calcite"
 						}
 					},
 					{
@@ -315,9 +291,7 @@ fun DataPack.noiseSettingsTests() {
 						},
 						"then_run": {
 							"type": "minecraft:block",
-							"result_state": {
-								"Name": "minecraft:packed_ice"
-							}
+							"result_state": "minecraft:packed_ice"
 						}
 					},
 					{
@@ -325,9 +299,7 @@ fun DataPack.noiseSettingsTests() {
 						"sequence": [
 							{
 								"type": "minecraft:block",
-								"result_state": {
-									"Name": "minecraft:deepslate"
-								}
+								"result_state": "minecraft:deepslate"
 							}
 						]
 					}
@@ -352,31 +324,19 @@ fun DataPack.noiseSettingsTests() {
 			"ore_veins": [
 				{
 					"density": "minecraft:overworld/ore_vein/copper_density",
-					"filler_block": {
-						"Name": "minecraft:granite"
-					},
+					"filler_block": "minecraft:granite",
 					"filler_gap": "minecraft:overworld/ore_vein/gap",
-					"ore_block": {
-						"Name": "minecraft:copper_ore"
-					},
-					"raw_ore_block": {
-						"Name": "minecraft:raw_copper_block"
-					},
+					"ore_block": "minecraft:copper_ore",
+					"raw_ore_block": "minecraft:raw_copper_block",
 					"raw_ore_chance": 0.02,
 					"richness": "minecraft:overworld/ore_vein/richness"
 				},
 				{
 					"density": "minecraft:overworld/ore_vein/iron_density",
-					"filler_block": {
-						"Name": "minecraft:tuff"
-					},
+					"filler_block": "minecraft:tuff",
 					"filler_gap": 0.25,
-					"ore_block": {
-						"Name": "minecraft:deepslate_iron_ore"
-					},
-					"raw_ore_block": {
-						"Name": "minecraft:raw_iron_block"
-					},
+					"ore_block": "minecraft:deepslate_iron_ore",
+					"raw_ore_block": "minecraft:raw_iron_block",
 					"raw_ore_chance": 0.05,
 					"richness": 0.75
 				}
@@ -445,9 +405,7 @@ fun DataPack.materialRuleTests() {
 			"if_true": "noiseSettings:highlands",
 			"then_run": {
 				"type": "minecraft:block",
-				"result_state": {
-					"Name": "minecraft:snow_block"
-				}
+				"result_state": "minecraft:snow_block"
 			}
 		}
 	""".trimIndent()

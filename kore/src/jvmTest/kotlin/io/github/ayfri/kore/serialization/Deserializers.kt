@@ -28,8 +28,11 @@ import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import io.github.ayfri.kore.serializers.SealedDispatcher
 import io.github.ayfri.kore.serializers.TripleAsArraySerializer
+import io.github.ayfri.kore.utils.decodeFromNbtTag
+import io.github.ayfri.kore.utils.encodeToNbtTag
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
+import io.github.ayfri.kore.utils.toSnbt
 import io.kotest.core.spec.style.FunSpec
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -80,6 +83,29 @@ fun blockEntityDataDeserializer() {
 fun blockStateDeserializer() {
 	roundTripsAs(Block.serializer(), Block(BlockState(Blocks.OAK_STAIRS, mapOf("facing" to "north", "half" to "top"))))
 	roundTripsAs(Block.serializer(), Block(BlockState(Blocks.STONE)))
+
+	val serializer = BlockState.serializer()
+	val stone = BlockState(Blocks.STONE)
+	val stairs = BlockState(Blocks.OAK_STAIRS, mapOf("facing" to "north"))
+
+	json.encodeToString(serializer, stone) assertsIs "\"minecraft:stone\""
+	json.encodeToString(serializer, json.decodeFromString(serializer, "\"minecraft:stone\"")) assertsIs "\"minecraft:stone\""
+	json.encodeToString(serializer, json.decodeFromString(serializer, """{"id":"minecraft:stone"}""")) assertsIs "\"minecraft:stone\""
+	json.encodeToString(serializer, stairs) assertsIs """
+		{
+			"id": "minecraft:oak_stairs",
+			"properties": {
+				"facing": "north"
+			}
+		}
+	""".trimIndent()
+	roundTripsAs(serializer, stairs)
+
+	encodeToNbtTag(serializer, stone).toSnbt() assertsIs "\"minecraft:stone\""
+	encodeToNbtTag(serializer, stairs).toSnbt() assertsIs """{id:"minecraft:oak_stairs",properties:{facing:"north"}}"""
+	encodeToNbtTag(serializer, decodeFromNbtTag(serializer, encodeToNbtTag(serializer, stone))).toSnbt() assertsIs "\"minecraft:stone\""
+	encodeToNbtTag(serializer, decodeFromNbtTag(serializer, encodeToNbtTag(serializer, stairs))).toSnbt() assertsIs
+		"""{id:"minecraft:oak_stairs",properties:{facing:"north"}}"""
 }
 
 fun tripleAsArrayDeserializer() {

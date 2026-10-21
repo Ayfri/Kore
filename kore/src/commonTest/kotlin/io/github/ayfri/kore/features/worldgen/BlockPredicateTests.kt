@@ -340,9 +340,7 @@ fun DataPack.blockPredicateTests() {
 					1,
 					0
 				],
-				"state": {
-					"Name": "minecraft:oak_sapling"
-				}
+				"state": "minecraft:oak_sapling"
 			}
 		""".trimIndent()
 	) {

@@ -753,9 +753,7 @@ fun DataPack.enchantmentTests() {
 							"type": "minecraft:replace_block",
 							"block_state": {
 								"type": "minecraft:simple_state_provider",
-								"state": {
-									"Name": "minecraft:diamond_block"
-								}
+								"state": "minecraft:diamond_block"
 							},
 							"offset": [
 								5,
@@ -770,9 +768,7 @@ fun DataPack.enchantmentTests() {
 							"type": "minecraft:replace_disk",
 							"block_state": {
 								"type": "minecraft:simple_state_provider",
-								"state": {
-									"Name": "minecraft:diamond_block"
-								}
+								"state": "minecraft:diamond_block"
 							},
 							"radius": 5,
 							"height": 2
@@ -874,9 +870,7 @@ fun DataPack.enchantmentTests() {
 							"type": "minecraft:replace_disk",
 							"block_state": {
 								"type": "minecraft:simple_state_provider",
-								"state": {
-									"Name": "minecraft:frosted_ice"
-								}
+								"state": "minecraft:frosted_ice"
 							},
 							"radius": {
 								"type": "minecraft:clamped",

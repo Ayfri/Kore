@@ -37,9 +37,7 @@ fun DataPack.blockStateProviderTests() {
 		"simple_state_provider", """
 			{
 				"type": "minecraft:simple_state_provider",
-				"state": {
-					"Name": "minecraft:dandelion"
-				}
+				"state": "minecraft:dandelion"
 			}
 		""".trimIndent()
 	) { simpleStateProvider(Blocks.DANDELION) }
@@ -49,8 +47,8 @@ fun DataPack.blockStateProviderTests() {
 			{
 				"type": "minecraft:simple_state_provider",
 				"state": {
-					"Name": "minecraft:oak_log",
-					"Properties": {
+					"id": "minecraft:oak_log",
+					"properties": {
 						"axis": "y"
 					}
 				}
@@ -64,9 +62,7 @@ fun DataPack.blockStateProviderTests() {
 				"type": "minecraft:copy_properties_provider",
 				"source": {
 					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:waxed_copper_block"
-					}
+					"state": "minecraft:waxed_copper_block"
 				}
 			}
 		""".trimIndent()
@@ -78,9 +74,7 @@ fun DataPack.blockStateProviderTests() {
 				"type": "minecraft:rotated_block_provider",
 				"state": {
 					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:oak_log"
-					}
+					"state": "minecraft:oak_log"
 				}
 			}
 		""".trimIndent()
@@ -93,9 +87,7 @@ fun DataPack.blockStateProviderTests() {
 				"direction": "north",
 				"state": {
 					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:dispenser"
-					}
+					"state": "minecraft:dispenser"
 				}
 			}
 		""".trimIndent()
@@ -113,9 +105,7 @@ fun DataPack.blockStateProviderTests() {
 							"weight": 1,
 							"data": {
 								"type": "minecraft:simple_state_provider",
-								"state": {
-									"Name": "minecraft:oak_log"
-								}
+								"state": "minecraft:oak_log"
 							}
 						}
 					]
@@ -159,18 +149,14 @@ fun DataPack.blockStateProviderTests() {
 						"weight": 3,
 						"data": {
 							"type": "minecraft:simple_state_provider",
-							"state": {
-								"Name": "minecraft:dandelion"
-							}
+							"state": "minecraft:dandelion"
 						}
 					},
 					{
 						"weight": 1,
 						"data": {
 							"type": "minecraft:simple_state_provider",
-							"state": {
-								"Name": "minecraft:poppy"
-							}
+							"state": "minecraft:poppy"
 						}
 					},
 					{
@@ -179,9 +165,7 @@ fun DataPack.blockStateProviderTests() {
 							"type": "minecraft:rotated_block_provider",
 							"state": {
 								"type": "minecraft:simple_state_provider",
-								"state": {
-									"Name": "minecraft:oak_log"
-								}
+								"state": "minecraft:oak_log"
 							}
 						}
 					}
@@ -213,12 +197,8 @@ fun DataPack.blockStateProviderTests() {
 				},
 				"scale": 0.05,
 				"states": [
-					{
-						"Name": "minecraft:moss_block"
-					},
-					{
-						"Name": "minecraft:stone"
-					}
+					"minecraft:moss_block",
+					"minecraft:stone"
 				]
 			}
 		""".trimIndent()
@@ -259,12 +239,8 @@ fun DataPack.blockStateProviderTests() {
 				},
 				"slow_scale": 0.005,
 				"states": [
-					{
-						"Name": "minecraft:crimson_roots"
-					},
-					{
-						"Name": "minecraft:warped_roots"
-					}
+					"minecraft:crimson_roots",
+					"minecraft:warped_roots"
 				]
 			}
 		""".trimIndent()
@@ -295,18 +271,12 @@ fun DataPack.blockStateProviderTests() {
 				"scale": 0.05,
 				"threshold": -0.8,
 				"high_chance": 0.31,
-				"default_state": {
-					"Name": "minecraft:grass_block"
-				},
+				"default_state": "minecraft:grass_block",
 				"low_states": [
-					{
-						"Name": "minecraft:podzol"
-					}
+					"minecraft:podzol"
 				],
 				"high_states": [
-					{
-						"Name": "minecraft:coarse_dirt"
-					}
+					"minecraft:coarse_dirt"
 				]
 			}
 		""".trimIndent()
@@ -335,9 +305,7 @@ fun DataPack.blockStateProviderTests() {
 				},
 				"source": {
 					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:wheat"
-					}
+					"state": "minecraft:wheat"
 				}
 			}
 		""".trimIndent()
@@ -360,9 +328,7 @@ fun DataPack.blockStateProviderTests() {
 				},
 				"source": {
 					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:cave_vines"
-					}
+					"state": "minecraft:cave_vines"
 				}
 			}
 		""".trimIndent()
@@ -374,9 +340,7 @@ fun DataPack.blockStateProviderTests() {
 				"type": "minecraft:rule_based_state_provider",
 				"fallback": {
 					"type": "minecraft:simple_state_provider",
-					"state": {
-						"Name": "minecraft:dirt"
-					}
+					"state": "minecraft:dirt"
 				},
 				"rules": [
 					{
@@ -386,9 +350,7 @@ fun DataPack.blockStateProviderTests() {
 						},
 						"then": {
 							"type": "minecraft:simple_state_provider",
-							"state": {
-								"Name": "minecraft:grass_block"
-							}
+							"state": "minecraft:grass_block"
 						}
 					},
 					{
@@ -398,9 +360,7 @@ fun DataPack.blockStateProviderTests() {
 						},
 						"then": {
 							"type": "minecraft:simple_state_provider",
-							"state": {
-								"Name": "minecraft:podzol"
-							}
+							"state": "minecraft:podzol"
 						}
 					}
 				]
@@ -445,9 +405,7 @@ fun DataPack.blockStateProviderTests() {
 							},
 							"source": {
 								"type": "minecraft:simple_state_provider",
-								"state": {
-									"Name": "minecraft:wheat"
-								}
+								"state": "minecraft:wheat"
 							}
 						}
 					},
@@ -462,9 +420,7 @@ fun DataPack.blockStateProviderTests() {
 									},
 									"then": {
 										"type": "minecraft:simple_state_provider",
-										"state": {
-											"Name": "minecraft:carrots"
-										}
+										"state": "minecraft:carrots"
 									}
 								}
 							]

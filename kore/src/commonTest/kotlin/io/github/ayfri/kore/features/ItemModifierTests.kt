@@ -679,9 +679,7 @@ fun DataPack.itemModifierTests() {
 					{
 						"block_state_provider": {
 							"type": "minecraft:simple_state_provider",
-							"state": {
-								"Name": "minecraft:dirt_path"
-							}
+							"state": "minecraft:dirt_path"
 						},
 						"disallowed_faces": [
 							"down"
