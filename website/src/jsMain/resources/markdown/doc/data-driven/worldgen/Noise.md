@@ -135,7 +135,7 @@ node classes.
 | `constant`             | `constant(...)`           | A fixed value, ignoring the input position.                                   |
 | `cube`                 | `cube(...)`               | Raises the input to the power of 3 (x³).                                      |
 | `div`                  | `div(...)`                | Divides the first input by the second.                                        |
-| `end_islands`          | `endIslands(...)`         | Samples the End's island noise. No parameters.                                |
+| `end_outer_islands`    | `endOuterIslands(...)`    | Samples the End's outer islands, without the central island. No parameters.   |
 | `find_top_surface`     | `findTopSurface(...)`     | Scans a column for the topmost position where a density is above zero.        |
 | `flat_cache`           | `flatCache(...)`          | Caches the input per 4x4 column, computed once at Y=0.                        |
 | `floor`                | `floor(...)`              | Rounds the input down to a multiple of `multiple` (1 by default).             |

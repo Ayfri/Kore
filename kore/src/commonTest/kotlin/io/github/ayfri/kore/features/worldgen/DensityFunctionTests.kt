@@ -149,11 +149,11 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
-	densityFunctionsBuilder.endIslands("end_islands")
+	densityFunctionsBuilder.endOuterIslands("end_outer_islands")
 
 	densityFunctions.last() assertsIs """
 		{
-			"type": "minecraft:end_islands"
+			"type": "minecraft:end_outer_islands"
 		}
 	""".trimIndent()
 
