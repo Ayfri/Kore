@@ -8,8 +8,10 @@ import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
 
 /**
- * Converts an empty map into an explorer map leading to the nearest of the [destination] structures, written as a
- * single structure ID, a `#tag` or a list of IDs. Mirrors vanilla `minecraft:exploration_map`.
+ * Adds map data leading to the nearest of the [destination] structures to the item it applies to, written as a
+ * single structure ID, a `#tag` or a list of IDs. The loot entry or trade picks the item (vanilla uses
+ * `minecraft:buried_treasure_map`, `minecraft:desert_village_map`...). When no structure is found the item gets no
+ * `map_id`, which a `filtered` step can test to `discard` it. Mirrors vanilla `minecraft:exploration_map`.
  *
  * ```
  * explorationMap(Tags.Worldgen.Structure.ON_TREASURE_MAPS)  // "destination": "#minecraft:on_treasure_maps"
@@ -20,6 +22,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ExplorationMap(
 	override var condition: PredicateCondition? = null,
+	/** The map decoration type, the icon marking the destination on the map. */
 	var decoration: MapDecorationTypeArgument? = null,
 	var destination: InlinableList<ConfiguredStructureOrTagArgument>,
 	var searchRadius: Int? = null,

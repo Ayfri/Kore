@@ -5,7 +5,7 @@ nav-title: Item Modifiers
 description: Transform item stacks using Kore's type-safe DSL for loot functions - set counts, add enchantments, copy data, and more.
 keywords: minecraft, datapack, kore, item modifiers, loot functions, /item modify, components
 date-created: 2025-08-11
-date-modified: 2026-10-21
+date-modified: 2026-10-22
 routeOverride: /docs/data-driven/item-modifiers
 ---
 
@@ -481,7 +481,9 @@ The second one writes `"modifier": "my_pack:my_modifier"`.
 
 #### explorationMap
 
-Convert an empty map into an explorer map. The destination is required: one or several structures or structure tags.
+Add map data leading to a structure to the item the modifier applies to. The loot entry or trade picks the item (vanilla
+uses `minecraft:buried_treasure_map`, `minecraft:desert_village_map`...). The destination is required: one or several
+structures or structure tags. The `decoration` is the map decoration type, the icon marking the destination.
 
 ```kotlin
 itemModifier("treasure_map") {
@@ -500,6 +502,19 @@ A tag is written with its `#` (`"destination": "#minecraft:on_treasure_maps"`) a
 ```kotlin
 itemModifier("two_structures") {
 	explorationMap(ConfiguredStructures.MINESHAFT, ConfiguredStructures.MONUMENT)
+}
+```
+
+When no structure is found the item has no `map_id`, so `discard` removes it. Vanilla chest loot does it with a `filtered`
+step:
+
+```kotlin
+itemModifier("treasure_map_or_nothing") {
+	explorationMap(Tags.Worldgen.Structure.ON_TREASURE_MAPS, decoration = MapDecorationTypes.RED_X, zoom = 1)
+	filtered {
+		itemFilter { predicates { exists(ItemComponentTypes.MAP_ID) } }
+		onFail { discard() }
+	}
 }
 ```
 

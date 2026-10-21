@@ -7,6 +7,7 @@ import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.FormattingColor
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
 import io.github.ayfri.kore.arguments.components.item.*
+import io.github.ayfri.kore.arguments.components.matchers.exists
 import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.items
@@ -25,6 +26,7 @@ import io.github.ayfri.kore.features.predicates.providers.reference
 import io.github.ayfri.kore.features.predicates.providers.scoreNumber
 import io.github.ayfri.kore.features.predicates.providers.sum
 import io.github.ayfri.kore.features.predicates.providers.uniform
+import io.github.ayfri.kore.features.predicates.sub.predicates
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
@@ -333,6 +335,36 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 	roundTrip(itemModifiers.last())
+
+	itemModifier("exploration_map_discard_without_structure") {
+		explorationMap(Tags.Worldgen.Structure.ON_TREASURE_MAPS, decoration = MapDecorationTypes.RED_X, zoom = 1)
+		filtered {
+			itemFilter { predicates { exists(ItemComponentTypes.MAP_ID) } }
+			onFail { discard() }
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		[
+			{
+				"type": "minecraft:exploration_map",
+				"decoration": "minecraft:red_x",
+				"destination": "#minecraft:on_treasure_maps",
+				"zoom": 1
+			},
+			{
+				"type": "minecraft:filtered",
+				"item_filter": {
+					"predicates": {
+						"minecraft:map_id": {}
+					}
+				},
+				"on_fail": {
+					"type": "minecraft:discard"
+				}
+			}
+		]
+	""".trimIndent()
 
 	itemModifier("explosion_decay") {
 		explosionDecay()
