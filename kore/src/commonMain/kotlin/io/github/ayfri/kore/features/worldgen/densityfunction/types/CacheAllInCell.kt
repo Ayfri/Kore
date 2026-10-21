@@ -7,13 +7,13 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionAr
 import kotlinx.serialization.Serializable
 
 /**
- * Caches [argument] for the duration of the interpolation cell it's evaluated in.
+ * Caches [input] for the duration of the interpolation cell it's evaluated in.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
 @Serializable
 data class CacheAllInCell(
-	var argument: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
+	var input: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
 ) : DensityFunctionType()
 
 /**

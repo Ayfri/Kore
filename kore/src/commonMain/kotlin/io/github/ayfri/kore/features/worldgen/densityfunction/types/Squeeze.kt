@@ -7,13 +7,13 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionAr
 import kotlinx.serialization.Serializable
 
 /**
- * Clamps [argument] to [-1, 1], then applies `x/2 - x^3/24`.
+ * Clamps [input] to [-1, 1], then applies `x/2 - x^3/24`.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
 @Serializable
 data class Squeeze(
-	var argument: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
+	var input: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
 ) : DensityFunctionType()
 
 /**

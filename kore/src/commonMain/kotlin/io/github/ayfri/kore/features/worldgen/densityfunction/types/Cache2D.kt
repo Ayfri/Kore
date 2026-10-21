@@ -7,13 +7,13 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionAr
 import kotlinx.serialization.Serializable
 
 /**
- * Caches [argument], computing it once per horizontal (X/Z) position.
+ * Caches [input], computing it once per horizontal (X/Z) position.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
 @Serializable
 data class Cache2D(
-	var argument: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
+	var input: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
 ) : DensityFunctionType()
 
 /**

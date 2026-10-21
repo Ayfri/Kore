@@ -7,13 +7,13 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionAr
 import kotlinx.serialization.Serializable
 
 /**
- * Raises [argument] to the power of 2 (x^2).
+ * Raises [input] to the power of 2 (x^2).
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
 @Serializable
 data class Square(
-	var argument: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
+	var input: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
 ) : DensityFunctionType()
 
 /**

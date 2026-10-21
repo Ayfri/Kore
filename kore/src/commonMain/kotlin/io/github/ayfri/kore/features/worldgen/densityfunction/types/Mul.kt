@@ -7,14 +7,14 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionAr
 import kotlinx.serialization.Serializable
 
 /**
- * Multiplies [argument1] and [argument2] together.
+ * Multiplies [left] and [right] together.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
 @Serializable
 data class Mul(
-	var argument1: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
-	var argument2: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
+	var left: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
+	var right: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
 ) : DensityFunctionType()
 
 /**

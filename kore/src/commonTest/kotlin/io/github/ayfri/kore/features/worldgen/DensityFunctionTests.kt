@@ -16,7 +16,7 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:abs",
-			"argument": "minecraft:overworld/base_3d_noise"
+			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -25,8 +25,8 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:add",
-			"argument1": "minecraft:overworld/base_3d_noise",
-			"argument2": "minecraft:nether/base_3d_noise"
+			"left": "minecraft:overworld/base_3d_noise",
+			"right": "minecraft:nether/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -51,7 +51,7 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:blend_density",
-			"argument": "minecraft:overworld/base_3d_noise"
+			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -68,7 +68,7 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:cache_2d",
-			"argument": "minecraft:overworld/base_3d_noise"
+			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -77,7 +77,7 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:cache_all_in_cell",
-			"argument": "minecraft:overworld/base_3d_noise"
+			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -86,7 +86,7 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:cache_once",
-			"argument": "minecraft:overworld/base_3d_noise"
+			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -106,7 +106,7 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:constant",
-			"argument": 1.0
+			"value": 1.0
 		}
 	""".trimIndent()
 
@@ -115,7 +115,7 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:cube",
-			"argument": "minecraft:overworld/base_3d_noise"
+			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -150,7 +150,7 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:flat_cache",
-			"argument": "minecraft:overworld/base_3d_noise"
+			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -159,7 +159,7 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:half_negative",
-			"argument": "minecraft:overworld/base_3d_noise"
+			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -168,7 +168,7 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:interpolated",
-			"argument": "minecraft:overworld/base_3d_noise"
+			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -196,22 +196,13 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
-	densityFunctionsBuilder.invert("invert", DensityFunctions.Overworld.BASE_3D_NOISE)
-
-	densityFunctions.last() assertsIs """
-		{
-			"type": "minecraft:invert",
-			"argument": "minecraft:overworld/base_3d_noise"
-		}
-	""".trimIndent()
-
 	densityFunctionsBuilder.max("max", DensityFunctions.Overworld.BASE_3D_NOISE, DensityFunctions.Nether.BASE_3D_NOISE)
 
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:max",
-			"argument1": "minecraft:overworld/base_3d_noise",
-			"argument2": "minecraft:nether/base_3d_noise"
+			"left": "minecraft:overworld/base_3d_noise",
+			"right": "minecraft:nether/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -220,8 +211,8 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:min",
-			"argument1": "minecraft:overworld/base_3d_noise",
-			"argument2": "minecraft:nether/base_3d_noise"
+			"left": "minecraft:overworld/base_3d_noise",
+			"right": "minecraft:nether/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -230,8 +221,8 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:mul",
-			"argument1": "minecraft:overworld/base_3d_noise",
-			"argument2": "minecraft:nether/base_3d_noise"
+			"left": "minecraft:overworld/base_3d_noise",
+			"right": "minecraft:nether/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -270,7 +261,7 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:quarter_negative",
-			"argument": "minecraft:overworld/base_3d_noise"
+			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -293,21 +284,50 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
+	densityFunctionsBuilder.reciprocal("reciprocal", DensityFunctions.Overworld.BASE_3D_NOISE)
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:reciprocal",
+			"input": "minecraft:overworld/base_3d_noise"
+		}
+	""".trimIndent()
+
+	densityFunctionsBuilder.reciprocal("reciprocal_constant", 4.0)
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:reciprocal",
+			"input": 4.0
+		}
+	""".trimIndent()
+
 	densityFunctionsBuilder.shift("shift", Noises.CALCITE)
 
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:shift",
-			"argument": "minecraft:calcite"
+			"noise": "minecraft:calcite"
 		}
 	""".trimIndent()
 
-	densityFunctionsBuilder.shiftA("shift_a", Noises.CALCITE)
+	densityFunctionsBuilder.shiftA("shift_a", Noises.OFFSET)
 
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:shift_a",
-			"argument": "minecraft:calcite"
+			"noise": "minecraft:offset"
+		}
+	""".trimIndent()
+
+	with(densityFunctionsBuilder) {
+		flatCache("shift_x", cache2D("shift_x_cache", shiftA("shift_x_offset", Noises.OFFSET)))
+	}
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:flat_cache",
+			"input": "densityFunction:shift_x_cache"
 		}
 	""".trimIndent()
 
@@ -316,7 +336,7 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:shift_b",
-			"argument": "minecraft:calcite"
+			"noise": "minecraft:calcite"
 		}
 	""".trimIndent()
 
@@ -399,7 +419,7 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:square",
-			"argument": "minecraft:overworld/base_3d_noise"
+			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -408,7 +428,7 @@ fun DataPack.densityFunctionTests() {
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:squeeze",
-			"argument": "minecraft:overworld/base_3d_noise"
+			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 

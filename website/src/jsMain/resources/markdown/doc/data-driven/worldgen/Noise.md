@@ -5,7 +5,7 @@ nav-title: Noise
 description: Shape Minecraft terrain from Kotlin - noise definitions, density functions, noise routers and material rules, fully type-safe with Kore.
 keywords: minecraft datapack, kore, worldgen, noise settings, density function, noise router, material rule, terrain generation, perlin noise, octaves
 date-created: 2026-02-03
-date-modified: 2026-10-20
+date-modified: 2026-10-21
 routeOverride: /docs/data-driven/worldgen/noise
 ---
 
@@ -99,8 +99,12 @@ val terrain = with(dp.densityFunctionsBuilder) {
 }
 ```
 
-Most builders accept either a `Double` or a `DensityFunctionArgument` for their inputs, in every combination. `noise`, `shift`, `shiftA`,
-`shiftB` and `shiftedNoise` take a `NoiseArgument` instead, since they sample a noise definition directly.
+Most builders accept either a `Double` or a `DensityFunctionArgument` for their inputs, in every combination. `constant` takes a `Double`
+only, and `noise`, `shift`, `shiftA`, `shiftB` and `shiftedNoise` take a `NoiseArgument`, since they sample a noise definition directly.
+
+The JSON fields follow the game: single-input nodes (`abs`, `cube`, `reciprocal`...) write `input`, two-input nodes (`add`, `max`, `min`,
+`mul`) write `left` and `right`, `constant` writes `value` and the shift nodes write `noise`. The same names are the properties of the
+node classes.
 
 ### Density Function Types
 
@@ -124,7 +128,6 @@ Most builders accept either a `Double` or a `DensityFunctionArgument` for their 
 | `half_negative`        | `halfNegative(...)`       | Halves the input when negative, otherwise leaves it unchanged.                |
 | `interpolated`         | `interpolated(...)`       | Interpolates the input across the surrounding grid cells.                     |
 | `interval_select`      | `intervalSelect(...)`     | Picks one of several functions from where the input falls between thresholds. |
-| `invert`               | `invert(...)`             | Reciprocal (1 / x) of the input.                                              |
 | `max`                  | `max(...)`                | Larger of two inputs.                                                         |
 | `min`                  | `min(...)`                | Smaller of two inputs.                                                        |
 | `mul`                  | `mul(...)`                | Multiplies two inputs.                                                        |
@@ -132,6 +135,7 @@ Most builders accept either a `Double` or a `DensityFunctionArgument` for their 
 | `old_blended_noise`    | `oldBlendedNoise(...)`    | Legacy blended noise used before the 1.18 terrain rewrite.                    |
 | `quarter_negative`     | `quarterNegative(...)`    | Quarters the input when negative, otherwise leaves it unchanged.              |
 | `range_choice`         | `rangeChoice(...)`        | Picks between two inputs based on whether a value falls within a range.       |
+| `reciprocal`           | `reciprocal(...)`         | Reciprocal (1 / x) of the input.                                              |
 | `shift`                | `shift(...)`              | Samples a noise at `(x/4, y/4, z/4)`, scaled back up by 4.                    |
 | `shift_a`              | `shiftA(...)`             | Samples a noise at `(x/4, 0, z/4)`, scaled back up by 4.                      |
 | `shift_b`              | `shiftB(...)`             | Samples a noise at `(z/4, x/4, 0)`, scaled back up by 4.                      |

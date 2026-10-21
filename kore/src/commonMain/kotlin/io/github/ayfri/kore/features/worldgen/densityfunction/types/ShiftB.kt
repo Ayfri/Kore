@@ -5,17 +5,17 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.NoiseArgument
 import kotlinx.serialization.Serializable
 
 /**
- * Samples [argument] at (z / 4, x / 4, 0), then scales the result back up by 4.
+ * Samples [noise] at (z / 4, x / 4, 0), then scales the result back up by 4.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
 @Serializable
 data class ShiftB(
-	var argument: NoiseArgument,
+	var noise: NoiseArgument,
 ) : DensityFunctionType()
 
 /**
- * Adds a `shift_b` density function to the data pack, sampling [argument] at (z / 4, x / 4, 0) then
+ * Adds a `shift_b` density function to the data pack, sampling [noise] at (z / 4, x / 4, 0) then
  * scaling the result back up by 4.
  *
  * Produces `data/<namespace>/worldgen/density_function/<fileName>.json`.
@@ -23,4 +23,4 @@ data class ShiftB(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.shiftB(fileName: String, argument: NoiseArgument) = register(fileName, ShiftB(argument))
+fun DensityFunctionsScope.shiftB(fileName: String, noise: NoiseArgument) = register(fileName, ShiftB(noise))
