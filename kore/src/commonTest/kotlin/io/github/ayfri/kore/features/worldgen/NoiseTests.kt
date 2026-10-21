@@ -56,6 +56,22 @@ fun DataPack.noiseTests() {
 	noises.last().fileName assertsIs "cave/entrance"
 	noises.last().resourceFolder assertsIs "worldgen/noise"
 
+	noise("listed") {
+		amplitudeModifiers = listOf(1.0, 0.5)
+		baseOctave = -5
+	}
+
+	noises.last() assertsIs """
+		{
+			"amplitude_modifiers": [
+				1.0,
+				0.5
+			],
+			"base_octave": -5,
+			"octave_count": 2
+		}
+	""".trimIndent()
+
 	noise("temperature") {
 		amplitudeModifiers(1.5, 0.0, 1.0, 0.0, 0.0, 0.0)
 		baseAmplitude = 1.2453007926713473

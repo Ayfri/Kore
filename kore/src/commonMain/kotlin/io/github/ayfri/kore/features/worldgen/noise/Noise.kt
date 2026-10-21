@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.worldgen.noise
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.generated.arguments.worldgen.types.NoiseArgument
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -23,9 +24,11 @@ import kotlinx.serialization.Transient
  * @property baseOctave The octave the first modifier applies to, between `-32` and `32`, negative values being larger scales.
  * @property normalize Whether the sampled value is normalized to the `-1.0` to `1.0` range (default `true`). The deprecated `"legacy"`
  * normalization isn't expressible.
- * @property octaveCount The number of octaves, between `1` and `32` (default `1`).
+ * @property octaveCount The number of octaves, between `1` and `32`. Left unset, it's written as the size of [amplitudeModifiers], or
+ * omitted (meaning `1`) without modifiers.
  */
-@Serializable
+@KeepGeneratedSerializer
+@Serializable(with = Noise.Companion.NoiseSerializer::class)
 data class Noise(
 	@Transient
 	override var fileName: String = "noise",
@@ -36,6 +39,10 @@ data class Noise(
 	override var octaveCount: Int? = null,
 ) : Generator("worldgen/noise"), AmplitudeModifiersHolder {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
+
+	companion object {
+		data object NoiseSerializer : AmplitudeModifiersHolderSerializer<Noise>(generatedSerializer(), { copy(octaveCount = it) })
+	}
 }
 
 /**

@@ -428,7 +428,7 @@ weightedStateProvider {
 
 ### Noise-Based
 
-The three noise-based providers share `seed`, `scale` and a `noise { }` block. `noise(baseOctave, vararg amplitudeModifiers)` is the short form, which also sets `octaveCount` to the number of modifiers,
+The three noise-based providers share `seed`, `scale` and a `noise { }` block. `noise(baseOctave, vararg amplitudeModifiers)` is the short form,
 and `noise(baseOctave) { }` the receiver form over `NoiseParameters` (`amplitudeModifiers(...)`, `baseAmplitude`, `normalize`, `octaveCount`);
 `dualNoiseProvider` gets the same pair as `slowNoise`. `states(...)` takes either blocks or block states.
 

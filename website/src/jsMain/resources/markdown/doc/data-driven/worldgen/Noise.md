@@ -35,18 +35,17 @@ A noise definition configures one Perlin noise instance. **Octaves** layer noise
 features (continents), high octaves add fine detail (small bumps).
 
 `baseOctave = -7` starts at the 2⁷ = 128 block scale. Each following octave doubles in frequency, and `amplitudeModifiers` weights each one,
-usually decreasing so detail never overwhelms the base shape. `octaveCount` is the number of octaves, and when `amplitudeModifiers` is set
-its size has to equal it.
+usually decreasing so detail never overwhelms the base shape. `octaveCount` is the number of octaves, which the game requires to match the
+number of `amplitudeModifiers`: left unset, it's written as that number.
 
 ```kotlin
 val hills = dp.noise("hills") {
 	baseOctave = -5
 	amplitudeModifiers = listOf(1.0, 0.5, 0.25)
-	octaveCount = 3
 }
 ```
 
-`amplitudeModifiers(...)` sets the weights inline and sets `octaveCount` to their number in the same call:
+`amplitudeModifiers(...)` is the vararg form of the same list:
 
 ```kotlin
 val hills = dp.noise("hills") {
@@ -67,7 +66,7 @@ A file name holding slashes lands in subfolders, so `noise("cave/entrance")` wri
 | `baseAmplitude`      | `Double?`       | Amplitude every octave is scaled by, from `0.0` to `1000000.0`. Defaults to `1.0`.                                            | `1.2453007926713473`                       |
 | `baseOctave`         | `Int`           | Starting octave from `-32` to `32`, negative values are larger scale. Lower means larger features.                            | `-10`                                      |
 | `normalize`          | `Boolean?`      | Whether the sampled value is normalized. Defaults to `true`. The deprecated `"legacy"` normalization isn't expressible.      | not written                                |
-| `octaveCount`        | `Int?`          | Number of octaves, from `1` to `32`. Defaults to `1`.                                                                         | `6`                                        |
+| `octaveCount`        | `Int?`          | Number of octaves, from `1` to `32`. Defaults to the number of `amplitudeModifiers`, or `1`.                                  | `6`                                        |
 
 The block state providers of [features](/docs/data-driven/worldgen/features#noise-based) take the same fields inline through
 `NoiseParameters`, built with `noiseParameters(baseOctave, vararg amplitudeModifiers)`.

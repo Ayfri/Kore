@@ -1,13 +1,18 @@
 package io.github.ayfri.kore.features.worldgen.noise
 
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 /**
  * The octave layout shared by [Noise] files and inline [NoiseParameters].
  *
  * @property amplitudeModifiers The amplitude multiplier of each octave, between `0.0` and `1000000.0` and at most 32 of them. Absent or empty
  * means `1.0` for every octave, otherwise its size has to equal [octaveCount].
- * @property octaveCount The number of octaves, between `1` and `32` (default `1`).
+ * @property octaveCount The number of octaves, between `1` and `32`. Left unset, it's written as the size of [amplitudeModifiers], or
+ * omitted (meaning `1`) without modifiers.
  */
 sealed interface AmplitudeModifiersHolder {
 	var amplitudeModifiers: List<Double>?
@@ -15,12 +20,26 @@ sealed interface AmplitudeModifiersHolder {
 }
 
 /**
- * Sets [AmplitudeModifiersHolder.amplitudeModifiers] and [AmplitudeModifiersHolder.octaveCount] together, one modifier per octave:
- * `amplitudeModifiers(1.0, 0.5)` gives 2 octaves.
+ * Writes `octave_count` as the size of [AmplitudeModifiersHolder.amplitudeModifiers] when it's unset, since the game rejects a noise whose
+ * modifier count differs from its octave count. An explicit [AmplitudeModifiersHolder.octaveCount] is written as is.
  */
+open class AmplitudeModifiersHolderSerializer<T : AmplitudeModifiersHolder>(
+	private val delegate: KSerializer<T>,
+	private val withOctaveCount: T.(Int) -> T,
+) : KSerializer<T> {
+	override val descriptor get() = delegate.descriptor
+
+	override fun serialize(encoder: Encoder, value: T) {
+		val count = value.amplitudeModifiers?.size?.takeIf { it > 0 && value.octaveCount == null }
+		encoder.encodeSerializableValue(delegate, count?.let { value.withOctaveCount(it) } ?: value)
+	}
+
+	override fun deserialize(decoder: Decoder) = decoder.decodeSerializableValue(delegate)
+}
+
+/** Sets [AmplitudeModifiersHolder.amplitudeModifiers], one modifier per octave: `amplitudeModifiers(1.0, 0.5)` writes 2 octaves. */
 fun AmplitudeModifiersHolder.amplitudeModifiers(vararg modifiers: Double) {
 	amplitudeModifiers = modifiers.toList()
-	octaveCount = modifiers.size
 }
 
 /**
@@ -34,16 +53,23 @@ fun AmplitudeModifiersHolder.amplitudeModifiers(vararg modifiers: Double) {
  * @property baseOctave The octave the first modifier applies to, between `-32` and `32`, negative values being larger scales.
  * @property normalize Whether the sampled value is normalized to the `-1.0` to `1.0` range (default `true`). The deprecated `"legacy"`
  * normalization isn't expressible.
- * @property octaveCount The number of octaves, between `1` and `32` (default `1`).
+ * @property octaveCount The number of octaves, between `1` and `32`. Left unset, it's written as the size of [amplitudeModifiers], or
+ * omitted (meaning `1`) without modifiers.
  */
-@Serializable
+@KeepGeneratedSerializer
+@Serializable(with = NoiseParameters.Companion.NoiseParametersSerializer::class)
 data class NoiseParameters(
 	override var amplitudeModifiers: List<Double>? = null,
 	var baseAmplitude: Double? = null,
 	var baseOctave: Int = 0,
 	var normalize: Boolean? = null,
 	override var octaveCount: Int? = null,
-) : AmplitudeModifiersHolder
+) : AmplitudeModifiersHolder {
+	companion object {
+		data object NoiseParametersSerializer :
+			AmplitudeModifiersHolderSerializer<NoiseParameters>(generatedSerializer(), { copy(octaveCount = it) })
+	}
+}
 
 /**
  * Creates noise parameters starting at [baseOctave], one octave per modifier of [amplitudeModifiers] (a single octave when none is given).
