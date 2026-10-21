@@ -12,7 +12,7 @@ import kotlinx.serialization.serializer
 /** A particle entry with its options and spawn probability. */
 @Serializable
 data class Particle(
-	var options: ParticleOptions,
+	var particle: ParticleOptions,
 	var probability: Float,
 )
 

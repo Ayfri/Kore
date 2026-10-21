@@ -41,7 +41,7 @@ fun DataPack.environmentAttributesTests() {
 			"attributes": {
 				"minecraft:visual/ambient_particles": [
 					{
-						"options": {
+						"particle": {
 							"type": "minecraft:ash"
 						},
 						"probability": 0.01
@@ -880,7 +880,7 @@ fun DataPack.environmentAttributesTests() {
 				"minecraft:visual/ambient_particles": {
 					"argument": [
 						{
-							"options": {
+							"particle": {
 								"type": "minecraft:white_ash"
 							},
 							"probability": 0.1
