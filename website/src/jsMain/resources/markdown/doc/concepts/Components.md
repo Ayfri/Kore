@@ -5,7 +5,7 @@ nav-title: Components
 description: A guide for using components in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, components
 date-created: 2024-01-08
-date-modified: 2026-10-21
+date-modified: 2026-10-22
 routeOverride: /docs/concepts/components
 ---
 
@@ -408,7 +408,6 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `lock(..)`                           | Locks a container so only players holding a matching item (item predicate) can open it.                  |
 | `lodestoneTarget(..)`                | Makes a compass point to specific coordinates in a dimension.                                            |
 | `lore(..)`                           | Adds tooltip lines below the item name for descriptions or flavor text.                                  |
-| `mapColor(..)`                       | Sets the color tint for filled map item textures.                                                        |
 | `mapDecorations(..)`                 | Adds custom icons/markers displayed on a filled map.                                                     |
 | `mapId(..)`                          | Links the item to a specific map data ID for filled maps.                                                |
 | `maxDamage(..)`                      | Sets the maximum durability before the item breaks.                                                      |

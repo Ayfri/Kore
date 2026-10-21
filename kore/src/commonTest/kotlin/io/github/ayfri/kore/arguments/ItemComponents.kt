@@ -574,11 +574,6 @@ fun itemComponentsTests() {
 	loreTest.components!!.lore(textComponent("test", Color.AQUA) + text("test2", Color.BLACK) + text("a"))
 	loreTest.asString() assertsIs "minecraft:stone_sword[lore=[{type:\"text\",color:\"aqua\",text:\"test\"},{type:\"text\",color:\"black\",text:\"test2\"},{type:\"text\",text:\"a\"}]]"
 
-	val mapColorTest = stone {
-		mapColor(Color.AQUA.toRGB())
-	}
-	mapColorTest.asString() assertsIs """minecraft:stone[map_color=5636095]"""
-
 	val mapDecorationsTest = stone {
 		mapDecorations {
 			decoration("here", MapDecorationTypes.PLAYER, 10.0, 10.0, 5f)

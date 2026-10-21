@@ -5,7 +5,7 @@ nav-title: Colors
 description: Guide to using colors in Kore, including named colors, RGB/ARGB, dye colors, and how different contexts serialize them.
 keywords: minecraft, kore, colors, rgb, argb, dyes, components, particles
 date-created: 2025-08-11
-date-modified: 2026-09-29
+date-modified: 2026-10-22
 routeOverride: /docs/concepts/colors
 ---
 
@@ -91,11 +91,6 @@ Different Minecraft systems expect colors in different formats. Kore picks the r
 	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/arguments/components/item/DyedColorComponent.kt)
 	  ```kotlin
 	  @Serializable(RGB.Companion.ColorAsDecimalSerializer::class) var rgb: RGB,
-	  ```
-	- `mapColor(..)`: decimal
-	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/arguments/components/item/MapColorComponent.kt)
-	  ```kotlin
-	  InlineAutoSerializer<MapColorComponent, RGB>(RGB.Companion.ColorAsDecimalSerializer, MapColorComponent::color, ::MapColorComponent)
 	  ```
 	- `potionContents(customColor=..)`: decimal
 	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/arguments/components/item/PotionContentsComponent.kt)
@@ -216,17 +211,6 @@ import io.github.ayfri.kore.arguments.colors.Color
 
 val dyedHelmet = Items.LEATHER_HELMET {
 	dyedColor(Color.AQUA)
-}
-```
-
-Map color (decimal serialization):
-
-```kotlin
-import io.github.ayfri.kore.generated.Items
-import io.github.ayfri.kore.arguments.colors.rgb
-
-val withMapColor = Items.STONE {
-	mapColor(rgb(85, 255, 255))
 }
 ```
 
