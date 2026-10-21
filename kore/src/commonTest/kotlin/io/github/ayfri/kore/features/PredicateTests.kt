@@ -343,7 +343,7 @@ fun DataPack.predicateTests() {
 			"entity": "this",
 			"predicate": {
 				"minecraft:components": {
-					"axolotl_variant": "cyan",
+					"axolotl/variant": "cyan",
 					"damage": 12,
 					"!unbreakable": {}
 				},

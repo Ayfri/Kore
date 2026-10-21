@@ -51,12 +51,12 @@ abstract class ComponentsScope(open val components: MutableMap<String, Component
 
 	/** Sets a component. */
 	operator fun set(name: DataComponentTypeArgument, component: Component) {
-		this[name.name.lowercase()] = component
+		this[name.componentKey()] = component
 	}
 
 	/** Sets a component with raw value. */
 	operator fun set(name: DataComponentTypeArgument, nbt: NbtTag) {
-		this[name.name.lowercase()] = nbt
+		this[name.componentKey()] = nbt
 	}
 
 	/** Converts the scope to a [NbtCompound] for serialization as SNBT. */
@@ -76,3 +76,5 @@ abstract class ComponentsScope(open val components: MutableMap<String, Component
 	override fun toString() = asNbt().entries
 		.joinToString(separator = ",", prefix = "[", postfix = "]") { (key, value) -> "$key=${value.toSnbt()}" }
 }
+
+private fun DataComponentTypeArgument.componentKey() = asId().removePrefix("minecraft:")

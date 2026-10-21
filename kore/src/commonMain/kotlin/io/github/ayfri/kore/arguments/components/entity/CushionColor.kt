@@ -28,5 +28,5 @@ data class CushionColor(
 
 /** Sets the dye color of a cushion. */
 fun ComponentsScope.cushionColor(color: DyeColors) {
-	this[EntityItemComponentTypes.CUSHION_COLOR.originalName] = CushionColor(color)
+	this[EntityItemComponentTypes.CUSHION_COLOR] = CushionColor(color)
 }
