@@ -166,8 +166,9 @@ dp.densityFunctions {
 }
 ```
 
-`beardifier`, `blend_alpha`, `blend_offset`, `blend_density` and `cache_all_in_cell` are internal to vanilla generation and are not meant to
-be referenced from a datapack, even though the builders exist.
+`blend_alpha`, `blend_offset`, `blend_density` and `cache_all_in_cell` are internal to vanilla generation and are not meant to
+be referenced from a datapack, even though the builders exist. `beardifier` is added to the `finalDensity` by hand, see the
+[noise router](#noise-router).
 
 ### Multi-Parameter Nodes
 
@@ -369,6 +370,22 @@ noiseRouter {
 
 Unset fields serialize as `0.0`, which means flat, featureless terrain - so a hand-written router usually starts from the vanilla density
 functions in the generated `DensityFunctions` object.
+
+`finalDensity` no longer adds the `minecraft:beardifier` on its own, so terrain doesn't blend into structures unless the density function
+does it. A pack reusing vanilla terrain adds it, as the vanilla overworld does with an `add` whose `right` is `{ "type": "minecraft:beardifier" }`:
+
+```kotlin
+val terrain = with(dp.densityFunctionsBuilder) {
+	val beardifier = beardifier("beardifier")
+	add("terrain_with_structures", DensityFunctions.Overworld.SLOPED_CHEESE, beardifier)
+}
+
+dp.noiseSettings("my_terrain") {
+	noiseRouter {
+		finalDensity(terrain)
+	}
+}
+```
 
 Reference: [Noise router](https://minecraft.wiki/w/Noise_settings#Noise_router)
 

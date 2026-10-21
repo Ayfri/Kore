@@ -5,7 +5,7 @@ nav-title: Creating a Datapack
 description: Shape a Kore datapack end to end - namespace, output folder, pack.mcmeta, overlays and filters, then generate a folder, ZIP or a mod JAR for Fabric or NeoForge.
 keywords: minecraft datapack, kore datapack, pack.mcmeta, pack format, datapack zip, datapack jar, fabric datapack mod, datapack overlays, datapack namespace, generate datapack
 date-created: 2024-02-26
-date-modified: 2026-08-05
+date-modified: 2026-10-21
 routeOverride: /docs/guides/creating-a-datapack
 position: 1
 ---
@@ -98,8 +98,8 @@ Every datapack needs a `pack.mcmeta`. Kore always generates one; the `pack` bloc
 ```kotlin
 dataPack("mydatapack") {
 	pack {
-		minFormat(107)
-		maxFormat(107)
+		minFormat(111)
+		maxFormat(111)
 		description = textComponent("My Datapack")
 	}
 }
@@ -113,9 +113,9 @@ dataPack("mydatapack") {
 
 ```kotlin
 pack {
-	minFormat(107)        // plain integer
-	minFormat(107, 0)     // [major, minor] pair
-	maxFormat(107)
+	minFormat(111)        // plain integer
+	minFormat(111, 0)     // [major, minor] pair
+	maxFormat(111)
 }
 ```
 
@@ -123,8 +123,8 @@ You can also assign a `PackFormat` value directly:
 
 ```kotlin
 pack {
-	minFormat = packFormat(107)
-	maxFormat = packFormat(107)
+	minFormat = packFormat(111)
+	maxFormat = packFormat(111)
 }
 ```
 
@@ -162,9 +162,9 @@ decimal value triggers a warning:
 ```kotlin
 dataPack("mydatapack") {
 	pack {
-		minFormat(107)
-		maxFormat(107)
-		packFormat = packFormat(107) // must stay a plain integer
+		minFormat(111)
+		maxFormat(111)
+		packFormat = packFormat(111) // must stay a plain integer
 	}
 }
 ```
