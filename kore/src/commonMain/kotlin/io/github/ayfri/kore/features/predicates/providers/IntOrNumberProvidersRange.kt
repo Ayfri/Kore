@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.features.predicates.providers
 
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
@@ -16,7 +15,6 @@ import kotlinx.serialization.Serializable
  * @property value The exact value to match, when the bound is a bare number.
  * @property range The bounds to match, when the bound is an object.
  */
-@OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
 @Serializable(with = IntOrNumberProvidersRange.Companion.IntOrNumberProviderRangeSerializer::class)
 data class IntOrNumberProvidersRange(

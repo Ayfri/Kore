@@ -10,7 +10,6 @@ import io.github.ayfri.kore.serializers.EitherInlineSerializer
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -49,7 +48,6 @@ data class TrialSpawnerCustomSpawnRules(
  * @property chance The drop chance shared by every slot.
  * @property slots The drop chance of each listed slot.
  */
-@OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
 @Serializable(with = TrialSpawnerSlotDropChances.Companion.TrialSpawnerSlotDropChancesSerializer::class)
 data class TrialSpawnerSlotDropChances(

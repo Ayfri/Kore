@@ -4,7 +4,6 @@ import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunctionsScope
 import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionArgument
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
@@ -24,7 +23,6 @@ data class Spline(
  * @property constant The constant value, `null` when this is a nested spline.
  * @property spline The nested spline, `null` when this is a constant.
  */
-@OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
 @Serializable(with = SplineValue.Companion.SplineValueSerializer::class)
 data class SplineValue(

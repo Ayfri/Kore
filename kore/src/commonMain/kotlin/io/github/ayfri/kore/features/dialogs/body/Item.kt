@@ -9,7 +9,6 @@ import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.data.item.builders.itemStack
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
@@ -23,7 +22,6 @@ data class Item(
 	var width: Int? = null,
 ) : DialogBody()
 
-@OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
 @Serializable(with = ItemDescription.Companion.ItemDescriptionSerializer::class)
 data class ItemDescription(

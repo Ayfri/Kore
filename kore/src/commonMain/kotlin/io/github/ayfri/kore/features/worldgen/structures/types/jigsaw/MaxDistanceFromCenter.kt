@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.structures.types.jigsaw
 
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
@@ -18,7 +17,6 @@ import kotlinx.serialization.Serializable
  * @property horizontal Between `1` and `128` blocks.
  * @property vertical Between `1` and `4064` blocks, `null` meaning the vanilla default of `4064`.
  */
-@OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
 @Serializable(with = MaxDistanceFromCenter.Companion.MaxDistanceFromCenterSerializer::class)
 data class MaxDistanceFromCenter(

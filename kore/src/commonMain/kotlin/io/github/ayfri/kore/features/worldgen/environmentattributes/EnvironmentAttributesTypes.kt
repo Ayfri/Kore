@@ -2,7 +2,6 @@ package io.github.ayfri.kore.features.worldgen.environmentattributes
 
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.EnvironmentAttributesType
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
@@ -13,7 +12,6 @@ import kotlinx.serialization.Serializable
  * - a raw JSON value (assumed `minecraft:override`)
  * - an expanded object with `modifier` and `argument`
  */
-@OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
 @Serializable(with = EnvironmentAttributeValue.Companion.EnvironmentAttributeValueSerializer::class)
 data class EnvironmentAttributeValue(

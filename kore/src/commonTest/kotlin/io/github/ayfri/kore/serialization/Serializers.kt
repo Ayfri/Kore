@@ -6,7 +6,6 @@ import io.github.ayfri.kore.assertions.assertsIsNbt
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
 import io.kotest.core.spec.style.FunSpec
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -33,7 +32,6 @@ fun serializersTests() {
 	eitherInlineSerializerInlined()
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
 @Serializable(with = Data.Companion.DataSerializer::class)
 private class Data(
@@ -106,7 +104,6 @@ fun singlePropertySimplifierSerializer() {
 	decodedFullSnbt.optional.orEmpty() assertsIs "optional"
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
 @Serializable(with = EitherData.Companion.EitherDataSerializer::class)
 private class EitherData(
@@ -168,7 +165,6 @@ fun eitherInlineSerializer() {
 	(decoded2Snbt.p2 ?: 0) assertsIs 42
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
 @Serializable(with = InlineEitherData.Companion.InlineEitherDataSerializer::class)
 private class InlineEitherData(

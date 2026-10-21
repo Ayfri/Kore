@@ -57,11 +57,9 @@ val jsonSerializer get() = lazyJsonSerializer.value
 internal fun defaultContentName(serialName: String) = serialName.substringAfterLast('.').snakeCase()
 
 /** The key [json] writes the [serialName] element of this descriptor under, after its naming strategy. */
-@OptIn(ExperimentalSerializationApi::class)
 internal fun SerialDescriptor.jsonKey(json: Json, serialName: String) =
 	json.configuration.namingStrategy?.serialNameForJson(this, getElementIndex(serialName), serialName) ?: serialName
 
 /** The key SNBT writes the [serialName] element of this descriptor under, snake_case like the data pack JSON. */
-@OptIn(ExperimentalSerializationApi::class)
 internal fun SerialDescriptor.snakeCaseKey(serialName: String) =
 	JsonNamingSnakeCaseStrategy.serialNameForJson(this, getElementIndex(serialName), serialName)

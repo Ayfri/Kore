@@ -2,11 +2,9 @@ package io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise
 
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
 import io.github.ayfri.kore.serializers.PairAsArray
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
-@OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
 @Serializable(with = DoubleOrDoublePair.Companion.DoubleOrDoublePairSerializer::class)
 data class DoubleOrDoublePair(

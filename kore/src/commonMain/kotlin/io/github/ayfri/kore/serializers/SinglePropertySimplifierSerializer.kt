@@ -4,7 +4,6 @@ import io.github.ayfri.kore.utils.decodeFromNbtTag
 import io.github.ayfri.kore.utils.encodeToNbtTag
 import io.github.ayfri.kore.utils.jsonKey
 import io.github.ayfri.kore.utils.snakeCaseKey
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -21,7 +20,6 @@ import net.benwoodworth.knbt.nbtCompound
  *
  * Example:
  * ```kotlin
- * @OptIn(ExperimentalSerializationApi::class)
  * @KeepGeneratedSerializer
  * @Serializable(with = MyDataClass.Companion.MyDataClassSerializer::class)
  * data class MyDataClass(var myProperty: Int = 0, var myOtherProperty: Int? = null) {
@@ -43,7 +41,6 @@ import net.benwoodworth.knbt.nbtCompound
  * }
  * ```
  */
-@OptIn(ExperimentalSerializationApi::class)
 open class SinglePropertySimplifierSerializer<T : Any>(
 	private val delegate: KSerializer<T>,
 	private val propertyName: String,

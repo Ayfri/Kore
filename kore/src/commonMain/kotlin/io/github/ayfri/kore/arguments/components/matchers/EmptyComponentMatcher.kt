@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.arguments.components.matchers
 
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
@@ -26,7 +25,6 @@ data class EmptyComponentMatcher(
 		data object EmptyComponentMatcherSerializer : KSerializer<EmptyComponentMatcher> {
 			override val descriptor = buildClassSerialDescriptor("EmptyComponentMatcher")
 
-			@OptIn(ExperimentalSerializationApi::class)
 			override fun serialize(encoder: Encoder, value: EmptyComponentMatcher) =
 				encoder.encodeCollection(mapSerialDescriptor<String, String>(), 0) {}
 

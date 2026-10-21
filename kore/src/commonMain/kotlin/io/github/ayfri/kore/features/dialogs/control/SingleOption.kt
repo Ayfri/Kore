@@ -5,7 +5,6 @@ import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
@@ -18,7 +17,6 @@ data class SingleOption(
 	var options: List<DialogSelectOption>,
 ) : DialogControl()
 
-@OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
 @Serializable(with = DialogSelectOption.Companion.DialogSelectOptionSerializer::class)
 data class DialogSelectOption(

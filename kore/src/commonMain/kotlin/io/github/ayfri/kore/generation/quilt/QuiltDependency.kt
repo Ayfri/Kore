@@ -1,11 +1,9 @@
 package io.github.ayfri.kore.generation.quilt
 
 import io.github.ayfri.kore.serializers.SinglePropertySimplifierSerializer
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
-@OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
 @Serializable(with = QuiltDependency.Companion.QuiltDependencySerializer::class)
 data class QuiltDependency(

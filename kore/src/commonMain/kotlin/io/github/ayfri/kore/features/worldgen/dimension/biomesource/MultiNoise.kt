@@ -3,11 +3,9 @@ package io.github.ayfri.kore.features.worldgen.dimension.biomesource
 import io.github.ayfri.kore.features.worldgen.dimension.biomesource.multinoise.MultiNoiseEntry
 import io.github.ayfri.kore.generated.arguments.worldgen.types.MultiNoiseBiomeSourceParameterListArgument
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
-@OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
 @Serializable(with = MultiNoise.Companion.MultiNoiseSerializer::class)
 data class MultiNoise(

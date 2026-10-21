@@ -5,7 +5,6 @@ import io.github.ayfri.kore.generation.fabric.conditions.ResourceCondition
 import io.github.ayfri.kore.utils.KoreLogger.warn
 import io.github.ayfri.kore.utils.resolve
 import kotlinx.io.files.Path
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.builtins.ListSerializer
@@ -40,7 +39,6 @@ abstract class Generator(@Transient val resourceFolder: String = "") {
 	 * is set. Conditions are only applied when the generated JSON root is an object; array-form resources (multi-entry
 	 * predicates/item modifiers) emit a warning and are left untouched.
 	 */
-	@OptIn(ExperimentalSerializationApi::class)
 	fun generateJsonWithLoadConditions(dataPack: DataPack): String {
 		val json = generateJson(dataPack)
 		if (fabricLoadConditions.isEmpty()) return json

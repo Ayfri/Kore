@@ -2,10 +2,8 @@ package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.serializers.JsonNamingSnakeCaseStrategy
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 
-@OptIn(ExperimentalSerializationApi::class)
 private val roundTripJson = Json {
 	prettyPrint = true
 	prettyPrintIndent = "\t"

@@ -3,7 +3,6 @@ package io.github.ayfri.kore.arguments.numbers.ranges.serializers
 import io.github.ayfri.kore.arguments.numbers.ranges.IntRange
 import io.github.ayfri.kore.arguments.numbers.ranges.IntRangeOrInt
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
@@ -31,7 +30,6 @@ data object IntRangeOrIntJsonSerializer : KSerializer<IntRangeOrInt> {
 		else -> encoder.encodeInt(value.int!!)
 	}
 
-	@OptIn(ExperimentalSerializationApi::class)
 	override fun deserialize(decoder: Decoder): IntRangeOrInt {
 		val jsonDecoder =
 			decoder as? kotlinx.serialization.json.JsonDecoder ?: error("This serializer can only be used with JSON")

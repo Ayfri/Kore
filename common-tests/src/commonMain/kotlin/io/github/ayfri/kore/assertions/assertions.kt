@@ -7,11 +7,9 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.commands.Command
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldMatch
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
 
-@OptIn(ExperimentalSerializationApi::class)
 private val jsonStringifier = Json {
 	prettyPrint = true
 	prettyPrintIndent = "\t"

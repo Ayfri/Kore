@@ -74,7 +74,6 @@ import io.github.ayfri.kore.serializers.JsonNamingSnakeCaseStrategy
 import io.github.ayfri.kore.utils.*
 import io.github.ayfri.kore.utils.KoreLogger.warn
 import kotlinx.io.files.Path
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 
 /**
@@ -306,7 +305,6 @@ class DataPack(val name: String) {
 		const val DEFAULT_GENERATED_FUNCTIONS_FOLDER = "generated_scopes"
 
 		/** The JSON settings of every data pack file, [jsonEncoder] adds the pack's pretty printing on top. */
-		@OptIn(ExperimentalSerializationApi::class)
 		val jsonFormat = Json {
 			encodeDefaults = true
 			explicitNulls = false
