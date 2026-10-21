@@ -453,35 +453,53 @@ itemModifier("chest_loot") {
 }
 ```
 
+`set_loot_table` isn't usable in 26.3-snapshot-4: the block entity `type` collides with the function's `type` key, so Kore writes `"type": "minecraft:set_loot_table"` without the block entity. See [Known Issues](/docs/advanced/known-issues). The `containerLoot` item component sets the same loot table.
+
 #### modifyContents
 
-Apply modifiers to items inside a container:
+Apply modifiers to items inside a container. `modifier { }` takes inline functions, or an item modifier ID with `reference(...)`:
 
 ```kotlin
 itemModifier("enchant_bundle_contents") {
 	modifyContents(ContentComponentTypes.BUNDLE_CONTENTS) {
-		modifiers {
+		modifier {
 			enchantRandomly()
 		}
 	}
 }
+
+itemModifier("modify_by_id") {
+	modifyContents(ContentComponentTypes.CONTAINER) {
+		modifier { reference(ItemModifierArgument("my_modifier", "my_pack")) }
+	}
+}
 ```
+
+The second one writes `"modifier": "my_pack:my_modifier"`.
 
 ### Maps and Exploration
 
 #### explorationMap
 
-Convert empty map to explorer map:
+Convert an empty map into an explorer map. The destination is required: one or several structures or structure tags.
 
 ```kotlin
 itemModifier("treasure_map") {
-	explorationMap {
-		destination = Tags.Worldgen.Structure.ON_TREASURE_MAPS
-		decoration = MapDecorationTypes.RED_X
-		zoom = 2
-		searchRadius = 50
-		skipExistingChunks = true
-	}
+	explorationMap(
+		Tags.Worldgen.Structure.ON_TREASURE_MAPS,
+		decoration = MapDecorationTypes.RED_X,
+		zoom = 1,
+		searchRadius = 50,
+		skipExistingChunks = false,
+	)
+}
+```
+
+A tag is written with its `#` (`"destination": "#minecraft:on_treasure_maps"`) and several structures as a list:
+
+```kotlin
+itemModifier("two_structures") {
+	explorationMap(ConfiguredStructures.MINESHAFT, ConfiguredStructures.MONUMENT)
 }
 ```
 
@@ -793,7 +811,16 @@ itemModifier("complex") {
 }
 ```
 
-A `sequence` holding a single function writes it as an object, several ones as a list.
+A `sequence` holding a single function writes it as an object, several ones as a list. `sequence { }` returns the function, so a `condition` guards the whole group:
+
+```kotlin
+itemModifier("sometimes_mystery") {
+	sequence {
+		setCount(1f)
+		setName("Mystery Item")
+	}.condition { randomChance(0.5f) }
+}
+```
 
 #### discard
 

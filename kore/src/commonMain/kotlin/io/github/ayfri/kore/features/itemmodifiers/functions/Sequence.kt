@@ -14,10 +14,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Sequence(
 	override var condition: PredicateCondition? = null,
-	val functions: InlinableItemModifier? = null,
+	val functions: InlinableItemModifier,
 ) : ItemFunction()
 
-/** Add a `sequence` step from a nested builder. */
-fun ItemModifier.sequence(block: ItemModifier.() -> Unit = {}) {
-	modifiers += Sequence(functions = ItemModifier().apply(block))
-}
+/**
+ * Add a `sequence` step from a nested builder and return it to guard it with a [condition].
+ *
+ * ```
+ * sequence { setItem(Items.APPLE) }.condition { randomChance(0.5f) }
+ * ```
+ */
+fun ItemModifier.sequence(block: ItemModifier.() -> Unit = {}) =
+	Sequence(functions = ItemModifier().apply(block)).also { modifiers += it }

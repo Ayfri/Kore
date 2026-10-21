@@ -24,6 +24,6 @@ fun ItemModifier.modifyContents(component: ContentComponentTypes, block: ModifyC
 	ModifyContents(component = component).apply(block).also { modifiers += it }
 
 /** Add nested item functions to be applied to the targeted component's entries. */
-fun ModifyContents.modifiers(block: ItemModifier.() -> Unit) {
+fun ModifyContents.modifier(block: ItemModifier.() -> Unit) {
 	modifier += ItemModifier().apply(block).modifiers
 }

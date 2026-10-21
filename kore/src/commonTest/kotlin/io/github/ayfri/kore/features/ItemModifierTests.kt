@@ -252,9 +252,8 @@ fun DataPack.itemModifierTests() {
 	""".trimIndent()
 
 	itemModifier("exploration_map") {
-		explorationMap {
+		explorationMap(Tags.Worldgen.Structure.MINESHAFT) {
 			decoration = MapDecorationTypes.FRAME
-			destination = Tags.Worldgen.Structure.MINESHAFT
 			searchRadius = 20
 			skipExistingChunks = true
 			zoom = 1
@@ -264,13 +263,76 @@ fun DataPack.itemModifierTests() {
 	itemModifiers.last() assertsIs """
 		{
 			"type": "minecraft:exploration_map",
-			"destination": "minecraft:mineshaft",
 			"decoration": "minecraft:frame",
-			"zoom": 1,
+			"destination": "#minecraft:mineshaft",
 			"search_radius": 20,
-			"skip_existing_chunks": true
+			"skip_existing_chunks": true,
+			"zoom": 1
 		}
 	""".trimIndent()
+	roundTrip(itemModifiers.last())
+
+	itemModifier("exploration_map_shipwreck") {
+		explorationMap(
+			Tags.Worldgen.Structure.ON_TREASURE_MAPS,
+			decoration = MapDecorationTypes.RED_X,
+			skipExistingChunks = false,
+			zoom = 1,
+		)
+		setName("Map", color = Color.BLACK)
+	}
+
+	itemModifiers.last() assertsIs """
+		[
+			{
+				"type": "minecraft:exploration_map",
+				"decoration": "minecraft:red_x",
+				"destination": "#minecraft:on_treasure_maps",
+				"skip_existing_chunks": false,
+				"zoom": 1
+			},
+			{
+				"type": "minecraft:set_name",
+				"name": {
+					"text": "Map",
+					"color": "black",
+					"type": "text"
+				}
+			}
+		]
+	""".trimIndent()
+
+	itemModifier("exploration_map_cartographer") {
+		explorationMap(
+			Tags.Worldgen.Structure.ON_OCEAN_EXPLORER_MAPS,
+			decoration = MapDecorationTypes.MONUMENT,
+			searchRadius = 100,
+		)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:exploration_map",
+			"decoration": "minecraft:monument",
+			"destination": "#minecraft:on_ocean_explorer_maps",
+			"search_radius": 100
+		}
+	""".trimIndent()
+
+	itemModifier("exploration_map_two_structures") {
+		explorationMap(ConfiguredStructures.MINESHAFT, ConfiguredStructures.MONUMENT)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:exploration_map",
+			"destination": [
+				"minecraft:mineshaft",
+				"minecraft:monument"
+			]
+		}
+	""".trimIndent()
+	roundTrip(itemModifiers.last())
 
 	itemModifier("explosion_decay") {
 		explosionDecay()
@@ -365,7 +427,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("modify_contents") {
 		modifyContents(ContentComponentTypes.BUNDLE_CONTENTS) {
-			modifiers {
+			modifier {
 				setName("Test")
 			}
 		}
@@ -424,7 +486,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("reference_modify_contents") {
 		modifyContents(ContentComponentTypes.BUNDLE_CONTENTS) {
-			modifiers { reference(ItemModifierTagArgument("my_tag", "kore")) }
+			modifier { reference(ItemModifierTagArgument("my_tag", "kore")) }
 		}
 	}
 
@@ -435,6 +497,48 @@ fun DataPack.itemModifierTests() {
 			"modifier": "#kore:my_tag"
 		}
 	""".trimIndent()
+
+	itemModifier("modify_contents_reference_id") {
+		modifyContents(ContentComponentTypes.CONTAINER) {
+			modifier { reference(ItemModifierArgument("my_modifier", "kore")) }
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:modify_contents",
+			"component": "container",
+			"modifier": "kore:my_modifier"
+		}
+	""".trimIndent()
+	roundTrip(itemModifiers.last())
+
+	itemModifier("sequence_condition") {
+		sequence {
+			setItem(Items.APPLE)
+			explosionDecay()
+		}.condition { randomChance(0.5f) }
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:sequence",
+			"condition": {
+				"type": "minecraft:random_chance",
+				"chance": 0.5
+			},
+			"functions": [
+				{
+					"type": "minecraft:set_item",
+					"item": "minecraft:apple"
+				},
+				{
+					"type": "minecraft:explosion_decay"
+				}
+			]
+		}
+	""".trimIndent()
+	roundTrip(itemModifiers.last())
 
 	itemModifier("reference_sequence") {
 		sequence {
@@ -912,8 +1016,8 @@ fun DataPack.itemModifierTests() {
 	itemModifiers.last() assertsIs """
 		{
 			"type": "minecraft:set_loot_table",
-			"name": "minecraft:chests/simple_dungeon",
-			"seed": 42
+			"seed": 42,
+			"tag": "minecraft:chests/simple_dungeon"
 		}
 	""".trimIndent()
 
@@ -1154,9 +1258,8 @@ fun DataPack.itemModifierTests() {
 	""".trimIndent()
 
 	val modifier = itemModifier("test_modifier") {
-		explorationMap {
+		explorationMap(Tags.Worldgen.Structure.MINESHAFT) {
 			decoration = MapDecorationTypes.BANNER_BLACK
-			destination = Tags.Worldgen.Structure.MINESHAFT
 			skipExistingChunks = true
 
 			condition {
@@ -1185,8 +1288,8 @@ fun DataPack.itemModifierTests() {
 						}
 					]
 				},
-				"destination": "minecraft:mineshaft",
 				"decoration": "minecraft:banner_black",
+				"destination": "#minecraft:mineshaft",
 				"skip_existing_chunks": true
 			},
 			{
