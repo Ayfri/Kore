@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Display Entities
+title: Minecraft Display Entities - Block, Item and Text Displays with Transformations
 nav-title: Display Entities
-description: A guide for creating Display Entities in the world.
-keywords: minecraft, datapack, kore, guide, display-entities
+description: Summon Minecraft block, item and text displays, then scale, rotate and move them with transformations and animate them with interpolation, from Kotlin.
+keywords: minecraft display entity, block_display, item_display, text_display, display transformation, interpolation, billboard, datapack, kore
 date-created: 2024-04-06
-date-modified: 2026-10-07
+date-modified: 2026-10-22
 routeOverride: /docs/helpers/display-entities
 ---
 
@@ -47,10 +47,10 @@ val entityDisplay = blockDisplay {
 			quaternionNormalized(0.0, 0.0, 0.0, 1.0)
 		}
 
-		scale = vec3(2.0)
+		scale = Vec3f(2, 2, 2)
 
 		translation {
-			y = 2.0
+			y = 2f
 		}
 	}
 
@@ -146,13 +146,26 @@ transformation {
 		quaternionNormalized(0.0, 0.0, 0.0, 1.0)
 	}
 
-	scale = vec3(2.0)
+	scale = Vec3f(2, 2, 2)
 
 	translation {
-		y = 2.0
+		y = 2f
 	}
 }
 ```
+
+The game applies the parts to the model in this order: `rightRotation`, `scale`, `leftRotation`, then `translation`. Rotations and scale
+work around the pivot of each display type:
+
+| Display          | Pivot                                    | Scaled by 2                          |
+|------------------|------------------------------------------|--------------------------------------|
+| `block_display`  | Bottom north-west corner of the block    | Grows towards +X, +Y and +Z          |
+| `item_display`   | Center of the item                       | Grows evenly around the entity       |
+| `text_display`   | Bottom center of the text                | Grows upwards and to both sides      |
+
+Without rotations, centering a block display on its entity takes a translation of `-0.5` times the scale on each axis.
+
+Reference: [Display](https://minecraft.wiki/w/Display)
 
 `Quaternion` and `Matrix` operators (`+`, `-`, `*`, `/`) return a new value and leave both operands untouched, while
 named methods like `normalize()`, `slerp()` or `multiply()` modify the receiver. `Quaternion.IDENTITY` and
@@ -180,7 +193,7 @@ interpolableEntityDisplay.summon()
 
 interpolableEntityDisplay.interpolateTo(duration = 2.seconds) {
 	translation {
-		y = 2.0
+		y = 2f
 	}
 }
 ```
