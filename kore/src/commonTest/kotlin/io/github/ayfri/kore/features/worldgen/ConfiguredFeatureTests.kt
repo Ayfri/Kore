@@ -349,14 +349,6 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
-	configuredFeaturesBuilder.desertWell("test_desert_well")
-
-	configuredFeatures.last() assertsIs """
-		{
-			"type": "minecraft:desert_well"
-		}
-	""".trimIndent()
-
 	configuredFeaturesBuilder.disk("test_disk", radius = 3, halfHeight = 1) {
 		stateProvider = simpleStateProvider(Blocks.GRAVEL)
 		target { solid() }

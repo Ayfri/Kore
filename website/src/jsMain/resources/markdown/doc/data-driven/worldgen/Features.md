@@ -39,7 +39,7 @@ val flower = dp.configuredFeaturesBuilder.simpleBlock("my_flower") {
 
 dp.configuredFeatures {
 	bamboo("my_bamboo", probability = 0.3)
-	desertWell("my_well")
+	monsterRoom("my_dungeon")
 }
 ```
 
@@ -429,16 +429,16 @@ Kore covers every vanilla configured feature type.
 
 ### Features Without Configuration
 
-Eleven feature types have no fields at all. Their builders take only a file name and nothing else:
+Ten feature types have no fields at all. Their builders take only a file name and nothing else:
 
 ```kotlin
 configuredFeatures {
-	desertWell("my_well")
+	blueIce("my_ice")
 	monsterRoom("my_dungeon")
 }
 ```
 
-`blueIce`, `bonusChest`, `chorusPlant`, `desertWell`, `endIsland`, `endPlatform`, `freezeTopLayer`, `monsterRoom`, `noOp`, `vines`,
+`blueIce`, `bonusChest`, `chorusPlant`, `endIsland`, `endPlatform`, `freezeTopLayer`, `monsterRoom`, `noOp`, `vines`,
 `voidStartPlatform`.
 
 Reference: [Feature types](https://minecraft.wiki/w/Configured_feature#Types)
