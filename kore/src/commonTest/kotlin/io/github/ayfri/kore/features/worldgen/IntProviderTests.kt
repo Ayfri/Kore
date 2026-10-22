@@ -8,7 +8,10 @@ import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.count
 import io.github.ayfri.kore.features.worldgen.placedfeature.placedFeature
 import io.github.ayfri.kore.generated.Features
 import io.github.ayfri.kore.utils.pretty
+import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import kotlinx.serialization.encodeToString
 
 fun DataPack.intProviderTests() {
 	placedFeature("biased_to_bottom_test", Features.ACACIA) {
@@ -249,5 +252,26 @@ class IntProviderTests : FunSpec({
 			pretty()
 			intProviderTests()
 		}
+	}
+
+	test("int providers decode a bare number as a constant") {
+		val json = dataPack("intProvidersDecode") {}.jsonEncoder
+		val serializer = IntProvider.Companion.IntProviderSerializer
+
+		json.decodeFromString(serializer, "5") shouldBe ConstantIntProvider(5)
+		json.decodeFromString(serializer, """{"type":"minecraft:constant","value":5}""") shouldBe ConstantIntProvider(5)
+		json.decodeFromString(serializer, """{"type":"minecraft:uniform","min_inclusive":1,"max_inclusive":3}""") shouldBe
+			UniformIntProvider(1, 3)
+		json.decodeFromString(serializer, """{"type":"minecraft:clamped","min_inclusive":1,"max_inclusive":5,"source":3}""") shouldBe
+			ClampedIntProvider(1, 5, ConstantIntProvider(3))
+		json.encodeToString(serializer, ConstantIntProvider(5)) shouldBe "5"
+		json.encodeToString(serializer, UniformIntProvider(1, 3)) shouldBe """{"type":"minecraft:uniform","min_inclusive":1,"max_inclusive":3}"""
+	}
+
+	test("int providers reject an object without a type") {
+		val json = dataPack("intProvidersDecodeUntyped") {}.jsonEncoder
+		val serializer = IntProvider.Companion.IntProviderSerializer
+
+		shouldThrowAny { json.decodeFromString(serializer, """{"min_inclusive":1,"max_inclusive":3}""") }
 	}
 })

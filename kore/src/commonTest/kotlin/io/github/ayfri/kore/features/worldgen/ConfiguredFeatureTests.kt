@@ -39,10 +39,12 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.t
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeaturesBuilder
 import io.github.ayfri.kore.features.worldgen.configuredfeature.target
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.Surface
 import io.github.ayfri.kore.features.worldgen.placedfeature.feature
+import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.Offset
 import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.offset
 import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.randomlySelected
 import io.github.ayfri.kore.features.worldgen.placedfeature.placed
@@ -3086,6 +3088,16 @@ class ConfiguredFeatureTests : FunSpec({
 		val single = """{"features":{"feature":"minecraft:desert_well","placement":[]}}"""
 		json.decodeFromString<Overlay>(single).features.single().inline!!.feature.asString() shouldBe "minecraft:desert_well"
 		json.encodeToString(json.decodeFromString<Overlay>(single)) shouldBe single
+	}
+
+	test("an inline placed feature with an offset placement modifier round trips") {
+		val json = dataPack("placedFeatureOrInlineOffset") {}.jsonEncoder
+		val offset = """{"features":{"feature":"minecraft:basalt_pillar","placement":[{"type":"minecraft:offset","x":0,"y":-2,"z":0}]}}"""
+
+		val decoded = json.decodeFromString<Overlay>(offset)
+		decoded.features.single().inline!!.placementModifiers shouldBe
+			listOf(Offset(ConstantIntProvider(0), ConstantIntProvider(-2), ConstantIntProvider(0)))
+		json.encodeToString(decoded) shouldBe offset
 	}
 
 	test("an inline placed feature that can't be decoded throws instead of dropping its placement") {

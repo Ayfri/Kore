@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
  * @property maxInclusive Highest level that can be drawn, which must resolve at or above [minInclusive].
  */
 @Serializable
-@SerialName("minecraft:uniform")
+@SerialName("uniform")
 data class UniformHeightProvider(
 	var minInclusive: VerticalAnchor,
 	var maxInclusive: VerticalAnchor,

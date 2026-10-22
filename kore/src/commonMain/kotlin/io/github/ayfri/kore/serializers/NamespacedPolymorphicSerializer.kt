@@ -33,6 +33,15 @@ import net.benwoodworth.knbt.*
  * the `minecraft:` prefix to [subtypeOf] to get the subtype's content name, and decodes the whole object, [outputName]
  * included. Content names are subtype names (`block_particle_options`), not discriminator values (`block`). For families
  * where several discriminator values share one subtype, like particle options.
+ *
+ * [inlinedSubtype] is the content name of a subtype that is written without [outputName], as its bare value (a number, or
+ * an object for a subtype whose body is itself an object): `constant` for the int, float, height and number providers.
+ * Decoding reads it from that bare value or from `{ "type": "<it>", "value": <bare value> }`. An object without
+ * [outputName] is decoded as that subtype only, so it fails when it belongs to another one.
+ *
+ * [decodeUntyped] lets an object without [outputName] be decoded by trying every subtype, for a family whose subtypes
+ * are written without it, like the vertical anchors `{ "absolute": 64 }`. Each subtype needs a required field the others
+ * lack, otherwise a subtype whose fields all have defaults accepts any object.
  */
 open class NamespacedPolymorphicSerializer<T : Any>(
 	private val dispatcher: SealedDispatcher<T>,
@@ -43,6 +52,8 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 	private val skipEmptyOutput: Boolean = true,
 	private val contentName: (String) -> String = ::defaultContentName,
 	private val subtypeOf: ((typeName: String) -> String)? = null,
+	private val inlinedSubtype: String? = null,
+	private val decodeUntyped: Boolean = false,
 ) : KSerializer<T> {
 	override val descriptor = serialDescriptor<JsonElement>()
 
@@ -83,27 +94,44 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 			}
 		}
 
-	/** A bare (non-object) value has no discriminator to read, so every subtype is tried until one decodes it. */
-	private inline fun decodeBare(value: Any, decode: (DeserializationStrategy<T>) -> T) =
-		dispatcher.serializersBySerialName.values.firstNotNullOfOrNull { runCatching { decode(it) }.getOrNull() }
-			?: error("No subtype of $baseName can deserialize non-object value: $value")
+	/** A value with no discriminator to read (a bare value, or an object with [decodeUntyped]) is tried against every subtype. */
+	private inline fun decodeBare(value: Any, decode: (DeserializationStrategy<T>) -> T): T {
+		var failure: Throwable? = null
+		return dispatcher.serializersBySerialName.values.firstNotNullOfOrNull {
+			runCatching { decode(it) }.onFailure { failure = it }.getOrNull()
+		} ?: throw IllegalStateException("No subtype of $baseName can deserialize: $value", failure)
+	}
+
+	/** The bare value of an [inlinedSubtype] written as `{ "type": ..., "value": ... }`, `null` for any other subtype. */
+	private fun <E> inlinedValue(typeName: String, fields: Map<String, E>) =
+		if (inlinedSubtype != null && normalize(typeName) == inlinedSubtype) fields["value"] else null
 
 	override fun deserialize(decoder: Decoder): T = when (decoder) {
 		is JsonDecoder -> when (val element = decoder.decodeJsonElement()) {
-			is JsonObject -> {
-				val typeName = element[outputName]?.jsonPrimitive?.content
-					?: error("Missing '$outputName' field in JSON object for $baseName")
-				decoder.json.decodeFromJsonElement(generatedDeserializer(typeName), JsonObject(content(element) { it as? JsonObject }))
+			is JsonObject -> when (val typeName = element[outputName]?.jsonPrimitive?.content) {
+				null -> when {
+					inlinedSubtype != null -> decoder.json.decodeFromJsonElement(generatedDeserializer(inlinedSubtype), element)
+					decodeUntyped -> decodeBare(element) { decoder.json.decodeFromJsonElement(it, element) }
+					else -> error("Missing '$outputName' field in JSON object for $baseName")
+				}
+
+				else -> inlinedValue(typeName, element)?.let { decoder.json.decodeFromJsonElement(generatedDeserializer(typeName), it) }
+					?: decoder.json.decodeFromJsonElement(generatedDeserializer(typeName), JsonObject(content(element) { it as? JsonObject }))
 			}
 
 			else -> decodeBare(element) { decoder.json.decodeFromJsonElement(it, element) }
 		}
 
 		else -> when (val tag = (decoder.nbtDecoder ?: error("$baseName can only be deserialized from JSON or NBT.")).decodeNbtTag()) {
-			is NbtCompound -> {
-				val typeName = (tag[outputName] as? NbtString)?.value
-					?: error("Missing '$outputName' field in NBT compound for $baseName")
-				decodeFromNbtTag(generatedDeserializer(typeName), NbtCompound(content(tag) { it as? NbtCompound }))
+			is NbtCompound -> when (val typeName = (tag[outputName] as? NbtString)?.value) {
+				null -> when {
+					inlinedSubtype != null -> decodeFromNbtTag(generatedDeserializer(inlinedSubtype), tag)
+					decodeUntyped -> decodeBare(tag) { decodeFromNbtTag(it, tag) }
+					else -> error("Missing '$outputName' field in NBT compound for $baseName")
+				}
+
+				else -> inlinedValue(typeName, tag)?.let { decodeFromNbtTag(generatedDeserializer(typeName), it) }
+					?: decodeFromNbtTag(generatedDeserializer(typeName), NbtCompound(content(tag) { it as? NbtCompound }))
 			}
 
 			else -> decodeBare(tag) { decodeFromNbtTag(it, tag) }
@@ -119,7 +147,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 				when (val body = encoder.json.encodeToJsonElement(actual, value)) {
 					is JsonObject -> {
 						requireSubtype(body[outputName]?.jsonPrimitive?.content, subtype)
-						JsonObject(wrap(body, JsonPrimitive(namespaced(subtype)), ::JsonObject))
+						if (subtype == inlinedSubtype) body else JsonObject(wrap(body, JsonPrimitive(namespaced(subtype)), ::JsonObject))
 					}
 
 					else -> body
@@ -130,7 +158,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 				when (val body = encodeToNbtTag(actual, value)) {
 					is NbtCompound -> {
 						requireSubtype((body[outputName] as? NbtString)?.value, subtype)
-						NbtCompound(wrap(body, NbtString(namespaced(subtype)), ::NbtCompound))
+						if (subtype == inlinedSubtype) body else NbtCompound(wrap(body, NbtString(namespaced(subtype)), ::NbtCompound))
 					}
 
 					else -> body

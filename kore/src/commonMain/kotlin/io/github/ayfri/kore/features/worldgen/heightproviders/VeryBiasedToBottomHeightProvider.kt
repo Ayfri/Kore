@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
  * @property inner Height of the uniform part at the bottom of the range, `1` by default, at most the range height.
  */
 @Serializable
-@SerialName("minecraft:very_biased_to_bottom")
+@SerialName("very_biased_to_bottom")
 data class VeryBiasedToBottomHeightProvider(
 	var minInclusive: VerticalAnchor,
 	var maxInclusive: VerticalAnchor,

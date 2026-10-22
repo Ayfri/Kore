@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
  * @property maxInclusive Highest value that can be drawn, which must be at or above [minInclusive].
  */
 @Serializable
-@SerialName("minecraft:very_biased_to_bottom")
+@SerialName("very_biased_to_bottom")
 data class VeryBiasedToBottomIntProvider(
 	var minInclusive: Int,
 	var maxInclusive: Int,

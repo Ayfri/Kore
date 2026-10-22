@@ -1,7 +1,8 @@
 package io.github.ayfri.kore.features.worldgen.floatproviders
 
-import kotlinx.serialization.SerialName
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Always returns the same float.
@@ -12,6 +13,14 @@ import kotlinx.serialization.Serializable
  *
  * @property value The value returned on every call.
  */
-@Serializable
-@SerialName("minecraft:constant")
-data class ConstantFloatProvider(val value: Float) : FloatProvider
+@Serializable(with = ConstantFloatProvider.Companion.ConstantFloatProviderSerializer::class)
+data class ConstantFloatProvider(val value: Float) : FloatProvider {
+	companion object {
+		data object ConstantFloatProviderSerializer : InlineAutoSerializer<ConstantFloatProvider, Float>(
+			serializer<Float>(),
+			ConstantFloatProvider::value,
+			::ConstantFloatProvider,
+			"constant",
+		)
+	}
+}

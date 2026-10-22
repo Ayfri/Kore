@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
  * @property distribution The entries to draw from, which must not be empty.
  */
 @Serializable
-@SerialName("minecraft:weighted_list")
+@SerialName("weighted_list")
 data class WeightedListHeightProvider(
 	var distribution: List<WeightedListHeightProviderEntry>,
 ) : HeightProvider

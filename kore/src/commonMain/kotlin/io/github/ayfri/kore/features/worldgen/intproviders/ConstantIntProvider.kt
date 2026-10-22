@@ -1,7 +1,8 @@
 package io.github.ayfri.kore.features.worldgen.intproviders
 
-import kotlinx.serialization.SerialName
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Always returns the same integer.
@@ -12,6 +13,14 @@ import kotlinx.serialization.Serializable
  *
  * @property value The value returned on every call.
  */
-@Serializable
-@SerialName("minecraft:constant")
-data class ConstantIntProvider(val value: Int) : IntProvider
+@Serializable(with = ConstantIntProvider.Companion.ConstantIntProviderSerializer::class)
+data class ConstantIntProvider(val value: Int) : IntProvider {
+	companion object {
+		data object ConstantIntProviderSerializer : InlineAutoSerializer<ConstantIntProvider, Int>(
+			serializer<Int>(),
+			ConstantIntProvider::value,
+			::ConstantIntProvider,
+			"constant",
+		)
+	}
+}

@@ -5,12 +5,17 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.largeDripstone
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeaturesBuilder
+import io.github.ayfri.kore.features.worldgen.floatproviders.ConstantFloatProvider
+import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProvider
+import io.github.ayfri.kore.features.worldgen.floatproviders.UniformFloatProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.clampedNormal
 import io.github.ayfri.kore.features.worldgen.floatproviders.constant
 import io.github.ayfri.kore.features.worldgen.floatproviders.trapezoid
 import io.github.ayfri.kore.features.worldgen.floatproviders.uniform
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import kotlinx.serialization.encodeToString
 
 fun DataPack.floatProviderTests() {
 	configuredFeaturesBuilder.largeDripstone("clamped_normal_test") {
@@ -111,5 +116,16 @@ class FloatProviderTests : FunSpec({
 			pretty()
 			floatProviderTests()
 		}
+	}
+
+	test("float providers decode a bare number as a constant") {
+		val json = dataPack("floatProvidersDecode") {}.jsonEncoder
+		val serializer = FloatProvider.Companion.FloatProviderSerializer
+
+		json.decodeFromString(serializer, "1.5") shouldBe ConstantFloatProvider(1.5f)
+		json.decodeFromString(serializer, """{"type":"minecraft:constant","value":1.5}""") shouldBe ConstantFloatProvider(1.5f)
+		json.decodeFromString(serializer, """{"type":"minecraft:uniform","min_inclusive":1.0,"max_exclusive":2.5}""") shouldBe
+			UniformFloatProvider(1f, 2.5f)
+		json.encodeToString(serializer, ConstantFloatProvider(1.5f)) shouldBe "1.5"
 	}
 })

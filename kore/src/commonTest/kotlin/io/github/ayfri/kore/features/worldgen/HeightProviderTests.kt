@@ -6,13 +6,19 @@ import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.heightproviders.*
 import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.heightRange
 import io.github.ayfri.kore.features.worldgen.placedfeature.placedFeature
+import io.github.ayfri.kore.features.worldgen.verticalanchors.AboveBottom
+import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
+import io.github.ayfri.kore.features.worldgen.verticalanchors.BelowTop
 import io.github.ayfri.kore.features.worldgen.verticalanchors.aboveBottom
 import io.github.ayfri.kore.features.worldgen.verticalanchors.absolute
 import io.github.ayfri.kore.features.worldgen.verticalanchors.belowTop
 import io.github.ayfri.kore.features.worldgen.verticalanchors.relativeToSeaLevel
 import io.github.ayfri.kore.generated.Features
 import io.github.ayfri.kore.utils.pretty
+import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import kotlinx.serialization.encodeToString
 
 fun DataPack.heightProviderTests() {
 	placedFeature("constant_absolute_test", Features.ACACIA) {
@@ -337,5 +343,25 @@ class HeightProviderTests : FunSpec({
 			pretty()
 			heightProviderTests()
 		}
+	}
+
+	test("height providers decode a bare vertical anchor as a constant") {
+		val json = dataPack("heightProvidersDecode") {}.jsonEncoder
+		val serializer = HeightProvider.Companion.HeightProviderSerializer
+
+		json.decodeFromString(serializer, """{"absolute":64}""") shouldBe ConstantHeightProvider(Absolute(64))
+		json.decodeFromString(serializer, """{"above_bottom":8}""") shouldBe ConstantHeightProvider(AboveBottom(8))
+		json.decodeFromString(serializer, """{"type":"minecraft:constant","value":{"below_top":2}}""") shouldBe
+			ConstantHeightProvider(BelowTop(2))
+		json.decodeFromString(serializer, """{"type":"minecraft:uniform","min_inclusive":{"absolute":1},"max_inclusive":{"absolute":9}}""") shouldBe
+			UniformHeightProvider(Absolute(1), Absolute(9))
+		json.encodeToString(serializer, ConstantHeightProvider(Absolute(64))) shouldBe """{"absolute":64}"""
+	}
+
+	test("height providers reject an object without a type that isn't a vertical anchor") {
+		val json = dataPack("heightProvidersDecodeUntyped") {}.jsonEncoder
+		val serializer = HeightProvider.Companion.HeightProviderSerializer
+
+		shouldThrowAny { json.decodeFromString(serializer, """{"min_inclusive":{"absolute":1},"max_inclusive":{"absolute":9}}""") }
 	}
 })

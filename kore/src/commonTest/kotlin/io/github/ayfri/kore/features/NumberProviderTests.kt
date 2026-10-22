@@ -610,6 +610,8 @@ fun DataPack.numberProviderTests() {
 	roundTrip(lootTables.last())
 
 	jsonEncoder.decodeFromString(NumberProvider.serializer(), "5.0") assertsIs ConstantNumberProvider(5f)
+	jsonEncoder.decodeFromString(NumberProvider.serializer(), """{"type":"minecraft:constant","value":5.0}""") assertsIs
+		ConstantNumberProvider(5f)
 
 	jsonEncoder.decodeFromString(NumberProvider.serializer(), "\"my_pack:r\"")
 		.shouldBeInstanceOf<NumberProviderReference>().id

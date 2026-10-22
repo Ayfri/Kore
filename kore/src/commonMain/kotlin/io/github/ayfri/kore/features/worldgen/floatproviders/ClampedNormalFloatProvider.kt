@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  * @property max Highest value that can be returned, which must be at or above [min].
  */
 @Serializable
-@SerialName("minecraft:clamped_normal")
+@SerialName("clamped_normal")
 data class ClampedNormalFloatProvider(
 	var mean: Float,
 	var deviation: Float,

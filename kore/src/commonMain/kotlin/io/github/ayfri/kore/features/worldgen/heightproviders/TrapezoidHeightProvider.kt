@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
  * @property plateau Height of the flat top of the distribution, `0` by default, which makes it a triangle.
  */
 @Serializable
-@SerialName("minecraft:trapezoid")
+@SerialName("trapezoid")
 data class TrapezoidHeightProvider(
 	var minInclusive: VerticalAnchor,
 	var maxInclusive: VerticalAnchor,

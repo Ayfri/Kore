@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
  * @property maxExclusive Upper bound of the range, excluded, which must be at or above [minInclusive].
  */
 @Serializable
-@SerialName("minecraft:uniform")
+@SerialName("uniform")
 data class UniformFloatProvider(
 	var minInclusive: Float,
 	var maxExclusive: Float,

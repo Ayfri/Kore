@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
  * @property source The int provider the value is drawn from before being clamped.
  */
 @Serializable
-@SerialName("minecraft:clamped")
+@SerialName("clamped")
 data class ClampedIntProvider(
 	var minInclusive: Int,
 	var maxInclusive: Int,

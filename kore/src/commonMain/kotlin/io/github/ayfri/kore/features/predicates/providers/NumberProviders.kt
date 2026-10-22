@@ -32,8 +32,10 @@ import kotlinx.serialization.serializer
 @Serializable(with = NumberProvider.Companion.NumberProviderSerializer::class)
 sealed class NumberProvider {
 	companion object {
-		data object NumberProviderSerializer :
-			NamespacedPolymorphicSerializer<NumberProvider>(numberProviderSealedSerializer())
+		data object NumberProviderSerializer : NamespacedPolymorphicSerializer<NumberProvider>(
+			numberProviderSealedSerializer(),
+			inlinedSubtype = "constant",
+		)
 	}
 }
 

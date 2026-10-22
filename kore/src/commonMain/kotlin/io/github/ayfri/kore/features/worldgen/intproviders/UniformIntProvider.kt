@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
  * @property maxInclusive Highest value that can be drawn, which must be at or above [minInclusive].
  */
 @Serializable
-@SerialName("minecraft:uniform")
+@SerialName("uniform")
 data class UniformIntProvider(
 	var minInclusive: Int,
 	var maxInclusive: Int,

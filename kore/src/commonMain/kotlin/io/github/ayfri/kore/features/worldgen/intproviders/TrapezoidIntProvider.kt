@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
  * @property plateau Width of the flat top of the distribution, `0` making it a triangle.
  */
 @Serializable
-@SerialName("minecraft:trapezoid")
+@SerialName("trapezoid")
 data class TrapezoidIntProvider(
 	var min: Int,
 	var max: Int,

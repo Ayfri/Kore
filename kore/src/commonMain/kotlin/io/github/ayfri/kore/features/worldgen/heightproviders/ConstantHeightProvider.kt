@@ -4,8 +4,9 @@ import io.github.ayfri.kore.features.worldgen.verticalanchors.AboveBottom
 import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
 import io.github.ayfri.kore.features.worldgen.verticalanchors.BelowTop
 import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchor
-import kotlinx.serialization.SerialName
+import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.serializer
 
 /**
  * Always returns the same Y level.
@@ -17,11 +18,19 @@ import kotlinx.serialization.Serializable
  *
  * @property value The anchor resolved on every call.
  */
-@Serializable
-@SerialName("minecraft:constant")
+@Serializable(with = ConstantHeightProvider.Companion.ConstantHeightProviderSerializer::class)
 data class ConstantHeightProvider(
 	var value: VerticalAnchor,
-) : HeightProvider
+) : HeightProvider {
+	companion object {
+		data object ConstantHeightProviderSerializer : InlineAutoSerializer<ConstantHeightProvider, VerticalAnchor>(
+			serializer<VerticalAnchor>(),
+			ConstantHeightProvider::value,
+			::ConstantHeightProvider,
+			"constant",
+		)
+	}
+}
 
 /**
  * Creates a `constant` height provider always returning [value].

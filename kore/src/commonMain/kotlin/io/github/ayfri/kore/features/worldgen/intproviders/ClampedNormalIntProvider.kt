@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  * @property deviation Standard deviation of the distribution, larger values spreading it wider.
  */
 @Serializable
-@SerialName("minecraft:clamped_normal")
+@SerialName("clamped_normal")
 data class ClampedNormalIntProvider(
 	var minInclusive: Int,
 	var maxInclusive: Int,

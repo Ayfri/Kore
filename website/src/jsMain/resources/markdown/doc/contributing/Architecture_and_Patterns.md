@@ -149,7 +149,6 @@ Frequently reused serializers, in alphabetical order:
 - [`LowercaseSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/LowercaseSerializer.kt)
 - [`NamespacedPolymorphicSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/NamespacedPolymorphicSerializer.kt)
 - [`NbtAsJsonSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/NbtAsJsonSerializer.kt)
-- [`ProviderSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/ProviderSerializer.kt)
 - [`SinglePropertySimplifierSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/SinglePropertySimplifierSerializer.kt)
 - [`ToStringSerializer`](https://github.com/ayfri/kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/serializers/ToStringSerializer.kt)
 

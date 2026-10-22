@@ -23,7 +23,11 @@ import kotlinx.serialization.Serializable
 sealed class VerticalAnchor {
 	companion object {
 		data object VerticalAnchorSerializer :
-			NamespacedPolymorphicSerializer<VerticalAnchor>(verticalAnchorSealedSerializer(), skipOutputName = true)
+			NamespacedPolymorphicSerializer<VerticalAnchor>(
+				verticalAnchorSealedSerializer(),
+				skipOutputName = true,
+				decodeUntyped = true,
+			)
 	}
 }
 
