@@ -135,10 +135,12 @@ fun Transformation.rightRotation(block: RotationBuilder.() -> Unit) {
 	rightRotation = RotationBuilder().apply(block).rotation
 }
 
+/** Edits a copy of the current scale, `(1, 1, 1)` by default: `scale { x = 2f }` gives `(2, 1, 1)`. */
 fun Transformation.scale(block: Vec3f.() -> Unit) {
-	scale = Vec3f().apply(block)
+	scale = scale.copy().apply(block)
 }
 
+/** Edits a copy of the current translation, `(0, 0, 0)` by default: `translation { y = 2f }` gives `(0, 2, 0)`. */
 fun Transformation.translation(block: Vec3f.() -> Unit) {
-	translation = Vec3f().apply(block)
+	translation = (translation ?: Vec3f()).copy().apply(block)
 }

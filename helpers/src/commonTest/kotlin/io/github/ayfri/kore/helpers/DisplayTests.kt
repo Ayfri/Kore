@@ -196,6 +196,10 @@ fun Function.displayTransformationTests() {
 		}
 	} assertsIs """{transformation:[2.0f,0.0f,0.0f,0.0f,0.0f,2.0f,0.0f,2.0f,0.0f,0.0f,2.0f,0.0f,0.0f,0.0f,0.0f,1.0f],block_state:"minecraft:stone"}"""
 
+	nbtOf {
+		scale { x = 2f }
+	} assertsIs """{transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[2.0f,1.0f,1.0f],translation:[0.0f,0.0f,0.0f]},block_state:"minecraft:stone"}"""
+
 	val display = blockDisplay {
 		blockState(Blocks.STONE)
 		transformation { scale = Vec3f(2, 2, 2) }
