@@ -265,7 +265,7 @@ val item  = ItemDisplayEntity(uuid)
 val text  = TextDisplayEntity(uuid)
 ```
 
-All three target their entity with `@e[type=minecraft:<type>,nbt={UUID:[I;...]}]`.
+All three target their entity with `@e[limit=1,nbt={UUID:[I;...]},type=minecraft:<type>]`.
 
 These handle classes live in the `oop` module and extend `Entity`, so every entity-scoped extension applies to them -
 see [Entities & Players](/docs/oop/entities-and-players) for the full list.

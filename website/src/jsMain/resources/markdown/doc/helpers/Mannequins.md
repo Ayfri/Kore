@@ -313,7 +313,7 @@ handle.kill()
 handle.teleportTo(0, 64, 5)
 ```
 
-The generated selector is `@e[type=minecraft:mannequin,nbt={UUID:[I;...]}]`, uniquely targeting the spawned instance.
+The generated selector is `@e[limit=1,nbt={UUID:[I;...]},type=minecraft:mannequin]`, uniquely targeting the spawned instance.
 
 `MannequinEntity` lives in the `oop` module and extends `Entity`, so every entity-scoped extension applies to it -
 see [Entities & Players](/docs/oop/entities-and-players) for the full list.
