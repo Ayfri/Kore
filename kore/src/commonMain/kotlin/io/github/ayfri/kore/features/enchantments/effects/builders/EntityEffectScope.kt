@@ -2,13 +2,11 @@ package io.github.ayfri.kore.features.enchantments.effects.builders
 
 import io.github.ayfri.kore.arguments.maths.Vec3f
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
+import io.github.ayfri.kore.data.particle.ParticleOptions
 import io.github.ayfri.kore.data.sound.SoundEvent
 import io.github.ayfri.kore.features.enchantments.effects.entity.*
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePosition
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePositionType
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.ParticleType
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.ParticleTypeScope
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.particleType
 import io.github.ayfri.kore.features.enchantments.values.Constant
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.LevelBasedScope
@@ -17,7 +15,6 @@ import io.github.ayfri.kore.features.predicates.toCondition
 import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.MobEffectOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
-import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 
 /**
@@ -29,7 +26,7 @@ import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#Entity_effects
  */
-interface EntityEffectScope : LevelBasedScope, ParticleTypeScope {
+interface EntityEffectScope : LevelBasedScope {
 	/** Appends [effect] to the component being built, lifting its requirements next to it where the format allows. */
 	fun addEffect(effect: EntityEffect)
 }
@@ -154,8 +151,8 @@ fun EntityEffectScope.damageItem(amount: Int, block: DamageItem.() -> Unit = {})
  *
  * ```kotlin
  * explode(
- *     smallParticle = particleType(Particles.GUST_EMITTER_SMALL),
- *     largeParticle = particleType(Particles.GUST_EMITTER_LARGE),
+ *     smallParticle = simpleParticle(Particles.GUST_EMITTER_SMALL),
+ *     largeParticle = simpleParticle(Particles.GUST_EMITTER_LARGE),
  *     sound = SoundEvents.Entity.WindCharge.WIND_BURST,
  * ) {
  *     blockInteraction = BlockInteraction.TRIGGER
@@ -166,19 +163,11 @@ fun EntityEffectScope.damageItem(amount: Int, block: DamageItem.() -> Unit = {})
  * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#explode
  */
 fun EntityEffectScope.explode(
-	smallParticle: ParticleType,
-	largeParticle: ParticleType,
+	smallParticle: ParticleOptions,
+	largeParticle: ParticleOptions,
 	sound: SoundEventArgument,
 	block: Explode.() -> Unit = {},
 ) = addEffect(Explode(largeParticle, smallParticle, sound).apply(block))
-
-/** Appends an `explode` effect using the default options of [smallParticle] and [largeParticle]. */
-fun EntityEffectScope.explode(
-	smallParticle: ParticleTypeArgument,
-	largeParticle: ParticleTypeArgument,
-	sound: SoundEventArgument,
-	block: Explode.() -> Unit = {},
-) = addEffect(Explode(particleType(largeParticle), particleType(smallParticle), sound).apply(block))
 
 /**
  * Appends an `ignite` effect setting the affected entity on fire for [duration] seconds.
@@ -260,7 +249,7 @@ fun EntityEffectScope.setBlockProperties(block: SetBlockProperties.() -> Unit = 
  * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#spawn_particles
  */
 fun EntityEffectScope.spawnParticles(
-	particle: ParticleType,
+	particle: ParticleOptions,
 	horizontalPositionType: ParticlePositionType,
 	verticalPositionType: ParticlePositionType,
 	block: SpawnParticles.() -> Unit = {},
@@ -271,14 +260,6 @@ fun EntityEffectScope.spawnParticles(
 		verticalPosition = ParticlePosition(verticalPositionType),
 	).apply(block)
 )
-
-/** Appends a `spawn_particles` effect spawning [particle] with its default options around the affected entity. */
-fun EntityEffectScope.spawnParticles(
-	particle: ParticleTypeArgument,
-	horizontalPositionType: ParticlePositionType,
-	verticalPositionType: ParticlePositionType,
-	block: SpawnParticles.() -> Unit = {},
-) = spawnParticles(particleType(particle), horizontalPositionType, verticalPositionType, block)
 
 /**
  * Appends a `summon_entity` effect summoning one of the entity types picked in [block].

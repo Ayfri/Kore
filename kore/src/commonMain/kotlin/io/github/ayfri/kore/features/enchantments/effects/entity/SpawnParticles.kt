@@ -1,10 +1,9 @@
 package io.github.ayfri.kore.features.enchantments.effects.entity
 
+import io.github.ayfri.kore.data.particle.ParticleOptions
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePosition
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePositionType
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticleVelocity
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.ParticleType
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.ParticleTypeScope
 import io.github.ayfri.kore.features.worldgen.floatproviders.ConstantFloatProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProvider
 import io.github.ayfri.kore.features.worldgen.floatproviders.FloatProviderScope
@@ -15,7 +14,7 @@ import kotlinx.serialization.Serializable
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Enchantment_definition#spawn_particles
  *
- * @property particle The particle spawned, along with the options its kind understands.
+ * @property particle The particle spawned, along with the options its kind reads.
  * @property horizontalPosition Where the particle spawns on the X and Z axes.
  * @property verticalPosition Where the particle spawns on the Y axis.
  * @property horizontalVelocity How fast the particle flies on the X and Z axes.
@@ -23,12 +22,12 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SpawnParticles(
-	var particle: ParticleType,
+	var particle: ParticleOptions,
 	var horizontalPosition: ParticlePosition,
 	var verticalPosition: ParticlePosition,
 	var horizontalVelocity: ParticleVelocity = ParticleVelocity(),
 	var verticalVelocity: ParticleVelocity = ParticleVelocity(),
-) : EntityEffect(), FloatProviderScope, ParticleTypeScope
+) : EntityEffect(), FloatProviderScope
 
 /** Sets [SpawnParticles.horizontalPosition], where the particle spawns on the X and Z axes. */
 fun SpawnParticles.horizontalPosition(type: ParticlePositionType, offset: Float? = null, scale: Float? = null) {

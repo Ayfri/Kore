@@ -1,15 +1,12 @@
 package io.github.ayfri.kore.features.enchantments.effects.entity
 
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.ParticleType
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.ParticleTypeScope
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.particleType
+import io.github.ayfri.kore.data.particle.ParticleOptions
 import io.github.ayfri.kore.features.enchantments.values.Constant
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.enchantments.values.LevelBasedScope
 import io.github.ayfri.kore.features.enchantments.values.constantLevelBased
 import io.github.ayfri.kore.generated.arguments.types.DamageTypeArgument
-import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.generated.arguments.types.SoundEventArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.LowercaseSerializer
@@ -58,34 +55,24 @@ enum class BlockInteraction {
 @Serializable
 data class ExplodeBlockParticle(
 	var weight: Int,
-	var particle: ParticleType,
+	var particle: ParticleOptions,
 	var scaling: Float? = null,
 	var speed: Float? = null,
-) : ParticleTypeScope
+)
 
 /** Receiver of the [ExplodeBlockParticle] builders, collecting the particles thrown by an [Explode] effect. */
-class ExplodeBlockParticlesScope internal constructor() : ParticleTypeScope {
+class ExplodeBlockParticlesScope internal constructor() {
 	internal val particles = mutableListOf<ExplodeBlockParticle>()
 }
 
 /** Appends a particle thrown by the explosion, picked against the [weight] of the other entries. */
 fun ExplodeBlockParticlesScope.particle(
 	weight: Int,
-	particle: ParticleType,
+	particle: ParticleOptions,
 	scaling: Float? = null,
 	speed: Float? = null,
 ) {
 	particles += ExplodeBlockParticle(weight, particle, scaling, speed)
-}
-
-/** Appends a particle thrown by the explosion, picked against the [weight] of the other entries. */
-fun ExplodeBlockParticlesScope.particle(
-	weight: Int,
-	particle: ParticleTypeArgument,
-	scaling: Float? = null,
-	speed: Float? = null,
-) {
-	particles += ExplodeBlockParticle(weight, particleType(particle), scaling, speed)
 }
 
 /**
@@ -109,8 +96,8 @@ fun ExplodeBlockParticlesScope.particle(
  */
 @Serializable
 data class Explode(
-	var largeParticle: ParticleType,
-	var smallParticle: ParticleType,
+	var largeParticle: ParticleOptions,
+	var smallParticle: ParticleOptions,
 	var sound: SoundEventArgument,
 	var attributeToUser: Boolean = false,
 	var blockInteraction: BlockInteraction = BlockInteraction.NONE,
@@ -121,7 +108,7 @@ data class Explode(
 	var knockbackMultiplier: LevelBased? = null,
 	var offset: TripleAsArray<Float, Float, Float>? = null,
 	var radius: LevelBased = Constant(0f),
-) : EntityEffect(), LevelBasedScope, ParticleTypeScope
+) : EntityEffect(), LevelBasedScope
 
 /** Sets [Explode.blockParticles] to the particles collected in [block], thrown out of the destroyed blocks. */
 fun Explode.blockParticles(block: ExplodeBlockParticlesScope.() -> Unit) {

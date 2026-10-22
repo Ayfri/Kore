@@ -6,6 +6,8 @@ import io.github.ayfri.kore.arguments.colors.ARGB
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.colors.rgb
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.data.particle.dustParticle
+import io.github.ayfri.kore.data.particle.simpleParticle
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.biome.types.ambient
 import io.github.ayfri.kore.features.worldgen.biome.types.creature
@@ -29,7 +31,7 @@ import io.kotest.core.spec.style.FunSpec
 fun DataPack.environmentAttributesTests() {
 	dimensionType("env_attr_ambient_particles") {
 		attributes {
-			ambientParticles { particle(Particles.ASH, 0.01f) }
+			ambientParticles { particle(simpleParticle(Particles.ASH), 0.01f) }
 		}
 		monsterSpawnLightLevel = constant(0)
 	}
@@ -43,6 +45,41 @@ fun DataPack.environmentAttributesTests() {
 							"type": "minecraft:ash"
 						},
 						"probability": 0.01
+					}
+				]
+			},
+			"has_skylight": true,
+			"has_ceiling": false,
+			"has_ender_dragon_fight": false,
+			"coordinate_scale": 1.0,
+			"ambient_light": 0.0,
+			"logical_height": 384,
+			"infiniburn": "#minecraft:infiniburn_overworld",
+			"min_y": -64,
+			"height": 384,
+			"monster_spawn_light_level": 0,
+			"monster_spawn_block_light_limit": 0
+		}
+	""".trimIndent()
+
+	dimensionType("env_attr_ambient_particles_dust") {
+		attributes {
+			ambientParticles { particle(dustParticle(Color.RED), 0.1f) }
+		}
+		monsterSpawnLightLevel = constant(0)
+	}
+
+	dimensionTypes.last() assertsIs """
+		{
+			"attributes": {
+				"minecraft:visual/ambient_particles": [
+					{
+						"particle": {
+							"type": "minecraft:dust",
+							"color": 16733525,
+							"scale": 1.0
+						},
+						"probability": 0.1
 					}
 				]
 			},
@@ -364,7 +401,7 @@ fun DataPack.environmentAttributesTests() {
 
 	dimensionType("env_attr_dripstone_particle") {
 		attributes {
-			defaultDripstoneParticle(Particles.DRIPPING_DRIPSTONE_WATER)
+			defaultDripstoneParticle(simpleParticle(Particles.DRIPPING_DRIPSTONE_WATER))
 		}
 		monsterSpawnLightLevel = constant(0)
 	}
@@ -864,7 +901,7 @@ fun DataPack.environmentAttributesTests() {
 
 	dimensionType("env_attr_ambient_particles_append") {
 		attributes {
-			ambientParticles(EnvironmentAttributeModifier.APPEND) { particle(Particles.WHITE_ASH, 0.1f) }
+			ambientParticles(EnvironmentAttributeModifier.APPEND) { particle(simpleParticle(Particles.WHITE_ASH), 0.1f) }
 		}
 		monsterSpawnLightLevel = constant(0)
 	}

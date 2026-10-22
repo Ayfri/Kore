@@ -1,10 +1,10 @@
 package io.github.ayfri.kore.features.worldgen.environmentattributes.types
 
+import io.github.ayfri.kore.data.particle.ParticleOptions
 import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributeModifier
 import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributesScope
 import io.github.ayfri.kore.features.worldgen.environmentattributes.environmentAttributeValue
 import io.github.ayfri.kore.generated.EnvironmentAttributes
-import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
@@ -16,12 +16,18 @@ data class Particle(
 	var probability: Float,
 )
 
-/** Particle type definition, used for dripstone and ambient particle attributes. */
-@Serializable
-data class ParticleOptions(
-	var type: ParticleTypeArgument,
-) : EnvironmentAttributesType()
-
+/** A single particle with its options, used for the dripstone particle attribute. */
+@Serializable(with = ParticleOptionsValue.Companion.ParticleOptionsValueSerializer::class)
+data class ParticleOptionsValue(var value: ParticleOptions) : EnvironmentAttributesType() {
+	companion object {
+		data object ParticleOptionsValueSerializer : InlineAutoSerializer<ParticleOptionsValue, ParticleOptions>(
+			ParticleOptions.serializer(),
+			ParticleOptionsValue::value,
+			::ParticleOptionsValue,
+			serialName = "ParticleOptionsValue",
+		)
+	}
+}
 
 /** A list of ambient particles that randomly spawn around the camera. */
 @Serializable(with = ParticleValue.Companion.AmbiantParticlesSerializer::class)
@@ -41,7 +47,7 @@ data class ParticleValue(
  * Sets the ambient particles attribute, controlling particles that randomly spawn around the camera.
  *
  * ```
- * ambientParticles(EnvironmentAttributeModifier.APPEND) { particle(Particles.ASH, 0.01f) }
+ * ambientParticles(EnvironmentAttributeModifier.APPEND) { particle(simpleParticle(Particles.ASH), 0.01f) }
  * ```
  * [EnvironmentAttributeModifier.APPEND] adds the particles after the ones of the lower-priority source instead of replacing them.
  */
@@ -49,17 +55,21 @@ fun EnvironmentAttributesScope.ambientParticles(mod: EnvironmentAttributeModifie
 	this[EnvironmentAttributes.Visual.AMBIENT_PARTICLES] = environmentAttributeValue(ParticleValue().apply(block), mod)
 }
 
-/** Sets the default particle dripped from Dripstone blocks when no fluid is placed above. */
+/**
+ * Sets the default particle dripped from Dripstone blocks when no fluid is placed above.
+ *
+ * ```
+ * defaultDripstoneParticle(simpleParticle(Particles.DRIPPING_WATER))
+ * ```
+ */
 fun EnvironmentAttributesScope.defaultDripstoneParticle(
-	type: ParticleTypeArgument,
+	particle: ParticleOptions,
 	mod: EnvironmentAttributeModifier.OVERRIDE? = null,
-	block: ParticleOptions.() -> Unit = {},
 ) = apply {
-	this[EnvironmentAttributes.Visual.DEFAULT_DRIPSTONE_PARTICLE] =
-		environmentAttributeValue(ParticleOptions(type).apply(block), mod)
+	this[EnvironmentAttributes.Visual.DEFAULT_DRIPSTONE_PARTICLE] = environmentAttributeValue(ParticleOptionsValue(particle), mod)
 }
 
-/** Adds an ambient particle with the chance to spawn it in an empty space. */
-fun ParticleValue.particle(type: ParticleTypeArgument, probability: Float) = apply {
-	list += Particle(ParticleOptions(type), probability)
+/** Adds an ambient [particle] with the chance to spawn it in an empty space. */
+fun ParticleValue.particle(particle: ParticleOptions, probability: Float) = apply {
+	list += Particle(particle, probability)
 }

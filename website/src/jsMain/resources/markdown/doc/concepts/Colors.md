@@ -140,19 +140,12 @@ Different Minecraft systems expect colors in different formats. Kore picks the r
 	  ```kotlin
 	  var color: @Serializable(ColorAsDecimalSerializer::class) Color,
 	  ```
-	- Enchantment effect particles (double arrays `[r, g, b]` in 0..1):
-	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/enchantments/effects/entity/spawnparticles/types/DustParticleType.kt)
+	- Particle options in enchantment effects and environment attributes (packed ints): RGB for `dust`, `dust_color_transition`, `effect`,
+	  `instant_effect` and `trail`, ARGB for `entity_effect`, `flash` and `tinted_leaves`. A color without alpha is fully opaque.
+	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/data/particle/ParticleOptionsTypes.kt)
 	  ```kotlin
-	  var color: @Serializable(ColorAsDoubleArraySerializer::class) Color,
-	  ```
-	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/enchantments/effects/entity/spawnparticles/types/DustColorTransitionParticleType.kt)
-	  ```kotlin
-	  var fromColor: @Serializable(ColorAsDoubleArraySerializer::class) Color,
-	  var toColor: @Serializable(ColorAsDoubleArraySerializer::class) Color,
-	  ```
-	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/features/enchantments/effects/entity/spawnparticles/types/EffectParticleType.kt)
-	  ```kotlin
-	  var color: @Serializable(ColorAsDoubleArraySerializer::class) Color,
+	  @Serializable(ColorAsDecimalSerializer::class) var color: Color,
+	  @Serializable(ColorAsARGBDecimalSerializer::class) var color: Color,
 	  ```
 
 - UI and commands using named colors (strings):
@@ -255,16 +248,12 @@ Particles
   val p = Dust(color = Color.RED, scale = 1.0)
   ```
 
-- Enchantment dust (double array):
+- Enchantment and environment attribute dust (packed int, `"color": 16711680`):
   ```kotlin
-  import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.DustParticleType
-  import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
   import io.github.ayfri.kore.arguments.colors.rgb
+  import io.github.ayfri.kore.data.particle.dustParticle
 
-  val enchantDust = DustParticleType(
-      type = ParticleTypeArgument("dust"),
-      color = rgb(255, 0, 0)
-  )
+  val enchantDust = dustParticle(rgb(255, 0, 0), scale = 1f)
   ```
 
 Entity variant dye usage:

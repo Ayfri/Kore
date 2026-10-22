@@ -26,6 +26,13 @@ import net.benwoodworth.knbt.*
  *     }
  * }
  * ```
+ *
+ * When [subtypeOf] is set, [outputName] is a property every subtype declares itself. Serializing writes the subtype body
+ * unchanged, after checking that [subtypeOf] maps its `minecraft:` [outputName] value to the subtype being written (other
+ * namespaces are not checked, since a mod can give them any shape). Decoding reads [outputName], passes its value without
+ * the `minecraft:` prefix to [subtypeOf] to get the subtype's content name, and decodes the whole object, [outputName]
+ * included. Content names are subtype names (`block_particle_options`), not discriminator values (`block`). For families
+ * where several discriminator values share one subtype, like particle options.
  */
 open class NamespacedPolymorphicSerializer<T : Any>(
 	private val dispatcher: SealedDispatcher<T>,
@@ -35,6 +42,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 	private val useMinecraftPrefix: Boolean = true,
 	private val skipEmptyOutput: Boolean = true,
 	private val contentName: (String) -> String = ::defaultContentName,
+	private val subtypeOf: ((typeName: String) -> String)? = null,
 ) : KSerializer<T> {
 	override val descriptor = serialDescriptor<JsonElement>()
 
@@ -49,7 +57,8 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 	val contentNames get() = dispatcher.serializersBySerialName.keys.map(contentName)
 
 	private fun generatedDeserializer(typeName: String): DeserializationStrategy<T> {
-		val serialName = serialNameByContent.value[normalize(typeName)] ?: normalize(typeName)
+		val name = normalize(typeName).let { subtypeOf?.invoke(it) ?: it }
+		val serialName = serialNameByContent.value[name] ?: name
 		return dispatcher.serializersBySerialName[serialName] ?: error("No subtype '$typeName' in $baseName")
 	}
 
@@ -58,19 +67,21 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 		json.decodeFromJsonElement(generatedDeserializer(typeName), element)
 
 	/** The fields of a serialized object, without the type name: at the top level or inside [moveIntoProperty]. */
-	private fun <E> content(fields: Map<String, E>, asObject: (E) -> Map<String, E>?) = when (moveIntoProperty) {
-		null -> fields - outputName
+	private fun <E> content(fields: Map<String, E>, asObject: (E) -> Map<String, E>?) = when {
+		subtypeOf != null -> fields
+		moveIntoProperty == null -> fields - outputName
 		else -> fields[moveIntoProperty]?.let(asObject).orEmpty()
 	}
 
 	/** The inverse of [content]: [fields] with [typeName] first, moved into [moveIntoProperty] when set. */
-	private fun <E> wrap(fields: Map<String, E>, typeName: E, toObject: (Map<String, E>) -> E) = buildMap {
-		if (!skipOutputName) put(outputName, typeName)
-		when (moveIntoProperty) {
-			null -> putAll(fields - outputName)
-			else -> if (!(skipEmptyOutput && fields.isEmpty())) put(moveIntoProperty, toObject(fields - outputName))
+	private fun <E> wrap(fields: Map<String, E>, typeName: E, toObject: (Map<String, E>) -> E) =
+		if (subtypeOf != null) fields else buildMap {
+			if (!skipOutputName) put(outputName, typeName)
+			when (moveIntoProperty) {
+				null -> putAll(fields - outputName)
+				else -> if (!(skipEmptyOutput && fields.isEmpty())) put(moveIntoProperty, toObject(fields - outputName))
+			}
 		}
-	}
 
 	/** A bare (non-object) value has no discriminator to read, so every subtype is tried until one decodes it. */
 	private inline fun decodeBare(value: Any, decode: (DeserializationStrategy<T>) -> T) =
@@ -101,22 +112,42 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 
 	override fun serialize(encoder: Encoder, value: T) {
 		val actual = dispatcher.serializerOf(value)
-		val outputClassName = namespaced(contentName(actual.descriptor.serialName))
+		val subtype = contentName(actual.descriptor.serialName)
 
 		when (encoder) {
 			is JsonEncoder -> encoder.encodeJsonElement(
 				when (val body = encoder.json.encodeToJsonElement(actual, value)) {
-					is JsonObject -> JsonObject(wrap(body, JsonPrimitive(outputClassName), ::JsonObject))
+					is JsonObject -> {
+						requireSubtype(body[outputName]?.jsonPrimitive?.content, subtype)
+						JsonObject(wrap(body, JsonPrimitive(namespaced(subtype)), ::JsonObject))
+					}
+
 					else -> body
 				}
 			)
 
 			else -> (encoder.nbtEncoder ?: error("$baseName can only be serialized to JSON or NBT.")).encodeNbtTag(
 				when (val body = encodeToNbtTag(actual, value)) {
-					is NbtCompound -> NbtCompound(wrap(body, NbtString(outputClassName), ::NbtCompound))
+					is NbtCompound -> {
+						requireSubtype((body[outputName] as? NbtString)?.value, subtype)
+						NbtCompound(wrap(body, NbtString(namespaced(subtype)), ::NbtCompound))
+					}
+
 					else -> body
 				}
 			)
+		}
+	}
+
+	/** With [subtypeOf] set, fails when a `minecraft:` [typeName] belongs to another subtype than the one being written. */
+	private fun requireSubtype(typeName: String?, subtype: String) {
+		if (subtypeOf == null || typeName == null) return
+		val id = typeName.removePrefix("minecraft:")
+		if (':' in id) return
+
+		val expected = subtypeOf.invoke(id)
+		require(expected == subtype) {
+			"$typeName doesn't take $subtype options, it takes $expected ones, use the factory matching it."
 		}
 	}
 

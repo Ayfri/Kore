@@ -5,7 +5,7 @@ nav-title: Enchantments
 description: Create custom Minecraft enchantments using Kore's type-safe Kotlin DSL with support for all vanilla effect components and level-based values.
 keywords: minecraft, datapack, kore, enchantments, effects, custom enchantments
 date-created: 2025-03-02
-date-modified: 2026-10-21
+date-modified: 2026-10-22
 routeOverride: /docs/data-driven/enchantments
 ---
 
@@ -380,12 +380,13 @@ damageItem(1)  // durability removed from the enchanted item
 
 ### Explode
 
-`smallParticle`, `largeParticle` and `sound` are required; everything else has a vanilla default:
+`smallParticle`, `largeParticle` and `sound` are required; everything else has a vanilla default. Both particles are
+[particle options](/docs/commands/commands#particle-options), `simpleParticle(...)` for a particle without options:
 
 ```kotlin
 explode(
-	smallParticle = Particles.GUST_EMITTER_SMALL,
-	largeParticle = Particles.GUST_EMITTER_LARGE,
+	smallParticle = simpleParticle(Particles.GUST_EMITTER_SMALL),
+	largeParticle = simpleParticle(Particles.GUST_EMITTER_LARGE),
 	sound = SoundEvents.Entity.WindCharge.WIND_BURST,
 ) {
 	blockInteraction = BlockInteraction.TRIGGER
@@ -394,7 +395,7 @@ explode(
 	immuneBlocks(Tags.Block.BLOCKS_WIND_CHARGE_EXPLOSIONS)
 
 	blockParticles {
-		particle(2, Particles.ASH, scaling = 0.5f)
+		particle(2, simpleParticle(Particles.ASH), scaling = 0.5f)
 	}
 }
 ```
@@ -443,9 +444,13 @@ setBlockProperties {
 
 ### Spawn Particles
 
+`spawnParticles` takes [particle options](/docs/commands/commands#particle-options): `simpleParticle(...)` for a particle without
+options, and a factory such as `dustParticle`, `blockParticle` or `geyserParticle` for one that has some. The same factories work in
+`explode` and in the ambient particles of [environment attributes](/docs/data-driven/worldgen/environment-attributes).
+
 ```kotlin
 spawnParticles(
-	Particles.FLAME,
+	simpleParticle(Particles.FLAME),
 	horizontalPositionType = ParticlePositionType.IN_BOUNDING_BOX,
 	verticalPositionType = ParticlePositionType.IN_BOUNDING_BOX
 ) {
@@ -454,16 +459,33 @@ spawnParticles(
 }
 ```
 
-Particles carrying options take a builder instead of a plain `ParticleTypeArgument`: `blockParticleType`, `dustParticleType`,
-`dustColorTransitionParticleType`, `itemParticleType`, `geyserParticleType`, `geyserBaseParticleType`, `geyserPlumeParticleType` and
-`geyserPoofParticleType`.
+A red dust particle, colors being written as packed ints:
 
 ```kotlin
 spawnParticles(
-	geyserBaseParticleType(Particles.GEYSER_BASE, burstImpulseBase = 0.5f, waterBlocks = 3),
+	dustParticle(Color.RED, scale = 1.5f),
 	horizontalPositionType = ParticlePositionType.ENTITY_POSITION,
 	verticalPositionType = ParticlePositionType.ENTITY_POSITION
 )
+```
+
+```json
+{
+	"type": "minecraft:spawn_particles",
+	"particle": {
+		"type": "minecraft:dust",
+		"color": 16733525,
+		"scale": 1.5
+	},
+	"horizontal_position": {
+		"type": "entity_position"
+	},
+	"vertical_position": {
+		"type": "entity_position"
+	},
+	"horizontal_velocity": {},
+	"vertical_velocity": {}
+}
 ```
 
 ### Run Function

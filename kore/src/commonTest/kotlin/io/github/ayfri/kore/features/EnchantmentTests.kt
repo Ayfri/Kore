@@ -1,20 +1,19 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.colors.Color
+import io.github.ayfri.kore.arguments.colors.rgb
 import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
 import io.github.ayfri.kore.arguments.maths.Vec3f
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
+import io.github.ayfri.kore.data.particle.*
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.enchantments.*
 import io.github.ayfri.kore.features.enchantments.effects.builders.*
 import io.github.ayfri.kore.features.enchantments.effects.entity.*
 import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.ParticlePositionType
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.geyserBaseParticleType
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.geyserParticleType
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.geyserPlumeParticleType
-import io.github.ayfri.kore.features.enchantments.effects.entity.spawnparticles.types.geyserPoofParticleType
 import io.github.ayfri.kore.features.enchantments.effects.special.start
 import io.github.ayfri.kore.features.enchantments.effects.value.requirements
 import io.github.ayfri.kore.features.enchantments.values.*
@@ -28,9 +27,13 @@ import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.features.worldgen.blockpredicate.matchingBlocks
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
 import io.github.ayfri.kore.generated.*
+import io.github.ayfri.kore.serializers.JsonNamingSnakeCaseStrategy
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
+import kotlinx.serialization.json.Json
 
 private const val DUMMY_ENCHANTMENT_CONTENT = """"description": "",
 			"supported_items": [],
@@ -608,8 +611,8 @@ fun DataPack.enchantmentTests() {
 				damageItem(1)
 
 				explode(
-					smallParticle = Particles.GUST_EMITTER_SMALL,
-					largeParticle = Particles.GUST_EMITTER_LARGE,
+					smallParticle = simpleParticle(Particles.GUST_EMITTER_SMALL),
+					largeParticle = simpleParticle(Particles.GUST_EMITTER_LARGE),
 					sound = SoundEvents.Entity.WindCharge.WIND_BURST,
 				) {
 					blockInteraction = BlockInteraction.TRIGGER
@@ -617,7 +620,7 @@ fun DataPack.enchantmentTests() {
 					knockbackMultiplier(2)
 
 					blockParticles {
-						particle(2, Particles.ASH, scaling = 0.5f)
+						particle(2, simpleParticle(Particles.ASH), scaling = 0.5f)
 					}
 				}
 
@@ -645,7 +648,7 @@ fun DataPack.enchantmentTests() {
 				}
 
 				spawnParticles(
-					Particles.ANGRY_VILLAGER,
+					simpleParticle(Particles.ANGRY_VILLAGER),
 					horizontalPositionType = ParticlePositionType.IN_BOUNDING_BOX,
 					verticalPositionType = ParticlePositionType.IN_BOUNDING_BOX,
 				) {
@@ -1349,25 +1352,25 @@ fun DataPack.enchantmentTests() {
 			hitBlock {
 				allOf {
 					spawnParticles(
-						geyserParticleType(Particles.GEYSER, waterBlocks = 3),
+						geyserParticle(3),
 						horizontalPositionType = ParticlePositionType.ENTITY_POSITION,
 						verticalPositionType = ParticlePositionType.ENTITY_POSITION,
 					)
 
 					spawnParticles(
-						geyserBaseParticleType(Particles.GEYSER_BASE, burstImpulseBase = 0.5f, waterBlocks = 3),
+						geyserBurstParticle(3, 0.5f),
 						horizontalPositionType = ParticlePositionType.ENTITY_POSITION,
 						verticalPositionType = ParticlePositionType.ENTITY_POSITION,
 					)
 
 					spawnParticles(
-						geyserPlumeParticleType(Particles.GEYSER_PLUME, waterBlocks = 4),
+						geyserParticle(4, Particles.GEYSER_PLUME),
 						horizontalPositionType = ParticlePositionType.ENTITY_POSITION,
 						verticalPositionType = ParticlePositionType.ENTITY_POSITION,
 					)
 
 					spawnParticles(
-						geyserPoofParticleType(Particles.GEYSER_POOF, burstImpulseBase = 1.5f, waterBlocks = 4),
+						geyserBurstParticle(4, 1.5f, Particles.GEYSER_POOF),
 						horizontalPositionType = ParticlePositionType.ENTITY_POSITION,
 						verticalPositionType = ParticlePositionType.ENTITY_POSITION,
 					)
@@ -1455,6 +1458,225 @@ fun DataPack.enchantmentTests() {
 		}
 	""".trimIndent()
 
+	enchantment("particle_options") {
+		effects {
+			hitBlock {
+				allOf {
+					val particles = listOf(
+						dustParticle(Color.RED, 1.5f),
+						colorParticle(Color.GREEN),
+						colorParticle(Color.WHITE, Particles.FLASH),
+						effectParticle(Color.GREEN, 2f),
+						trailParticle(Color.BLUE, 20, 0.5, 64.0, 0.5),
+						sculkChargeParticle(1.5f),
+						shriekParticle(5),
+						vibrationParticle(1, 2, 3, 10),
+						blockParticle(Blocks.STONE),
+						itemParticle(Items.DIAMOND),
+					)
+
+					particles.forEach {
+						spawnParticles(
+							it,
+							horizontalPositionType = ParticlePositionType.ENTITY_POSITION,
+							verticalPositionType = ParticlePositionType.ENTITY_POSITION,
+						)
+					}
+				}
+			}
+		}
+	}
+
+	enchantments.last() assertsIs """
+		{
+			$DUMMY_ENCHANTMENT_CONTENT
+			"effects": {
+				"minecraft:hit_block": [
+					{
+						"effect": {
+							"type": "minecraft:all_of",
+							"effects": [
+								{
+									"type": "minecraft:spawn_particles",
+									"particle": {
+										"type": "minecraft:dust",
+										"color": 16733525,
+										"scale": 1.5
+									},
+									"horizontal_position": {
+										"type": "entity_position"
+									},
+									"vertical_position": {
+										"type": "entity_position"
+									},
+									"horizontal_velocity": {},
+									"vertical_velocity": {}
+								},
+								{
+									"type": "minecraft:spawn_particles",
+									"particle": {
+										"type": "minecraft:entity_effect",
+										"color": -11141291
+									},
+									"horizontal_position": {
+										"type": "entity_position"
+									},
+									"vertical_position": {
+										"type": "entity_position"
+									},
+									"horizontal_velocity": {},
+									"vertical_velocity": {}
+								},
+								{
+									"type": "minecraft:spawn_particles",
+									"particle": {
+										"type": "minecraft:flash",
+										"color": -1
+									},
+									"horizontal_position": {
+										"type": "entity_position"
+									},
+									"vertical_position": {
+										"type": "entity_position"
+									},
+									"horizontal_velocity": {},
+									"vertical_velocity": {}
+								},
+								{
+									"type": "minecraft:spawn_particles",
+									"particle": {
+										"type": "minecraft:effect",
+										"color": 5635925,
+										"power": 2.0
+									},
+									"horizontal_position": {
+										"type": "entity_position"
+									},
+									"vertical_position": {
+										"type": "entity_position"
+									},
+									"horizontal_velocity": {},
+									"vertical_velocity": {}
+								},
+								{
+									"type": "minecraft:spawn_particles",
+									"particle": {
+										"type": "minecraft:trail",
+										"color": 5592575,
+										"duration": 20,
+										"target": [
+											0.5,
+											64.0,
+											0.5
+										]
+									},
+									"horizontal_position": {
+										"type": "entity_position"
+									},
+									"vertical_position": {
+										"type": "entity_position"
+									},
+									"horizontal_velocity": {},
+									"vertical_velocity": {}
+								},
+								{
+									"type": "minecraft:spawn_particles",
+									"particle": {
+										"type": "minecraft:sculk_charge",
+										"roll": 1.5
+									},
+									"horizontal_position": {
+										"type": "entity_position"
+									},
+									"vertical_position": {
+										"type": "entity_position"
+									},
+									"horizontal_velocity": {},
+									"vertical_velocity": {}
+								},
+								{
+									"type": "minecraft:spawn_particles",
+									"particle": {
+										"type": "minecraft:shriek",
+										"delay": 5
+									},
+									"horizontal_position": {
+										"type": "entity_position"
+									},
+									"vertical_position": {
+										"type": "entity_position"
+									},
+									"horizontal_velocity": {},
+									"vertical_velocity": {}
+								},
+								{
+									"type": "minecraft:spawn_particles",
+									"particle": {
+										"type": "minecraft:vibration",
+										"arrival_in_ticks": 10,
+										"destination": {
+											"pos": [
+												1,
+												2,
+												3
+											],
+											"type": "block"
+										}
+									},
+									"horizontal_position": {
+										"type": "entity_position"
+									},
+									"vertical_position": {
+										"type": "entity_position"
+									},
+									"horizontal_velocity": {},
+									"vertical_velocity": {}
+								},
+								{
+									"type": "minecraft:spawn_particles",
+									"particle": {
+										"type": "minecraft:block",
+										"block_state": "minecraft:stone"
+									},
+									"horizontal_position": {
+										"type": "entity_position"
+									},
+									"vertical_position": {
+										"type": "entity_position"
+									},
+									"horizontal_velocity": {},
+									"vertical_velocity": {}
+								},
+								{
+									"type": "minecraft:spawn_particles",
+									"particle": {
+										"type": "minecraft:item",
+										"item": {
+											"id": "minecraft:diamond"
+										}
+									},
+									"horizontal_position": {
+										"type": "entity_position"
+									},
+									"vertical_position": {
+										"type": "entity_position"
+									},
+									"horizontal_velocity": {},
+									"vertical_velocity": {}
+								}
+							]
+						}
+					}
+				]
+			}
+		}
+	""".trimIndent()
+
+	roundTrip<ParticleOptions>(dustParticle(rgb(0xabcdef), 2f))
+	roundTrip<ParticleOptions>(geyserBurstParticle(4, 1.5f, Particles.GEYSER_POOF))
+	roundTrip<ParticleOptions>(simpleParticle(Particles.ASH))
+	roundTrip<ParticleOptions>(vibrationParticle(1, 2, 3, 10))
+
 	enchantment("round_trip_simple_enchantment") {
 		supportedItems(Items.DIAMOND_SWORD)
 		slots(EquipmentSlot.MAINHAND)
@@ -1469,6 +1691,24 @@ class EnchantmentTests : FunSpec({
 		dataPack("enchantment") {
 			pretty()
 			enchantmentTests()
+		}
+	}
+
+	test("particle options are decoded as the subtype their type maps to") {
+		val json = Json { namingStrategy = JsonNamingSnakeCaseStrategy }
+		val dust = json.decodeFromString<ParticleOptions>("""{"type":"dust","color":255,"scale":1.0}""")
+		dust.shouldBeInstanceOf<DustParticleOptions>()
+		dust.color shouldBe rgb(255)
+		dust.scale shouldBe 1f
+
+		json.decodeFromString<ParticleOptions>("""{"type":"minecraft:block_marker","block_state":"minecraft:stone"}""")
+			.shouldBeInstanceOf<BlockParticleOptions>()
+		json.decodeFromString<ParticleOptions>("""{"type":"minecraft:ash"}""").shouldBeInstanceOf<SimpleParticleOptions>()
+	}
+
+	test("particle options refuse a particle ID that belongs to another subtype") {
+		shouldThrow<IllegalArgumentException> {
+			Json.encodeToString(ParticleOptions.serializer(), simpleParticle(Particles.DUST))
 		}
 	}
 

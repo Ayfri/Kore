@@ -5,7 +5,7 @@ nav-title: Environment Attributes
 description: Data-driven visual, audio and gameplay rules for Minecraft biomes and dimensions - fog, sky, music, mob behavior - with Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, environment attributes, biome, dimension type, fog, sky color, music, modifiers
 date-created: 2026-02-09
-date-modified: 2026-10-21
+date-modified: 2026-10-22
 routeOverride: /docs/data-driven/worldgen/environment-attributes
 ---
 
@@ -85,7 +85,7 @@ blocks of the camera. The others snap to the biome at the exact position.
 | `cloudColor(argb)`               | ARGB color     | `#00000000`     | Yes     | Camera           | Color of the clouds.                                             |
 | `cloudFogEndDistance(float)`     | Float, >= 0    | `1024.0`        | Yes     | Camera           | Distance in blocks at which cloud fog ends.                      |
 | `cloudHeight(float)`             | Float          | `192.33`        | Yes     | Camera           | Height all clouds are drawn at.                                  |
-| `defaultDripstoneParticle(type)` | Particle       | dripstone water | No      | Dripstone block  | Particle dripped when no fluid sits above the dripstone.         |
+| `defaultDripstoneParticle(...)`  | Particle       | dripstone water | No      | Dripstone block  | Particle dripped when no fluid sits above the dripstone.         |
 | `fogColor(color)`                | RGB color      | `#000000`       | Yes     | Camera           | Fog color out of water. Time, weather and potions affect it too. |
 | `fogEndDistance(float)`          | Float, >= 0    | `1024.0`        | Yes     | Camera           | Distance in blocks at which fog ends.                            |
 | `fogStartDistance(float)`        | Float, >= 0    | `0.0`           | Yes     | Camera           | Distance in blocks at which fog starts.                          |
@@ -111,7 +111,7 @@ attributes {
 	cloudColor(ARGB(255, 128, 64, 32))
 	blockLightTint(rgb(255, 180, 80), EnvironmentAttributeModifier.MULTIPLY)
 	moonPhase(Textures.Environment.Celestial.Moon.FULL_MOON)
-	defaultDripstoneParticle(Particles.DRIPPING_LAVA)
+	defaultDripstoneParticle(simpleParticle(Particles.DRIPPING_LAVA))
 }
 ```
 
@@ -120,15 +120,30 @@ Color builders take an `Int` hex literal, a `Color`, or an `rgb(r, g, b)` / `ARG
 
 ### Ambient Particles
 
-`ambientParticles` takes one `particle(type, probability)` per entry in its block, pairing a particle type with the chance to spawn it in
-an empty space.
+`ambientParticles` takes one `particle(options, probability)` per entry in its block, pairing
+[particle options](/docs/commands/commands#particle-options) with the chance to spawn them in an empty space. `simpleParticle(...)`
+builds a particle without options, and factories such as `dustParticle` build the ones that have some.
 
 ```kotlin
 attributes {
 	ambientParticles {
-		particle(Particles.ASH, probability = 0.01f)
-		particle(Particles.WHITE_ASH, probability = 0.005f)
+		particle(simpleParticle(Particles.ASH), probability = 0.01f)
+		particle(simpleParticle(Particles.WHITE_ASH), probability = 0.005f)
+		particle(dustParticle(Color.RED), probability = 0.1f)
 	}
+}
+```
+
+The dust entry is written with its options inline, its color as a packed int:
+
+```json
+{
+	"particle": {
+		"type": "minecraft:dust",
+		"color": 16733525,
+		"scale": 1.0
+	},
+	"probability": 0.1
 }
 ```
 
@@ -137,7 +152,21 @@ particles of its dimension for instance, instead of replacing them.
 
 ```kotlin
 attributes {
-	ambientParticles(EnvironmentAttributeModifier.APPEND) { particle(Particles.WHITE_ASH, 0.1f) }
+	ambientParticles(EnvironmentAttributeModifier.APPEND) { particle(simpleParticle(Particles.WHITE_ASH), 0.1f) }
+}
+```
+
+`defaultDripstoneParticle` takes the same particle options, and writes them as the attribute value itself:
+
+```kotlin
+attributes {
+	defaultDripstoneParticle(simpleParticle(Particles.DRIPPING_DRIPSTONE_WATER))
+}
+```
+
+```json
+"minecraft:visual/default_dripstone_particle": {
+	"type": "minecraft:dripping_dripstone_water"
 }
 ```
 
