@@ -267,6 +267,26 @@ summon(giant.entityType, vec3(), nbt {
 summon minecraft:mannequin ~ ~ ~ {profile:{name:"Ayfri"},Health:40.0f}
 ```
 
+## Clickable NPC
+
+A mannequin only stands there. `npc(name) { }` pairs it with an [interaction](/docs/helpers/interactions) sized to its pose, so
+right and left clicks run Kotlin callbacks:
+
+```kotlin
+val greeter = npc("greeter") {
+	mannequin {
+		customName("Bob", Color.GOLD)
+		playerProfile("Ayfri")
+	}
+	onRightClick { say("Welcome!") }
+}
+
+function("place_greeter") { greeter.summon(vec3(0, 64, 0)) }
+```
+
+The mannequin and the interaction are summoned together, and `clicked` in a callback selects the mannequin. The hitbox sizes,
+the per-NPC scoreboard state and a shopkeeper opening a menu are in [NPCs](/docs/helpers/interactions#npcs).
+
 ## Summoning and OOP Handle
 
 Use `summon()` inside a function to spawn the mannequin and receive a `MannequinEntity` handle.

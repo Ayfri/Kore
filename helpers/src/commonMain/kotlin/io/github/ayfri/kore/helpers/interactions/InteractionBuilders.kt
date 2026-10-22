@@ -11,6 +11,7 @@ import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.helpers.HelpersConstants
 import io.github.ayfri.kore.helpers.interactions.utils.ClickKind
 import io.github.ayfri.kore.helpers.interactions.utils.generateClick
+import io.github.ayfri.kore.helpers.npcs.NpcDsl
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 
@@ -63,7 +64,7 @@ fun DataPack.interaction(name: String, block: Interaction.() -> Unit): Interacti
  *
  * Only callbacks added inside [DataPack.interaction] are generated.
  */
-fun Interaction.onLeftClick(block: Function.(clicked: Entity) -> Unit) {
+fun Interaction.onLeftClick(block: @NpcDsl Function.(clicked: Entity) -> Unit) {
 	leftClicks += block
 }
 
@@ -78,7 +79,7 @@ fun Interaction.onLeftClick(block: Function.(clicked: Entity) -> Unit) {
  *
  * Only callbacks added inside [DataPack.interaction] are generated.
  */
-fun Interaction.onRightClick(block: Function.(clicked: Entity) -> Unit) {
+fun Interaction.onRightClick(block: @NpcDsl Function.(clicked: Entity) -> Unit) {
 	rightClicks += block
 }
 

@@ -61,8 +61,8 @@ That makes helpers a good fit for packs that start simple and progressively adop
   and coordinate transforms.
 - **[Display Entities](/docs/helpers/display-entities)** - Configure block, item, and text display entities with shared
   transformations, billboards, brightness, and interpolation settings.
-- **[Interactions](/docs/helpers/interactions)** - Make clickable hitboxes with right and left click callbacks,
-  generated as advancements and functions with no tick function.
+- **[Interactions](/docs/helpers/interactions)** - Make clickable hitboxes and clickable mannequin NPCs with right and
+  left click callbacks, generated as advancements and functions with no tick function.
 - **[Inventory Manager](/docs/helpers/inventory-manager)** - Register slot listeners and container policies for player,
   entity, or block inventories.
 - **[Mannequins](/docs/helpers/mannequins)** - Build mannequin entities with profiles, hidden layers, poses, and hand

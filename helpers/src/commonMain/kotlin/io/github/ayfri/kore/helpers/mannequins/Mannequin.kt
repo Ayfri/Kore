@@ -6,6 +6,7 @@ import io.github.ayfri.kore.arguments.components.item.ProfileComponent
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.entities.summon.EntitySummonData
 import io.github.ayfri.kore.generated.EntityTypes
+import io.github.ayfri.kore.helpers.npcs.NpcDsl
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.encodeToNbtTag
 import kotlinx.serialization.Serializable
@@ -29,6 +30,7 @@ import net.benwoodworth.knbt.nbtCompound
  * @property pose The pose of the mannequin.
  * @property profile The profile of the mannequin.
  */
+@NpcDsl
 @Serializable
 data class Mannequin(
 	var description: ChatComponents? = null,

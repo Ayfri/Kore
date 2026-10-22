@@ -4,6 +4,7 @@ import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.entities.summon.EntitySummonData
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.EntityTypes
+import io.github.ayfri.kore.helpers.npcs.NpcDsl
 import io.github.ayfri.kore.utils.encodeToNbtTag
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -22,6 +23,7 @@ import net.benwoodworth.knbt.nbtCompound
  * @property response Whether the game plays the attack sound on a left click and swings the arm on a right click.
  * @property width The width of the hitbox, centered on the entity position, the game defaults to 1.
  */
+@NpcDsl
 @Serializable
 data class Interaction(
 	var height: Float? = null,

@@ -3,7 +3,7 @@ root: .components.layouts.MarkdownLayout
 title: Clickable Minecraft Interaction Entities
 nav-title: Interactions
 description: Make clickable Minecraft interaction entities with Kore, with right and left click callbacks generated as advancements and functions and no tick function.
-keywords: minecraft interaction entity, interaction entity, clickable entity, datapack click detection, right click, left click, player_interacted_with_entity, player_hurt_entity, datapack button, kore interaction
+keywords: minecraft interaction entity, interaction entity, clickable entity, datapack click detection, right click, left click, player_interacted_with_entity, player_hurt_entity, datapack button, minecraft npc, clickable npc, shopkeeper npc, kore interaction
 date-created: 2026-10-22
 date-modified: 2026-10-22
 routeOverride: /docs/helpers/interactions
@@ -84,7 +84,9 @@ execute at @s on attacker run kill @e[limit=1,tag=my_pack.interaction.clicked,ty
 ```
 
 A callback with several commands is run through a generated function, named after a hash of its commands so the pack
-builds identically every time.
+builds identically every time. The interaction builder isn't reachable inside a callback of a plain interaction,
+`onRightClick { width = 2f }` doesn't compile. The click callbacks of an NPC are the exception, they reach the NPC
+builder to declare an `objective(key)`.
 
 ## Generated output
 
@@ -179,6 +181,8 @@ interaction("gate") {
 ```mcfunction
 execute as @e[distance=..40,tag=my_pack.interaction.gate,type=minecraft:interaction] if function my_pack:generated_scopes/interaction_right_click_target run function my_pack:generated_scopes/interaction_gate_right_click_hit
 ```
+
+An NPC sets it the same way, `npc("bob") { interaction { searchRadius = 40 } }`.
 
 ## Hover
 
@@ -283,3 +287,213 @@ playsound minecraft:block.lever.click
 ```
 
 Right clicking the button opens the gate, left clicking it closes it again.
+
+## NPCs
+
+An NPC is a [mannequin](/docs/helpers/mannequins) you see and an interaction you click, summoned at the same position.
+`npc(name) { }` declares both: `mannequin { }` configures the body, `onRightClick` and `onLeftClick` add the callbacks, and
+`summon` places the pair.
+
+```kotlin
+import io.github.ayfri.kore.helpers.npcs.npc
+
+val greeter = npc("greeter") {
+	mannequin {
+		customName("Bob", Color.GOLD)
+		playerProfile("Ayfri")
+	}
+	onRightClick { say("Welcome!") }
+}
+
+function("place_greeter") { greeter.summon(vec3(0, 64, 0)) }
+```
+
+```mcfunction
+summon minecraft:mannequin 0 64 0 {CustomName:{text:"Bob",color:"gold"},Invulnerable:1b,Tags:["my_pack.npc.greeter"],immovable:1b,profile:{name:"Ayfri"},UUID:[I;698108564,1678478208,-1383230621,-2104385281]}
+summon minecraft:interaction 0 64 0 {Tags:["my_pack.interaction.npc_greeter"],height:1.9f,width:0.7f,UUID:[I;-1579629773,-2071100508,-114521633,248843919]}
+```
+
+The mannequin is `immovable` and `invulnerable` by default and carries the tag `<pack>.npc.<name>`. The interaction is the
+definition `npc_<name>`, so it generates what any [interaction](#right-and-left-clicks) does. They share a position instead of
+riding each other, since a passenger sits at the attachment point and would shift the hitbox.
+
+Kore has no hook run when a block ends, so the NPC is registered when the `npc(name) { }` block returns: the callbacks,
+objectives and sizes only count when declared inside it, and a name is unique in the pack.
+
+### Hitbox
+
+The interaction is as wide and tall as the mannequin's `pose` plus 0.1, so a click reaches it before the mannequin. Setting
+`width` or `height` in `interaction { }` keeps your value for that side and sizes the other one from the pose.
+
+| Pose                         | Mannequin hitbox (width x height) | Interaction |
+|------------------------------|-----------------------------------|-------------|
+| `STANDING` (default)         | 0.6 x 1.8                         | 0.7 x 1.9   |
+| `CROUCHING`                  | 0.6 x 1.5                         | 0.7 x 1.6   |
+| `SWIMMING` and `FALL_FLYING` | 0.6 x 0.6                         | 0.7 x 0.7   |
+| `SLEEPING`                   | 0.2 x 0.2                         | 0.3 x 0.3   |
+
+A mannequin in a lying pose is drawn well outside its hitbox, the model of a swimming or sleeping one covers more than the
+interaction. Set `interaction { width = 1.8f; height = 0.6f }` to cover the drawing.
+
+```kotlin
+val sleeper = npc("sleeper") {
+	mannequin { pose = MannequinPose.SLEEPING }
+	interaction { width = 1.8f }
+}
+```
+
+Here the interaction is 1.8 wide and 0.3 tall.
+
+### Inside an NPC callback
+
+`@s` is the player and the position is the NPC's, like in any interaction callback, but `clicked` selects the mannequin,
+the entity a player sees, instead of the interaction. The selector is sorted by distance, so with two instances standing
+close together the one at the clicked position wins:
+
+```kotlin
+npc("bob") {
+	onLeftClick { clicked -> clicked.kill() }
+}
+```
+
+```mcfunction
+execute at @s on attacker run kill @e[distance=..0.5,limit=1,sort=nearest,tag=my_pack.npc.bob,type=minecraft:mannequin]
+```
+
+### State
+
+`objective(key)` declares the dummy objective `<pack>.npc.<name>.<key>`, creates it in the load function `npc_<name>_load`
+and returns its name. The callback picks who holds the score, with the usual scoreboard commands:
+
+| Scope                  | Holder                               | Example                                  |
+|------------------------|--------------------------------------|------------------------------------------|
+| Per player and per NPC | the clicking player, `self()`        | visits of each player to this NPC        |
+| Per NPC instance       | the mannequin, `clicked`             | how many times this very NPC was greeted |
+| Per definition         | a fake player, `fakePlayer("total")` | clicks on all the instances of this NPC  |
+
+```kotlin
+npc("counter") {
+	val visits = objective("visits")
+	val greeted = objective("greeted")
+	val total = objective("total")
+
+	onRightClick { clicked ->
+		scoreboard.players.add(self(), visits, 1)
+		scoreboard.players.add(clicked.asScoreHolder(), greeted, 1)
+		scoreboard.players.add(fakePlayer("total").asScoreHolder(), total, 1)
+	}
+}
+```
+
+```mcfunction
+scoreboard players add @s my_pack.npc.counter.visits 1
+scoreboard players add @e[distance=..0.5,limit=1,sort=nearest,tag=my_pack.npc.counter,type=minecraft:mannequin] my_pack.npc.counter.greeted 1
+scoreboard players add #total my_pack.npc.counter.total 1
+```
+
+```mcfunction
+# npc_counter_load
+scoreboard objectives add my_pack.npc.counter.visits dummy
+scoreboard objectives add my_pack.npc.counter.greeted dummy
+scoreboard objectives add my_pack.npc.counter.total dummy
+```
+
+For a value that is read back as a Kotlin property, see [State Delegates](/docs/helpers/state-delegates).
+
+### NpcEntity
+
+`summon` returns an `NpcEntity` holding the two handles, `mannequin` and `interaction`, each targeting its instance by UUID.
+`kill()` and `teleportTo(position, rotation)` act on both, the rotation only turns the mannequin.
+
+```kotlin
+function("move_greeter") {
+	val bob = greeter.summon(vec3(0, 64, 0))
+	bob.teleportTo(vec3(0, 64, 5))
+	bob.kill()
+}
+```
+
+```mcfunction
+teleport @e[limit=1,nbt={UUID:[I;698108564,1678478208,-1383230621,-2104385281]},type=minecraft:mannequin] 0 64 5
+teleport @e[limit=1,nbt={UUID:[I;-1579629773,-2071100508,-114521633,248843919]},type=minecraft:interaction] 0 64 5
+kill @e[limit=1,nbt={UUID:[I;698108564,1678478208,-1383230621,-2104385281]},type=minecraft:mannequin]
+kill @e[limit=1,nbt={UUID:[I;-1579629773,-2071100508,-114521633,248843919]},type=minecraft:interaction]
+```
+
+Any other entity command goes through `bob.mannequin` or `bob.interaction`. `NpcEntity` isn't an `Entity` because it stands for
+two entities.
+
+The two UUIDs are fixed per `summon` call, so a function that runs at several places (`execute at @a run function place_npc`)
+creates only the first NPC, and the next ones fail because the UUIDs are already taken. Placing one NPC at several positions
+from one line isn't possible with `summon`, since the handle needs the UUIDs. The vanilla `summon` with the `toNbt()` of
+both models has no handle and works there, with the interaction tag added to `tags` so the clicks still match:
+
+```kotlin
+greeter.interaction.tags = greeter.interaction.tags.orEmpty() + greeter.interaction.definitionTag!!
+
+function("place_npc") {
+	summon(EntityTypes.MANNEQUIN, vec3(), greeter.mannequin.toNbt())
+	summon(EntityTypes.INTERACTION, vec3(), greeter.interaction.toNbt())
+}
+```
+
+```mcfunction
+summon minecraft:mannequin ~ ~ ~ {CustomName:{text:"Bob",color:"gold"},Invulnerable:1b,Tags:["my_pack.npc.greeter"],immovable:1b,profile:{name:"Ayfri"}}
+summon minecraft:interaction ~ ~ ~ {Tags:["my_pack.interaction.npc_greeter"],height:1.9f,width:0.7f}
+```
+
+### A Shopkeeper that Opens a Menu
+
+A shopkeeper by hand is a mannequin, an interaction, the advancement and functions of [the click](#generated-output), a
+trigger objective for the dialog and a score per player. With Kore it is one declaration: a right click opens a
+[menu](/docs/helpers/menus) and counts the visit of the player, a left click answers in the chat.
+
+```kotlin
+val shop = menu("shop", "Bob's Shop", Color.GOLD) {
+	text("Everything is for sale.")
+	button("Heal me") { say("healed") }
+}
+
+val shopkeeper = npc("shopkeeper") {
+	val visits = objective("visits")
+
+	mannequin {
+		customName("Bob", Color.GOLD)
+		customNameVisible = true
+		playerProfile("Ayfri")
+		pose = MannequinPose.CROUCHING
+	}
+
+	onRightClick {
+		scoreboard.players.add(self(), visits, 1)
+		shop.open()
+	}
+	onLeftClick { tellraw(self(), textComponent("Bob: Right click to trade.", Color.GRAY)) }
+}
+
+function("place_bob") { shopkeeper.summon(vec3(0, 64, 0)) }
+```
+
+```mcfunction
+# place_bob
+summon minecraft:mannequin 0 64 0 {CustomName:{text:"Bob",color:"gold"},CustomNameVisible:1b,Invulnerable:1b,Tags:["my_pack.npc.shopkeeper"],immovable:1b,pose:"crouching",profile:{name:"Ayfri"},UUID:[I;1986223431,821987320,-494237298,-530125415]}
+summon minecraft:interaction 0 64 0 {Tags:["my_pack.interaction.npc_shopkeeper"],height:1.6f,width:0.7f,UUID:[I;-725450195,-1726051519,-1557154389,87209692]}
+
+# generated_460f5ccb
+scoreboard players add @s my_pack.npc.shopkeeper.visits 1
+dialog show @s my_pack:shop
+
+# interaction_npc_shopkeeper_left_click_hit
+tag @s add my_pack.interaction.clicked
+execute at @s on attacker run tellraw @s {type:"text",color:"gray",text:"Bob: Right click to trade."}
+data remove entity @s attack
+tag @s remove my_pack.interaction.clicked
+
+# npc_shopkeeper_load
+scoreboard objectives add my_pack.npc.shopkeeper.visits dummy
+```
+
+> [!FOOTPRINT]
+> - **Objectives:** one dummy objective per `objective(key)`, named `<pack>.npc.<name>.<key>`.
+> - **Entities:** two per `summon`, a mannequin tagged `<pack>.npc.<name>` and an interaction tagged `<pack>.interaction.npc_<name>`.
+> - **Load and files:** `npc_<name>_load` creates the objectives, only when there are some. The rest is the interaction's, see the footprint above.
