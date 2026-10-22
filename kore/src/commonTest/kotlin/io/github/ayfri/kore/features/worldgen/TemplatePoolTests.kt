@@ -3,6 +3,9 @@ package io.github.ayfri.kore.features.worldgen
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.features.worldgen.processorlist.processorListOrInline
+import io.github.ayfri.kore.features.worldgen.processorlist.types.blockAge
+import io.github.ayfri.kore.features.worldgen.processorlist.types.gravity
 import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.LiquidSettings
 import io.github.ayfri.kore.features.worldgen.templatepool.Projection
 import io.github.ayfri.kore.features.worldgen.templatepool.elements.*
@@ -139,6 +142,56 @@ fun DataPack.templatePoolTests() {
 								"override_liquid_settings": "apply_waterlogging"
 							}
 						]
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	templatePool("inline_processors") {
+		legacySingle(Structures.Village.Plains.TownCenters.PLAINS_FOUNTAIN_01) {
+			processors = processorListOrInline { gravity(HeightMap.OCEAN_FLOOR, offset = -1) }
+		}
+		single(Structures.EndCity.BRIDGE_END) {
+			processors = processorListOrInline { blockAge(0.5) }
+		}
+	}
+
+	templatePools.last() assertsIs """
+		{
+			"fallback": "minecraft:empty",
+			"elements": [
+				{
+					"weight": 1,
+					"element": {
+						"element_type": "minecraft:legacy_single_pool_element",
+						"projection": "rigid",
+						"location": "minecraft:village/plains/town_centers/plains_fountain_01",
+						"processors": {
+							"processors": [
+								{
+									"processor_type": "minecraft:gravity",
+									"heightmap": "OCEAN_FLOOR",
+									"offset": -1
+								}
+							]
+						}
+					}
+				},
+				{
+					"weight": 1,
+					"element": {
+						"element_type": "minecraft:single_pool_element",
+						"projection": "rigid",
+						"location": "minecraft:end_city/bridge_end",
+						"processors": {
+							"processors": [
+								{
+									"processor_type": "minecraft:block_age",
+									"mossiness": 0.5
+								}
+							]
+						}
 					}
 				}
 			]

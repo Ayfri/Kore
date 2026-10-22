@@ -291,6 +291,59 @@ projectedRandomPatchySquare("basalt_cap") {
 }
 ```
 
+### Templates And Processors
+
+`template` places one of its weighted structure templates, picked by `weight`, and runs the optional `processors` list on it. `processors`
+takes a processor list by ID with `processorListOrInline(ProcessorLists.X)`, or written inline with `processorListOrInline { }`, whose block
+holds the same [processor builders](https://kore.ayfri.com/docs/data-driven/worldgen/structures) as `processorList { }`.
+
+```kotlin
+template("desert_well", structureTemplate(Structures.DesertWell.WELL), processors = processorListOrInline(ProcessorLists.EMPTY))
+```
+
+```kotlin
+template(
+	"desert_well_sand",
+	structureTemplate(Structures.DesertWell.SUSPICIOUS_SAND),
+	processors = processorListOrInline {
+		rules {
+			rule {
+				inputPredicate = blockMatch(Blocks.SUSPICIOUS_SAND)
+				locationPredicate = alwaysTrue()
+				outputState = blockState(Blocks.SUSPICIOUS_SAND)
+				blockEntityModifier = appendLoot(LootTables.Archaeology.DESERT_WELL)
+			}
+		}
+	},
+)
+```
+
+```json
+{
+	"type": "minecraft:template",
+	"processors": {
+		"processors": [
+			{
+				"processor_type": "minecraft:rule",
+				"rules": [
+					{
+						"location_predicate": {"predicate_type": "minecraft:always_true"},
+						"input_predicate": {"predicate_type": "minecraft:block_match", "block": "minecraft:suspicious_sand"},
+						"output_state": "minecraft:suspicious_sand",
+						"block_entity_modifier": {"type": "minecraft:append_loot", "loot_table": "minecraft:archaeology/desert_well"}
+					}
+				]
+			}
+		]
+	},
+	"templates": [{"data": {"id": "minecraft:desert_well/suspicious_sand"}, "weight": 1}]
+}
+```
+
+An ID is written as a bare string (`"processors": "minecraft:empty"`). `fossil` takes both forms for `fossilProcessors` and
+`overlayProcessors`, and so do the `single` and `legacySingle` [template pool](https://kore.ayfri.com/docs/data-driven/worldgen/structures)
+elements.
+
 ### All Feature Types
 
 Kore covers every vanilla configured feature type.
@@ -339,7 +392,7 @@ Kore covers every vanilla configured feature type.
 | `spike(...)`                       | Tall spiky columns                   | Ice spikes in frozen biomes    |
 | `springFeature(...)`               | Fluid source block                   | Water/lava springs             |
 | `steppedColumnCluster(...)`        | Cluster of stepped columns           | Basalt delta columns           |
-| `template(...)`                    | A weighted structure template        | Random structure variants      |
+| `template(...)`                    | A weighted structure template        | Desert wells, sulfur springs   |
 | `tree(...)`                        | A tree, trunk and foliage            | Every vanilla tree             |
 | `underwaterMagma(...)`             | Underwater magma blocks              | Ocean floors                   |
 | `vegetationPatch(...)`             | Vegetation on surfaces               | Cave moss patches              |

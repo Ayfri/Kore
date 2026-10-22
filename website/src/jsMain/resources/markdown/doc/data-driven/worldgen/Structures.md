@@ -188,8 +188,9 @@ val pool = dp.templatePool("my_pool") {
 | `empty()`                            | `minecraft:empty_pool_element`         | Nothing, useful as filler weight                             |
 
 Every builder takes `weight` (1 to 150, default `1`) and `projection` (`Projection.RIGID` keeps the original shape, `TERRAIN_MATCHING`
-adapts it to the terrain height; default `RIGID`). `processors` defaults to `ProcessorLists.EMPTY`. A trailing block reaches the remaining
-fields, such as `overrideLiquidSettings` on `single` and `legacySingle`.
+adapts it to the terrain height; default `RIGID`). `processors` takes a processor list ID and defaults to `ProcessorLists.EMPTY`. `single` and `legacySingle` also accept a processor list
+written inline, set in the trailing block with `processors = processorListOrInline { gravity(HeightMap.OCEAN_FLOOR) }`. The same block
+reaches the remaining fields, such as `overrideLiquidSettings`.
 
 ```kotlin
 dp.templatePool("houses") {

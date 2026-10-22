@@ -2,6 +2,8 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
+import io.github.ayfri.kore.features.worldgen.processorlist.ProcessorListOrInline
+import io.github.ayfri.kore.features.worldgen.processorlist.processorListOrInline
 import io.github.ayfri.kore.generated.arguments.worldgen.types.ProcessorListArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import kotlinx.serialization.Serializable
@@ -20,16 +22,16 @@ import kotlinx.serialization.Serializable
  * `7`: lowering it keeps the fossils from floating.
  * @property fossilStructures The fossil structure templates to choose from, not empty.
  * @property overlayStructures The overlay structure templates, as many as [fossilStructures] in the same order.
- * @property fossilProcessors The processor list applied to the fossil structure.
- * @property overlayProcessors The processor list applied to the overlay structure.
+ * @property fossilProcessors The processor list applied to the fossil structure, by ID or inline.
+ * @property overlayProcessors The processor list applied to the overlay structure, by ID or inline.
  */
 @Serializable
 data class Fossil(
 	var maxEmptyCornersAllowed: Int = 0,
 	var fossilStructures: List<StructureArgument> = emptyList(),
 	var overlayStructures: List<StructureArgument> = emptyList(),
-	var fossilProcessors: ProcessorListArgument,
-	var overlayProcessors: ProcessorListArgument,
+	var fossilProcessors: ProcessorListOrInline,
+	var overlayProcessors: ProcessorListOrInline,
 ) : FeatureConfig()
 
 /**
@@ -59,6 +61,35 @@ fun ConfiguredFeatures.fossil(
 	overlayStructures: List<StructureArgument> = emptyList(),
 	fossilProcessors: ProcessorListArgument,
 	overlayProcessors: ProcessorListArgument,
+) = fossil(
+	fileName,
+	maxEmptyCornersAllowed,
+	fossilStructures,
+	overlayStructures,
+	processorListOrInline(fossilProcessors),
+	processorListOrInline(overlayProcessors),
+)
+
+/**
+ * Creates a `fossil` configured feature taking its processor lists by ID or inline.
+ *
+ * ```kotlin
+ * fossil(
+ *     "fossil_coal",
+ *     fossilStructures = listOf(StructureArgument("fossil/skull_1")),
+ *     overlayStructures = listOf(StructureArgument("fossil/skull_1_coal")),
+ *     fossilProcessors = processorListOrInline { blockRot(0.9) },
+ *     overlayProcessors = processorListOrInline(ProcessorLists.FOSSIL_COAL),
+ * )
+ * ```
+ */
+fun ConfiguredFeatures.fossil(
+	fileName: String,
+	maxEmptyCornersAllowed: Int = 0,
+	fossilStructures: List<StructureArgument> = emptyList(),
+	overlayStructures: List<StructureArgument> = emptyList(),
+	fossilProcessors: ProcessorListOrInline,
+	overlayProcessors: ProcessorListOrInline,
 ) = dp.configuredFeature(
 	fileName,
 	Fossil(maxEmptyCornersAllowed, fossilStructures, overlayStructures, fossilProcessors, overlayProcessors),

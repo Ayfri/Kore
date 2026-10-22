@@ -19,6 +19,8 @@ import net.benwoodworth.knbt.nbtCompound
  * @param delegate The plugin-generated structural serializer for [T] (use `@KeepGeneratedSerializer` + `generatedSerializer()`).
  * @param propertyNamesToInline The serial names of the properties to check for inlining.
  * @param inline Whether to attempt to inline the first non-null property from [propertyNamesToInline].
+ * @param decodeOnly Serial names tried on decode after [propertyNamesToInline], but never inlined on encode. Lets a
+ * property be read from its bare value (e.g. a list) while it is still written inside the object.
  *
  * Example:
  * ```kotlin
@@ -35,10 +37,13 @@ open class EitherInlineSerializer<T : Any>(
 	private val delegate: KSerializer<T>,
 	private vararg val propertyNamesToInline: String,
 	private val inline: Boolean = true,
+	private val decodeOnly: List<String> = emptyList(),
 ) : KSerializer<T> {
 	override val descriptor get() = delegate.descriptor
 
 	private val namesToInline get() = if (inline) propertyNamesToInline.asList() else emptyList()
+
+	private val namesToDecode get() = if (inline) propertyNamesToInline.asList() + decodeOnly else emptyList()
 
 	override fun serialize(encoder: Encoder, value: T) = when (encoder) {
 		is JsonEncoder -> {
@@ -55,7 +60,7 @@ open class EitherInlineSerializer<T : Any>(
 	override fun deserialize(decoder: Decoder): T = when (decoder) {
 		is JsonDecoder -> {
 			val element = decoder.decodeJsonElement()
-			namesToInline.firstNotNullOfOrNull { name ->
+			namesToDecode.firstNotNullOfOrNull { name ->
 				val wrapped = JsonObject(mapOf(descriptor.jsonKey(decoder.json, name) to element))
 				runCatching { decoder.json.decodeFromJsonElement(delegate, wrapped) }.getOrNull()
 			} ?: decoder.json.decodeFromJsonElement(delegate, element)
@@ -63,7 +68,7 @@ open class EitherInlineSerializer<T : Any>(
 
 		else -> decoder.nbtDecoder?.let { nbt ->
 			val tag = nbt.decodeNbtTag()
-			namesToInline.firstNotNullOfOrNull { name ->
+			namesToDecode.firstNotNullOfOrNull { name ->
 				runCatching { decodeFromNbtTag(delegate, NbtCompound(mapOf(descriptor.snakeCaseKey(name) to tag))) }.getOrNull()
 			} ?: decodeFromNbtTag(delegate, tag)
 		} ?: decoder.decodeSerializableValue(delegate)

@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 import io.github.ayfri.kore.arguments.StructureRotation
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
+import io.github.ayfri.kore.features.worldgen.processorlist.ProcessorListOrInline
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import kotlinx.serialization.Serializable
 
@@ -39,10 +40,12 @@ data class WeightedStructureTemplateEntry(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#template
  *
+ * @property processors The processor list applied to the placed template, by ID or inline, none when `null`.
  * @property templates The weighted structure templates to pick from.
  */
 @Serializable
 data class Template(
+	var processors: ProcessorListOrInline? = null,
 	var templates: List<WeightedStructureTemplateEntry>,
 ) : FeatureConfig()
 
@@ -71,14 +74,30 @@ fun structureTemplate(
  * )
  * ```
  *
+ * The [processors] list is applied to the placed template:
+ *
+ * ```kotlin
+ * template(
+ *     "end_city_bridges",
+ *     structureTemplate(Structures.EndCity.BRIDGE_END),
+ *     processors = processorListOrInline(ProcessorLists.EMPTY),
+ * )
+ * ```
+ *
  * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#template
  */
-fun ConfiguredFeatures.template(fileName: String, vararg templates: WeightedStructureTemplateEntry) =
-	dp.configuredFeature(fileName, Template(templates.toList()))
+fun ConfiguredFeatures.template(
+	fileName: String,
+	vararg templates: WeightedStructureTemplateEntry,
+	processors: ProcessorListOrInline? = null,
+) = dp.configuredFeature(fileName, Template(processors, templates.toList()))
 
-/** Creates a `template` configured feature placing one of the weighted [templates]. */
-fun ConfiguredFeatures.template(fileName: String, templates: List<WeightedStructureTemplateEntry>) =
-	dp.configuredFeature(fileName, Template(templates))
+/** Creates a `template` configured feature placing one of the weighted [templates], with the optional [processors]. */
+fun ConfiguredFeatures.template(
+	fileName: String,
+	templates: List<WeightedStructureTemplateEntry>,
+	processors: ProcessorListOrInline? = null,
+) = dp.configuredFeature(fileName, Template(processors, templates))

@@ -1,5 +1,7 @@
 package io.github.ayfri.kore.features.worldgen.templatepool.elements
 
+import io.github.ayfri.kore.features.worldgen.processorlist.ProcessorListOrInline
+import io.github.ayfri.kore.features.worldgen.processorlist.processorListOrInline
 import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.LiquidSettings
 import io.github.ayfri.kore.features.worldgen.templatepool.Projection
 import io.github.ayfri.kore.features.worldgen.templatepool.TemplatePoolEntry
@@ -16,14 +18,14 @@ import kotlinx.serialization.Serializable
  *
  * @property projection How the piece adapts to the terrain.
  * @property location The structure template to place.
- * @property processors The processor list applied to every block of the template.
+ * @property processors The processor list applied to every block of the template, by ID or inline.
  * @property overrideLiquidSettings Overrides the waterlogging behavior of the jigsaw structure for this piece.
  */
 @Serializable
 data class LegacySinglePoolElement(
 	var projection: Projection = Projection.RIGID,
 	var location: StructureArgument,
-	var processors: ProcessorListArgument = ProcessorLists.EMPTY,
+	var processors: ProcessorListOrInline = processorListOrInline(ProcessorLists.EMPTY),
 	var overrideLiquidSettings: LiquidSettings? = null,
 ) : TemplatePoolElement()
 
@@ -38,7 +40,12 @@ fun PoolEntriesScope.legacySingle(
 	weight: Int = 1,
 	projection: Projection = Projection.RIGID,
 	block: LegacySinglePoolElement.() -> Unit = {},
-) = apply { elements += TemplatePoolEntry(weight, LegacySinglePoolElement(projection, location, processors).apply(block)) }
+) = apply {
+	elements += TemplatePoolEntry(
+		weight,
+		LegacySinglePoolElement(projection, location, processorListOrInline(processors)).apply(block),
+	)
+}
 
 /**
  * Appends a `legacy_single_pool_element` placing the [location] template to the enclosing [ListPoolElement].
@@ -50,4 +57,4 @@ fun PoolElementsScope.legacySingle(
 	processors: ProcessorListArgument = ProcessorLists.EMPTY,
 	projection: Projection = Projection.RIGID,
 	block: LegacySinglePoolElement.() -> Unit = {},
-) = apply { elements += LegacySinglePoolElement(projection, location, processors).apply(block) }
+) = apply { elements += LegacySinglePoolElement(projection, location, processorListOrInline(processors)).apply(block) }

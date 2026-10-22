@@ -6,7 +6,9 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.data.block.blockState
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
+import io.github.ayfri.kore.features.worldgen.processorlist.ProcessorListOrInline
 import io.github.ayfri.kore.features.worldgen.processorlist.processorList
+import io.github.ayfri.kore.features.worldgen.processorlist.processorListOrInline
 import io.github.ayfri.kore.features.worldgen.processorlist.types.*
 import io.github.ayfri.kore.features.worldgen.processorlist.types.rule.ProcessorRule
 import io.github.ayfri.kore.features.worldgen.processorlist.types.rule.blockentitymodifier.*
@@ -19,6 +21,9 @@ import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 fun DataPack.processorListTests() {
 	processorList("every_processor") {
@@ -288,5 +293,20 @@ class ProcessorListTests : FunSpec({
 			pretty()
 			processorListTests()
 		}
+	}
+
+	test("processor list or inline decodes an ID, the object form and the bare array") {
+		val json = dataPack("processorListOrInline") {}.jsonEncoder
+		val inline = processorListOrInline { gravity(HeightMap.OCEAN_FLOOR, offset = -1) }
+		val processors = """{"processor_type":"minecraft:gravity","heightmap":"OCEAN_FLOOR","offset":-1}"""
+
+		val id = json.decodeFromString<ProcessorListOrInline>("\"minecraft:empty\"")
+		id.id?.asString() shouldBe "minecraft:empty"
+		id.processors shouldBe null
+		json.encodeToString(id) shouldBe "\"minecraft:empty\""
+
+		json.decodeFromString<ProcessorListOrInline>("""{"processors":[$processors]}""") shouldBe inline
+		json.decodeFromString<ProcessorListOrInline>("[$processors]") shouldBe inline
+		json.encodeToString(inline) shouldBe """{"processors":[$processors]}"""
 	}
 })

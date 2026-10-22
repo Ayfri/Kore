@@ -42,7 +42,13 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.target
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.Surface
+import io.github.ayfri.kore.features.worldgen.processorlist.processorListOrInline
+import io.github.ayfri.kore.features.worldgen.processorlist.types.blockRot
+import io.github.ayfri.kore.features.worldgen.processorlist.types.rule.blockentitymodifier.appendLoot
+import io.github.ayfri.kore.features.worldgen.processorlist.types.rule.rule
+import io.github.ayfri.kore.features.worldgen.processorlist.types.rules
 import io.github.ayfri.kore.features.worldgen.ruletest.allOf
+import io.github.ayfri.kore.features.worldgen.ruletest.alwaysTrue
 import io.github.ayfri.kore.features.worldgen.ruletest.anyOf
 import io.github.ayfri.kore.features.worldgen.ruletest.blockMatch
 import io.github.ayfri.kore.features.worldgen.ruletest.heightMatch
@@ -497,6 +503,36 @@ fun DataPack.configuredFeatureTests() {
 				"minecraft:fossil/overlay/coal_0"
 			],
 			"fossil_processors": "minecraft:fossil_coal",
+			"overlay_processors": "minecraft:fossil_rot"
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.fossil(
+		"test_fossil_inline",
+		fossilStructures = listOf(StructureArgument("fossil/spine_1")),
+		overlayStructures = listOf(StructureArgument("fossil/overlay/coal_0")),
+		fossilProcessors = processorListOrInline { blockRot(0.9) },
+		overlayProcessors = processorListOrInline(ProcessorLists.FOSSIL_ROT),
+	)
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:fossil",
+			"max_empty_corners_allowed": 0,
+			"fossil_structures": [
+				"minecraft:fossil/spine_1"
+			],
+			"overlay_structures": [
+				"minecraft:fossil/overlay/coal_0"
+			],
+			"fossil_processors": {
+				"processors": [
+					{
+						"processor_type": "minecraft:block_rot",
+						"integrity": 0.9
+					}
+				]
+			},
 			"overlay_processors": "minecraft:fossil_rot"
 		}
 	""".trimIndent()
@@ -1495,6 +1531,79 @@ fun DataPack.configuredFeatureTests() {
 				{
 					"data": {
 						"id": "minecraft:end_city/bridge_gentle_stairs"
+					},
+					"weight": 1
+				}
+			]
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.template(
+		"test_template_processors",
+		structureTemplate(Structures.DesertWell.SUSPICIOUS_SAND),
+		processors = processorListOrInline {
+			rules {
+				rule {
+					inputPredicate = blockMatch(Blocks.SUSPICIOUS_SAND)
+					locationPredicate = alwaysTrue()
+					outputState = blockState(Blocks.SUSPICIOUS_SAND)
+					blockEntityModifier = appendLoot(LootTables.Archaeology.DESERT_WELL)
+				}
+			}
+		},
+	)
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:template",
+			"processors": {
+				"processors": [
+					{
+						"processor_type": "minecraft:rule",
+						"rules": [
+							{
+								"location_predicate": {
+									"predicate_type": "minecraft:always_true"
+								},
+								"input_predicate": {
+									"predicate_type": "minecraft:block_match",
+									"block": "minecraft:suspicious_sand"
+								},
+								"output_state": "minecraft:suspicious_sand",
+								"block_entity_modifier": {
+									"type": "minecraft:append_loot",
+									"loot_table": "minecraft:archaeology/desert_well"
+								}
+							}
+						]
+					}
+				]
+			},
+			"templates": [
+				{
+					"data": {
+						"id": "minecraft:desert_well/suspicious_sand"
+					},
+					"weight": 1
+				}
+			]
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.template(
+		"test_template_processor_list",
+		structureTemplate(Structures.DesertWell.WELL),
+		processors = processorListOrInline(ProcessorLists.EMPTY),
+	)
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:template",
+			"processors": "minecraft:empty",
+			"templates": [
+				{
+					"data": {
+						"id": "minecraft:desert_well/well"
 					},
 					"weight": 1
 				}
