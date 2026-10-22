@@ -113,9 +113,19 @@ mannequin {
 }
 ```
 
-The game also accepts a name or UUID with `texture`, `cape`, `elytra` or `model` overrides in the same profile, like
-`{name:"Ayfri",model:"slim"}`. That combination isn't possible with Kore's builders because `PlayerProfile` and `TextureProfile` are
-separate types.
+A player profile also takes `texture`, `cape`, `elytra` and `model` overrides, applied on top of the looked-up skin:
+
+```kotlin
+mannequin {
+	playerProfile("Ayfri") {
+		model = MannequinModel.SLIM
+	}
+}
+```
+
+```mcfunction
+summon minecraft:mannequin ~ ~ ~ {profile:{model:"slim",name:"Ayfri"}}
+```
 
 ## Customization
 

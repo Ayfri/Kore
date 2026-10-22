@@ -696,13 +696,19 @@ fun itemComponentsTests() {
 	profileTest.asString() assertsIs """minecraft:player_head[profile={name:"Notch"}]"""
 
 	profileTest.components!!.playerProfile("Notch", id = uuid("8667ba71-b85a-4004-af54-457a9734eed7"))
-	profileTest.asString() assertsIs """minecraft:player_head[profile={name:"Notch",id:[I;-2040022415,-1202044924,-1353431686,-1758138665]}]"""
+	profileTest.asString() assertsIs """minecraft:player_head[profile={id:[I;-2040022415,-1202044924,-1353431686,-1758138665],name:"Notch"}]"""
 
 	profileTest.components!!.playerProfile("Notch") {
 		property("test", "test")
 		property("test", byteArrayOf('K'.code.toByte(), 'o'.code.toByte(), 'r'.code.toByte(), 'e'.code.toByte()))
 	}
 	profileTest.asString() assertsIs """minecraft:player_head[profile={name:"Notch",properties:[{name:"test",value:"test"},{name:"test",value:"Kore"}]}]"""
+
+	profileTest.components!!.playerProfile("Notch") {
+		model = MannequinModel.SLIM
+		texture = Textures.Entity.Player.Slim.ALEX
+	}
+	profileTest.asString() assertsIs """minecraft:player_head[profile={model:"slim",name:"Notch",texture:"minecraft:entity/player/slim/alex"}]"""
 
 	profileTest.components!!.textureProfile(texture = "tex", model = MannequinModel.SLIM)
 	profileTest.asString() assertsIs """minecraft:player_head[profile={model:"slim",texture:"minecraft:tex"}]"""

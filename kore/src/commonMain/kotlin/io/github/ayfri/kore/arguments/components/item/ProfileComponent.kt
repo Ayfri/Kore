@@ -25,7 +25,7 @@ data class ProfileProperty(
 /**
  * Represents the `minecraft:profile` item component, which sets the player skin displayed on a player head item.
  *
- * Can be a [PlayerProfile] (name/UUID lookup) or a [TextureProfile] (direct texture model).
+ * Can be a [PlayerProfile] (name/UUID lookup, with optional texture overrides) or a [TextureProfile] (direct textures).
  *
  * Docs: https://kore.ayfri.com/docs/concepts/components
  * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#profile
@@ -42,11 +42,23 @@ sealed class ProfileComponent : Component() {
 	}
 }
 
+/**
+ * A profile looked up by [name] or [id], or built from [properties], that can also override the looked-up skin with
+ * [texture], [cape], [elytra] and [model].
+ *
+ * ```
+ * playerProfile("Ayfri") { model = MannequinModel.SLIM } // profile={model:"slim",name:"Ayfri"}
+ * ```
+ */
 @Serializable
 data class PlayerProfile(
-	var name: String? = null,
+	var cape: CapeTextureArgument? = null,
+	var elytra: ElytraTextureArgument? = null,
 	@Serializable(with = UUIDAsIntArraySerializer::class) var id: UUIDArgument? = null,
+	var model: MannequinModel? = null,
+	var name: String? = null,
 	var properties: List<ProfileProperty>? = null,
+	var texture: PlayerSkinTextureArgument? = null,
 ) : ProfileComponent()
 
 @Serializable
@@ -63,7 +75,7 @@ fun ComponentsScope.playerProfile(
 	id: UUIDArgument? = null,
 	properties: List<ProfileProperty>? = null,
 ) = apply {
-	this[ItemComponentTypes.PROFILE] = PlayerProfile(name, id, properties)
+	this[ItemComponentTypes.PROFILE] = PlayerProfile(id = id, name = name, properties = properties)
 }
 
 fun ComponentsScope.playerProfile(
@@ -73,7 +85,7 @@ fun ComponentsScope.playerProfile(
 ) = playerProfile(name, UUIDArgument(id), properties)
 
 fun ComponentsScope.playerProfile(name: String? = null, id: UUIDArgument? = null, block: PlayerProfile.() -> Unit) = apply {
-	this[ItemComponentTypes.PROFILE] = PlayerProfile(name, id).apply(block)
+	this[ItemComponentTypes.PROFILE] = PlayerProfile(id = id, name = name).apply(block)
 }
 
 fun ComponentsScope.playerProfile(name: String? = null, id: Uuid, block: PlayerProfile.() -> Unit) =

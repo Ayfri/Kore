@@ -43,6 +43,14 @@ fun Function.mannequinTests() {
 
 	m2String.toNbt().toString() assertsIs "{profile:{texture:\"mypack:skins/bob\"}}"
 
+	val m2Player = mannequin {
+		playerProfile("Ayfri") {
+			model = MannequinModel.SLIM
+		}
+	}
+
+	m2Player.toNbt().toString() assertsIs "{profile:{model:\"slim\",name:\"Ayfri\"}}"
+
 	val m3 = mannequin {
 		description = textComponent("Test")
 		hideDescription = false
