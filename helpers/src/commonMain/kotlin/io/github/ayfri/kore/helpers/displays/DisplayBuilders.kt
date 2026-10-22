@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.helpers.displays
 
 import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
+import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.Components
 import io.github.ayfri.kore.arguments.types.resources.BlockArgument
@@ -24,7 +25,7 @@ fun BlockDisplay.blockState(block: BlockArgument, init: BlockStateBuilder.() -> 
 }
 
 fun TextDisplay.text(text: String = "", color: Color? = null, init: PlainTextComponent.() -> Unit = {}) {
-	this.text = io.github.ayfri.kore.arguments.chatcomponents.text(text, color, init)
+	this.text = textComponent(text, color, init)
 }
 
 fun textDisplay(block: TextDisplay.() -> Unit) = TextDisplay().apply(block)

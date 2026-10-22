@@ -135,6 +135,20 @@ val textDisplay = textDisplay {
 }
 ```
 
+`text` takes any text component, so several styled parts can be joined with `+`:
+
+```kotlin
+val legendary = textDisplay {
+	text = textComponent("Legendary ", Color.GOLD) + textComponent("Sword")
+}
+
+summon(legendary.entityType, vec3(), legendary.toNbt())
+```
+
+```mcfunction
+summon minecraft:text_display ~ ~ ~ {text:[{type:"text",text:""},{type:"text",color:"gold",text:"Legendary "},{type:"text",text:"Sword"}]}
+```
+
 ## Transformations
 
 Transformations are used to modify the translation, left/right rotations and scale of displays. They are created by calling `transformation`

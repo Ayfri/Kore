@@ -1,6 +1,6 @@
 package io.github.ayfri.kore.helpers.displays.entities
 
-import io.github.ayfri.kore.arguments.chatcomponents.PlainTextComponent
+import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.colors.ARGB
 import io.github.ayfri.kore.arguments.colors.ColorAsARGBDecimalSerializer
 import io.github.ayfri.kore.generated.EntityTypes
@@ -21,7 +21,7 @@ data class TextDisplay(
 	var lineWidth: Int? = null,
 	var seeThrough: Boolean? = null,
 	var shadow: Boolean? = null,
-	var text: PlainTextComponent? = null,
+	var text: ChatComponents? = null,
 	var textOpacity: Byte? = null,
 ) : DisplayEntity() {
 	override val entityType = EntityTypes.TEXT_DISPLAY
@@ -53,7 +53,7 @@ data class TextDisplay(
 					value.lineWidth?.let { encodeSerializableElement(descriptor, 3, Int.serializer(), it) }
 					value.seeThrough?.let { encodeSerializableElement(descriptor, 4, Boolean.serializer(), it) }
 					value.shadow?.let { encodeSerializableElement(descriptor, 5, Boolean.serializer(), it) }
-					value.text?.let { encodeSerializableElement(descriptor, 6, NbtTag.serializer(), it.toNbt()) }
+					value.text?.let { encodeSerializableElement(descriptor, 6, NbtTag.serializer(), it.toNbtTag()) }
 					value.textOpacity?.let { encodeSerializableElement(descriptor, 7, Byte.serializer(), it) }
 					encodeDisplayEntity(value, descriptor, 8)
 				}
