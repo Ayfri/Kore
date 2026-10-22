@@ -5,7 +5,7 @@ nav-title: Time
 description: Work with Minecraft time in Kore using TimeNumber. Type-safe ticks, seconds, and days with arithmetic, conversions, and integration with commands, schedulers, and timers.
 keywords: minecraft time, ticks to seconds, minecraft tick timer, kore TimeNumber, datapack duration, tick conversion, minecraft time command, schedule delay, minecraft day cycle, time arithmetic
 date-created: 2026-06-16
-date-modified: 2026-06-16
+date-modified: 2026-10-22
 routeOverride: /docs/concepts/time
 ---
 
@@ -80,6 +80,14 @@ twentyTicks.inDays()      // TimeNumber(1/1200 ≈ 0.000833, DAYS)
 val oneDay = 1.days
 oneDay.inTicks()          // TimeNumber(24000.0, TICKS)
 oneDay.inSeconds()        // TimeNumber(1200.0, SECONDS)
+```
+
+`wholeTicks()` gives the duration as an `Int` of ticks, truncated, for NBT and score values:
+
+```kotlin
+2.seconds.wholeTicks()     // 40
+0.07.seconds.wholeTicks()  // 1, truncated
+1.days.wholeTicks()        // 24000
 ```
 
 `toTicks()` / `toSeconds()` / `toDays()` reinterpret the raw number without converting (rarely needed):

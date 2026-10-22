@@ -49,7 +49,7 @@ data class TimerHandle(val timer: Timer) {
 
 		fn.execute {
 			ifCondition {
-				score(entity.asSelector(), timer.name, rangeOrInt(timer.duration.inTicks().value.toInt()))
+				score(entity.asSelector(), timer.name, rangeOrInt(timer.duration.wholeTicks()))
 			}
 			run { functionCommand(generated) }
 		}

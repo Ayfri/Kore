@@ -48,7 +48,7 @@ data class DisplayEntityInterpolable(val entity: DisplayEntity, var lastPosition
 		duration: TimeNumber,
 		start: Int = entity.startInterpolation ?: 0,
 		transformation: Transformation,
-	): Command = interpolateTo(duration.inTicks().value.toInt(), start, transformation)
+	): Command = interpolateTo(duration.wholeTicks(), start, transformation)
 
 	context(fn: Function)
 	fun interpolateTo(

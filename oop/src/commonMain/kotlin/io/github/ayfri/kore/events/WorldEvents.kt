@@ -128,7 +128,7 @@ fun World.onInterval(period: TimeNumber, block: Function.() -> Unit) =
 	) { handlers, tagName ->
 		val obj = OopConstants.worldStateObjective
 		val counter = literal(OopConstants.worldStateScore(tagName, "counter"))
-		val target = period.inTicks().value.toInt()
+		val target = period.wholeTicks()
 
 		scoreboard { players { add(counter, obj, 1) } }
 		execute {

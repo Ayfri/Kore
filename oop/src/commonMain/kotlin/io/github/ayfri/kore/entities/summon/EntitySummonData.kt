@@ -124,8 +124,6 @@ data class ItemEntitySummonData(
 	override fun toNbt() = encodeToNbtTag(serializer(), this).nbtCompound
 }
 
-private fun TimeNumber.wholeTicks() = inTicks().value.toInt()
-
 /**
  * Sets the free NBT stored on the entity.
  *

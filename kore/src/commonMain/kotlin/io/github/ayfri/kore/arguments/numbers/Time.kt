@@ -32,6 +32,17 @@ data class TimeNumber(val value: Double, val type: TimeType = TimeType.TICKS) : 
 		TimeType.DAYS -> TimeNumber(value * 24000, TimeType.TICKS)
 	}
 
+	/**
+	 * This duration as a whole number of ticks, truncated, for the NBT and score values that hold an `Int`.
+	 *
+	 * ```
+	 * 2.seconds.wholeTicks()      // 40
+	 * 0.07.seconds.wholeTicks()   // 1, truncated
+	 * 1.days.wholeTicks()         // 24000
+	 * ```
+	 */
+	fun wholeTicks() = inTicks().value.toInt()
+
 	fun inSeconds() = when (type) {
 		TimeType.TICKS -> TimeNumber(value / 20, TimeType.SECONDS)
 		TimeType.SECONDS -> TimeNumber(value, TimeType.SECONDS)
