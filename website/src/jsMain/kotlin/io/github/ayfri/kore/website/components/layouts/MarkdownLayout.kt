@@ -12,6 +12,7 @@ import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.*
 import io.github.ayfri.kore.website.components.doc.*
 import io.github.ayfri.kore.website.components.mc.DocMockupsStyle
+import io.github.ayfri.kore.website.components.mc.McPlayerModelStyle
 import io.github.ayfri.kore.website.components.mc.McUiStyle
 import io.github.ayfri.kore.website.utils.*
 import kotlin.time.Duration.Companion.seconds
@@ -38,6 +39,7 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 	Style(DocControlsStyle)
 	Style(DocMockupsStyle)
 	Style(MarkdownLayoutStyle)
+	Style(McPlayerModelStyle)
 	Style(McSpriteStyle)
 	Style(McUiStyle)
 

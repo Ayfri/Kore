@@ -145,6 +145,12 @@ fun McTooltip(vararg extraClasses: String, content: @Composable () -> Unit) {
 	Div({ classes(McUiStyle.tooltip, *extraClasses) }) { content() }
 }
 
+/** A name tag line over an entity, on the game's translucent backdrop and without text shadow. */
+@Composable
+fun McNameTag(text: String) {
+	Div({ classes(McUiStyle.nameTag) }) { McLine(text, shadow = false) }
+}
+
 /** A button drawn with the vanilla 9-slice `widget/button` sprite, [width] in GUI pixels (null to fit the label). */
 @Composable
 fun McButton(label: String, enabled: Boolean = true, width: Int? = null, onClick: () -> Unit = {}) {
@@ -453,6 +459,12 @@ object McUiStyle : StyleSheet() {
 			imageRendering(ImageRendering.Pixelated)
 			inset(gui(-8))
 		}
+	}
+
+	val nameTag by style {
+		backgroundColor(rgba(0, 0, 0, 0.25))
+		padding(gui(1), 0.px, 0.px, gui(1))
+		width(Width.MaxContent)
 	}
 
 	/**

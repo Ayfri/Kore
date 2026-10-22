@@ -42,6 +42,10 @@ summon minecraft:mannequin ~ ~ ~ {profile:{name:"Ayfri"}}
 
 Without a `profile`, a mannequin wears the default slim Alex skin.
 
+Type a player name below, pick a pose and the layers to hide, and copy the `summon` command or the Kotlin that writes it.
+
+{{{ .components.doc.MannequinBuilder }}}
+
 ## Profiles
 
 `profile` is the same value as the [`minecraft:profile` component](https://minecraft.wiki/w/Data_component_format#profile) of player
@@ -172,6 +176,8 @@ The `pose` field sets the mannequin's pose, a subset of the poses players take:
 - `SWIMMING`
 - `FALL_FLYING`
 - `SLEEPING`
+
+{{{ .components.doc.MannequinPoses }}}
 
 ## Hidden Layers
 

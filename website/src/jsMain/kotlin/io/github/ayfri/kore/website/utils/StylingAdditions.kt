@@ -143,6 +143,9 @@ fun StyleScope.paddingY(value: CSSNumeric) {
 	paddingBottom(value)
 }
 
+/** The distance from the viewer to the `z = 0` plane of the 3D children, a longer one flattening the perspective. */
+fun StyleScope.perspective(value: CSSLengthNumericValue) = property("perspective", value)
+
 /** The mobile tap flash, only settable through its `-webkit-` name. */
 fun StyleScope.tapHighlightColor(color: CSSColorValue) = property("-webkit-tap-highlight-color", color)
 
