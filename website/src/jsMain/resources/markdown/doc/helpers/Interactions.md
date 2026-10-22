@@ -400,6 +400,9 @@ scoreboard objectives add my_pack.npc.counter.total dummy
 
 For a value that is read back as a Kotlin property, see [State Delegates](/docs/helpers/state-delegates).
 
+An NPC that talks, with timed lines and choices per player, calls a [conversation](/docs/helpers/conversations) from
+`onRightClick`.
+
 ### NpcEntity
 
 `summon` returns an `NpcEntity` holding the two handles, `mannequin` and `interaction`, each targeting its instance by UUID.

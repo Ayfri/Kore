@@ -59,6 +59,8 @@ That makes helpers a good fit for packs that start simple and progressively adop
   when your source text already contains terminal-style formatting.
 - **[Area](/docs/helpers/area)** - Work with axis-aligned 3D regions for containment checks, intersections, unions,
   and coordinate transforms.
+- **[Conversations](/docs/helpers/conversations)** - Script per-player NPC dialogue with timed lines, click pauses, and
+  dialog or chat choices.
 - **[Display Entities](/docs/helpers/display-entities)** - Configure block, item, and text display entities with shared
   transformations, billboards, brightness, and interpolation settings.
 - **[Interactions](/docs/helpers/interactions)** - Make clickable hitboxes and clickable mannequin NPCs with right and

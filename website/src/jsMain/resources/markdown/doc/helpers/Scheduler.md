@@ -5,7 +5,7 @@ nav-title: Scheduler
 description: Schedule and loop tasks in Minecraft datapacks with Kore. Tick-based loops, delayed actions, repeating schedules, and timed callbacks without complex scoreboard chains.
 keywords: datapack scheduler, minecraft schedule, timer datapack, datapack loop, tick loop minecraft, schedule function, repeating task datapack, delay command minecraft, kore scheduler, datapack timer loop
 date-created: 2025-03-26
-date-modified: 2026-10-07
+date-modified: 2026-10-22
 routeOverride: /docs/helpers/scheduler
 ---
 
@@ -43,6 +43,9 @@ in the `helpers` module.
 
 **Note:**
 **Schedulers are saved and loaded from a `scheduler_setup` function that is added to the `minecraft/load.json` tag.**
+
+A scheduled function runs without an executor, so `@s` is lost. For a delay that keeps the player, such as the lines of an
+NPC, use [Conversations](/docs/helpers/conversations), whose `wait` runs the next step as the same player.
 
 ## Basic Usage
 

@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.helpers
 
 object HelpersConstants {
+	const val conversationAdvancementFolder = "conversation"
 	const val interactionAdvancementFolder = "interaction"
 	var mathDisplayUuid = "4b4f5245-0000-0000-0000-000000000002"
 	var mathEntitiesX = -30_000_000
@@ -14,6 +15,19 @@ object HelpersConstants {
 	var raycastObjective = "kore_raycast"
 	var raycastTag = "kore_raycasting"
 
+	fun conversationAdvanceFunctionName(name: String) = "conversation_${name}_advance"
+	fun conversationAdvancementName(name: String) = "$conversationAdvancementFolder/$name"
+	fun conversationChoiceDialogName(name: String, id: Int) = "conversation_${name}_choice_$id"
+	fun conversationChoiceObjective(namespace: String, name: String) = "${conversationObjective(namespace, name)}.choice"
+	fun conversationDispatchFunctionName(name: String) = "conversation_${name}_dispatch"
+	fun conversationLoadFunctionName(name: String) = "conversation_${name}_load"
+	fun conversationObjective(namespace: String, name: String) = "$namespace.conversation.$name"
+	fun conversationReenableFunctionName(name: String) = "conversation_${name}_reenable"
+	fun conversationResumeFunctionName(name: String) = "conversation_${name}_resume"
+	fun conversationSegmentFunctionName(name: String, id: Int) = "conversation_${name}_$id"
+	fun conversationShowFunctionName(name: String, id: Int) = "conversation_${name}_show_$id"
+	fun conversationTickFunctionName(name: String) = "conversation_${name}_tick"
+	fun conversationWaitObjective(namespace: String, name: String) = "${conversationObjective(namespace, name)}.wait"
 	fun interactionClickedTag(namespace: String) = "$namespace.interaction.clicked"
 	fun interactionClickFunctionName(name: String, event: String) = "interaction_${name}_$event"
 	fun interactionHitFunctionName(name: String, event: String) = "interaction_${name}_${event}_hit"
