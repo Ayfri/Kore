@@ -5,7 +5,7 @@ nav-title: Block Predicates
 description: Test blocks during world generation with Kore's block predicate DSL - solid, matching blocks, fluids, biomes, tags and offsets.
 keywords: minecraft, datapack, kore, worldgen, block predicate, placement condition, matching blocks, would survive
 date-created: 2026-08-19
-date-modified: 2026-10-20
+date-modified: 2026-10-22
 routeOverride: /docs/data-driven/worldgen/block-predicates
 ---
 
@@ -65,7 +65,7 @@ blockPredicateFilter {
 
 ## Offsets
 
-Every predicate testing a block accepts an offset, applied to the position being placed. Each component has to be between `-16` and `16`:
+Every predicate testing a single block accepts an offset, applied to the position being placed. Each component has to be between `-16` and `16`:
 
 ```kotlin
 predicate {
@@ -74,7 +74,8 @@ predicate {
 }
 ```
 
-`all_of`, `any_of`, `not`, `true` and `matching_biomes` have no offset - they either combine other predicates or test the position itself.
+`all_of`, `any_of`, `height_range`, `matching_biomes`, `not`, `true` and `volume_match` have no offset - they either combine other predicates or test
+the position itself. `volume_match` tests the box between its own `min` and `max` corners, each given as an offset from the position.
 
 ## Predicate Types
 
@@ -94,6 +95,7 @@ predicate {
 | `replaceable()`                  | The block can be replaced by a placed block (air, water, grass)   |
 | `solid()`                        | The block is solid                                                |
 | `unobstructed()`                 | No entity occupies the space of the block                         |
+| `volumeMatch(min, max) { }`      | Every block of the box between both corner offsets passes         |
 | `wouldSurvive(state)`            | The given block state is a valid placement there                  |
 
 ### Blocks, Fluids and Biomes
@@ -115,6 +117,34 @@ predicate {
 ```
 
 `matchingBlockTag` is the separate `matching_block_tag` type, which writes the tag without its `#` prefix.
+
+### Volume Match
+
+`volumeMatch` tests every block of a box, given by two corner offsets from the tested position, against the predicate built in its block. Each
+component has to be between `-16` and `16`. This is the desert well check, which requires no air under the whole area (water or any other non-air block passes):
+
+```kotlin
+blockPredicateFilter {
+	predicate {
+		volumeMatch(Triple(-2, -2, -2), Triple(2, -1, 2)) { not { matchingBlockTag(Tags.Block.AIR) } }
+	}
+}
+```
+
+```json
+{
+	"type": "minecraft:volume_match",
+	"match": {
+		"type": "minecraft:not",
+		"predicate": {
+			"type": "minecraft:matching_block_tag",
+			"tag": "minecraft:air"
+		}
+	},
+	"max": [2, -1, 2],
+	"min": [-2, -2, -2]
+}
+```
 
 ### Would Survive
 

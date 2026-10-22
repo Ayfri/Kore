@@ -332,6 +332,33 @@ fun DataPack.blockPredicateTests() {
 	}
 
 	assertPredicate(
+		"volume_match", """
+			{
+				"type": "minecraft:volume_match",
+				"match": {
+					"type": "minecraft:not",
+					"predicate": {
+						"type": "minecraft:matching_block_tag",
+						"tag": "minecraft:air"
+					}
+				},
+				"max": [
+					2,
+					-1,
+					2
+				],
+				"min": [
+					-2,
+					-2,
+					-2
+				]
+			}
+		""".trimIndent()
+	) {
+		volumeMatch(Triple(-2, -2, -2), Triple(2, -1, 2)) { not { matchingBlockTag(Tags.Block.AIR) } }
+	}
+
+	assertPredicate(
 		"would_survive", """
 			{
 				"type": "minecraft:would_survive",
