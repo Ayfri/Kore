@@ -101,7 +101,7 @@ when you leave it out.
 
 Conditions are injected at the JSON **root**, which must be an object. That covers recipes, advancements, loot tables,
 predicates (several conditions are written as one `all_of`), item modifiers (several functions are written as one
-`sequence`).
+`sequence`) and slot sources (several sources are written as one `group`).
 
 A constant number provider file is written as a bare number, which has no root to attach `fabric:load_conditions` to.
 Kore emits a warning and generates the file without conditions in that case. Use a provider that is an object if you

@@ -4,12 +4,13 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.generated.arguments.types.SlotSourceArgument
 import io.github.ayfri.kore.serializers.InlinableList
-import io.github.ayfri.kore.serializers.InlinableListSerializer
 import kotlinx.serialization.Transient
 
 /**
  * Data-driven slot source, usable by ID in `/item`, `/execute if items|slots` and in other slot sources through
- * [SlotSourceReference]. A file holding one reference is the bare string of its ID.
+ * [SlotSourceReference]. A file holds exactly one source object: a single source that isn't a reference is written as is,
+ * while several sources or a lone reference are wrapped in a `minecraft:group`. A file without any source isn't
+ * possible, use `empty()` to select no slot.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/slot-sources
  * Minecraft Wiki: https://minecraft.wiki/w/Slot_source
@@ -19,8 +20,11 @@ data class SlotSourceFile(
 	override var fileName: String = "slot_source",
 	var sources: InlinableList<SlotSource>,
 ) : Generator("slot_source") {
-	override fun generateJson(dataPack: DataPack) =
-		dataPack.jsonEncoder.encodeToString(InlinableListSerializer(SlotSource.serializer()), sources)
+	override fun generateJson(dataPack: DataPack): String {
+		require(sources.isNotEmpty()) { "Slot source file '$fileName' needs at least one source, use `empty()` to select no slot." }
+		val source = sources.singleOrNull()?.takeUnless { it is SlotSourceReference } ?: GroupSlotSource(sources)
+		return dataPack.jsonEncoder.encodeToString(SlotSource.serializer(), source)
+	}
 }
 
 /**

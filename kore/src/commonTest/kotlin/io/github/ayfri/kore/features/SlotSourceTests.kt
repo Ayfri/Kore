@@ -9,18 +9,17 @@ import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.slotsources.*
 import io.github.ayfri.kore.generated.arguments.tagged.SlotSourceTagArgument
 import io.github.ayfri.kore.generated.arguments.types.SlotSourceArgument
-import io.github.ayfri.kore.serializers.InlinableListSerializer
 import io.github.ayfri.kore.utils.pretty
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.types.shouldBeInstanceOf
 
 private fun DataPack.slotSourceRoundTrip() {
 	val json = slotSources.last().generateJson(this)
-	val serializer = InlinableListSerializer(SlotSource.serializer())
-	val decoded = jsonEncoder.decodeFromString(serializer, json)
+	val decoded = jsonEncoder.decodeFromString(SlotSource.serializer(), json)
 
-	jsonEncoder.encodeToString(serializer, decoded) assertsIs json
+	jsonEncoder.encodeToString(SlotSource.serializer(), decoded) assertsIs json
 }
 
 fun DataPack.slotSourceTests() {
@@ -45,23 +44,26 @@ fun DataPack.slotSourceTests() {
 	}
 
 	slotSources.last() assertsIs """
-		[
-			"slot_source_tests:hands",
-			{
-				"type": "minecraft:slot_range",
-				"source": "container",
-				"slots": "armor.*"
-			},
-			{
-				"type": "minecraft:limit_slots",
-				"limit": 2,
-				"slot_source": {
+		{
+			"type": "minecraft:group",
+			"terms": [
+				"slot_source_tests:hands",
+				{
 					"type": "minecraft:slot_range",
-					"source": "this",
-					"slots": "hotbar.*"
+					"source": "container",
+					"slots": "armor.*"
+				},
+				{
+					"type": "minecraft:limit_slots",
+					"limit": 2,
+					"slot_source": {
+						"type": "minecraft:slot_range",
+						"source": "this",
+						"slots": "hotbar.*"
+					}
 				}
-			}
-		]
+			]
+		}
 	""".trimIndent()
 	slotSourceRoundTrip()
 
@@ -69,25 +71,38 @@ fun DataPack.slotSourceTests() {
 		reference(hands)
 	}
 
-	slotSources.last() assertsIs "\"slot_source_tests:hands\""
+	slotSources.last() assertsIs """
+		{
+			"type": "minecraft:group",
+			"terms": "slot_source_tests:hands"
+		}
+	""".trimIndent()
 	slotSourceRoundTrip()
 
 	slotSource("only_tag") {
 		reference(SlotSourceTagArgument("all_hands", "slot_source_tests"))
 	}
 
-	slotSources.last() assertsIs "\"#slot_source_tests:all_hands\""
+	slotSources.last() assertsIs """
+		{
+			"type": "minecraft:group",
+			"terms": "#slot_source_tests:all_hands"
+		}
+	""".trimIndent()
 
 	slotSource("references") {
 		reference(hands)
-		reference(SlotSourceTagArgument("all_hands", "slot_source_tests"))
+		reference(SlotSourceArgument("offhand", "slot_source_tests"))
 	}
 
 	slotSources.last() assertsIs """
-		[
-			"slot_source_tests:hands",
-			"#slot_source_tests:all_hands"
-		]
+		{
+			"type": "minecraft:group",
+			"terms": [
+				"slot_source_tests:hands",
+				"slot_source_tests:offhand"
+			]
+		}
 	""".trimIndent()
 	slotSourceRoundTrip()
 
@@ -116,25 +131,28 @@ fun DataPack.slotSourceTests() {
 	}
 
 	slotSources.last() assertsIs """
-		[
-			{
-				"type": "minecraft:contents",
-				"component": "minecraft:container",
-				"slot_source": "slot_source_tests:hands"
-			},
-			{
-				"type": "minecraft:limit_slots",
-				"limit": 1,
-				"slot_source": [
-					"slot_source_tests:hands",
-					{
-						"type": "minecraft:slot_range",
-						"source": "this",
-						"slots": "hotbar.*"
-					}
-				]
-			}
-		]
+		{
+			"type": "minecraft:group",
+			"terms": [
+				{
+					"type": "minecraft:contents",
+					"component": "minecraft:container",
+					"slot_source": "slot_source_tests:hands"
+				},
+				{
+					"type": "minecraft:limit_slots",
+					"limit": 1,
+					"slot_source": [
+						"slot_source_tests:hands",
+						{
+							"type": "minecraft:slot_range",
+							"source": "this",
+							"slots": "hotbar.*"
+						}
+					]
+				}
+			]
+		}
 	""".trimIndent()
 	slotSourceRoundTrip()
 
@@ -155,6 +173,14 @@ class SlotSourceTests : FunSpec({
 		dataPack("slot_source_tests") {
 			pretty()
 			slotSourceTests()
+		}
+	}
+
+	test("slot source file without source") {
+		dataPack("slot_source_tests") {
+			slotSource("empty") {}
+
+			shouldThrow<IllegalArgumentException> { slotSources.last().generateJson(this) }
 		}
 	}
 })

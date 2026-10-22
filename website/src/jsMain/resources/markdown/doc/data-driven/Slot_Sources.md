@@ -5,7 +5,7 @@ nav-title: Slot Sources
 description: Select inventory slots in Minecraft loot tables, /item and /execute with Kore's type-safe slot source DSL and slot source files.
 keywords: minecraft, datapack, kore, slot sources, slot_source, item command, execute if items, execute if slots, loot tables
 date-created: 2026-10-08
-date-modified: 2026-10-21
+date-modified: 2026-10-22
 routeOverride: /docs/data-driven/slot-sources
 ---
 
@@ -21,7 +21,7 @@ merged mix of them. The same builders are used in four places:
 | `/item` source and destination slots | `items.replace(self(), slots, ...)`        |
 | `/execute if items` and `if slots`   | `ifCondition { slots(self(), slots) }`     |
 
-Several sources in one block are concatenated, a single one is written as an object and several as an array.
+Several sources in one block are concatenated. A slot source file is written as one object (several sources are wrapped in a `group`), a field takes a single source as an object and several as an array.
 
 Reference: [Slot source](https://minecraft.wiki/w/Slot_source)
 
@@ -42,7 +42,16 @@ val hands = slotSource("hands") {
 }
 ```
 
-Another slot source points to a file with `reference(hands)`, which writes the bare string `"<namespace>:hands"`, see [Reference](#reference). A file can also be a reference alone: `slotSource("alias") { reference(hands) }` is written `"<namespace>:hands"`.
+A file is always one source object. Several sources, or a lone reference, are written as a `group`, which Kore does for you: `slotSource("alias") { reference(hands) }` is written as
+
+```json
+{
+	"type": "minecraft:group",
+	"terms": "<namespace>:hands"
+}
+```
+
+Another slot source points to a file with `reference(hands)`, which writes the bare string `"<namespace>:hands"`, see [Reference](#reference). A `slotSource { }` without any source throws when the pack is generated, `empty()` selects no slot.
 
 ## In Commands
 
@@ -181,15 +190,15 @@ slotSources {
 
 slotSource("hands_and_hotbar") {
 	reference(hands)
-	slotRange(SlotSourceOrigin.THIS, HOTBAR)  // ["my_pack:hands", {"type": "minecraft:slot_range", ...}]
+	slotRange(SlotSourceOrigin.THIS, HOTBAR)  // { "type": "minecraft:group", "terms": ["my_pack:hands", {"type": "minecraft:slot_range", ...}] }
 }
 
 slotSource("armor") {
-	reference(SlotSourceTagArgument("armor_slots", "my_pack"))  // "#my_pack:armor_slots"
+	reference(SlotSourceTagArgument("armor_slots", "my_pack"))  // { "type": "minecraft:group", "terms": "#my_pack:armor_slots" }
 }
 ```
 
-Every `slot_source` field (`contents`, `filtered`, `limitSlots`, the `slots` loot entry), the `terms` of a `group`, a slot source file and an inline slot source accept an ID, a tag, an inline source or a list mixing IDs and inline sources. A tag can't be one of the list's elements, only the whole list.
+Every `slot_source` field (`contents`, `filtered`, `limitSlots`, the `slots` loot entry), the `terms` of a `group` and an inline slot source accept an ID, a tag, an inline source or a list mixing IDs and inline sources. A tag can't be one of the list's elements, only the whole list. A slot source file doesn't: it is always an object.
 
 A slot source that references itself, directly or through other files, makes the pack fail to load.
 
