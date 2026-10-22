@@ -6,9 +6,9 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 /**
- * Serializes a [Color] as a `[r, g, b]` double-array with values in 0.0..1.0.
+ * Serializes a [Color] as a `[r, g, b, a]` double-array with values in 0.0..1.0, colors without alpha being fully opaque.
  *
- * Used by some particle effect payloads (e.g., enchantment-related) that expect normalized colors.
+ * Used where Minecraft expects normalized RGBA colors, like the chat type style.
  * See documentation: https://kore.ayfri.com/docs/concepts/colors
  */
 data object ColorAsDoubleArrayRGBASerializer : KSerializer<Color> {
