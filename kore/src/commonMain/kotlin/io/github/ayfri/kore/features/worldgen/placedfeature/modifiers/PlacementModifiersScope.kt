@@ -7,7 +7,8 @@ import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
  * Builder scope for declaring placement modifiers.
  *
  * Every placement modifier builder (e.g. [count], [inSquare], [randomlySelected]) is an extension on this interface, so
- * they only resolve inside a `placedFeature { }` block or a nested block such as [randomlySelected]'s.
+ * they only resolve inside a `placedFeature { }` block, the `placed(...) { }` block of an inline placed feature, or a nested
+ * block such as [randomlySelected]'s.
  *
  * @property placementModifiers The placement modifiers appended so far, in application order.
  */

@@ -2,6 +2,9 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
+import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeatureOrInline
+import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeaturesScope
+import io.github.ayfri.kore.features.worldgen.placedfeature.buildPlacedFeatures
 import io.github.ayfri.kore.generated.arguments.worldgen.PlacedFeatureOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -11,7 +14,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Sequence(
-	var features: InlinableList<PlacedFeatureOrTagArgument>,
+	var features: InlinableList<PlacedFeatureOrInline>,
 ) : FeatureConfig()
 
 /**
@@ -40,4 +43,22 @@ fun ConfiguredFeatures.sequence(fileName: String, vararg features: PlacedFeature
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  */
 fun ConfiguredFeatures.sequence(fileName: String, features: List<PlacedFeatureOrTagArgument>) =
-	dp.configuredFeature(fileName, Sequence(features))
+	dp.configuredFeature(fileName, Sequence(features.map { PlacedFeatureOrInline(feature = it) }))
+
+/**
+ * Creates a `sequence` configured feature placing the placed features declared in [block] in order, by ID with
+ * `feature(...)` or inline with `placed(...)`, stopping at the first one that is not placed.
+ *
+ * ```kotlin
+ * sequence("tree_then_flowers") {
+ *     feature(PlacedFeatures.ACACIA)
+ *     placed(Features.FLOWER_DEFAULT) { offset(y = constant(1)) }
+ * }
+ * ```
+ *
+ * Produces `data/<namespace>/worldgen/feature/<fileName>.json`.
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
+ */
+fun ConfiguredFeatures.sequence(fileName: String, block: PlacedFeaturesScope.() -> Unit) =
+	dp.configuredFeature(fileName, Sequence(buildPlacedFeatures(block)))

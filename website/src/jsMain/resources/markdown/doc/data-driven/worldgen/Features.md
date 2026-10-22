@@ -271,6 +271,34 @@ isn't. A single feature or tag is written as a bare string.
 overlay("basalt_pillars", PlacedFeatures.BASALT_BLOBS, PlacedFeatures.BASALT_PILLAR)
 ```
 
+`overlay`, `sequence` and `simpleRandomSelector` also take a block where `feature(...)` adds a placed feature by ID and `placed(...) { }`
+adds a placed feature written inline, with its placement modifiers declared in the block, using the same builders as `placedFeature { }`.
+A tag isn't possible in the block because the game only reads a tag as the whole field, never as an entry of a list. An inline placed
+feature references its configured feature by ID: Kore can't write the configured feature inline yet, because the configured feature builders
+always register a file. A single entry is written bare, as a string or as an object.
+
+```kotlin
+overlay("basalt_pillars") {
+	feature(PlacedFeatures.BASALT_BLOBS)
+	placed(Features.BASALT_PILLAR) {
+		offset(y = constant(-2))
+	}
+}
+```
+
+```json
+{
+	"type": "minecraft:overlay",
+	"features": [
+		"minecraft:basalt_blobs",
+		{
+			"feature": "minecraft:basalt_pillar",
+			"placement": [{"type": "minecraft:offset", "x": 0, "y": -2, "z": 0}]
+		}
+	]
+}
+```
+
 `projectedRandomPatchySquare` covers a square of side `2 * size + 1` centered on the placement position, keeping each column with a
 probability that falls off towards the corners (the center cross is always kept). Each kept column is projected downward through the
 blocks matching `projectThrough`, for at most `maxProjectionHeight` steps, and `block` is placed where it stops. Vanilla caps its basalt

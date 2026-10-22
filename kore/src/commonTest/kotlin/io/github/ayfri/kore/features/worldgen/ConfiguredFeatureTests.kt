@@ -42,6 +42,10 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.target
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.features.worldgen.noisesettings.rules.conditions.Surface
+import io.github.ayfri.kore.features.worldgen.placedfeature.feature
+import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.offset
+import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.randomlySelected
+import io.github.ayfri.kore.features.worldgen.placedfeature.placed
 import io.github.ayfri.kore.features.worldgen.processorlist.processorListOrInline
 import io.github.ayfri.kore.features.worldgen.processorlist.types.blockRot
 import io.github.ayfri.kore.features.worldgen.processorlist.types.rule.blockentitymodifier.appendLoot
@@ -60,7 +64,12 @@ import io.github.ayfri.kore.generated.arguments.worldgen.tagged.PlacedFeatureTag
 import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureArgument
 import io.github.ayfri.kore.utils.pretty
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import io.github.ayfri.kore.features.worldgen.floatproviders.clampedNormal
 import io.github.ayfri.kore.features.worldgen.floatproviders.constant as constantFloat
 import io.github.ayfri.kore.features.worldgen.floatproviders.uniform as uniformFloat
@@ -1008,6 +1017,84 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
+	configuredFeaturesBuilder.overlay("test_overlay_inline") {
+		feature(PlacedFeatures.BASALT_BLOBS)
+		placed(Features.BASALT_PILLAR) {
+			offset(y = constant(-2))
+		}
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:overlay",
+			"features": [
+				"minecraft:basalt_blobs",
+				{
+					"feature": "minecraft:basalt_pillar",
+					"placement": [
+						{
+							"type": "minecraft:offset",
+							"x": 0,
+							"y": -2,
+							"z": 0
+						}
+					]
+				}
+			]
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.overlay("test_overlay_inline_single") {
+		placed(Features.DESERT_WELL)
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:overlay",
+			"features": {
+				"feature": "minecraft:desert_well",
+				"placement": []
+			}
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.overlay("test_overlay_randomly_selected") {
+		placed(Features.DESERT_WELL) {
+			randomlySelected {
+				offset(y = constant(-1))
+				offset(x = constant(1), y = constant(-1))
+			}
+		}
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:overlay",
+			"features": {
+				"feature": "minecraft:desert_well",
+				"placement": [
+					{
+						"type": "minecraft:randomly_selected",
+						"placements": [
+							{
+								"type": "minecraft:offset",
+								"x": 0,
+								"y": -1,
+								"z": 0
+							},
+							{
+								"type": "minecraft:offset",
+								"x": 1,
+								"y": -1,
+								"z": 0
+							}
+						]
+					}
+				]
+			}
+		}
+	""".trimIndent()
+
 	configuredFeaturesBuilder.projectedRandomPatchySquare("test_projected_random_patchy_square") {
 		block = simpleStateProvider(Blocks.BASALT)
 		projectThrough { matchingBlocks(Blocks.AIR) }
@@ -1357,6 +1444,33 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
+	configuredFeaturesBuilder.sequence("test_sequence_inline") {
+		feature(PlacedFeatures.ACACIA)
+		placed(Features.FLOWER_DEFAULT) {
+			offset(y = constant(1))
+		}
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:sequence",
+			"features": [
+				"minecraft:acacia",
+				{
+					"feature": "minecraft:flower_default",
+					"placement": [
+						{
+							"type": "minecraft:offset",
+							"x": 0,
+							"y": 1,
+							"z": 0
+						}
+					]
+				}
+			]
+		}
+	""".trimIndent()
+
 	configuredFeaturesBuilder.simpleBlock("test_simple_block", scheduleTick = true) {
 		toPlace = simpleStateProvider(Blocks.STONE)
 	}
@@ -1384,6 +1498,33 @@ fun DataPack.configuredFeatureTests() {
 			"features": [
 				"minecraft:acacia",
 				"minecraft:acacia_checked"
+			]
+		}
+	""".trimIndent()
+
+	configuredFeaturesBuilder.simpleRandomSelector("test_simple_random_selector_inline") {
+		feature(PlacedFeatures.BIRCH_CHECKED)
+		placed(Features.BIRCH) {
+			offset(y = constant(1))
+		}
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:simple_random_selector",
+			"features": [
+				"minecraft:birch_checked",
+				{
+					"feature": "minecraft:birch",
+					"placement": [
+						{
+							"type": "minecraft:offset",
+							"x": 0,
+							"y": 1,
+							"z": 0
+						}
+					]
+				}
 			]
 		}
 	""".trimIndent()
@@ -2935,5 +3076,31 @@ class ConfiguredFeatureTests : FunSpec({
 			pretty()
 			configuredFeatureTests()
 		}
+	}
+
+	test("overlay features decode an ID, a tag and an inline placed feature") {
+		val json = dataPack("placedFeatureOrInline") {}.jsonEncoder
+		val mixed = """{"features":["minecraft:basalt_blobs","minecraft:acacia",{"feature":"minecraft:basalt_pillar","placement":[{"type":"minecraft:in_square"}]}]}"""
+
+		val overlay = json.decodeFromString<Overlay>(mixed)
+		overlay.features.map { it.feature?.asString() } shouldBe listOf("minecraft:basalt_blobs", "minecraft:acacia", null)
+		overlay.features.map { it.inline?.feature?.asString() } shouldBe listOf(null, null, "minecraft:basalt_pillar")
+		json.encodeToString(overlay) shouldBe mixed
+
+		val tag = """{"features":"#test:my_features"}"""
+		json.decodeFromString<Overlay>(tag).features.single().feature!!.asString() shouldBe "#test:my_features"
+		json.encodeToString(json.decodeFromString<Overlay>(tag)) shouldBe tag
+
+		val single = """{"features":{"feature":"minecraft:desert_well","placement":[]}}"""
+		json.decodeFromString<Overlay>(single).features.single().inline!!.feature.asString() shouldBe "minecraft:desert_well"
+		json.encodeToString(json.decodeFromString<Overlay>(single)) shouldBe single
+	}
+
+	test("an inline placed feature that can't be decoded throws instead of dropping its placement") {
+		val json = dataPack("placedFeatureOrInlineInvalid") {}.jsonEncoder
+		val invalidInline = """{"feature":"minecraft:basalt_pillar","placement":[{"type":"minecraft:not_a_modifier"}]}"""
+
+		shouldThrow<SerializationException> { json.decodeFromString<Overlay>("""{"features":$invalidInline}""") }
+		shouldThrow<SerializationException> { json.decodeFromString<Overlay>("""{"features":["minecraft:acacia",$invalidInline]}""") }
 	}
 })
