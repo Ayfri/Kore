@@ -157,6 +157,7 @@ summon minecraft:text_display ~ ~ ~ {text:[{type:"text",text:""},{type:"text",co
 
 Transformations are used to modify the translation, left/right rotations and scale of displays. They are created by calling `transformation`
 DSL. You can also apply directly matrix transformations and use quaternions, axis angles or use Euler angles for rotations.
+`eulerAngles(x, y, z)` takes radians and applies the rotations like JOML's `rotateXYZ`.
 
 ```kotlin
 transformation {
@@ -187,9 +188,15 @@ work around the pivot of each display type:
 | `item_display`   | Center of the item                       | Grows evenly around the entity       |
 | `text_display`   | Bottom center of the text                | Grows upwards and to both sides      |
 
+The diagram below draws each display at its entity position, the pivot marked by a dot:
+
+{{{ .components.doc.DisplayPivotDiagram }}}
+
 Without rotations, centering a block display on its entity takes a translation of `-0.5` times the scale on each axis.
 
-Reference: [Display](https://minecraft.wiki/w/Display)
+The editor below previews a transformation on each display type, from any angle, with the matching Kotlin and an equivalent `summon` command:
+
+{{{ .components.doc.DisplayTransformEditor }}}
 
 `Quaternion` and `Matrix` operators (`+`, `-`, `*`, `/`) return a new value and leave both operands untouched, while
 named methods like `normalize()`, `slerp()` or `multiply()` modify the receiver. `Quaternion.IDENTITY` and
@@ -200,6 +207,8 @@ Transformations can also be combined:
 - `a.interpolate(b, t)` returns the transformation `t` of the way from `a` (`0`) to `b` (`1`).
 - `a.invert()` returns the transformation undoing `a`, as a matrix.
 - `a.decompose()` splits a matrix transformation back into translation, rotations and scale.
+
+Reference: [Display](https://minecraft.wiki/w/Display)
 
 ## Interpolations
 
