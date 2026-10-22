@@ -84,8 +84,10 @@ private class SnakeCaseComposite(private val composite: CompositeEncoder, privat
 	override fun encodeLongElement(descriptor: SerialDescriptor, index: Int, value: Long) =
 		composite.encodeLongElement(descriptor.renamed(), index, value)
 
-	override fun <T : Any> encodeNullableSerializableElement(descriptor: SerialDescriptor, index: Int, serializer: SerializationStrategy<T>, value: T?) =
-		encodeInlineElement(descriptor, index).encodeNullableSerializableValue(serializer, value)
+	/** NBT has no null, so an unset element is left out: the JS serialization plugin writes the properties a class inherits from another module without checking them. */
+	override fun <T : Any> encodeNullableSerializableElement(descriptor: SerialDescriptor, index: Int, serializer: SerializationStrategy<T>, value: T?) {
+		if (value != null) encodeInlineElement(descriptor, index).encodeSerializableValue(serializer, value)
+	}
 
 	override fun <T> encodeSerializableElement(descriptor: SerialDescriptor, index: Int, serializer: SerializationStrategy<T>, value: T) =
 		encodeInlineElement(descriptor, index).encodeSerializableValue(serializer, value)
