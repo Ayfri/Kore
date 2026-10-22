@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.helpers.displays.entities
 
 import io.github.ayfri.kore.arguments.colors.RGB
+import io.github.ayfri.kore.entities.summon.EntitySummonData
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.helpers.displays.maths.Transformation
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
@@ -32,7 +33,7 @@ data class Brightness(
 
 @GeneratedSealedSerializer
 @Serializable
-sealed class DisplayEntity {
+sealed class DisplayEntity : EntitySummonData() {
 	@JsonSerialName("billboard")
 	var billboardMode: BillboardMode? = null
 	var brightness: Brightness? = null

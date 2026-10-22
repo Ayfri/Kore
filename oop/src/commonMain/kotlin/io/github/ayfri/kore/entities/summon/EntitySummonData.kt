@@ -2,134 +2,115 @@ package io.github.ayfri.kore.entities.summon
 
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
-import io.github.ayfri.kore.arguments.maths.Vec2
-import io.github.ayfri.kore.arguments.numbers.PosNumber
-import io.github.ayfri.kore.arguments.types.literals.LiteralArgument
+import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
-import io.github.ayfri.kore.utils.nbtList
+import io.github.ayfri.kore.serializers.JsonSerialName
+import io.github.ayfri.kore.serializers.UUIDAsIntArraySerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import net.benwoodworth.knbt.*
 
 /**
- * Serializable fields mirror common Minecraft entity root NBT. Use [applyCommonEntitySummonNbt] inside a summon
- * compound builder. Item-only spawn options live on [ItemEntitySummonData] (`PickupDelay`, `Age`, … are applied in
- * [io.github.ayfri.kore.items.summon] after the shared tags).
+ * Root NBT every entity shares, the base of [ItemEntitySummonData] and of the helpers' mannequins, display entities and
+ * interactions. Fields are written first, before the ones of the subclass: `Tags`, `CustomName`, `Glowing`...
+ *
+ * Extending it takes a plain `@Serializable` class, `@Serializable(with = ...)` on a parent drops the inherited fields.
  */
 @Serializable
-sealed class EntitySummonData {
+abstract class EntitySummonData {
+	@JsonSerialName("Air")
 	var air: Int? = null
-	var customName: String? = null
+
+	@JsonSerialName("CustomName")
+	var customName: ChatComponents? = null
+
+	@JsonSerialName("CustomNameVisible")
+	var customNameVisible: Boolean? = null
 	var fallDistance: Double? = null
+
+	@JsonSerialName("Fire")
 	var fire: Short? = null
+
+	@JsonSerialName("Glowing")
 	var glowing: Boolean? = null
+
+	@JsonSerialName("HasVisualFire")
 	var hasVisualFire: Boolean? = null
+
+	@JsonSerialName("Invulnerable")
 	var invulnerable: Boolean? = null
 
 	/** Ticks of temporary damage immunity: the entity ignores damage while this is above 0 or while [invulnerable] is true. */
 	var invulnerableTime: Int? = null
-	var motion: Triple<Double, Double, Double>? = null
-	var noGravity: Boolean? = null
-	var onGround: Boolean? = null
-	var portalCooldown: Int? = null
-	var pos: Triple<PosNumber, PosNumber, PosNumber>? = null
 
-	@Transient
-	var rotation: Vec2? = null
+	@JsonSerialName("Motion")
+	var motion: List<Double>? = null
+
+	@JsonSerialName("NoGravity")
+	var noGravity: Boolean? = null
+
+	@JsonSerialName("OnGround")
+	var onGround: Boolean? = null
+
+	@JsonSerialName("PortalCooldown")
+	var portalCooldown: Int? = null
+
+	@JsonSerialName("Pos")
+	var pos: List<Double>? = null
+
+	@JsonSerialName("Rotation")
+	var rotation: List<Float>? = null
+
+	@JsonSerialName("Silent")
 	var silent: Boolean? = null
+
+	@JsonSerialName("Tags")
 	var tags: List<String>? = null
 }
 
-fun EntitySummonData.applyCommonEntitySummonNbt(nbt: NbtCompoundBuilder) {
-	nbt.apply {
-		air?.let { put("Air", it) }
-		when {
-			this@applyCommonEntitySummonNbt is ItemEntitySummonData -> {
-				val item = this@applyCommonEntitySummonNbt
-				when {
-					item.displayName != null -> {
-						put("CustomName", item.displayName!!.toNbtTag())
-						put("CustomNameVisible", item.displayNameVisible)
-					}
-
-					customName != null -> {
-						put("CustomName", NbtString(customName!!))
-						put("CustomNameVisible", item.displayNameVisible)
-					}
-				}
-			}
-
-			customName != null -> put("CustomName", NbtString(customName!!))
-		}
-		fallDistance?.let { put("FallDistance", it) }
-		fire?.let { put("Fire", it) }
-		glowing?.let { put("Glowing", it) }
-		hasVisualFire?.let { put("HasVisualFire", it) }
-		invulnerable?.let { put("Invulnerable", it) }
-		/** The game writes this tag in lowercase snake_case, unlike the PascalCase root tags around it. */
-		invulnerableTime?.let { put("invulnerable_time", it) }
-		motion?.let { (dx, dy, dz) ->
-			put("Motion", nbtList<NbtDouble> {
-				add(NbtDouble(dx))
-				add(NbtDouble(dy))
-				add(NbtDouble(dz))
-			})
-		}
-		noGravity?.let { put("NoGravity", it) }
-		onGround?.let { put("OnGround", it) }
-		portalCooldown?.let { put("PortalCooldown", it) }
-		pos?.let { (x, y, z) ->
-			put("Pos", nbtList<NbtDouble> {
-				add(NbtDouble(x.value))
-				add(NbtDouble(y.value))
-				add(NbtDouble(z.value))
-			})
-		}
-		rotation?.let { r ->
-			put("Rotation", nbtList<NbtFloat> {
-				add(NbtFloat(r.x.value.toFloat()))
-				add(NbtFloat(r.y.value.toFloat()))
-			})
-		}
-		silent?.let { put("Silent", it) }
-		tags?.let { tagList ->
-			put("Tags", nbtList<NbtString> {
-				tagList.forEach { add(NbtString(it)) }
-			})
-		}
-	}
-}
-
+/** Spawn options of a `minecraft:item` entity, on top of the [EntitySummonData] fields. */
 @Serializable
 @SerialName("item")
 data class ItemEntitySummonData(
-	var age: Short? = null,
-	var displayNameVisible: Boolean = true,
-	var health: Short? = null,
-	var owner: UUIDArgument? = null,
-	var pickupDelay: Short? = null,
-	var showcase: Boolean = false,
-	var thrower: UUIDArgument? = null,
-) : EntitySummonData() {
-	@Transient
-	var displayName: ChatComponents? = null
-}
+	@JsonSerialName("Age") var age: Short? = null,
+	@JsonSerialName("Health") var health: Short? = null,
+	@Serializable(with = UUIDAsIntArraySerializer::class) @JsonSerialName("Owner") var owner: UUIDArgument? = null,
+	@JsonSerialName("PickupDelay") var pickupDelay: Short? = null,
+	@Transient var showcase: Boolean = false,
+	@Serializable(with = UUIDAsIntArraySerializer::class) @JsonSerialName("Thrower") var thrower: UUIDArgument? = null,
+) : EntitySummonData()
 
 fun itemEntitySummonData(block: ItemEntitySummonData.() -> Unit) = ItemEntitySummonData().apply(block)
 
+/**
+ * Sets the custom name of the entity to a plain or colored text.
+ *
+ * ```
+ * customName("Shop", Color.GOLD)  // CustomName:{text:"Shop",color:"gold"}
+ * ```
+ */
+fun EntitySummonData.customName(text: String, color: Color? = null) {
+	customName = textComponent(text, color)
+}
+
+/**
+ * Sets the velocity of the entity, in blocks per tick on each axis.
+ *
+ * ```
+ * motion(0.0, 0.6, 0.0)  // Motion:[0.0d,0.6d,0.0d]
+ * ```
+ */
 fun EntitySummonData.motion(dx: Double, dy: Double, dz: Double) {
-	motion = Triple(dx, dy, dz)
+	motion = listOf(dx, dy, dz)
 }
 
+/**
+ * Sets the yaw and pitch of the entity, in degrees.
+ *
+ * ```
+ * rotation(90f, 0f)  // Rotation:[90.0f,0.0f]
+ * ```
+ */
 fun EntitySummonData.rotation(yaw: Float, pitch: Float) {
-	rotation = Vec2(yaw, pitch)
-}
-
-fun ItemEntitySummonData.displayName(text: String) {
-	customName = textComponent(text).asString()
-}
-
-fun ItemEntitySummonData.displayName(holder: LiteralArgument) {
-	customName = holder.asString()
+	rotation = listOf(yaw, pitch)
 }

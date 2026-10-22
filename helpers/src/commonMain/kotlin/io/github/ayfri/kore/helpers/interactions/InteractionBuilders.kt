@@ -40,7 +40,7 @@ fun interaction(block: Interaction.() -> Unit) = Interaction().apply(block)
  * 	onRightClick { say("Pulled") }
  * }
  *
- * function("setup") { lever.summon(vec3(0, 64, 0)) }  // summon minecraft:interaction 0 64 0 {height:0.5f,Tags:["my_pack.interaction.lever"],width:0.5f,UUID:[I;...]}
+ * function("setup") { lever.summon(vec3(0, 64, 0)) }  // summon minecraft:interaction 0 64 0 {Tags:["my_pack.interaction.lever"],height:0.5f,width:0.5f,UUID:[I;...]}
  * ```
  *
  * Docs: https://kore.ayfri.com/docs/helpers/interactions
@@ -96,7 +96,10 @@ fun Interaction.summon(position: Vec3): InteractionEntity {
 		"Interaction has click callbacks but wasn't declared with dataPack.interaction(name) { }, so they were never generated."
 	}
 
-	val baseNbt = (definitionTag?.let { copy(tags = tags.orEmpty() + it) } ?: this).toNbt()
+	val ownTags = tags
+	definitionTag?.let { tags = ownTags.orEmpty() + it }
+	val baseNbt = toNbt()
+	tags = ownTags
 	val uuid = fn.datapack.entityUUID("interaction:$baseNbt:${position.asString()}")
 	fn.summon(entityType, position, nbt {
 		baseNbt.forEach { (key, value) -> this[key] = value }

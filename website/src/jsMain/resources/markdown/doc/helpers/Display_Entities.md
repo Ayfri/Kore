@@ -31,6 +31,9 @@ All display entities inherit these properties from the shared `DisplayEntity` ba
 - `transformation` - combine translation, rotation, scale, or custom matrices.
 - `viewRange` - multiplier of the render distance, `1f` by default.
 
+Every entity field (`tags`, `customName`, `glowing`...) is available too, they come from the shared
+[`EntitySummonData`](/docs/oop/items#shared-entity-fields) base and are written first.
+
 ## Entity Displays
 
 Entity displays are used to display blocks/items/text in the world. You can define multiple properties for the display, such as transformation, billboard mode, shadow etc.

@@ -1,9 +1,9 @@
 package io.github.ayfri.kore.helpers.interactions
 
 import io.github.ayfri.kore.entities.Entity
+import io.github.ayfri.kore.entities.summon.EntitySummonData
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.EntityTypes
-import io.github.ayfri.kore.serializers.JsonSerialName
 import io.github.ayfri.kore.utils.encodeToNbtTag
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -20,16 +20,14 @@ import net.benwoodworth.knbt.nbtCompound
  *
  * @property height The height of the hitbox, growing upwards from the entity position, the game defaults to 1.
  * @property response Whether the game plays the attack sound on a left click and swings the arm on a right click.
- * @property tags The scoreboard tags of the interaction.
  * @property width The width of the hitbox, centered on the entity position, the game defaults to 1.
  */
 @Serializable
 data class Interaction(
 	var height: Float? = null,
 	var response: Boolean? = null,
-	@JsonSerialName("Tags") var tags: List<String>? = null,
 	var width: Float? = null,
-) {
+) : EntitySummonData() {
 	/** The entity type of the interaction. */
 	@Transient
 	val entityType = EntityTypes.INTERACTION

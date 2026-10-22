@@ -140,6 +140,10 @@ mannequin {
 }
 ```
 
+The rows for `CustomName`, `CustomNameVisible`, `Glowing`, `Invulnerable`, `NoGravity`, `Rotation`, `Silent` and `Tags` are entity fields
+a mannequin shares with every entity, they come from the [`EntitySummonData`](/docs/oop/items#shared-entity-fields) base, which lists the
+others too (`motion`, `fire`, `air`...).
+
 | Field               | Kore                                     | Default    | Effect                                                              |
 |---------------------|------------------------------------------|------------|---------------------------------------------------------------------|
 | `CustomName`        | `customName`                             | none       | Name shown above the mannequin when it is looked at                 |
@@ -245,7 +249,7 @@ summon(shopkeeper.entityType, vec3(0, 64, 0), shopkeeper.toNbt())
 ```
 
 ```mcfunction
-summon minecraft:mannequin 0 64 0 {CustomName:"Bob",CustomNameVisible:1b,description:{text:"Shopkeeper",color:"gold"},equipment:{mainhand:{id:"minecraft:emerald"}},hidden_layers:["cape"],immovable:1b,Invulnerable:1b,main_hand:"left",pose:"crouching",profile:{name:"Ayfri"},Tags:["shopkeeper"]}
+summon minecraft:mannequin 0 64 0 {CustomName:"Bob",CustomNameVisible:1b,Invulnerable:1b,Tags:["shopkeeper"],description:{text:"Shopkeeper",color:"gold"},equipment:{mainhand:{id:"minecraft:emerald"}},hidden_layers:["cape"],immovable:1b,main_hand:"left",pose:"crouching",profile:{name:"Ayfri"}}
 ```
 
 `Mannequin` doesn't cover every field a living entity has: attributes (such as `minecraft:scale`) and `Health` aren't part of it. They can

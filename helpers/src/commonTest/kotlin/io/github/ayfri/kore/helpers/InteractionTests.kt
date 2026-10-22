@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.helpers
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.assertions.assertsIs
@@ -8,6 +9,7 @@ import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.entities.InteractionEntity
 import io.github.ayfri.kore.entities.kill
+import io.github.ayfri.kore.entities.summon.customName
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.generatedFunctionName
 import io.github.ayfri.kore.helpers.interactions.interaction
@@ -33,6 +35,14 @@ class InteractionTests : FunSpec({
 			response = true
 			width = 0.7f
 		}.toNbt().toString() assertsIs "{height:1.9f,response:1b,width:0.7f}"
+	}
+
+	test("model nbt starts with the entity fields") {
+		interaction {
+			customName("Lever", Color.GOLD)
+			height = 1.9f
+			tags = listOf("lever")
+		}.toNbt().toString() assertsIs """{CustomName:{text:"Lever",color:"gold"},Tags:["lever"],height:1.9f}"""
 	}
 
 	test("right click generates one advancement and three functions") {
@@ -236,7 +246,7 @@ class InteractionTests : FunSpec({
 			}
 
 			functions.single().lines.single() shouldMatch Regex(
-				"""summon minecraft:interaction 0 64 0 \{height:0.5f,Tags:\["custom","interaction_tests.interaction.lever"\],width:0.5f,UUID:\[I;.*?\]\}"""
+				"""summon minecraft:interaction 0 64 0 \{Tags:\["custom","interaction_tests.interaction.lever"\],height:0.5f,width:0.5f,UUID:\[I;.*?\]\}"""
 			)
 		}
 	}

@@ -9,6 +9,7 @@ import io.github.ayfri.kore.arguments.components.item.damage
 import io.github.ayfri.kore.arguments.enums.DataType
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrInt
+import io.github.ayfri.kore.arguments.types.literals.uuid
 import io.github.ayfri.kore.arguments.types.resources.storage
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.bossbar.registerBossBar
@@ -16,6 +17,8 @@ import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.say
 import io.github.ayfri.kore.data.item.builders.itemStack
 import io.github.ayfri.kore.entities.*
+import io.github.ayfri.kore.entities.summon.motion
+import io.github.ayfri.kore.entities.summon.rotation
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.items.summon
@@ -55,7 +58,7 @@ fun oopTests() = dataPack("oop") {
 					bold = true
 				})
 			}
-		} assertsIs """execute at @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] run summon minecraft:item 0.0 0.0 0.0 {CustomName:{type:"text",bold:1b,color:"red",text:"MY ITEM"},CustomNameVisible:1b,Item:{id:"minecraft:diamond_sword"}}"""
+		} assertsIs """execute at @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] run summon minecraft:item 0.0 0.0 0.0 {CustomName:{text:"MY ITEM",bold:1b,color:"red"},CustomNameVisible:1b,Item:{id:"minecraft:diamond_sword"}}"""
 		lines.size assertsIs 1
 	}
 
@@ -74,12 +77,26 @@ fun oopTests() = dataPack("oop") {
 		item.summon {
 			showcase = true
 			tags = listOf("display")
-		} assertsIs """summon minecraft:item 0.0 0.0 0.0 {Invulnerable:1b,NoGravity:1b,Tags:["display"],Item:{id:"minecraft:diamond_sword",components:{custom_name:{text:"Shop",color:"gold"}}},PickupDelay:32767s,Age:-32768s,CustomName:{type:"text",color:"gold",text:"Shop"},CustomNameVisible:1b}"""
+		} assertsIs """summon minecraft:item 0.0 0.0 0.0 {CustomName:{text:"Shop",color:"gold"},CustomNameVisible:1b,Invulnerable:1b,NoGravity:1b,Tags:["display"],Age:-32768s,PickupDelay:32767s,Item:{id:"minecraft:diamond_sword",components:{custom_name:{text:"Shop",color:"gold"}}}}"""
 		lines.size assertsIs 1
 	}
 
 	function("summon_item_entity_invulnerable_time") {
 		itemStack(Items.DIAMOND_SWORD).summon { invulnerableTime = 60 } assertsIs """summon minecraft:item 0.0 0.0 0.0 {invulnerable_time:60,Item:{id:"minecraft:diamond_sword"}}"""
+		lines.size assertsIs 1
+	}
+
+	function("summon_item_entity_fields") {
+		itemStack(Items.DIAMOND_SWORD).summon {
+			age = 10
+			glowing = true
+			health = 5
+			motion(0.0, 0.6, 0.0)
+			owner = uuid("00000000-0000-0000-0000-000000000001")
+			pickupDelay = 20
+			rotation(90f, 0f)
+			thrower = uuid("00000000-0000-0000-0000-000000000002")
+		} assertsIs """summon minecraft:item 0.0 0.0 0.0 {Glowing:1b,Motion:[0.0d,0.6d,0.0d],Rotation:[90.0f,0.0f],Age:10s,Health:5s,Owner:[I;0,0,0,1],PickupDelay:20s,Thrower:[I;0,0,0,2],Item:{id:"minecraft:diamond_sword"}}"""
 		lines.size assertsIs 1
 	}
 

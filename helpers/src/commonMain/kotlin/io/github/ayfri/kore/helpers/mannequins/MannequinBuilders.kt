@@ -68,20 +68,6 @@ fun Mannequin.playerProfile(name: String? = null, id: Uuid, block: PlayerProfile
 	playerProfile(name, UUIDArgument(id), block)
 
 /**
- * Sets the rotation of the mannequin.
- *
- * ```
- * rotation(90f, 0f)  // Rotation:[90.0f,0.0f]
- * ```
- *
- * @param yaw The horizontal rotation, in degrees.
- * @param pitch The vertical rotation, in degrees.
- */
-fun Mannequin.rotation(yaw: Float, pitch: Float) {
-	rotation = listOf(yaw, pitch)
-}
-
-/**
  * Summons this mannequin at [position] and returns an OOP handle targeting it by UUID.
  *
  * The UUID is embedded in the summon NBT so the returned [MannequinEntity] uniquely identifies this instance, it hashes

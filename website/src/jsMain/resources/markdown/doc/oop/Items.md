@@ -5,7 +5,7 @@ nav-title: Items
 description: Object-oriented item creation, spawning, and NBT serialization with the Kore OOP module.
 keywords: minecraft, datapack, kore, oop, items, item stack, summon, give, nbt, data modify
 date-created: 2026-03-03
-date-modified: 2026-10-21
+date-modified: 2026-10-22
 routeOverride: /docs/oop/items
 ---
 
@@ -85,40 +85,44 @@ function("shop_display") {
 Generated output:
 
 ```mcfunction
-summon minecraft:item 0.0 0.0 0.0 {Invulnerable:1b,NoGravity:1b,Tags:["display"],Item:{id:"minecraft:diamond_sword",components:{custom_name:{text:"Shop",color:"gold"}}},PickupDelay:32767s,Age:-32768s,CustomName:{type:"text",color:"gold",text:"Shop"},CustomNameVisible:1b}
+summon minecraft:item 0.0 0.0 0.0 {CustomName:{text:"Shop",color:"gold"},CustomNameVisible:1b,Invulnerable:1b,NoGravity:1b,Tags:["display"],Age:-32768s,PickupDelay:32767s,Item:{id:"minecraft:diamond_sword",components:{custom_name:{text:"Shop",color:"gold"}}}}
 ```
 
 `showcase = true` is a shortcut for a static display item: it sets `PickupDelay` and `Age` so the entity never
 despawns and cannot be picked up, plus `Invulnerable` and `NoGravity`. Any of those set explicitly win over the
 shortcut, and the item's `custom_name` component is mirrored onto the entity so the name renders in the world.
+An item entity with a `customName` shows it in the world unless `customNameVisible = false`.
 
 ### Shared entity fields
 
-These come from `EntitySummonData` and apply to every entity summoned through this API:
+These come from `EntitySummonData`, the base shared by item entities, [mannequins](/docs/helpers/mannequins),
+[display entities](/docs/helpers/display-entities) and [interactions](/docs/helpers/interactions). They are written first,
+before the fields of the entity itself:
 
-| Field                            | NBT tag                       |
-|----------------------------------|-------------------------------|
-| `air`                            | `Air`                         |
-| `customName`                     | `CustomName`                  |
-| `fallDistance`                   | `FallDistance`                |
-| `fire`                           | `Fire`                        |
-| `glowing`                        | `Glowing`                     |
-| `hasVisualFire`                  | `HasVisualFire`               |
-| `invulnerable`                   | `Invulnerable`                |
-| `invulnerableTime`               | `invulnerable_time`           |
-| `motion` / `motion(dx, dy, dz)`  | `Motion`                      |
-| `noGravity`                      | `NoGravity`                   |
-| `onGround`                       | `OnGround`                    |
-| `portalCooldown`                 | `PortalCooldown`              |
-| `pos`                            | `Pos`                         |
-| `rotation` / `rotation(yaw, pitch)` | `Rotation`                 |
-| `silent`                         | `Silent`                      |
-| `tags`                           | `Tags`                        |
+| Field                               | NBT tag             | Type                  |
+|-------------------------------------|---------------------|-----------------------|
+| `air`                               | `Air`               | `Int`                 |
+| `customName`                        | `CustomName`        | `ChatComponents`      |
+| `customNameVisible`                 | `CustomNameVisible` | `Boolean`             |
+| `fallDistance`                      | `fall_distance`     | `Double`              |
+| `fire`                              | `Fire`              | `Short`               |
+| `glowing`                           | `Glowing`           | `Boolean`             |
+| `hasVisualFire`                     | `HasVisualFire`     | `Boolean`             |
+| `invulnerable`                      | `Invulnerable`      | `Boolean`             |
+| `invulnerableTime`                  | `invulnerable_time` | `Int`                 |
+| `motion` / `motion(dx, dy, dz)`     | `Motion`            | `List<Double>`        |
+| `noGravity`                         | `NoGravity`         | `Boolean`             |
+| `onGround`                          | `OnGround`          | `Boolean`             |
+| `portalCooldown`                    | `PortalCooldown`    | `Int`                 |
+| `pos`                               | `Pos`               | `List<Double>`        |
+| `rotation` / `rotation(yaw, pitch)` | `Rotation`          | `List<Float>`         |
+| `silent`                            | `Silent`            | `Boolean`             |
+| `tags`                              | `Tags`              | `List<String>`        |
 
 `invulnerableTime` is a number of ticks during which the entity ignores damage, written as the lowercase `invulnerable_time` tag, while `invulnerable` makes it immune for good.
 
-`motion(dx, dy, dz)` and `rotation(yaw, pitch)` are helper functions so you do not have to build the underlying
-`Triple` or `Vec2` yourself:
+`customName("Shop", Color.GOLD)`, `motion(dx, dy, dz)` and `rotation(yaw, pitch)` are helper functions so you do not have
+to build the lists or the text component yourself:
 
 ```kotlin
 function("launch_item") {
@@ -137,8 +141,6 @@ function("launch_item") {
 | Field                | NBT tag              | Description                                        |
 |----------------------|----------------------|----------------------------------------------------|
 | `age`                | `Age`                | Ticks lived - negative values delay despawning     |
-| `displayName`        | `CustomName`         | Name as `ChatComponents`, also settable via `displayName(...)` |
-| `displayNameVisible` | `CustomNameVisible`  | Whether the name renders without looking at it     |
 | `health`             | `Health`             | Item entity health                                 |
 | `owner`              | `Owner`              | UUID allowed to pick the item up                   |
 | `pickupDelay`        | `PickupDelay`        | Ticks before pickup is allowed                     |

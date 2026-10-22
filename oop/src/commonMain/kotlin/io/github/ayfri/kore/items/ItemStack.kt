@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.items
 
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
-import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.Components
 import io.github.ayfri.kore.arguments.components.item.CustomNameComponent
@@ -10,13 +9,15 @@ import io.github.ayfri.kore.arguments.maths.coordinate
 import io.github.ayfri.kore.commands.summon
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.entities.summon.ItemEntitySummonData
-import io.github.ayfri.kore.entities.summon.applyCommonEntitySummonNbt
+import io.github.ayfri.kore.entities.summon.customName
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.ItemComponentTypes
+import io.github.ayfri.kore.utils.encodeToNbtTag
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import net.benwoodworth.knbt.NbtCompoundBuilder
+import net.benwoodworth.knbt.nbtCompound
 
 /**
  * Builds the `{id, count?, components?}` compound Minecraft expects wherever an item stack lives in NBT: the `Item`
@@ -57,24 +58,14 @@ fun ItemStack.summon(
 	}
 
 	val effectiveComponents = components ?: Components()
-	opts.applyCommonEntitySummonNbt(this)
-
-	this["Item"] = toNbt(effectiveComponents)
-
-	opts.pickupDelay?.let { this["PickupDelay"] = it }
-	opts.age?.let { this["Age"] = it }
-	opts.health?.let { this["Health"] = it }
-	opts.owner?.let { this["Owner"] = it.toNBTIntArray() }
-	opts.thrower?.let { this["Thrower"] = it.toNBTIntArray() }
-
-	if (opts.showcase && opts.displayName == null) {
-		val fromComponent =
+	if (opts.showcase && opts.customName == null) {
+		opts.customName =
 			(effectiveComponents[ItemComponentTypes.CUSTOM_NAME.name.lowercase()] as? CustomNameComponent)?.component
-		fromComponent?.let {
-			this["CustomName"] = it.toNbtTag()
-			this["CustomNameVisible"] = opts.displayNameVisible
-		}
 	}
+	if (opts.customName != null && opts.customNameVisible == null) opts.customNameVisible = true
+
+	encodeToNbtTag(ItemEntitySummonData.serializer(), opts).nbtCompound.forEach { (key, value) -> this[key] = value }
+	this["Item"] = toNbt(effectiveComponents)
 
 	extraEntityNbt?.invoke(this)
 }
@@ -86,8 +77,8 @@ fun ItemStack.summon(
 	extraEntityNbt: (NbtCompoundBuilder.() -> Unit)? = null
 ) =
 	summon(coordinate(), extraEntityNbt) {
-		displayName = customName
-		displayNameVisible = visible
+		this.customName = customName
+		customNameVisible = visible
 	}
 
 context(fn: Function)
@@ -98,6 +89,6 @@ fun ItemStack.summon(
 	extraEntityNbt: (NbtCompoundBuilder.() -> Unit)? = null
 ) =
 	summon(coordinate(), extraEntityNbt) {
-		displayName = textComponent(text, color)
-		displayNameVisible = visible
+		customName(text, color)
+		customNameVisible = visible
 	}

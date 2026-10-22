@@ -13,6 +13,7 @@ import io.github.ayfri.kore.data.item.builders.itemStack
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.entities.MannequinEntity
 import io.github.ayfri.kore.entities.kill
+import io.github.ayfri.kore.entities.summon.rotation
 import io.github.ayfri.kore.entities.swing
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load

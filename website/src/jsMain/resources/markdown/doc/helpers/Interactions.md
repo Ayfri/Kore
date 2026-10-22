@@ -37,7 +37,7 @@ function("place_lever") { lever.summon(vec3(0, 64, 0)) }
 ```
 
 ```mcfunction
-summon minecraft:interaction 0 64 0 {height:0.5f,Tags:["my_pack.interaction.lever"],width:0.5f,UUID:[I;1365429050,-1577096793,114802341,1558335436]}
+summon minecraft:interaction 0 64 0 {Tags:["my_pack.interaction.lever"],height:0.5f,width:0.5f,UUID:[I;-522001395,-648367109,-1705678205,-267231968]}
 ```
 
 > [!FOOTPRINT]
@@ -157,6 +157,10 @@ and an arm swing for a right click.
 | `response` | `response` | `false` | Plays the attack sound and swings the arm on clicks |
 | `Tags`     | `tags`     | none    | Extra scoreboard tags, the definition tag is added  |
 | `width`    | `width`    | `1`     | Width of the hitbox, centered on the position       |
+
+`tags` is one of the entity fields every interaction shares with other entities, from the
+[`EntitySummonData`](/docs/oop/items#shared-entity-fields) base: `customName`, `glowing`, `rotation(yaw, pitch)` and the others are
+available too, and written before `height`.
 
 ## Search radius
 
