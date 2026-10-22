@@ -226,7 +226,7 @@ fun WorldHeightDiagram() {
 			preset = chosen
 		}
 
-		HeightPillGroup("Dimension", Dimension.entries, world, Dimension::label) { world = it }
+		PillGroup("Dimension", Dimension.entries, world, Dimension::label) { world = it }
 
 		Div({ classes(WorldHeightStyle.body) }) {
 			WorldColumn(world, marks, label)
@@ -271,29 +271,10 @@ fun WorldHeightDiagram() {
 }
 
 @Composable
-private fun <T : Any> HeightPillGroup(label: String, options: List<T>, selected: T?, text: (T) -> String, onSelect: (T) -> Unit) {
-	Div({
-		classes(WorldHeightStyle.group)
-		attr("aria-label", label)
-		attr("role", "group")
-	}) {
-		options.forEach { option ->
-			Button({
-				classes(WorldHeightStyle.pill)
-				if (option == selected) classes(WorldHeightStyle.pillActive)
-				attr("aria-pressed", (option == selected).toString())
-				attr("type", "button")
-				onClick { onSelect(option) }
-			}) { Text(text(option)) }
-		}
-	}
-}
-
-@Composable
 private fun HeightPresetRow(selected: HeightPreset?, edited: Boolean, onSelect: (HeightPreset) -> Unit) {
 	Div({ classes(WorldHeightStyle.presets) }) {
 		Span({ classes(WorldHeightStyle.sectionTitle) }) { Text("Try a vanilla range") }
-		HeightPillGroup("Vanilla presets", HEIGHT_PRESETS, selected, HeightPreset::label, onSelect)
+		PillGroup("Vanilla presets", HEIGHT_PRESETS, selected, HeightPreset::label, onSelect)
 		selected?.let {
 			Div({ classes(WorldHeightStyle.caption) }) {
 				Text("from ")
@@ -310,7 +291,7 @@ private fun HeightPresetRow(selected: HeightPreset?, edited: Boolean, onSelect: 
 private fun OffsetInput(inputId: String, offset: Int, onChange: (Int) -> Unit) {
 	NumberInput(offset, MIN_Y, MAX_Y) {
 		id(inputId)
-		classes(WorldHeightStyle.number)
+		classes(DocControlsStyle.number)
 		step(1)
 		onInput { event -> event.value?.toDouble()?.takeUnless { it.isNaN() }?.let { onChange(it.toInt().coerceIn(MIN_Y, MAX_Y)) } }
 	}
@@ -330,7 +311,7 @@ private fun RangeEnd(name: String, anchor: Anchor, marker: Marker, onChange: (An
 
 	Div({ classes(WorldHeightStyle.rangeEnd) }) {
 		Label(inputId, { classes(WorldHeightStyle.controlLabel) }) { Text(name) }
-		HeightPillGroup("$name anchor type", AnchorKind.entries, anchor.kind, AnchorKind::function) { onChange(anchor.copy(kind = it)) }
+		PillGroup("$name anchor type", AnchorKind.entries, anchor.kind, AnchorKind::function) { onChange(anchor.copy(kind = it)) }
 		Div({ classes(WorldHeightStyle.anchorRow) }) {
 			OffsetInput(inputId, anchor.offset) { onChange(anchor.copy(offset = it)) }
 			Resolved(marker)
@@ -533,12 +514,6 @@ private object WorldHeightStyle : StyleSheet() {
 		width(100.percent)
 	}
 
-	val group by style {
-		display(DisplayStyle.Flex)
-		flexWrap(FlexWrap.Wrap)
-		gap(0.35.cssRem)
-	}
-
 	val labels by style {
 		flexGrow(1)
 		flexShrink(1)
@@ -573,35 +548,6 @@ private object WorldHeightStyle : StyleSheet() {
 
 	val lineRange by style {
 		backgroundColor(LandingVars.Accent.value())
-	}
-
-	val number by style {
-		backgroundColor(LandingVars.Surface.value())
-		border(1.px, LineStyle.Solid, LandingVars.Border.value())
-		borderRadius(0.4.cssRem)
-		boxSizing(BoxSizing.BorderBox)
-		color(LandingVars.Text.value())
-		fontSize(0.85.cssRem)
-		monoFont()
-		padding(0.3.cssRem, 0.5.cssRem)
-		width(5.5.cssRem)
-	}
-
-	val pill by style {
-		backgroundColor(LandingVars.Card.value())
-		border(1.px, LineStyle.Solid, LandingVars.Border.value())
-		borderRadius(999.px)
-		color(LandingVars.Muted.value())
-		cursor(Cursor.Pointer)
-		fontSize(0.8.cssRem)
-		monoFont()
-		padding(0.3.cssRem, 0.8.cssRem)
-	}
-
-	val pillActive by style {
-		backgroundColor(LandingVars.Accent.value().alpha(0.18))
-		border(1.px, LineStyle.Solid, LandingVars.Accent.value())
-		color(LandingVars.Text.value())
 	}
 
 	val presets by style {

@@ -11,7 +11,6 @@ import io.github.ayfri.kore.website.utils.alpha
 import io.github.ayfri.kore.website.utils.highlightCodeIn
 import io.github.ayfri.kore.website.utils.monoFont
 import io.github.ayfri.kore.website.utils.smMax
-import org.jetbrains.compose.web.attributes.step
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
@@ -565,15 +564,22 @@ fun ProviderExplorer() {
 			}
 		}
 
-		Div({ classes(ProviderExplorerStyle.controls) }) {
+		Div({ classes(DocControlsStyle.grid) }) {
 			spec.params.forEach { param ->
-				ParamControl(spec, param, values) { value ->
+				SliderField(
+					"provider-explorer-${spec.id}-${param.name}",
+					param.label,
+					values.double(param.name),
+					param.min,
+					spec.limit(param, values),
+					param.step,
+				) { value ->
 					edits = edits + spec.update(values, param, value).mapKeys { (name, _) -> "${spec.id}-$name" }
 				}
 			}
 		}
 
-		Div({ classes(ProviderExplorerStyle.chart) }) {
+		Div({ classes(DocControlsStyle.panel) }) {
 			HistogramBars(histogram, "$SAMPLE_COUNT samples. $reading")
 			Div({ classes(ProviderExplorerStyle.reading) }) { Text(reading) }
 		}
@@ -588,49 +594,6 @@ fun ProviderExplorer() {
 		)
 		highlightCodeIn(KOTLIN_CODE_ID, kotlin)
 		highlightCodeIn(JSON_CODE_ID, json)
-	}
-}
-
-@Composable
-private fun <T : Any> PillGroup(label: String, options: List<T>, selected: T?, text: (T) -> String, onSelect: (T) -> Unit) {
-	Div({
-		classes(ProviderExplorerStyle.group)
-		attr("aria-label", label)
-		attr("role", "group")
-	}) {
-		options.forEach { option ->
-			Button({
-				classes(ProviderExplorerStyle.pill)
-				if (option == selected) classes(ProviderExplorerStyle.pillActive)
-				attr("aria-pressed", (option == selected).toString())
-				attr("type", "button")
-				onClick { onSelect(option) }
-			}) { Text(text(option)) }
-		}
-	}
-}
-
-@Composable
-private fun ParamControl(spec: ProviderSpec, param: Param, values: Values, onChange: (Double) -> Unit) {
-	val value = values.double(param.name)
-	val limit = spec.limit(param, values)
-	val inputId = "provider-explorer-${spec.id}-${param.name}"
-
-	Div({ classes(ProviderExplorerStyle.control) }) {
-		Label(inputId, { classes(ProviderExplorerStyle.controlLabel) }) { Text(param.label) }
-		Div({ classes(ProviderExplorerStyle.controlRow) }) {
-			RangeInput(value, param.min, limit, param.step) {
-				classes(ProviderExplorerStyle.slider)
-				attr("aria-label", "${param.label} slider")
-				onInput { event -> event.value?.toDouble()?.takeUnless { it.isNaN() }?.let(onChange) }
-			}
-			NumberInput(value, param.min, limit) {
-				id(inputId)
-				classes(ProviderExplorerStyle.number)
-				step(param.step)
-				onInput { event -> event.value?.toDouble()?.takeUnless { it.isNaN() }?.let(onChange) }
-			}
-		}
 	}
 }
 
@@ -688,14 +651,10 @@ private fun HistogramBars(histogram: Histogram, label: String) {
 private fun RollStrip(rolls: List<Double>, kind: ProviderKind, sprite: Sprite?, from: Double, to: Double, onReroll: () -> Unit) {
 	val stacked = kind == ProviderKind.INT && sprite?.stacked == true
 
-	Div({ classes(ProviderExplorerStyle.rolls) }) {
+	Div({ classes(DocControlsStyle.panel, ProviderExplorerStyle.rolls) }) {
 		Div({ classes(ProviderExplorerStyle.rollsHeader) }) {
 			Span({ classes(ProviderExplorerStyle.rollsTitle) }) { Text("$ROLL_COUNT rolls") }
-			Button({
-				classes(ProviderExplorerStyle.pill)
-				attr("type", "button")
-				onClick { onReroll() }
-			}) { Text("Reroll") }
+			Pill("Reroll", onClick = onReroll)
 		}
 		Div({ classes(if (stacked) ProviderExplorerStyle.rollStacks else ProviderExplorerStyle.rollGrid) }) {
 			rolls.forEach { roll ->
@@ -809,44 +768,6 @@ private object ProviderExplorerStyle : StyleSheet() {
 		monoFont()
 	}
 
-	val chart by style {
-		backgroundColor(LandingVars.Pane.value())
-		border(1.px, LineStyle.Solid, LandingVars.Border.value())
-		borderRadius(0.8.cssRem)
-		minWidth(0.px)
-		padding(1.cssRem)
-	}
-
-	val control by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		gap(0.3.cssRem)
-		minWidth(0.px)
-	}
-
-	val controlLabel by style {
-		color(LandingVars.Muted.value())
-		fontSize(0.75.cssRem)
-		monoFont()
-	}
-
-	val controlRow by style {
-		alignItems(AlignItems.Center)
-		display(DisplayStyle.Flex)
-		gap(0.7.cssRem)
-		minWidth(0.px)
-	}
-
-	val controls by style {
-		display(DisplayStyle.Grid)
-		gap(0.9.cssRem, 1.5.cssRem)
-		gridTemplateColumns("repeat(2, minmax(0, 1fr))")
-
-		smMax(self) {
-			gridTemplateColumns("minmax(0, 1fr)")
-		}
-	}
-
 	val explorer by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
@@ -859,41 +780,6 @@ private object ProviderExplorerStyle : StyleSheet() {
 	val fill by style {
 		backgroundColor(LandingVars.Accent.value())
 		height(100.percent)
-	}
-
-	val group by style {
-		display(DisplayStyle.Flex)
-		flexWrap(FlexWrap.Wrap)
-		gap(0.35.cssRem)
-	}
-
-	val number by style {
-		backgroundColor(LandingVars.Surface.value())
-		border(1.px, LineStyle.Solid, LandingVars.Border.value())
-		borderRadius(0.4.cssRem)
-		boxSizing(BoxSizing.BorderBox)
-		color(LandingVars.Text.value())
-		fontSize(0.85.cssRem)
-		monoFont()
-		padding(0.3.cssRem, 0.5.cssRem)
-		width(5.5.cssRem)
-	}
-
-	val pill by style {
-		backgroundColor(LandingVars.Card.value())
-		border(1.px, LineStyle.Solid, LandingVars.Border.value())
-		borderRadius(999.px)
-		color(LandingVars.Muted.value())
-		cursor(Cursor.Pointer)
-		fontSize(0.8.cssRem)
-		monoFont()
-		padding(0.3.cssRem, 0.8.cssRem)
-	}
-
-	val pillActive by style {
-		backgroundColor(LandingVars.Accent.value().alpha(0.18))
-		border(1.px, LineStyle.Solid, LandingVars.Accent.value())
-		color(LandingVars.Text.value())
 	}
 
 	val presets by style {
@@ -961,14 +847,9 @@ private object ProviderExplorerStyle : StyleSheet() {
 	}
 
 	val rolls by style {
-		backgroundColor(LandingVars.Pane.value())
-		border(1.px, LineStyle.Solid, LandingVars.Border.value())
-		borderRadius(0.8.cssRem)
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		gap(0.8.cssRem)
-		minWidth(0.px)
-		padding(1.cssRem)
 	}
 
 	val rollsHeader by style {
@@ -981,14 +862,6 @@ private object ProviderExplorerStyle : StyleSheet() {
 		color(LandingVars.Muted.value())
 		fontSize(0.75.cssRem)
 		monoFont()
-	}
-
-	val slider by style {
-		accentColor(AccentColor.of(LandingVars.Accent.value()))
-		cursor(Cursor.Pointer)
-		flexGrow(1)
-		margin(0.px)
-		minWidth(0.px)
 	}
 
 	val sprites by style {

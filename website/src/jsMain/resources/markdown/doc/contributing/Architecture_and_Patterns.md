@@ -280,7 +280,8 @@ for lines mixing styles, like chat messages built from several text components.
 
 Interactive explainers (sliders that redraw a distribution, for example) live in `components/doc/`, like `ProviderExplorer`.
 Embed one the same way, right after the table it illustrates, and write the sentence introducing it so the page reads
-fine without it: the `.md` copies and `llms.txt` drop the widget line.
+fine without it: the `.md` copies and `llms.txt` drop the widget line. The pills, toggle groups, slider and text fields these
+widgets share live in `components/doc/DocControls.kt`: reuse them instead of styling new controls.
 
 Keep routes stable, keep navigation intentional, and update entry pages when a new doc should become discoverable.
 
