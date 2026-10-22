@@ -13,11 +13,9 @@ import io.github.ayfri.kore.entities.summon.customName
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.utils.encodeToNbtTag
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import net.benwoodworth.knbt.NbtCompoundBuilder
-import net.benwoodworth.knbt.nbtCompound
 
 /**
  * Builds the `{id, count?, components?}` compound Minecraft expects wherever an item stack lives in NBT: the `Item`
@@ -64,7 +62,7 @@ fun ItemStack.summon(
 	}
 	if (opts.customName != null && opts.customNameVisible == null) opts.customNameVisible = true
 
-	encodeToNbtTag(ItemEntitySummonData.serializer(), opts).nbtCompound.forEach { (key, value) -> this[key] = value }
+	opts.toNbt().forEach { (key, value) -> this[key] = value }
 	this["Item"] = toNbt(effectiveComponents)
 
 	extraEntityNbt?.invoke(this)

@@ -99,39 +99,71 @@ These come from `EntitySummonData`, the base shared by item entities, [mannequin
 [display entities](/docs/helpers/display-entities) and [interactions](/docs/helpers/interactions). They are written first,
 before the fields of the entity itself:
 
-| Field                               | NBT tag             | Type                  |
-|-------------------------------------|---------------------|-----------------------|
-| `air`                               | `Air`               | `Int`                 |
-| `customName`                        | `CustomName`        | `ChatComponents`      |
-| `customNameVisible`                 | `CustomNameVisible` | `Boolean`             |
-| `fallDistance`                      | `fall_distance`     | `Double`              |
-| `fire`                              | `Fire`              | `Short`               |
-| `glowing`                           | `Glowing`           | `Boolean`             |
-| `hasVisualFire`                     | `HasVisualFire`     | `Boolean`             |
-| `invulnerable`                      | `Invulnerable`      | `Boolean`             |
-| `invulnerableTime`                  | `invulnerable_time` | `Int`                 |
-| `motion` / `motion(dx, dy, dz)`     | `Motion`            | `List<Double>`        |
-| `noGravity`                         | `NoGravity`         | `Boolean`             |
-| `onGround`                          | `OnGround`          | `Boolean`             |
-| `portalCooldown`                    | `PortalCooldown`    | `Int`                 |
-| `pos`                               | `Pos`               | `List<Double>`        |
-| `rotation` / `rotation(yaw, pitch)` | `Rotation`          | `List<Float>`         |
-| `silent`                            | `Silent`            | `Boolean`             |
-| `tags`                              | `Tags`              | `List<String>`        |
+| Field               | Builder                     | NBT tag             | Type                |
+|---------------------|-----------------------------|---------------------|---------------------|
+| `air`               |                             | `Air`               | `Short`             |
+| `customName`        | `customName(text, color)`   | `CustomName`        | `ChatComponents`    |
+| `customNameVisible` |                             | `CustomNameVisible` | `Boolean`           |
+| `data`              | `customData { }`            | `data`              | `NbtCompound`       |
+| `fallDistance`      |                             | `fall_distance`     | `Double`            |
+| `fire`              | `onFire(duration)`          | `Fire`              | `Short`             |
+| `glowing`           |                             | `Glowing`           | `Boolean`           |
+| `hasVisualFire`     |                             | `HasVisualFire`     | `Boolean`           |
+| `invulnerable`      |                             | `Invulnerable`      | `Boolean`           |
+| `invulnerableTime`  | `invulnerableFor(duration)` | `invulnerable_time` | `Int`               |
+| `motion`            | `motion(dx, dy, dz)`        | `Motion`            | `List<Double>`      |
+| `noGravity`         |                             | `NoGravity`         | `Boolean`           |
+| `onGround`          |                             | `OnGround`          | `Boolean`           |
+| `passengers`        | `passenger(entity)`         | `Passengers`        | `List<NbtCompound>` |
+| `portalCooldown`    |                             | `PortalCooldown`    | `Int`               |
+| `rotation`          | `rotation(yaw, pitch)`      | `Rotation`          | `List<Float>`       |
+| `silent`            |                             | `Silent`            | `Boolean`           |
+| `tags`              | `tag(vararg names)`         | `Tags`              | `List<String>`      |
+| `team`              | `team(team)`                | `Team`              | `String`            |
+| `ticksFrozen`       | `frozen(duration)`          | `TicksFrozen`       | `Int`               |
 
-`invulnerableTime` is a number of ticks during which the entity ignores damage, written as the lowercase `invulnerable_time` tag, while `invulnerable` makes it immune for good.
-
-`customName("Shop", Color.GOLD)`, `motion(dx, dy, dz)` and `rotation(yaw, pitch)` are helper functions so you do not have
-to build the lists or the text component yourself:
+`invulnerableTime` is a number of ticks during which the entity ignores damage, while `invulnerable` makes it immune for good. The
+duration builders take a `TimeNumber` and write ticks: `invulnerableFor(3.seconds)` writes `invulnerable_time:60`, `onFire(5.seconds)`
+writes `Fire:100s` (at most 32767 ticks) and `frozen(1.seconds)` writes `TicksFrozen:20`. `team` is the name of the team the entity
+joins when it spawns, and `data` is free NBT any entity stores, matched with `nbt={data:{...}}` in selectors. The `pos` of an entity isn't
+a field because `summon` already takes its position.
 
 ```kotlin
+val red = team("red")
+
 function("launch_item") {
 	itemStack(Items.TNT).summon {
-		motion(0.0, 0.6, 0.0) // blocks per tick on each axis, so this pops it upwards
-		rotation(90f, 0f)     // yaw then pitch, in degrees
-		glowing = true        // draws the outline seen through walls
+		customName("Boom", Color.RED)          // CustomName, shown in the world
+		customData { this["quest"] = "intro" } // data
+		glowing = true                         // draws the outline seen through walls
+		motion(0.0, 0.6, 0.0)                  // blocks per tick on each axis, so this pops it upwards
+		onFire(5.seconds)                      // Fire:100s
+		rotation(90f, 0f)                      // yaw then pitch, in degrees
+		tag("loot", "quest")                   // adds to the tags already set
+		team(red)                              // Team:"red"
 	}
 }
+```
+
+```mcfunction
+summon minecraft:item 0.0 0.0 0.0 {CustomName:{text:"Boom",color:"red"},CustomNameVisible:1b,data:{quest:"intro"},Fire:100s,Glowing:1b,Motion:[0.0d,0.6d,0.0d],Rotation:[90.0f,0.0f],Tags:["loot","quest"],Team:"red",Item:{id:"minecraft:tnt"}}
+```
+
+`passenger(entity)` adds a model with its `id`, as the model is when it is added. Mannequins, display entities and interactions take it,
+an item entity isn't possible as a passenger because its `Item` compound only comes with `ItemStack.summon`:
+
+```kotlin
+val label = textDisplay {
+	text("Boss")
+	passenger(blockDisplay { blockState(Blocks.STONE) })
+	passenger(mannequin { pose = MannequinPose.STANDING })
+}
+
+summon(label.entityType, vec3(), label.toNbt())
+```
+
+```mcfunction
+summon minecraft:text_display ~ ~ ~ {Passengers:[{id:"minecraft:block_display",block_state:"minecraft:stone"},{id:"minecraft:mannequin",pose:"standing"}],text:"Boss"}
 ```
 
 ### Item-only fields

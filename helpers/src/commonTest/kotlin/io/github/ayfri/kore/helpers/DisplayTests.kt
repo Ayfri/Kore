@@ -21,6 +21,8 @@ import io.github.ayfri.kore.entities.display.BlockDisplayEntity
 import io.github.ayfri.kore.entities.display.ItemDisplayEntity
 import io.github.ayfri.kore.entities.display.TextDisplayEntity
 import io.github.ayfri.kore.entities.kill
+import io.github.ayfri.kore.entities.summon.passenger
+import io.github.ayfri.kore.entities.summon.tag
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
 import io.github.ayfri.kore.generated.Attributes
@@ -32,6 +34,8 @@ import io.github.ayfri.kore.helpers.displays.entities.BillboardMode
 import io.github.ayfri.kore.helpers.displays.entities.Brightness
 import io.github.ayfri.kore.helpers.displays.entities.ItemDisplayModelMode
 import io.github.ayfri.kore.helpers.displays.maths.*
+import io.github.ayfri.kore.helpers.mannequins.MannequinPose
+import io.github.ayfri.kore.helpers.mannequins.mannequin
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -164,6 +168,14 @@ fun Function.displayNbtTests() {
 	}
 
 	summon(taggedDisplay.entityType, vec3(), taggedDisplay.toNbt()) assertsIs """summon minecraft:block_display ~ ~ ~ {Glowing:1b,Tags:["hologram"],block_state:"minecraft:stone"}"""
+
+	val ridden = textDisplay {
+		text("Boss")
+		passenger(blockDisplay { blockState(Blocks.STONE); tag("seat") })
+		passenger(mannequin { pose = MannequinPose.STANDING })
+	}
+
+	ridden.toNbt().toString() assertsIs """{Passengers:[{id:"minecraft:block_display",Tags:["seat"],block_state:"minecraft:stone"},{id:"minecraft:mannequin",pose:"standing"}],text:"Boss"}"""
 
 	val stoneDisplay = blockDisplay { blockState(Blocks.STONE) }
 	summon(stoneDisplay.entityType, vec3(), stoneDisplay.toNbt()) assertsIs """summon minecraft:block_display ~ ~ ~ {block_state:"minecraft:stone"}"""

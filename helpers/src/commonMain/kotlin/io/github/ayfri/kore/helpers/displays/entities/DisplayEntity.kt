@@ -2,7 +2,6 @@ package io.github.ayfri.kore.helpers.displays.entities
 
 import io.github.ayfri.kore.arguments.colors.RGB
 import io.github.ayfri.kore.entities.summon.EntitySummonData
-import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
 import io.github.ayfri.kore.helpers.displays.maths.Transformation
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.JsonSerialName
@@ -10,7 +9,6 @@ import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import io.github.ayfri.kore.utils.encodeToNbtTag
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import net.benwoodworth.knbt.nbtCompound
 
 @Serializable(with = BillboardMode.Companion.BillboardModeSerializer::class)
@@ -52,10 +50,7 @@ sealed class DisplayEntity : EntitySummonData() {
 	var viewRange: Float? = null
 	var width: Float? = null
 
-	@Transient
-	abstract val entityType: EntityTypeArgument
-
-	fun toNbt() = encodeToNbtTag(DisplayEntitySerializer, this).nbtCompound
+	override fun toNbt() = encodeToNbtTag(DisplayEntitySerializer, this).nbtCompound
 
 	companion object {
 		data object DisplayEntitySerializer : NamespacedPolymorphicSerializer<DisplayEntity>(

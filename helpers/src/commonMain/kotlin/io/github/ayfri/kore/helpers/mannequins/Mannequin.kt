@@ -5,7 +5,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.components.item.ProfileComponent
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.entities.summon.EntitySummonData
-import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
+import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.encodeToNbtTag
 import kotlinx.serialization.Serializable
@@ -42,14 +42,14 @@ data class Mannequin(
 ) : EntitySummonData() {
 	/** The entity type of the mannequin. */
 	@Transient
-	val entityType = EntityTypeArgument("mannequin")
+	override val entityType = EntityTypes.MANNEQUIN
 
 	/**
 	 * Converts the mannequin to an NBT compound.
 	 *
 	 * @return The NBT compound.
 	 */
-	fun toNbt() = encodeToNbtTag(serializer(), this).nbtCompound
+	override fun toNbt() = encodeToNbtTag(serializer(), this).nbtCompound
 }
 
 /**

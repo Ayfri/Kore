@@ -30,7 +30,7 @@ data class Interaction(
 ) : EntitySummonData() {
 	/** The entity type of the interaction. */
 	@Transient
-	val entityType = EntityTypes.INTERACTION
+	override val entityType = EntityTypes.INTERACTION
 
 	/** The tag every summoned instance carries and the generated advancements filter on, `<namespace>.interaction.<name>` once declared. */
 	@Transient
@@ -59,5 +59,5 @@ data class Interaction(
 	 *
 	 * @return The NBT compound.
 	 */
-	fun toNbt() = encodeToNbtTag(serializer(), this).nbtCompound
+	override fun toNbt() = encodeToNbtTag(serializer(), this).nbtCompound
 }
