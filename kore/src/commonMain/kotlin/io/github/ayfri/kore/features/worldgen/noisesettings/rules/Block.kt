@@ -15,13 +15,13 @@ data class Block(
 ) : MaterialRule()
 
 /**
- * Appends a block material rule.
+ * Appends a block material rule placing [id], its block state properties being set in [block].
  */
-fun MaterialRulesScope.block(name: BlockArgument, block: MutableMap<String, String>.() -> Unit = {}) =
-	apply { rules += Block(BlockState(name, buildMap(block))) }
+fun MaterialRulesScope.block(id: BlockArgument, block: MutableMap<String, String>.() -> Unit = {}) =
+	apply { rules += Block(BlockState(id, buildMap(block))) }
 
 /**
- * Appends a block material rule.
+ * Appends a block material rule placing [id] with [properties].
  */
-fun MaterialRulesScope.block(name: BlockArgument, properties: Map<String, String>) =
-	apply { rules += Block(BlockState(name, properties)) }
+fun MaterialRulesScope.block(id: BlockArgument, properties: Map<String, String>) =
+	apply { rules += Block(BlockState(id, properties)) }

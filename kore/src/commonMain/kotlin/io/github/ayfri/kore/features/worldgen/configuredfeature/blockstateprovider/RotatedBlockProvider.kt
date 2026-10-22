@@ -51,19 +51,19 @@ fun BlockStateProviderScope.rotatedBlockProvider(state: BlockState = blockStateS
 	RotatedBlockProvider(direction, SimpleStateProvider(state))
 
 /**
- * Creates a `rotated_block_provider` placing [name] with [properties], rotated towards [direction] (random when
+ * Creates a `rotated_block_provider` placing [id] with [properties], rotated towards [direction] (random when
  * omitted).
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rotated_block_provider
  */
 fun BlockStateProviderScope.rotatedBlockProvider(
-	name: BlockArgument,
+	id: BlockArgument,
 	properties: Map<String, String>,
 	direction: Direction? = null,
-) = RotatedBlockProvider(direction, SimpleStateProvider(blockState(name, properties)))
+) = RotatedBlockProvider(direction, SimpleStateProvider(blockState(id, properties)))
 
 /**
- * Creates a `rotated_block_provider` placing [name] rotated towards [direction] (random when omitted), its other block
+ * Creates a `rotated_block_provider` placing [id] rotated towards [direction] (random when omitted), its other block
  * state properties being set in [block].
  *
  * ```kotlin
@@ -74,7 +74,7 @@ fun BlockStateProviderScope.rotatedBlockProvider(
  * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rotated_block_provider
  */
 fun BlockStateProviderScope.rotatedBlockProvider(
-	name: BlockArgument,
+	id: BlockArgument,
 	direction: Direction? = null,
 	block: BlockStateBuilder.() -> Unit = {},
-) = RotatedBlockProvider(direction, SimpleStateProvider(blockState(name, block)))
+) = RotatedBlockProvider(direction, SimpleStateProvider(blockState(id, block)))

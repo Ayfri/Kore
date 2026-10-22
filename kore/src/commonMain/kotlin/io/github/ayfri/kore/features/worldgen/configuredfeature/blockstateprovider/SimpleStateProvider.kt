@@ -33,7 +33,7 @@ data class SimpleStateProvider(
 fun BlockStateProviderScope.simpleStateProvider(state: BlockState = blockStateStone()) = SimpleStateProvider(state)
 
 /**
- * Creates a `simple_state_provider` placing [name] with [properties].
+ * Creates a `simple_state_provider` placing [id] with [properties].
  *
  * ```kotlin
  * simpleStateProvider(Blocks.OAK_LOG, mapOf("axis" to "y"))
@@ -41,11 +41,11 @@ fun BlockStateProviderScope.simpleStateProvider(state: BlockState = blockStateSt
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#simple_state_provider
  */
-fun BlockStateProviderScope.simpleStateProvider(name: BlockArgument, properties: Map<String, String>) =
-	SimpleStateProvider(blockState(name, properties))
+fun BlockStateProviderScope.simpleStateProvider(id: BlockArgument, properties: Map<String, String>) =
+	SimpleStateProvider(blockState(id, properties))
 
 /**
- * Creates a `simple_state_provider` placing [name], its block state properties being set in [block].
+ * Creates a `simple_state_provider` placing [id], its block state properties being set in [block].
  *
  * ```kotlin
  * simpleStateProvider(Blocks.OAK_LOG) {
@@ -55,5 +55,5 @@ fun BlockStateProviderScope.simpleStateProvider(name: BlockArgument, properties:
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#simple_state_provider
  */
-fun BlockStateProviderScope.simpleStateProvider(name: BlockArgument, block: BlockStateBuilder.() -> Unit = {}) =
-	SimpleStateProvider(blockState(name, block))
+fun BlockStateProviderScope.simpleStateProvider(id: BlockArgument, block: BlockStateBuilder.() -> Unit = {}) =
+	SimpleStateProvider(blockState(id, block))
