@@ -20,6 +20,7 @@ import io.github.ayfri.kore.utils.pretty
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 
 fun DataPack.numberProviderTests() {
@@ -609,6 +610,111 @@ fun DataPack.numberProviderTests() {
 		}
 	""".trimIndent()
 	roundTrip(lootTables.last())
+
+	lootTable("product_test") {
+		pool {
+			rolls = product(reference(NumberProviderArgument("a", "my_pack")), constant(2f))
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"entries": [],
+					"rolls": {
+						"type": "minecraft:product",
+						"operands": [
+							"my_pack:a",
+							2.0
+						]
+					}
+				}
+			]
+		}
+	""".trimIndent()
+	roundTrip(lootTables.last())
+
+	lootTable("maximum_tag_test") {
+		pool {
+			rolls = maximum(NumberProviderTagArgument("t", "my_pack"))
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"entries": [],
+					"rolls": {
+						"type": "minecraft:maximum",
+						"operands": "#my_pack:t"
+					}
+				}
+			]
+		}
+	""".trimIndent()
+	roundTrip(lootTables.last())
+
+	lootTable("minimum_single_test") {
+		pool {
+			rolls = minimum(constant(1f))
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"entries": [],
+					"rolls": {
+						"type": "minecraft:minimum",
+						"operands": 1.0
+					}
+				}
+			]
+		}
+	""".trimIndent()
+	roundTrip(lootTables.last())
+
+	lootTable("average_test") {
+		pool {
+			rolls = average(listOf(constant(1f), uniform(1f, 3f)))
+		}
+	}
+
+	lootTables.last() assertsIs """
+		{
+			"pools": [
+				{
+					"entries": [],
+					"rolls": {
+						"type": "minecraft:average",
+						"operands": [
+							1.0,
+							{
+								"type": "minecraft:uniform",
+								"min": 1.0,
+								"max": 3.0
+							}
+						]
+					}
+				}
+			]
+		}
+	""".trimIndent()
+	roundTrip(lootTables.last())
+
+	jsonEncoder.decodeFromString(NumberProvider.serializer(), """{"type":"minecraft:average","operands":1}""")
+		.shouldBeInstanceOf<AverageNumberProvider>()
+	jsonEncoder.decodeFromString(NumberProvider.serializer(), """{"type":"minecraft:maximum","operands":[1,2]}""")
+		.shouldBeInstanceOf<MaximumNumberProvider>().operands.size shouldBe 2
+	jsonEncoder.decodeFromString(NumberProvider.serializer(), """{"type":"minecraft:minimum","operands":"#my_pack:t"}""")
+		.shouldBeInstanceOf<MinimumNumberProvider>()
+	jsonEncoder.decodeFromString(NumberProvider.serializer(), """{"type":"minecraft:product","operands":[1,2]}""")
+		.shouldBeInstanceOf<ProductNumberProvider>().operands.size shouldBe 2
+
+	shouldThrow<IllegalArgumentException> { lootTable("product_empty_test") { pool { rolls = product() } } }
 
 	jsonEncoder.decodeFromString(NumberProvider.serializer(), "5.0") assertsIs ConstantNumberProvider(5f)
 	jsonEncoder.decodeFromString(NumberProvider.serializer(), """{"type":"minecraft:constant","value":5.0}""") assertsIs

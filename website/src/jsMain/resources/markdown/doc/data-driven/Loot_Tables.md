@@ -214,12 +214,16 @@ The builders are extensions on `NumberProviderScope`, so they only resolve insid
 
 | Provider                          | Description                                               | Example                                                                 |
 |-----------------------------------|-----------------------------------------------------------|-------------------------------------------------------------------------|
+| `average(...)`                    | Mean of several providers, or of a tag of providers       | `average(constant(2f), constant(4f))`                                   |
 | `binomial(n, p)`                  | Binomial distribution                                     | `binomial(5f, 0.5f)`                                                    |
 | `conditionalNumber(...)`          | One value when a condition passes, another otherwise      | `conditionalNumber(5f, 2f) { killedByPlayer() }`                        |
 | `constant(value)`                 | Fixed value                                               | `constant(5f)`                                                          |
 | `enchantmentLevel(...)`           | Based on enchantment level (requires enchantment context) | `enchantmentLevel(5)`                                                   |
 | `environmentAttribute(attribute)` | Current value of a numeric env attribute                  | `environmentAttribute(EnvironmentAttributes.Visual.FOG_START_DISTANCE)` |
+| `maximum(...)`                    | Largest of several providers, or of a tag of providers    | `maximum(constant(1f), scoreNumber("kills", EntityTarget.THIS))`        |
+| `minimum(...)`                    | Smallest of several providers, or of a tag of providers   | `minimum(constant(5f), scoreNumber("kills", EntityTarget.THIS))`        |
 | `numberDispatcher(...) { }`       | Value of the first matching case, or a default            | `numberDispatcher(default = 0f) { case(1f) { killedByPlayer() } }`      |
+| `product(...)`                    | Product of several providers, or of a tag of providers    | `product(reference(NumberProviders.Cooking.TIME_COAL), constant(2f))`   |
 | `reference(id)`                   | Number provider file, written as its ID                   | `reference(NumberProviders.Cooking.TIME_COAL)`                          |
 | `scoreNumber(...)`                | Value from a scoreboard objective                         | `scoreNumber("kills", EntityTarget.THIS)`                               |
 | `storageNumber(storage, path)`    | Value from command storage                                | `storageNumber("my_pack:data", "player.health")`                        |
@@ -244,7 +248,15 @@ pool {
 }
 ```
 
-The `operands` of a `sum` take one provider, a list of at least one provider (IDs and inline values can be mixed), or a tag of number providers: `sum(NumberProviderTagArgument("bonuses", "my_pack"))` writes `"operands": "#my_pack:bonuses"`. A tag is only valid as the whole `operands`, and a `sum` without operands isn't possible because the game rejects an empty list.
+The `operands` of `average`, `maximum`, `minimum`, `product` and `sum` take one provider, a list of at least one provider (IDs and inline values can be mixed), or a tag of number providers: `sum(NumberProviderTagArgument("bonuses", "my_pack"))` writes `"operands": "#my_pack:bonuses"`. A tag is only valid as the whole `operands`, and a provider without operands isn't possible because the game rejects an empty list.
+
+`minimum` caps a value, here the roll count at 5 whatever the score is:
+
+```kotlin
+pool {
+	rolls = minimum(scoreNumber("kills", EntityTarget.THIS), constant(5f))
+}
+```
 
 A provider that references itself, directly or through other files, makes the pack fail to load.
 

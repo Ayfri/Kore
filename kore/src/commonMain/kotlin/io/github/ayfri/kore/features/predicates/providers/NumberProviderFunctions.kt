@@ -12,6 +12,27 @@ import io.github.ayfri.kore.generated.arguments.types.EnvironmentAttributeArgume
 import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 
+/**
+ * Creates an [AverageNumberProvider] returning the mean of every provider of [operands].
+ *
+ * ```
+ * average(constant(2f), constant(4f))  // 3.0
+ * ```
+ */
+fun NumberProviderScope.average(vararg operands: NumberProvider) = AverageNumberProvider(operands.toList())
+
+/** Creates an [AverageNumberProvider] returning the mean of every provider of [operands]. */
+fun NumberProviderScope.average(operands: List<NumberProvider>) = AverageNumberProvider(operands)
+
+/**
+ * Creates an [AverageNumberProvider] returning the mean of every number provider of the tag [tag], written `"#my_pack:my_tag"`.
+ *
+ * ```
+ * average(NumberProviderTagArgument("bonuses", "my_pack"))  // "operands": "#my_pack:bonuses"
+ * ```
+ */
+fun NumberProviderScope.average(tag: NumberProviderTagArgument) = AverageNumberProvider(listOf(NumberProviderReference(tag)))
+
 /** Creates a [BinomialNumberProvider] returning the number of successes of [n] trials of probability [p]. */
 fun NumberProviderScope.binomial(n: NumberProvider, p: NumberProvider) = BinomialNumberProvider(n, p)
 
@@ -93,6 +114,48 @@ fun NumberProviderScope.enchantmentLevel(amount: LevelBased) = EnchantmentLevelN
 fun NumberProviderScope.environmentAttribute(attribute: EnvironmentAttributeArgument) = EnvironmentAttributeNumberProvider(attribute)
 
 /**
+ * Creates a [MaximumNumberProvider] returning the largest value among the providers of [operands].
+ *
+ * ```
+ * maximum(constant(2f), constant(4f))  // 4.0
+ * ```
+ */
+fun NumberProviderScope.maximum(vararg operands: NumberProvider) = MaximumNumberProvider(operands.toList())
+
+/** Creates a [MaximumNumberProvider] returning the largest value among the providers of [operands]. */
+fun NumberProviderScope.maximum(operands: List<NumberProvider>) = MaximumNumberProvider(operands)
+
+/**
+ * Creates a [MaximumNumberProvider] returning the largest value among the number providers of the tag [tag], written `"#my_pack:my_tag"`.
+ *
+ * ```
+ * maximum(NumberProviderTagArgument("bonuses", "my_pack"))  // "operands": "#my_pack:bonuses"
+ * ```
+ */
+fun NumberProviderScope.maximum(tag: NumberProviderTagArgument) = MaximumNumberProvider(listOf(NumberProviderReference(tag)))
+
+/**
+ * Creates a [MinimumNumberProvider] returning the smallest value among the providers of [operands].
+ *
+ * ```
+ * minimum(scoreNumber("kills", EntityTarget.THIS), constant(5f))  // caps the score at 5
+ * ```
+ */
+fun NumberProviderScope.minimum(vararg operands: NumberProvider) = MinimumNumberProvider(operands.toList())
+
+/** Creates a [MinimumNumberProvider] returning the smallest value among the providers of [operands]. */
+fun NumberProviderScope.minimum(operands: List<NumberProvider>) = MinimumNumberProvider(operands)
+
+/**
+ * Creates a [MinimumNumberProvider] returning the smallest value among the number providers of the tag [tag], written `"#my_pack:my_tag"`.
+ *
+ * ```
+ * minimum(NumberProviderTagArgument("bonuses", "my_pack"))  // "operands": "#my_pack:bonuses"
+ * ```
+ */
+fun NumberProviderScope.minimum(tag: NumberProviderTagArgument) = MinimumNumberProvider(listOf(NumberProviderReference(tag)))
+
+/**
  * Creates a [NumberDispatcherNumberProvider] returning the provider of the first [NumberDispatcherBuilder.case] whose
  * condition passes, [default] when none does.
  *
@@ -108,6 +171,27 @@ fun NumberProviderScope.numberDispatcher(default: NumberProvider? = null, block:
 /** Creates a [NumberDispatcherNumberProvider] returning the first matching case, or [default] when none does. */
 fun NumberProviderScope.numberDispatcher(default: Float, block: NumberDispatcherBuilder.() -> Unit) =
 	numberDispatcher(constant(default), block)
+
+/**
+ * Creates a [ProductNumberProvider] returning the product of every provider of [operands].
+ *
+ * ```
+ * product(reference(NumberProviderArgument("bonus", "my_pack")), constant(2f))
+ * ```
+ */
+fun NumberProviderScope.product(vararg operands: NumberProvider) = ProductNumberProvider(operands.toList())
+
+/** Creates a [ProductNumberProvider] returning the product of every provider of [operands]. */
+fun NumberProviderScope.product(operands: List<NumberProvider>) = ProductNumberProvider(operands)
+
+/**
+ * Creates a [ProductNumberProvider] returning the product of every number provider of the tag [tag], written `"#my_pack:my_tag"`.
+ *
+ * ```
+ * product(NumberProviderTagArgument("bonuses", "my_pack"))  // "operands": "#my_pack:bonuses"
+ * ```
+ */
+fun NumberProviderScope.product(tag: NumberProviderTagArgument) = ProductNumberProvider(listOf(NumberProviderReference(tag)))
 
 /**
  * Creates a [NumberProviderReference] pointing at the number provider [id], written as a bare string.

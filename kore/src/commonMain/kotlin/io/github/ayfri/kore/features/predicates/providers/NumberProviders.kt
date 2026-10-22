@@ -40,6 +40,20 @@ sealed class NumberProvider {
 }
 
 /**
+ * Returns the mean of every provider of [operands].
+ *
+ * Minecraft Wiki: [Number provider - average](https://minecraft.wiki/w/Number_provider#average)
+ *
+ * @property operands The providers whose values are averaged: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of number providers. Never empty.
+ */
+@Serializable
+data class AverageNumberProvider(var operands: InlinableList<NumberProvider>) : NumberProvider() {
+	init {
+		require(operands.isNotEmpty()) { "An 'average' number provider needs at least one operand." }
+	}
+}
+
+/**
  * Returns the number of successes of [n] trials, each succeeding with a probability of [p].
  *
  * Minecraft Wiki: [Number provider - binomial](https://minecraft.wiki/w/Number_provider#binomial)
@@ -112,6 +126,34 @@ data class EnvironmentAttributeNumberProvider(
 ) : NumberProvider()
 
 /**
+ * Returns the largest value among the providers of [operands].
+ *
+ * Minecraft Wiki: [Number provider - maximum](https://minecraft.wiki/w/Number_provider#maximum)
+ *
+ * @property operands The providers to compare: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of number providers. Never empty.
+ */
+@Serializable
+data class MaximumNumberProvider(var operands: InlinableList<NumberProvider>) : NumberProvider() {
+	init {
+		require(operands.isNotEmpty()) { "A 'maximum' number provider needs at least one operand." }
+	}
+}
+
+/**
+ * Returns the smallest value among the providers of [operands].
+ *
+ * Minecraft Wiki: [Number provider - minimum](https://minecraft.wiki/w/Number_provider#minimum)
+ *
+ * @property operands The providers to compare: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of number providers. Never empty.
+ */
+@Serializable
+data class MinimumNumberProvider(var operands: InlinableList<NumberProvider>) : NumberProvider() {
+	init {
+		require(operands.isNotEmpty()) { "A 'minimum' number provider needs at least one operand." }
+	}
+}
+
+/**
  * Returns the provider of the first case of [cases] whose condition passes, [default] when none does.
  *
  * Minecraft Wiki: [Number provider - number_dispatcher](https://minecraft.wiki/w/Number_provider#number_dispatcher)
@@ -138,6 +180,20 @@ data class NumberDispatcherCase(
 )
 
 /**
+ * Returns the product of every provider of [operands].
+ *
+ * Minecraft Wiki: [Number provider - product](https://minecraft.wiki/w/Number_provider#product)
+ *
+ * @property operands The providers whose values are multiplied together: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of number providers. Never empty.
+ */
+@Serializable
+data class ProductNumberProvider(var operands: InlinableList<NumberProvider>) : NumberProvider() {
+	init {
+		require(operands.isNotEmpty()) { "A 'product' number provider needs at least one operand." }
+	}
+}
+
+/**
  * Returns the value a score holder has on a scoreboard objective, optionally scaled.
  *
  * Minecraft Wiki: [Number provider - score](https://minecraft.wiki/w/Number_provider#score)
@@ -155,12 +211,12 @@ data class ScoreNumberProvider(
 
 /**
  * Returns the number provider [id] points to, written as the bare string `"my_pack:my_provider"` wherever a number
- * provider is expected. A tag (`"#my_pack:my_tag"`) is only valid as the whole `operands` of a `sum`.
+ * provider is expected. A tag (`"#my_pack:my_tag"`) is only valid as the whole `operands` of an `average`, `maximum`, `minimum`, `product` or `sum`.
  * A cyclic reference makes the pack fail to load. A list can mix IDs and inline values.
  *
  * Minecraft Wiki: [Number provider](https://minecraft.wiki/w/Number_provider)
  *
- * @property id The ID of the number provider file, or of the number provider tag in a `sum`.
+ * @property id The ID of the number provider file, or of the number provider tag as the `operands` of a provider that takes several.
  */
 @Serializable(with = NumberProviderReference.Companion.NumberProviderReferenceSerializer::class)
 data class NumberProviderReference(var id: NumberProviderOrTagArgument) : NumberProvider() {
