@@ -211,10 +211,11 @@ object MarkdownLayoutStyle : StyleSheet() {
 		}
 
 		"code" + not(attrContains("class", "language")) style {
-			fontFamily(*CodeThemeStyle.fonts)
-			fontSize(0.85.cssRem)
 			backgroundColor(GlobalStyle.secondaryBackgroundColor)
 			borderRadius(GlobalStyle.roundingButton)
+			fontFamily(*CodeThemeStyle.fonts)
+			fontSize(0.85.cssRem)
+			overflowWrap(OverflowWrap.Anywhere)
 			paddingX(0.2.cssRem)
 			paddingY(0.1.cssRem)
 		}
