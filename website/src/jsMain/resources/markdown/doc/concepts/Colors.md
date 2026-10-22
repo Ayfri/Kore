@@ -126,25 +126,15 @@ Different Minecraft systems expect colors in different formats. Kore picks the r
   ```
 
 - Particles:
-	- Command particles (decimal ints): Dust, DustColorTransition, Trail
-	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/commands/particle/types/DustParticleType.kt)
-	  ```kotlin
-	  var color: @Serializable(ColorAsDecimalSerializer::class) Color,
-	  ```
-	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/commands/particle/types/DustColorTransitionParticleType.kt)
-	  ```kotlin
-	  var fromColor: @Serializable(ColorAsDecimalSerializer::class) Color,
-	  var toColor: @Serializable(ColorAsDecimalSerializer::class) Color,
-	  ```
-	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/commands/particle/types/TrailParticleType.kt)
-	  ```kotlin
-	  var color: @Serializable(ColorAsDecimalSerializer::class) Color,
-	  ```
-	- Particle options in enchantment effects and environment attributes (packed ints): RGB for `dust`, `dust_color_transition`, `effect`,
-	  `instant_effect` and `trail`, ARGB for `entity_effect`, `flash` and `tinted_leaves`. A color without alpha is fully opaque.
+	- Particle options, in the `/particle` command, enchantment effects and environment attributes (packed ints): RGB for `dust`,
+	  `dust_color_transition`, `effect`, `instant_effect` and `trail`, ARGB for `entity_effect`, `flash` and `tinted_leaves`. A color without
+	  alpha is fully opaque, so `colorParticle(Color.GREEN)` gives `particle minecraft:entity_effect{color:-11141291}`.
 	  [See on GitHub](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/data/particle/ParticleOptionsTypes.kt)
 	  ```kotlin
+	  // RGB: dust, dust_color_transition, effect, instant_effect, trail
 	  @Serializable(ColorAsDecimalSerializer::class) var color: Color,
+
+	  // ARGB: entity_effect, flash, tinted_leaves
 	  @Serializable(ColorAsARGBDecimalSerializer::class) var color: Color,
 	  ```
 
@@ -240,20 +230,12 @@ val effects = BiomeEffects(
 
 Particles
 
-- Command dust (decimal):
-  ```kotlin
-  import io.github.ayfri.kore.commands.particle.types.Dust
-  import io.github.ayfri.kore.arguments.colors.Color
-
-  val p = Dust(color = Color.RED, scale = 1.0)
-  ```
-
-- Enchantment and environment attribute dust (packed int, `"color": 16711680`):
+- Dust, in the command (`particle minecraft:dust{color:16711680,scale:1.0f}`), an enchantment or an environment attribute (`"color": 16711680`):
   ```kotlin
   import io.github.ayfri.kore.arguments.colors.rgb
   import io.github.ayfri.kore.data.particle.dustParticle
 
-  val enchantDust = dustParticle(rgb(255, 0, 0), scale = 1f)
+  val dust = dustParticle(rgb(255, 0, 0), scale = 1f)
   ```
 
 Entity variant dye usage:

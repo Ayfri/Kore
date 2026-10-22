@@ -1,9 +1,13 @@
 package io.github.ayfri.kore.data.particle
 
+import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import io.github.ayfri.kore.utils.encodeToNbtTag
+import io.github.ayfri.kore.utils.toSnbt
 import kotlinx.serialization.Serializable
+import net.benwoodworth.knbt.NbtCompound
 
 /**
  * A particle and the options its kind reads, as `spawn_particles`, `explode`, and the ambient and dripstone particles of
@@ -32,6 +36,13 @@ sealed class ParticleOptions {
 		)
 	}
 }
+
+/** The `/particle` form of these options: the namespaced ID, followed by the SNBT of every field but [ParticleOptions.type]. */
+internal fun ParticleOptions.asCommandArgument() = literal(
+	(encodeToNbtTag(ParticleOptions.serializer(), this) as NbtCompound - "type").let {
+		type.asId() + if (it.isEmpty()) "" else NbtCompound(it).toSnbt()
+	}
+)
 
 /** Mirrors the vanilla-mcdoc `minecraft:particle` dispatch. */
 private val subtypeByParticle = mapOf(

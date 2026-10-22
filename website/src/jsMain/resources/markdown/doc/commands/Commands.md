@@ -1168,119 +1168,140 @@ also accepts an inline [loot table](/docs/data-driven/loot-tables) instead of a 
 ### Particle Command
 
 The `particle` command spawns visual particle effects in the world. Particles have position, spread (delta), speed, and count. Use
-`force` mode to make particles visible from far away or through blocks.
+`force` mode to render particles for every player regardless of their particle setting, up to 512 blocks away instead of 32 in `normal` mode.
+
+A particle without options is a plain `Particles` entry. Every parameter after the particle has a default, and the game reads delta,
+speed and count together, so setting any of them fills the others with `0 0 0`, `0` and `0`. A selector needs a mode, which is `normal`
+when omitted.
 
 ```kotlin
 function("particle_examples") {
-	particle(Particles.ASH)
+	particle(Particles.FLAME)
+	particle(Particles.FLAME, vec3())
 
 	// arguments are position, delta (how far particles scatter), speed, then count
 	particle(Particles.ASH, vec3(), vec3(), 1.0, 2)
 
-	// force shows the particle even far away or through blocks
+	// count alone is enough, delta and speed default to zero
+	particle(Particles.ASH, vec3(), count = 5)
+
+	// force renders the particle up to 512 blocks away, whatever the particle setting of the player
 	particle(Particles.ASH, vec3(), vec3(), 1.0, 2, ParticleMode.FORCE)
 
 	// a last selector limits who sees the particle
 	particle(Particles.ASH, vec3(), vec3(), 1.0, 2, ParticleMode.NORMAL, allEntities())
+	particle(Particles.ASH, vec3(), viewers = allEntities())
 }
 ```
 
 Generated output:
 
 ```mcfunction
-particle minecraft:ash
+particle minecraft:flame
+particle minecraft:flame ~ ~ ~
 particle minecraft:ash ~ ~ ~ ~ ~ ~ 1 2
+particle minecraft:ash ~ ~ ~ 0 0 0 0 5
 particle minecraft:ash ~ ~ ~ ~ ~ ~ 1 2 force
 particle minecraft:ash ~ ~ ~ ~ ~ ~ 1 2 normal @e
+particle minecraft:ash ~ ~ ~ 0 0 0 0 0 normal @e
 ```
 
-#### Special Particle Types
+Passing delta, speed, count, a mode or a selector without a position throws an `IllegalArgumentException`, since the command can't
+express it.
 
-Some particles carry extra data beyond a position. The `particles { }` block exposes one builder per such type:
+#### Particle Options
 
-| Builder                | Extra data                                          |
-|------------------------|-----------------------------------------------------|
-| `block`                | A block state, so the particle matches that block    |
-| `blockCrumble`         | A block state, for the crumbling effect              |
-| `blockMarker`          | A block state, used to visualise invisible blocks    |
-| `dragonBreath`         | A power value                                        |
-| `dust`                 | A color and a scale                                  |
-| `dustColorTransition`  | A start color, a scale, and an end color             |
-| `entityEffect`         | A color tint                                         |
-| `fallingDust`          | A block state                                        |
-| `flash`                | An ARGB color                                        |
-| `instantEffect`        | A color tint                                         |
-| `item`                 | An item stack, [components](/docs/concepts/components) included |
-| `sculkCharge`          | A roll angle in radians                              |
-| `shriek`               | A delay in ticks                                     |
-| `tintedLeaves`         | A color tint                                         |
-| `trail`                | A color, a target position, and a duration           |
-| `vibration`            | A destination position and a travel duration         |
+A particle that carries extra data is a `ParticleOptions`, built by one factory per shape of options. `particle(options, ...)` takes
+the same position, delta, speed, count, mode and selector parameters as above, and renders the namespaced ID followed by the options as
+SNBT. Colors are packed ints: RGB for `dust`, `dust_color_transition`, `effect`, `instant_effect` and `trail`, ARGB for
+`entity_effect`, `flash` and `tinted_leaves` (a color without alpha is opaque, see [Colors](/docs/concepts/colors)).
 
-Every builder also takes an optional trailing position, and `particle(Particles.X)` inside the block emits a plain
-particle with no extra data.
+| Factory                       | Particle IDs                                                      | Options                                                     | Example command                                                                    |
+|-------------------------------|-------------------------------------------------------------------|-------------------------------------------------------------|------------------------------------------------------------------------------------|
+| `blockParticle`               | `block`, `block_crumble`, `block_marker`, `dust_pillar`, `falling_dust` | A block, its states included                          | `particle minecraft:block{block_state:"minecraft:stone"}`                          |
+| `colorParticle`               | `entity_effect`, `flash`, `tinted_leaves`                         | An ARGB color                                               | `particle minecraft:entity_effect{color:-11141291}`                                |
+| `dragonBreathParticle`        | `dragon_breath`                                                   | An optional power                                           | `particle minecraft:dragon_breath{power:0.5f}`                                     |
+| `dustColorTransitionParticle` | `dust_color_transition`                                           | A start color, an end color and a scale                     | `particle minecraft:dust_color_transition{from_color:5592575,scale:2.0f,to_color:16733525}` |
+| `dustParticle`                | `dust`                                                            | An RGB color and a scale                                    | `particle minecraft:dust{color:16733525,scale:1.0f}`                               |
+| `effectParticle`              | `effect`, `instant_effect`                                        | An optional RGB color and an optional power                 | `particle minecraft:effect{color:5635925,power:2.0f}`                              |
+| `geyserBurstParticle`         | `geyser_base`, `geyser_poof`                                      | A water column height and a burst impulse                   | `particle minecraft:geyser_base{burst_impulse_base:0.5f,water_blocks:3}`           |
+| `geyserParticle`              | `geyser`, `geyser_plume`                                          | A water column height                                       | `particle minecraft:geyser{water_blocks:3}`                                        |
+| `itemParticle`                | `item`                                                            | An item, [components](/docs/concepts/components) included   | `particle minecraft:item{item:{id:"minecraft:diamond"}}`                           |
+| `sculkChargeParticle`         | `sculk_charge`                                                    | A roll angle in radians                                     | `particle minecraft:sculk_charge{roll:1.5f}`                                       |
+| `shriekParticle`              | `shriek`                                                          | A delay in ticks                                            | `particle minecraft:shriek{delay:100}`                                             |
+| `simpleParticle`              | every other particle                                              | None                                                        | `particle minecraft:ash`                                                           |
+| `trailParticle`               | `trail`                                                           | An RGB color, a duration in ticks and a target position     | `particle minecraft:trail{color:16733525,duration:10,target:[1.0d,2.0d,3.0d]}`     |
+| `vibrationParticle`           | `vibration`                                                       | A target block position and an arrival time in ticks        | `particle minecraft:vibration{arrival_in_ticks:10,destination:{pos:[1,2,3],type:"block"}}` |
+
+Factories that cover several IDs take the ID as a last parameter, defaulting to the first one of their row: `blockParticle(Blocks.SAND,
+Particles.DUST_PILLAR)`, `colorParticle(Color.WHITE, Particles.FLASH)`.
+
+A particle ID given the options of another row throws an `IllegalArgumentException` when written, so `blockParticle(Blocks.STONE,
+Particles.FLAME)` and `particle(Particles.DUST, vec3())` (a dust without color and scale) fail instead of producing a command the game
+rejects.
+
+A vibration targeting an entity isn't possible because the game only accepts a `block` position source here.
+
+The same factories work in the [`spawnParticles` and `explode` effects of enchantments](/docs/data-driven/enchantments) and in the
+[ambient and dripstone particles](/docs/data-driven/worldgen/environment-attributes) of environment attributes.
 
 ```kotlin
 import kotlin.math.PI
 
-function("special_particles") {
-	particles {
-		block(Blocks.STONE_SLAB(states = mapOf("half" to "top")))
-
-		blockCrumble(Blocks.STONE)
-
-		blockMarker(Blocks.STONE)
-
-		fallingDust(Blocks.STONE)
-
-		dust(Color.PURPLE, 2.0)
-		dust(rgb(0xabcdef), 2.0)
-
-		dustColorTransition(Color.BLUE, 2.0, Color.RED)
-
-		dragonBreath(0.5f)
-		entityEffect(color = Color.GREEN)
-		flash(Color.WHITE.toARGB())
-		instantEffect(color = Color.GREEN)
-		tintedLeaves(Color.RED)
-
-		item(Items.DIAMOND_SWORD {
-			enchantments {
-				enchantment(Enchantments.SHARPNESS, 5)
-			}
-		})
-
-		sculkCharge(PI / 2)
-
-		shriek(100)
-
-		trail(Color.RED, Triple(1, 2, 3), 10)
-
-		vibration(vec3(1, 2, 3), 10)
-	}
+function("particle_options") {
+	particle(blockParticle(Blocks.STONE_SLAB(states = mapOf("half" to "top"))))
+	particle(blockParticle(Blocks.STONE, Particles.BLOCK_CRUMBLE))
+	particle(colorParticle(Color.GREEN))
+	particle(colorParticle(Color.WHITE, Particles.FLASH))
+	particle(dragonBreathParticle(0.5f))
+	particle(dustParticle(Color.PURPLE, 2f))
+	particle(dustColorTransitionParticle(Color.BLUE, Color.RED, 2f))
+	particle(effectParticle(Color.GREEN, 2f, Particles.INSTANT_EFFECT))
+	particle(geyserBurstParticle(4, 1.5f, Particles.GEYSER_POOF))
+	particle(itemParticle(Items.DIAMOND_SWORD {
+		enchantments {
+			enchantment(Enchantments.SHARPNESS, 5)
+		}
+	}))
+	particle(sculkChargeParticle((PI / 2).toFloat()))
+	particle(vibrationParticle(1, 2, 3, 10), vec3(), count = 1, mode = ParticleMode.FORCE)
 }
 ```
 
 Generated output:
 
 ```mcfunction
-particle block{block_state:{id:"minecraft:stone_slab",properties:{half:"top"}}}
-particle block_crumble{block_state:"minecraft:stone"}
-particle block_marker{block_state:"minecraft:stone"}
-particle falling_dust{block_state:"minecraft:stone"}
-particle dust{color:11141375,scale:2.0d}
-particle dust{color:11259375,scale:2.0d}
-particle dust_color_transition{from_color:5592575,to_color:16733525,scale:2.0d}
-particle dragon_breath{power:0.5f}
-particle entity_effect{color:[0.3333333333333333d,1.0d,0.3333333333333333d]}
-particle flash{color:"#ffffffff"}
-particle instant_effect{color:[0.3333333333333333d,1.0d,0.3333333333333333d]}
-particle tinted_leaves{color:[1.0d,0.3333333333333333d,0.3333333333333333d,1.0d]}
-particle item{item:{id:"minecraft:diamond_sword",components:{enchantments:{"minecraft:sharpness":5}}}}
-particle sculk_charge 1.5707963267948966
-particle shriek 100
-particle trail{color:16733525,duration:10,target:[1,2,3]}
-particle vibration 1 2 3 10
+particle minecraft:block{block_state:{id:"minecraft:stone_slab",properties:{half:"top"}}}
+particle minecraft:block_crumble{block_state:"minecraft:stone"}
+particle minecraft:entity_effect{color:-11141291}
+particle minecraft:flash{color:-1}
+particle minecraft:dragon_breath{power:0.5f}
+particle minecraft:dust{color:11141375,scale:2.0f}
+particle minecraft:dust_color_transition{from_color:5592575,scale:2.0f,to_color:16733525}
+particle minecraft:instant_effect{color:5635925,power:2.0f}
+particle minecraft:geyser_poof{burst_impulse_base:1.5f,water_blocks:4}
+particle minecraft:item{item:{id:"minecraft:diamond_sword",components:{enchantments:{"minecraft:sharpness":5}}}}
+particle minecraft:sculk_charge{roll:1.5707964f}
+particle minecraft:vibration{arrival_in_ticks:10,destination:{pos:[1,2,3],type:"block"}} ~ ~ ~ 0 0 0 0 1 force
+```
+
+A ring of colored dust, one command per point, each one visible from far away:
+
+```kotlin
+function("dust_ring") {
+	val orange = dustParticle(rgb(0xFF8800), 1.5f)
+
+	for ((x, z) in listOf(102 to 100, 100 to 102, 98 to 100, 100 to 98)) {
+		particle(orange, vec3(x, 64, z), count = 3, mode = ParticleMode.FORCE)
+	}
+}
+```
+
+```mcfunction
+particle minecraft:dust{color:16746496,scale:1.5f} 102 64 100 0 0 0 0 3 force
+particle minecraft:dust{color:16746496,scale:1.5f} 100 64 102 0 0 0 0 3 force
+particle minecraft:dust{color:16746496,scale:1.5f} 98 64 100 0 0 0 0 3 force
+particle minecraft:dust{color:16746496,scale:1.5f} 100 64 98 0 0 0 0 3 force
 ```
 
 ### Clone Command
