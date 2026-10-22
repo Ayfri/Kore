@@ -5,7 +5,7 @@ nav-title: Fabric Resource Conditions
 description: "Load Kore-generated recipes, advancements and loot tables conditionally in Fabric mods, gated on mods, tags, registries or feature flags."
 keywords: minecraft, datapack, kore, fabric, resource conditions, datagen, load conditions, mod
 date-created: 2026-07-21
-date-modified: 2026-08-05
+date-modified: 2026-10-22
 routeOverride: /docs/guides/fabric-resource-conditions
 position: 5
 ---
@@ -100,8 +100,9 @@ when you leave it out.
 ## Limitation: object-form resources only
 
 Conditions are injected at the JSON **root**, which must be an object. That covers recipes, advancements, loot tables,
-predicates (several conditions are written as one `all_of`), and single-function item modifiers.
+predicates (several conditions are written as one `all_of`), item modifiers (several functions are written as one
+`sequence`).
 
-Item modifiers with **multiple** functions serialize as a top-level JSON array, which has no root to attach
-`fabric:load_conditions` to. Kore emits a warning and generates the file without conditions in that case. Wrap the logic
-differently (for example a single `sequence` function) if you need conditions on it.
+A constant number provider file is written as a bare number, which has no root to attach `fabric:load_conditions` to.
+Kore emits a warning and generates the file without conditions in that case. Use a provider that is an object if you
+need conditions on it, `uniform(5f, 5f)` keeps a constant value of `5`.

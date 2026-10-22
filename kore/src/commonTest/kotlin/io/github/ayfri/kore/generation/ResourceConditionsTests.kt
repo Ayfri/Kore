@@ -6,6 +6,7 @@ import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.advancements.advancement
 import io.github.ayfri.kore.features.itemmodifiers.functions.setCount
 import io.github.ayfri.kore.features.itemmodifiers.itemModifier
+import io.github.ayfri.kore.features.numberproviders.numberProvider
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.generation.fabric.conditions.ResourceCondition
@@ -119,7 +120,7 @@ fun DataPack.resourceConditionsTests() {
 
 	advancements.last().generateJsonElement(this).toString() assertsIs """{"criteria":{}}"""
 
-	itemModifier("multi_ignored") {
+	itemModifier("multi_attached") {
 		fabricLoadConditions {
 			allModsLoaded("create")
 		}
@@ -127,8 +128,37 @@ fun DataPack.resourceConditionsTests() {
 		setCount(2f)
 	}
 
-	val multi = itemModifiers.last()
-	multi.generateJsonWithLoadConditions(this) assertsIs multi.generateJson(this)
+	itemModifiers.last().generateJsonWithLoadConditions(this) assertsIs """
+		{
+			"fabric:load_conditions": [
+				{
+					"condition": "fabric:all_mods_loaded",
+					"values": [
+						"create"
+					]
+				}
+			],
+			"type": "minecraft:sequence",
+			"functions": [
+				{
+					"type": "minecraft:set_count",
+					"count": 1.0
+				},
+				{
+					"type": "minecraft:set_count",
+					"count": 2.0
+				}
+			]
+		}
+	""".trimIndent()
+
+	numberProvider("bare_ignored", 1f)
+	numberProviders.last().fabricLoadConditions {
+		allModsLoaded("create")
+	}
+
+	val bare = numberProviders.last()
+	bare.generateJsonWithLoadConditions(this) assertsIs bare.generateJson(this)
 
 	predicate("multi_attached") {
 		fabricLoadConditions {

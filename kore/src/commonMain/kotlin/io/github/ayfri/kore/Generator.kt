@@ -40,8 +40,8 @@ abstract class Generator(@Transient val resourceFolder: String = "") {
 
 	/**
 	 * Generates the JSON content, wrapping it with the Fabric [FABRIC_LOAD_CONDITIONS_KEY] array when [loadConditions]
-	 * is set. Conditions are only applied when the generated JSON root is an object; array-form resources (multi-function
-	 * item modifiers) emit a warning and are left untouched.
+	 * is set. Conditions are only applied when the generated JSON root is an object; resources with another root (a
+	 * constant number provider file, written as a bare number) emit a warning and are left untouched.
 	 */
 	fun generateJsonWithLoadConditions(dataPack: DataPack): String {
 		if (fabricLoadConditions.isEmpty()) return generateJson(dataPack)

@@ -43,7 +43,7 @@ Item modifiers are stored as JSON files in data packs at:
 data/<namespace>/item_modifier/<name>.json
 ```
 
-A file holds one function written as an object (`{ "type": "minecraft:set_count", ... }`), several functions written as a list, or the bare ID of another item modifier (`"my_pack:base"`) or an item modifier tag (`"#my_pack:buffs"`). Each function names its kind in `type`.
+A file holds one function object (`{ "type": "minecraft:set_count", ... }`) whose `type` names its kind. Several functions, or a lone reference to another item modifier (`"my_pack:base"`) or an item modifier tag (`"#my_pack:buffs"`), are written as a `minecraft:sequence`, which Kore does for you. An `itemModifier { }` without any function throws when the pack is generated.
 
 For complete JSON specification, see the [Minecraft Wiki - Item modifier](https://minecraft.wiki/w/Item_modifier).
 
@@ -83,7 +83,7 @@ load {
 }
 ```
 
-An inline modifier is written in the command as SNBT, in the same shape as a file: one function as an object, several as a list.
+An inline modifier is written in the command as SNBT and keeps the short forms a file doesn't have: one function as an object, several as a list, or an ID.
 
 ### In Loot Tables
 
@@ -878,11 +878,11 @@ val baseModifier = itemModifier("base") {
 
 itemModifier("combined") {
 	reference(baseModifier)
-	setCount(2f)  // ["my_pack:base", {"type": "minecraft:set_count", "count": 2.0}]
+	setCount(2f)  // { "type": "minecraft:sequence", "functions": ["my_pack:base", {"type": "minecraft:set_count", "count": 2.0}] }
 }
 
 itemModifier("shortcut") {
-	reference(baseModifier)
+	reference(baseModifier)  // { "type": "minecraft:sequence", "functions": "my_pack:base" }
 }
 
 lootTable("tagged") {
@@ -890,7 +890,7 @@ lootTable("tagged") {
 }
 ```
 
-The `shortcut` file is the bare string `"my_pack:base"`. A list can mix IDs and inline values, but a tag can't be one of its elements, only the whole list.
+A file is one function object, so the `combined` and `shortcut` files are written as a `sequence`. A list can mix IDs and inline values, but a tag can't be one of its elements, only the whole `functions` value.
 
 A reference has no `condition` of its own: wrap it in a `sequence { }` function to guard it. An item modifier that references itself, directly or through other files, makes the pack fail to load.
 
@@ -1011,64 +1011,67 @@ dataPack("legendary_items") {
 ### Generated JSON
 
 ```json
-[
-	{
-		"type": "minecraft:enchant_with_levels",
-		"condition": {
-			"type": "minecraft:random_chance",
-			"chance": 0.3
+{
+	"type": "minecraft:sequence",
+	"functions": [
+		{
+			"type": "minecraft:enchant_with_levels",
+			"condition": {
+				"type": "minecraft:random_chance",
+				"chance": 0.3
+			},
+			"levels": 30.0
 		},
-		"levels": 30.0
-	},
-	{
-		"type": "minecraft:set_enchantments",
-		"enchantments": {
-			"minecraft:unbreaking": 3
-		}
-	},
-	{
-		"type": "minecraft:set_name",
-		"name": {
-			"text": "Legendary Weapon",
-			"color": "gold",
-			"bold": true
-		}
-	},
-	{
-		"type": "minecraft:set_lore",
-		"lore": [
-			{
-				"text": "Forged in ancient flames",
-				"color": "gray"
-			},
-			{
-				"text": ""
-			},
-			{
-				"text": "▸ +5 Attack Damage",
-				"color": "green"
+		{
+			"type": "minecraft:set_enchantments",
+			"enchantments": {
+				"minecraft:unbreaking": 3
 			}
-		],
-		"mode": "replace_all"
-	},
-	{
-		"type": "minecraft:set_attributes",
-		"modifiers": [
-			{
-				"attribute": "minecraft:attack_damage",
-				"id": "minecraft:legendary_damage",
-				"amount": 5.0,
-				"operation": "add_value",
-				"slot": "mainhand"
+		},
+		{
+			"type": "minecraft:set_name",
+			"name": {
+				"text": "Legendary Weapon",
+				"color": "gold",
+				"bold": true
 			}
-		],
-		"replace": false
-	},
-	{
-		"type": "minecraft:set_damage",
-		"damage": 1.0
-	}
-]
+		},
+		{
+			"type": "minecraft:set_lore",
+			"lore": [
+				{
+					"text": "Forged in ancient flames",
+					"color": "gray"
+				},
+				{
+					"text": ""
+				},
+				{
+					"text": "▸ +5 Attack Damage",
+					"color": "green"
+				}
+			],
+			"mode": "replace_all"
+		},
+		{
+			"type": "minecraft:set_attributes",
+			"modifiers": [
+				{
+					"attribute": "minecraft:attack_damage",
+					"id": "minecraft:legendary_damage",
+					"amount": 5.0,
+					"operation": "add_value",
+					"slot": "mainhand"
+				}
+			],
+			"replace": false
+		},
+		{
+			"type": "minecraft:set_damage",
+			"damage": 1.0
+		}
+	]
+}
 ```
 
 ## Best Practices

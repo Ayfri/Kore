@@ -4,6 +4,8 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.annotations.LootDsl
 import io.github.ayfri.kore.features.itemmodifiers.functions.ItemFunction
+import io.github.ayfri.kore.features.itemmodifiers.functions.ItemModifierReference
+import io.github.ayfri.kore.features.itemmodifiers.functions.Sequence
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -29,9 +31,10 @@ typealias InlinableItemModifier = @Serializable(with = ItemModifier.Companion.In
  * Data-driven container for loot/item functions applied to items.
  *
  * Item modifiers are ordered lists of functions used by loot tables and commands to transform
- * items (set components, set lore, enchant, map exploration data, etc.). Kore serializes a single
- * function as a bare object and several ones as the vanilla JSON array (`sequence` shorthand). A file holding one
- * [reference][io.github.ayfri.kore.features.itemmodifiers.functions.reference] is the bare string of its ID.
+ * items (set components, set lore, enchant, map exploration data, etc.). An item modifier file holds exactly one
+ * function object: a single function that isn't a reference is written as is, while several functions or a lone
+ * [reference][io.github.ayfri.kore.features.itemmodifiers.functions.reference] are wrapped in a `minecraft:sequence`.
+ * A file without any function isn't possible, generating it throws.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * Minecraft Wiki: https://minecraft.wiki/w/Item_modifier
@@ -43,8 +46,11 @@ data class ItemModifier(
 	override var fileName: String = "item_modifier",
 	var modifiers: InlinableList<ItemFunction> = emptyList(),
 ) : Generator("item_modifier"), NumberProviderScope {
-	override fun generateJson(dataPack: DataPack) =
-		dataPack.jsonEncoder.encodeToString(InlinableListSerializer(ItemFunction.serializer()), modifiers)
+	override fun generateJson(dataPack: DataPack): String {
+		require(modifiers.isNotEmpty()) { "Item modifier file '$fileName' needs at least one function." }
+		val function = modifiers.singleOrNull()?.takeUnless { it is ItemModifierReference } ?: Sequence(functions = this)
+		return dataPack.jsonEncoder.encodeToString(ItemFunction.serializer(), function)
+	}
 
 	companion object {
 		data object InlinableItemModifierSerializer : InlineAutoSerializer<ItemModifier, InlinableList<ItemFunction>>(

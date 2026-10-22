@@ -14,6 +14,7 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.items
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.itemmodifiers.formulas.BinomialWithBonusCount
+import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.functions.*
 import io.github.ayfri.kore.features.itemmodifiers.itemModifier
 import io.github.ayfri.kore.features.itemmodifiers.types.Mode
@@ -40,9 +41,17 @@ import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.types.shouldBeInstanceOf
+
+private fun DataPack.roundTripFile(modifier: ItemModifier) {
+	val json = modifier.generateJson(this)
+	val decoded = jsonEncoder.decodeFromString(ItemFunction.serializer(), json)
+
+	jsonEncoder.encodeToString(ItemFunction.serializer(), decoded) assertsIs json
+}
 
 fun DataPack.itemModifierTests() {
 	itemModifier("apply_bonus") {
@@ -286,23 +295,26 @@ fun DataPack.itemModifierTests() {
 	}
 
 	itemModifiers.last() assertsIs """
-		[
-			{
-				"type": "minecraft:exploration_map",
-				"decoration": "minecraft:red_x",
-				"destination": "#minecraft:on_treasure_maps",
-				"skip_existing_chunks": false,
-				"zoom": 1
-			},
-			{
-				"type": "minecraft:set_name",
-				"name": {
-					"text": "Map",
-					"color": "black",
-					"type": "text"
+		{
+			"type": "minecraft:sequence",
+			"functions": [
+				{
+					"type": "minecraft:exploration_map",
+					"decoration": "minecraft:red_x",
+					"destination": "#minecraft:on_treasure_maps",
+					"skip_existing_chunks": false,
+					"zoom": 1
+				},
+				{
+					"type": "minecraft:set_name",
+					"name": {
+						"text": "Map",
+						"color": "black",
+						"type": "text"
+					}
 				}
-			}
-		]
+			]
+		}
 	""".trimIndent()
 
 	itemModifier("exploration_map_cartographer") {
@@ -346,25 +358,28 @@ fun DataPack.itemModifierTests() {
 	}
 
 	itemModifiers.last() assertsIs """
-		[
-			{
-				"type": "minecraft:exploration_map",
-				"decoration": "minecraft:red_x",
-				"destination": "#minecraft:on_treasure_maps",
-				"zoom": 1
-			},
-			{
-				"type": "minecraft:filtered",
-				"item_filter": {
-					"predicates": {
-						"minecraft:map_id": {}
-					}
+		{
+			"type": "minecraft:sequence",
+			"functions": [
+				{
+					"type": "minecraft:exploration_map",
+					"decoration": "minecraft:red_x",
+					"destination": "#minecraft:on_treasure_maps",
+					"zoom": 1
 				},
-				"on_fail": {
-					"type": "minecraft:discard"
+				{
+					"type": "minecraft:filtered",
+					"item_filter": {
+						"predicates": {
+							"minecraft:map_id": {}
+						}
+					},
+					"on_fail": {
+						"type": "minecraft:discard"
+					}
 				}
-			}
-		]
+			]
+		}
 	""".trimIndent()
 
 	itemModifier("explosion_decay") {
@@ -481,26 +496,41 @@ fun DataPack.itemModifierTests() {
 		reference(ItemModifierArgument("my_modifier", "kore"))
 	}
 
-	itemModifiers.last() assertsIs "\"kore:my_modifier\""
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:sequence",
+			"functions": "kore:my_modifier"
+		}
+	""".trimIndent()
 	roundTrip(itemModifiers.last())
+	roundTripFile(itemModifiers.last())
 
 	itemModifier("reference_tag") {
 		reference(ItemModifierTagArgument("my_tag", "kore"))
 	}
 
-	itemModifiers.last() assertsIs "\"#kore:my_tag\""
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:sequence",
+			"functions": "#kore:my_tag"
+		}
+	""".trimIndent()
 
 	itemModifier("two_references") {
 		reference(ItemModifierArgument("a", "kore"))
-		reference(ItemModifierTagArgument("b", "kore"))
+		reference(ItemModifierArgument("b", "kore"))
 	}
 
 	itemModifiers.last() assertsIs """
-		[
-			"kore:a",
-			"#kore:b"
-		]
+		{
+			"type": "minecraft:sequence",
+			"functions": [
+				"kore:a",
+				"kore:b"
+			]
+		}
 	""".trimIndent()
+	roundTripFile(itemModifiers.last())
 
 	itemModifier("reference_mixed") {
 		reference(ItemModifierArgument("a", "kore"))
@@ -508,14 +538,18 @@ fun DataPack.itemModifierTests() {
 	}
 
 	itemModifiers.last() assertsIs """
-		[
-			"kore:a",
-			{
-				"type": "minecraft:set_count",
-				"count": 1.0
-			}
-		]
+		{
+			"type": "minecraft:sequence",
+			"functions": [
+				"kore:a",
+				{
+					"type": "minecraft:set_count",
+					"count": 1.0
+				}
+			]
+		}
 	""".trimIndent()
+	roundTripFile(itemModifiers.last())
 
 	itemModifier("reference_modify_contents") {
 		modifyContents(ContentComponentTypes.BUNDLE_CONTENTS) {
@@ -1326,31 +1360,34 @@ fun DataPack.itemModifierTests() {
 	}
 
 	itemModifiers.last() assertsIs """
-		[
-			{
-				"type": "minecraft:exploration_map",
-				"condition": {
-					"type": "minecraft:all_of",
-					"terms": [
-						{
-							"type": "minecraft:random_chance",
-							"chance": 0.5
-						},
-						{
-							"type": "minecraft:weather_check",
-							"raining": true
-						}
-					]
+		{
+			"type": "minecraft:sequence",
+			"functions": [
+				{
+					"type": "minecraft:exploration_map",
+					"condition": {
+						"type": "minecraft:all_of",
+						"terms": [
+							{
+								"type": "minecraft:random_chance",
+								"chance": 0.5
+							},
+							{
+								"type": "minecraft:weather_check",
+								"raining": true
+							}
+						]
+					},
+					"decoration": "minecraft:banner_black",
+					"destination": "#minecraft:mineshaft",
+					"skip_existing_chunks": true
 				},
-				"decoration": "minecraft:banner_black",
-				"destination": "#minecraft:mineshaft",
-				"skip_existing_chunks": true
-			},
-			{
-				"type": "minecraft:set_instrument",
-				"options": "#minecraft:goat_horns"
-			}
-		]
+				{
+					"type": "minecraft:set_instrument",
+					"options": "#minecraft:goat_horns"
+				}
+			]
+		}
 	""".trimIndent()
 
 	load {
@@ -1415,15 +1452,18 @@ fun DataPack.itemModifierTests() {
 	}
 
 	itemModifiers.last() assertsIs """
-		[
-			{
-				"type": "minecraft:set_item",
-				"item": "minecraft:apple"
-			},
-			{
-				"type": "minecraft:explosion_decay"
-			}
-		]
+		{
+			"type": "minecraft:sequence",
+			"functions": [
+				{
+					"type": "minecraft:set_item",
+					"item": "minecraft:apple"
+				},
+				{
+					"type": "minecraft:explosion_decay"
+				}
+			]
+		}
 	""".trimIndent()
 
 	itemModifier("toggle_tooltips") {
@@ -1461,6 +1501,14 @@ class ItemModifierTests : FunSpec({
 		dataPack("itemModifier") {
 			pretty()
 			itemModifierTests()
+		}
+	}
+
+	test("item modifier file without function") {
+		dataPack("itemModifier") {
+			itemModifier("empty") {}
+
+			shouldThrow<IllegalArgumentException> { itemModifiers.last().generateJson(this) }
 		}
 	}
 })
