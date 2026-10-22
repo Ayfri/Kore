@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.helpers
 
 object HelpersConstants {
+	const val interactionAdvancementFolder = "interaction"
 	var mathDisplayUuid = "4b4f5245-0000-0000-0000-000000000002"
 	var mathEntitiesX = -30_000_000
 	var mathEntitiesZ = 1664
@@ -13,6 +14,12 @@ object HelpersConstants {
 	var raycastObjective = "kore_raycast"
 	var raycastTag = "kore_raycasting"
 
+	fun interactionClickedTag(namespace: String) = "$namespace.interaction.clicked"
+	fun interactionClickFunctionName(name: String, event: String) = "interaction_${name}_$event"
+	fun interactionHitFunctionName(name: String, event: String) = "interaction_${name}_${event}_hit"
+	fun interactionSourceTag(namespace: String) = "$namespace.interaction.source"
+	fun interactionTag(namespace: String, name: String) = "$namespace.interaction.$name"
+	fun interactionTargetFunctionName(event: String) = "interaction_${event}_target"
 	fun raycastHitFunctionName(name: String) = "raycast_${name}_hit"
 	fun raycastMaxFunctionName(name: String) = "raycast_${name}_max"
 	fun raycastStartFunctionName(name: String) = "raycast_${name}_start"

@@ -61,15 +61,15 @@ Both forms set `selector.type` automatically so you never need to write `type = 
 Use `toEntity()` when calling from an `EntityTypeArgument` receiver; use `entity(type, ...)` when you want a form
 that reads like the other `entity(...)` overloads.
 
-### Handles for spawned displays and mannequins
+### Handles for spawned displays, interactions and mannequins
 
-Four `Entity` subclasses target one specific spawned entity by UUID rather than by selector filters:
-`BlockDisplayEntity`, `ItemDisplayEntity`, `TextDisplayEntity`, and `MannequinEntity`. Each pins
+Five `Entity` subclasses target one specific spawned entity by UUID rather than by selector filters:
+`BlockDisplayEntity`, `InteractionEntity`, `ItemDisplayEntity`, `TextDisplayEntity`, and `MannequinEntity`. Each pins
 `selector.type` and a `UUID` NBT filter, so it always resolves to exactly that entity.
 
 You do not construct them directly in normal use - the [`helpers`](/docs/helpers/utilities) module returns them
 when it spawns something. `DisplayEntityInterpolable.toEntity()` picks the matching display subclass, and
-`Mannequin.summon(position)` returns a `MannequinEntity`:
+`Mannequin.summon(position)` returns a `MannequinEntity`, and `Interaction.summon(position)` an `InteractionEntity`:
 
 ```kotlin
 function("spawn_display") {
@@ -95,8 +95,8 @@ hold one it behaves like any other `Entity`: every extension on this page applie
 kill @e[limit=1,nbt={UUID:[I;...]},type=minecraft:block_display]
 ```
 
-See [Display Entities](/docs/helpers/display-entities) and [Mannequins](/docs/helpers/mannequins) for building and
-spawning them.
+See [Display Entities](/docs/helpers/display-entities), [Interactions](/docs/helpers/interactions) and
+[Mannequins](/docs/helpers/mannequins) for building and spawning them.
 
 ## Reading and reshaping a handle
 

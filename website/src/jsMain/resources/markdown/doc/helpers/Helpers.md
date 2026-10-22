@@ -2,10 +2,10 @@
 root: .components.layouts.MarkdownLayout
 title: Helpers Utilities
 nav-title: Helpers Utilities
-description: Overview of helper-focused utilities in Kore - renderers, displays, inventories, mannequins, math, NBT paths, raycasts, scheduling, and state delegates.
-keywords: minecraft, datapack, kore, helpers, ansi, markdown, minimessage, raycast, math, vector, area, state, nbt, vfx, particles, text, display, inventory, mannequin, scheduler, menu, dialog, sidebar
+description: Overview of helper-focused utilities in Kore - renderers, displays, interactions, inventories, mannequins, math, NBT paths, raycasts, scheduling, and state.
+keywords: minecraft, datapack, kore, helpers, ansi, markdown, minimessage, raycast, math, vector, area, state, nbt, vfx, particles, text, display, interaction, inventory, mannequin, scheduler, menu, dialog, sidebar
 date-created: 2026-03-31
-date-modified: 2026-10-21
+date-modified: 2026-10-22
 routeOverride: /docs/helpers/utilities
 position: 0
 ---
@@ -21,7 +21,8 @@ Use `helpers` when you want higher-level building blocks without introducing gam
 entity wrappers.
 
 - **Rendering helpers** convert human-friendly text formats into Minecraft text components.
-- **Display and entity helpers** cover display entities, mannequins, and other world-facing utility objects.
+- **Display and entity helpers** cover display entities, interactions, mannequins, and other world-facing utility
+  objects.
 - **Math, scheduling, and geometry helpers** pre-generate command logic for raycasts, particle shapes, spatial zones,
   delayed execution, or fixed-point math.
 - **State helpers** let you write concise Kotlin that still compiles to vanilla-friendly scoreboard and storage
@@ -32,8 +33,8 @@ The module is designed to stay composable: you can use it with plain Kore functi
 
 ## Install this module
 
-Add the `helpers` artifact when you want renderer, display, inventory, mannequin, math, raycast, scheduler, delegate, or
-particle utilities on top of Kore.
+Add the `helpers` artifact when you want renderer, display, interaction, inventory, mannequin, math, raycast, scheduler,
+delegate, or particle utilities on top of Kore.
 
 ```kotlin
 dependencies {
@@ -60,6 +61,8 @@ That makes helpers a good fit for packs that start simple and progressively adop
   and coordinate transforms.
 - **[Display Entities](/docs/helpers/display-entities)** - Configure block, item, and text display entities with shared
   transformations, billboards, brightness, and interpolation settings.
+- **[Interactions](/docs/helpers/interactions)** - Make clickable hitboxes with right and left click callbacks,
+  generated as advancements and functions with no tick function.
 - **[Inventory Manager](/docs/helpers/inventory-manager)** - Register slot listeners and container policies for player,
   entity, or block inventories.
 - **[Mannequins](/docs/helpers/mannequins)** - Build mannequin entities with profiles, hidden layers, poses, and hand
@@ -92,7 +95,7 @@ That makes helpers a good fit for packs that start simple and progressively adop
 Choose the `helpers` module when you mainly need:
 
 - data conversion and rendering,
-- world-facing utility objects such as displays, mannequins, and inventory controllers,
+- world-facing utility objects such as displays, interactions, mannequins, and inventory controllers,
 - geometry or math utilities,
 - scheduling helpers,
 - lightweight compile-time sugar over vanilla commands.
