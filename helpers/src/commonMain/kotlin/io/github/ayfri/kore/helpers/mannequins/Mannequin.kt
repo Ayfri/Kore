@@ -1,8 +1,11 @@
 package io.github.ayfri.kore.helpers.mannequins
 
+import io.github.ayfri.kore.arguments.EquipmentSlot
 import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.components.item.ProfileComponent
+import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.generated.arguments.types.EntityTypeArgument
+import io.github.ayfri.kore.serializers.JsonSerialName
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.encodeToNbtTag
 import kotlinx.serialization.Serializable
@@ -15,23 +18,41 @@ import net.benwoodworth.knbt.nbtCompound
  * JSON format reference: https://minecraft.wiki/w/Mannequin
  * Docs: https://kore.ayfri.com/docs/helpers/mannequins
  *
+ * @property customName The custom name of the mannequin.
+ * @property customNameVisible Whether the custom name is always visible.
  * @property description The description of the mannequin.
+ * @property equipment The items worn or held by the mannequin, by equipment slot.
+ * @property glowing Whether the mannequin glows.
  * @property hiddenLayers The layers to hide.
  * @property hideDescription Whether to hide the description.
  * @property immovable Whether the mannequin is immovable.
+ * @property invulnerable Whether the mannequin is immune to damage.
  * @property mainHand The main hand of the mannequin.
+ * @property noGravity Whether gravity is ignored by the mannequin.
  * @property pose The pose of the mannequin.
  * @property profile The profile of the mannequin.
+ * @property rotation The yaw and pitch of the mannequin, in degrees.
+ * @property silent Whether the mannequin makes no sound.
+ * @property tags The scoreboard tags of the mannequin.
  */
 @Serializable
 data class Mannequin(
+	@JsonSerialName("CustomName") var customName: ChatComponents? = null,
+	@JsonSerialName("CustomNameVisible") var customNameVisible: Boolean? = null,
 	var description: ChatComponents? = null,
+	var equipment: Map<EquipmentSlot, ItemStack>? = null,
+	@JsonSerialName("Glowing") var glowing: Boolean? = null,
 	var hiddenLayers: List<MannequinLayer>? = null,
 	var hideDescription: Boolean? = null,
 	var immovable: Boolean? = null,
+	@JsonSerialName("Invulnerable") var invulnerable: Boolean? = null,
 	var mainHand: MannequinHand? = null,
+	@JsonSerialName("NoGravity") var noGravity: Boolean? = null,
 	var pose: MannequinPose? = null,
 	var profile: ProfileComponent? = null,
+	@JsonSerialName("Rotation") var rotation: List<Float>? = null,
+	@JsonSerialName("Silent") var silent: Boolean? = null,
+	@JsonSerialName("Tags") var tags: List<String>? = null,
 ) {
 	/** The entity type of the mannequin. */
 	@Transient

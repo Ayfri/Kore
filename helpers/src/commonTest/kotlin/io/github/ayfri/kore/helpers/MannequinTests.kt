@@ -1,18 +1,22 @@
 package io.github.ayfri.kore.helpers
 
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
+import io.github.ayfri.kore.arguments.EquipmentSlot
+import io.github.ayfri.kore.arguments.colors.Color
 import io.github.ayfri.kore.arguments.components.item.MannequinModel
 import io.github.ayfri.kore.arguments.enums.SwingAnimationType
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.ticks
 import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.commands.SwingHand
+import io.github.ayfri.kore.data.item.builders.itemStack
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.entities.MannequinEntity
 import io.github.ayfri.kore.entities.kill
 import io.github.ayfri.kore.entities.swing
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Textures
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.helpers.mannequins.*
@@ -59,6 +63,26 @@ fun Function.mannequinTests() {
 	}
 
 	m3.toNbt().toString() assertsIs "{description:\"Test\",hide_description:0b,immovable:1b,pose:\"crouching\"}"
+
+	val m4 = mannequin {
+		equipment {
+			this[EquipmentSlot.HEAD] = itemStack(Items.GOLDEN_HELMET)
+			this[EquipmentSlot.MAINHAND] = itemStack(Items.IRON_SWORD)
+		}
+	}
+
+	m4.toNbt().toString() assertsIs "{equipment:{head:{id:\"minecraft:golden_helmet\"},mainhand:{id:\"minecraft:iron_sword\"}}}"
+
+	val m5 = mannequin {
+		customName = textComponent("Bob", Color.GOLD)
+		customNameVisible = true
+		invulnerable = true
+		rotation(90f, 0f)
+		silent = true
+		tags = listOf("npc")
+	}
+
+	m5.toNbt().toString() assertsIs "{CustomName:{text:\"Bob\",color:\"gold\"},CustomNameVisible:1b,Invulnerable:1b,Rotation:[90.0f,0.0f],Silent:1b,Tags:[\"npc\"]}"
 }
 
 fun Function.mannequinEntityTests() {

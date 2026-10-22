@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: How to Summon a Minecraft Mannequin with a Player Skin
 nav-title: Mannequins
-description: Summon a Minecraft mannequin wearing any player's skin, then set its pose, hidden skin layers, main hand and description, as a /summon command or in Kotlin.
+description: Summon a Minecraft mannequin NPC wearing any player's skin and armor, then set its pose, name, layers and description, as a /summon command or in Kotlin.
 keywords: minecraft mannequin, summon mannequin, mannequin player skin, mannequin profile, mannequin pose, minecraft npc, player statue, datapack, kore
 date-created: 2026-01-25
 date-modified: 2026-10-22
@@ -140,15 +140,24 @@ mannequin {
 }
 ```
 
-| Field              | Kore                                     | Default    | Effect                                                              |
-|--------------------|------------------------------------------|------------|---------------------------------------------------------------------|
-| `description`      | `description`                            | `NPC`      | Text shown under the name, where a player's `below_name` score goes |
-| `hidden_layers`    | `hiddenLayers(...)`                      | none       | Skin layers left out, see [Hidden Layers](#hidden-layers)           |
-| `hide_description` | `hideDescription`                        | `false`    | Removes the description line                                        |
-| `immovable`        | `immovable`                              | `false`    | Keeps the mannequin from being moved                                |
-| `main_hand`        | `mainHand`                               | `right`    | Hand holding the main hand item                                     |
-| `pose`             | `pose`                                   | `standing` | Body pose, see [Pose](#pose)                                        |
-| `profile`          | `playerProfile(...)`, `textureProfile()` | slim Alex  | Skin, see [Profiles](#profiles)                                     |
+| Field               | Kore                                     | Default    | Effect                                                              |
+|---------------------|------------------------------------------|------------|---------------------------------------------------------------------|
+| `CustomName`        | `customName`                             | none       | Name shown above the mannequin when it is looked at                 |
+| `CustomNameVisible` | `customNameVisible`                      | `false`    | Shows the name even when the player isn't looking at the mannequin  |
+| `description`       | `description`                            | `NPC`      | Text shown under the name, where a player's `below_name` score goes |
+| `equipment`         | `equipment { }`                          | none       | Items worn and held, see [Equipment](#equipment)                    |
+| `Glowing`           | `glowing`                                | `false`    | Draws the glowing outline around the mannequin                      |
+| `hidden_layers`     | `hiddenLayers(...)`                      | none       | Skin layers left out, see [Hidden Layers](#hidden-layers)           |
+| `hide_description`  | `hideDescription`                        | `false`    | Removes the description line                                        |
+| `immovable`         | `immovable`                              | `false`    | Keeps the mannequin from being moved                                |
+| `Invulnerable`      | `invulnerable`                           | `false`    | Makes the mannequin immune to damage                                |
+| `main_hand`         | `mainHand`                               | `right`    | Hand holding the main hand item                                     |
+| `NoGravity`         | `noGravity`                              | `false`    | Keeps the mannequin from falling                                    |
+| `pose`              | `pose`                                   | `standing` | Body pose, see [Pose](#pose)                                        |
+| `profile`           | `playerProfile(...)`, `textureProfile()` | slim Alex  | Skin, see [Profiles](#profiles)                                     |
+| `Rotation`          | `rotation(yaw, pitch)`                   | `0, 0`     | Facing, in degrees                                                  |
+| `Silent`            | `silent`                                 | `false`    | Mutes the sounds of the mannequin                                   |
+| `Tags`              | `tags`                                   | none       | Scoreboard tags, matched by `tag=` in selectors                     |
 
 ### Pose
 
@@ -181,6 +190,27 @@ mannequin {
 }
 ```
 
+## Equipment
+
+`equipment { }` puts items in the mannequin's equipment slots, set by `EquipmentSlot` (`HEAD`, `CHEST`, `LEGS`, `FEET`, `MAINHAND`, `OFFHAND`,
+`BODY` and `SADDLE`). Each slot takes an item stack, and slots left out stay empty.
+
+```kotlin
+val guard = mannequin {
+	equipment {
+		this[EquipmentSlot.CHEST] = itemStack(Items.DIAMOND_CHESTPLATE)
+		this[EquipmentSlot.HEAD] = itemStack(Items.GOLDEN_HELMET)
+		this[EquipmentSlot.MAINHAND] = itemStack(Items.IRON_SWORD)
+	}
+}
+
+summon(guard.entityType, vec3(), guard.toNbt())
+```
+
+```mcfunction
+summon minecraft:mannequin ~ ~ ~ {equipment:{chest:{id:"minecraft:diamond_chestplate"},head:{id:"minecraft:golden_helmet"},mainhand:{id:"minecraft:iron_sword"}}}
+```
+
 ## Main Hand
 
 `mainHand` sets which hand is the main hand of the mannequin, the one holding its main hand item.
@@ -193,28 +223,45 @@ mannequin {
 
 ## A Shopkeeper NPC
 
-Put together, the fields give a crouching shopkeeper that wears a player's skin, shows a gold label under its name and can't be pushed
-away from its stall:
+Put together, the fields give a crouching shopkeeper named Bob that wears a player's skin, holds an emerald, shows a gold label under its
+name and can't be pushed away from its stall or hurt:
 
 ```kotlin
 val shopkeeper = mannequin {
+	customName = textComponent("Bob")
+	customNameVisible = true
 	description = textComponent("Shopkeeper", Color.GOLD)
+	equipment { this[EquipmentSlot.MAINHAND] = itemStack(Items.EMERALD) }
 	hiddenLayers(MannequinLayer.CAPE)
 	immovable = true
+	invulnerable = true
 	mainHand = MannequinHand.LEFT
 	playerProfile("Ayfri")
 	pose = MannequinPose.CROUCHING
+	tags = listOf("shopkeeper")
 }
 
 summon(shopkeeper.entityType, vec3(0, 64, 0), shopkeeper.toNbt())
 ```
 
 ```mcfunction
-summon minecraft:mannequin 0 64 0 {description:{text:"Shopkeeper",color:"gold"},hidden_layers:["cape"],immovable:1b,main_hand:"left",pose:"crouching",profile:{name:"Ayfri"}}
+summon minecraft:mannequin 0 64 0 {CustomName:"Bob",CustomNameVisible:1b,description:{text:"Shopkeeper",color:"gold"},equipment:{mainhand:{id:"minecraft:emerald"}},hidden_layers:["cape"],immovable:1b,Invulnerable:1b,main_hand:"left",pose:"crouching",profile:{name:"Ayfri"},Tags:["shopkeeper"]}
 ```
 
-`Mannequin` covers the fields specific to mannequins. Equipment (`equipment`) and the fields every living entity has, like `CustomName`,
-aren't part of it yet.
+`Mannequin` doesn't cover every field a living entity has: attributes (such as `minecraft:scale`) and `Health` aren't part of it. They can
+be merged into `toNbt()` before the `summon`, the way `Mannequin.summon` adds `UUID`:
+
+```kotlin
+val giant = mannequin { playerProfile("Ayfri") }
+summon(giant.entityType, vec3(), nbt {
+	giant.toNbt().forEach { (key, value) -> this[key] = value }
+	this["Health"] = 40f
+})
+```
+
+```mcfunction
+summon minecraft:mannequin ~ ~ ~ {profile:{name:"Ayfri"},Health:40.0f}
+```
 
 ## Summoning and OOP Handle
 
