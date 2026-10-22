@@ -170,6 +170,45 @@ fun Function.displayNbtTests() {
 	summon(snowyDisplay.entityType, vec3(), snowyDisplay.toNbt()) assertsIs """summon minecraft:block_display ~ ~ ~ {block_state:{id:"minecraft:grass_block",properties:{snowy:"true"}}}"""
 }
 
+fun Function.displayTransformationTests() {
+	fun nbtOf(block: Transformation.() -> Unit) =
+		blockDisplay { blockState(Blocks.STONE); transformation(block) }.toNbt().toString()
+
+	nbtOf {
+		scale = Vec3f(2, 2, 2)
+		translation { y = 2f }
+	} assertsIs """{transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[2.0f,2.0f,2.0f],translation:[0.0f,2.0f,0.0f]},block_state:"minecraft:stone"}"""
+
+	nbtOf {
+		scale = Vec3f(2, 2, 2)
+	} assertsIs """{transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[2.0f,2.0f,2.0f],translation:[0.0f,0.0f,0.0f]},block_state:"minecraft:stone"}"""
+
+	nbtOf {
+		leftRotation { quaternionNormalized(0, 0.6, 0, 0.8) }
+	} assertsIs """{transformation:{left_rotation:[0.0f,0.6f,0.0f,0.8f],right_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.0f,1.0f,1.0f],translation:[0.0f,0.0f,0.0f]},block_state:"minecraft:stone"}"""
+
+	nbtOf {
+		matrix {
+			row(2f, 0f, 0f, 0f)
+			row(0f, 2f, 0f, 2f)
+			row(0f, 0f, 2f, 0f)
+			row(0f, 0f, 0f, 1f)
+		}
+	} assertsIs """{transformation:[2.0f,0.0f,0.0f,0.0f,0.0f,2.0f,0.0f,2.0f,0.0f,0.0f,2.0f,0.0f,0.0f,0.0f,0.0f,1.0f],block_state:"minecraft:stone"}"""
+
+	val display = blockDisplay {
+		blockState(Blocks.STONE)
+		transformation { scale = Vec3f(2, 2, 2) }
+	}
+	val first = display.toNbt()
+
+	display.transformation!!.matrix shouldBe null
+	display.toNbt() shouldBe first
+
+	display.interpolable(vec3()).interpolateTo(20) { scale = Vec3f(2f, 2f, 2f) }
+	lines.last().replace(".0f", "f") shouldMatch Regex("""data merge entity \S+ \{interpolation_duration:20,start_interpolation:0,transformation:\{left_rotation:\[0f,0f,0f,1f\],right_rotation:\[0f,0f,0f,1f\],scale:\[2f,2f,2f\],translation:\[0f,0f,0f\]\}\}""")
+}
+
 fun Function.displayEntitySelectorTests() {
 	val uuid = UUIDArgument(Uuid.parse("00000000-0000-0000-0000-000000000001"))
 
@@ -219,6 +258,12 @@ class DisplayTests : FunSpec({
 	test("display nbt") {
 		dataPack("helpers_tests") {
 			load { displayNbtTests() }
+		}
+	}
+
+	test("display transformation") {
+		dataPack("helpers_tests") {
+			load { displayTransformationTests() }
 		}
 	}
 

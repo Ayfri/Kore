@@ -8,10 +8,12 @@ import io.github.ayfri.kore.helpers.displays.maths.internal.Matrix3f
 import io.github.ayfri.kore.helpers.maths.Vec3f
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.serialDescriptor
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.encodeCollection
+import net.benwoodworth.knbt.NbtTag
 
 @Serializable(with = Transformation.Companion.TransformationSerializer::class)
 data class Transformation(
@@ -79,35 +81,34 @@ data class Transformation(
 	}
 
 	companion object {
-		/** A new identity transformation on each access, since serializing one stores its composed matrix in it. */
+		/** A new identity transformation on each access, so mutating one can't leak into the others. */
 		val IDENTITY get() = Transformation()
 
+		@Serializable
+		private data class TransformationParts(
+			val leftRotation: List<Float>,
+			val rightRotation: List<Float>,
+			val scale: List<Float>,
+			val translation: List<Float>,
+		)
+
 		object TransformationSerializer : KSerializer<Transformation> {
-			override val descriptor = serialDescriptor<FloatArray>()
+			override val descriptor = SerialDescriptor("Transformation", NbtTag.serializer().descriptor)
 
 			override fun serialize(encoder: Encoder, value: Transformation) {
-				var matrix = when {
-					value.matrix != null -> value.matrix!!
-					value.decomposed -> {
-						value.compose()
-						value.matrix!!
-					}
+				val matrix = value.matrix
+				if (matrix != null) return encoder.encodeSerializableValue(ListSerializer(Float.serializer()), matrix.values)
 
-					else -> Matrix.IDENTITY
-				}
-
-				val decomposed = value.decompose()
-				value.translation = decomposed.translation
-				value.leftRotation = decomposed.leftRotation
-				value.scale = decomposed.scale
-				value.rightRotation = decomposed.rightRotation
-				value.compose()
-
-				matrix = value.matrix!!
-
-				encoder.encodeCollection(serialDescriptor<FloatArray>(), matrix.values) { index, it ->
-					encodeFloatElement(descriptor, index, it)
-				}
+				val translation = value.translation ?: Vec3f()
+				encoder.encodeSerializableValue(
+					TransformationParts.serializer(),
+					TransformationParts(
+						leftRotation = value.leftRotation.run { listOf(x, y, z, w) },
+						rightRotation = value.rightRotation.run { listOf(x, y, z, w) },
+						scale = value.scale.run { listOf(x, y, z) },
+						translation = translation.run { listOf(x, y, z) },
+					)
+				)
 			}
 
 			@Throws(UnsupportedOperationException::class)

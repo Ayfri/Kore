@@ -20,7 +20,6 @@ import io.github.ayfri.kore.helpers.displays.maths.Transformation
 import io.github.ayfri.kore.utils.encodeToNbtTag
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
-import net.benwoodworth.knbt.NbtCompound
 
 data class DisplayEntityInterpolable(val entity: DisplayEntity, var lastPosition: Vec3, val selector: UUIDArgument) {
 	var isSummoned = false
@@ -69,9 +68,10 @@ data class DisplayEntityInterpolable(val entity: DisplayEntity, var lastPosition
 	fun summon(position: Vec3 = lastPosition) {
 		if (isSummoned) error("Entity already summoned")
 
-		val nbt = entity.toNbt().toMutableMap()
-		nbt["UUID"] = selector.toNBTIntArray()
-		fn.summon(entity.entityType, position, NbtCompound(nbt))
+		fn.summon(entity.entityType, position, nbt {
+			entity.toNbt().forEach { (key, value) -> this[key] = value }
+			this["UUID"] = selector.toNBTIntArray()
+		})
 		lastPosition = position
 		isSummoned = true
 	}

@@ -169,6 +169,12 @@ transformation {
 }
 ```
 
+```mcfunction
+transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[2.0f,2.0f,2.0f],translation:[0.0f,2.0f,0.0f]}
+```
+
+A transformation holding a matrix (`matrix { row(...) }`, `invert()`, `compose()`) is written as its 16 floats row by row, which the game decomposes when loading the entity.
+
 The game applies the parts to the model in this order: `rightRotation`, `scale`, `leftRotation`, then `translation`. Rotations and scale
 work around the pivot of each display type:
 
