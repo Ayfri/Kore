@@ -147,6 +147,16 @@ fun Function.displayNbtTests() {
 
 	summon(richTextDisplay.entityType, vec3(), richTextDisplay.toNbt()) assertsIs """summon minecraft:text_display ~ ~ ~ {text:[{type:"text",text:""},{type:"text",color:"gold",text:"Legendary "},{type:"text",text:"Sword"}]}"""
 
+	val sizedDisplay = blockDisplay {
+		blockState(Blocks.STONE)
+		height = 0.5f
+		teleportDuration = 3
+		viewRange = 0.5f
+		width = 1.5f
+	}
+
+	summon(sizedDisplay.entityType, vec3(), sizedDisplay.toNbt()) assertsIs """summon minecraft:block_display ~ ~ ~ {height:0.5f,teleport_duration:3,view_range:0.5f,width:1.5f,block_state:"minecraft:stone"}"""
+
 	val stoneDisplay = blockDisplay { blockState(Blocks.STONE) }
 	summon(stoneDisplay.entityType, vec3(), stoneDisplay.toNbt()) assertsIs """summon minecraft:block_display ~ ~ ~ {block_state:"minecraft:stone"}"""
 

@@ -39,14 +39,17 @@ sealed class DisplayEntity {
 
 	@Serializable(with = RGB.Companion.ColorAsDecimalSerializer::class)
 	var glowColorOverride: RGB? = null
-	var height: Int? = null
+	var height: Float? = null
 	var interpolationDuration: Int? = null
 	var shadowRadius: Float? = null
 	var shadowStrength: Float? = null
 	var startInterpolation: Int? = null
+
+	/** Ticks over which a teleport is smoothed, the game clamps it to 0..59. */
+	var teleportDuration: Int? = null
 	var transformation: Transformation? = null
-	var viewRange: Int? = null
-	var width: Int? = null
+	var viewRange: Float? = null
+	var width: Float? = null
 
 	@Transient
 	abstract val entityType: EntityTypeArgument

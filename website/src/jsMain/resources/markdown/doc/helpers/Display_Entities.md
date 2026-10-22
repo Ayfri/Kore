@@ -24,11 +24,12 @@ All display entities inherit these properties from the shared `DisplayEntity` ba
 - `billboardMode` - how the display faces the camera (`FIXED`, `VERTICAL`, `HORIZONTAL`, `CENTER`).
 - `brightness` - overrides the block and sky light levels used for rendering (`Brightness(block = 15, sky = 15)`, 0 to 15).
 - `glowColorOverride` - replace the outline color with a custom RGB value.
-- `height` / `width` - resize the display bounds.
+- `height` / `width` - size of the box used to cull the display, in blocks (`0f`, the default, never culls).
 - `interpolationDuration` / `startInterpolation` - animate transformation changes over time.
 - `shadowRadius` / `shadowStrength` - control the projected shadow.
+- `teleportDuration` - ticks over which a teleport is smoothed, 0 to 59.
 - `transformation` - combine translation, rotation, scale, or custom matrices.
-- `viewRange` - control when the entity is rendered from a distance.
+- `viewRange` - multiplier of the render distance, `1f` by default.
 
 ## Entity Displays
 
