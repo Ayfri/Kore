@@ -74,6 +74,30 @@ The block state providers of [features](/docs/data-driven/worldgen/features#nois
 Every call returns a `NoiseArgument`. Vanilla noises are available as `Noises.AQUIFER_BARRIER`, `Noises.CONTINENTALNESS` and so on, and can be
 passed anywhere a `NoiseArgument` is expected.
 
+### Octaves and Scale
+
+Octave `n` has a wavelength of 2⁻ⁿ blocks, so `-7` is 128 blocks and `-3` is 8 blocks. Octave `i` of the list sits at `baseOctave + i`, double the
+frequency of the previous one. Before its modifier is applied, each octave weighs half the previous one: three octaves weigh 4/7, 2/7 and 1/7.
+The game adds two Perlin noises together, the second sampled at the coordinates multiplied by `1.0181268882175227`.
+
+| baseOctave | Wavelength   | Vanilla noise                | Read in vanilla at                                        |
+|------------|--------------|------------------------------|-----------------------------------------------------------|
+| `-16`      | 65536 blocks | `jagged`                     | `xz_scale` 1500                                           |
+| `-10`      | 1024 blocks  | `temperature`                | `xz_scale` 0.25                                           |
+| `-9`       | 512 blocks   | `continentalness`, `erosion` | `xz_scale` 0.25                                           |
+| `-8`       | 256 blocks   | `vegetation`                 | `xz_scale` 0.25                                           |
+| `-7`       | 128 blocks   | `ridge`, `cave_entrance`     | `xz_scale` 0.25 for `ridge`, 0.75 for `cave_entrance`     |
+| `-6`       | 64 blocks    | `surface`                    | none, `noise_threshold` has no scale                      |
+| `-3`       | 8 blocks     | `offset`                     | coordinates divided by 4, through `shift_a` and `shift_b` |
+
+Density functions scale the coordinates they sample with (`xzScale`), so the in-game size is the wavelength divided by that scale: `temperature`
+at `xz_scale` 0.25 repeats every 4096 blocks.
+
+The explorer below samples a noise with the game's algorithm, from your octaves or a vanilla noise, as a map, a terrain slice or one curve per
+octave, with the matching Kotlin and JSON:
+
+{{{ .components.doc.NoiseExplorer }}}
+
 ---
 
 ## Density Functions
