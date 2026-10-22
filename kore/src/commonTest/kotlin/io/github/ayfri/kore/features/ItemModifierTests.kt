@@ -883,7 +883,7 @@ fun DataPack.itemModifierTests() {
 				"values": [
 					{
 						"type": "minecraft:sum",
-						"summands": [
+						"operands": [
 							{
 								"type": "minecraft:score",
 								"target": {

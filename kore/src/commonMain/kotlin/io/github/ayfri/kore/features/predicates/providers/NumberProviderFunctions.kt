@@ -132,17 +132,17 @@ fun NumberProviderScope.scoreNumber(score: String, target: ScoreProvider, scale:
 /** Creates a [StorageNumberProvider] reading the NBT [path] of the command storage [storage]. */
 fun NumberProviderScope.storageNumber(storage: String, path: String) = StorageNumberProvider(storage, path)
 
-/** Creates a [SumNumberProvider] adding every provider of [summands]. */
-fun NumberProviderScope.sum(vararg summands: NumberProvider) = SumNumberProvider(summands.toList())
+/** Creates a [SumNumberProvider] adding every provider of [operands]. */
+fun NumberProviderScope.sum(vararg operands: NumberProvider) = SumNumberProvider(operands.toList())
 
-/** Creates a [SumNumberProvider] adding every provider of [summands]. */
-fun NumberProviderScope.sum(summands: List<NumberProvider>) = SumNumberProvider(summands)
+/** Creates a [SumNumberProvider] adding every provider of [operands]. */
+fun NumberProviderScope.sum(operands: List<NumberProvider>) = SumNumberProvider(operands)
 
 /**
  * Creates a [SumNumberProvider] adding every number provider of the tag [tag], written `"#my_pack:my_tag"`.
  *
  * ```
- * sum(NumberProviderTagArgument("bonuses", "my_pack"))  // "summands": "#my_pack:bonuses"
+ * sum(NumberProviderTagArgument("bonuses", "my_pack"))  // "operands": "#my_pack:bonuses"
  * ```
  */
 fun NumberProviderScope.sum(tag: NumberProviderTagArgument) = SumNumberProvider(listOf(NumberProviderReference(tag)))

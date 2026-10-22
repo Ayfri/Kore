@@ -155,7 +155,7 @@ data class ScoreNumberProvider(
 
 /**
  * Returns the number provider [id] points to, written as the bare string `"my_pack:my_provider"` wherever a number
- * provider is expected. A tag (`"#my_pack:my_tag"`) is only valid as the whole `summands` of a `sum`.
+ * provider is expected. A tag (`"#my_pack:my_tag"`) is only valid as the whole `operands` of a `sum`.
  * A cyclic reference makes the pack fail to load. A list can mix IDs and inline values.
  *
  * Minecraft Wiki: [Number provider](https://minecraft.wiki/w/Number_provider)
@@ -188,14 +188,18 @@ data class NumberProviderReference(var id: NumberProviderOrTagArgument) : Number
 data class StorageNumberProvider(var storage: String, var path: String) : NumberProvider()
 
 /**
- * Returns the sum of every provider of [summands].
+ * Returns the sum of every provider of [operands].
  *
  * Minecraft Wiki: [Number provider - sum](https://minecraft.wiki/w/Number_provider#sum)
  *
- * @property summands The providers whose values are added together: one provider, a list, or a tag of number providers.
+ * @property operands The providers whose values are added together: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of number providers. Never empty.
  */
 @Serializable
-data class SumNumberProvider(var summands: InlinableList<NumberProvider>) : NumberProvider()
+data class SumNumberProvider(var operands: InlinableList<NumberProvider>) : NumberProvider() {
+	init {
+		require(operands.isNotEmpty()) { "A 'sum' number provider needs at least one operand." }
+	}
+}
 
 /**
  * Returns a number drawn uniformly between [min] and [max], both included.

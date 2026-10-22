@@ -17,6 +17,7 @@ import io.github.ayfri.kore.generated.arguments.tagged.NumberProviderTagArgument
 import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -435,7 +436,7 @@ fun DataPack.numberProviderTests() {
 					"entries": [],
 					"rolls": {
 						"type": "minecraft:sum",
-						"summands": [
+						"operands": [
 							1.0,
 							{
 								"type": "minecraft:uniform",
@@ -554,7 +555,7 @@ fun DataPack.numberProviderTests() {
 					"entries": [],
 					"rolls": {
 						"type": "minecraft:sum",
-						"summands": [
+						"operands": [
 							"my_pack:a",
 							"my_pack:b"
 						]
@@ -577,7 +578,7 @@ fun DataPack.numberProviderTests() {
 					"entries": [],
 					"rolls": {
 						"type": "minecraft:sum",
-						"summands": "#my_pack:t"
+						"operands": "#my_pack:t"
 					}
 				}
 			]
@@ -598,7 +599,7 @@ fun DataPack.numberProviderTests() {
 					"entries": [],
 					"rolls": {
 						"type": "minecraft:sum",
-						"summands": [
+						"operands": [
 							"my_pack:a",
 							1.0
 						]
@@ -621,10 +622,13 @@ fun DataPack.numberProviderTests() {
 		.shouldBeInstanceOf<NumberProviderReference>().id
 		.shouldBeInstanceOf<NumberProviderTagArgument>().asString() assertsIs "#my_pack:t"
 
-	jsonEncoder.decodeFromString(NumberProvider.serializer(), """{"type":"minecraft:sum","summands":"#my_pack:t"}""")
-		.shouldBeInstanceOf<SumNumberProvider>().summands.single()
+	jsonEncoder.decodeFromString(NumberProvider.serializer(), """{"type":"minecraft:sum","operands":"#my_pack:t"}""")
+		.shouldBeInstanceOf<SumNumberProvider>().operands.single()
 		.shouldBeInstanceOf<NumberProviderReference>().id
 		.shouldBeInstanceOf<NumberProviderTagArgument>().asString() assertsIs "#my_pack:t"
+
+	shouldThrow<IllegalArgumentException> { lootTable("sum_empty_test") { pool { rolls = sum() } } }
+	shouldThrowAny { jsonEncoder.decodeFromString(NumberProvider.serializer(), """{"type":"minecraft:sum","operands":[]}""") }
 
 	shouldThrowAny { jsonEncoder.decodeFromString(NumberProvider.serializer(), """{"min":1,"max":2}""") }
 }

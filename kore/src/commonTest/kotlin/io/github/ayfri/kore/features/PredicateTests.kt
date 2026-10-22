@@ -931,7 +931,7 @@ fun DataPack.predicateTests() {
 			"type": "minecraft:value_check",
 			"value": {
 				"type": "minecraft:sum",
-				"summands": [
+				"operands": [
 					1.0,
 					2.0,
 					{

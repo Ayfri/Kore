@@ -5,7 +5,7 @@ nav-title: Loot Tables
 description: Create and customize Minecraft loot tables using Kore's type-safe Kotlin DSL for drops, container contents, fishing, and more.
 keywords: minecraft, datapack, kore, loot tables, pools, entries, item modifiers, drops
 date-created: 2025-08-11
-date-modified: 2026-10-21
+date-modified: 2026-10-22
 routeOverride: /docs/data-driven/loot-tables
 ---
 
@@ -244,7 +244,7 @@ pool {
 }
 ```
 
-The `summands` of a `sum` also take a tag of number providers, `sum(NumberProviderTagArgument("bonuses", "my_pack"))`, which writes `"summands": "#my_pack:bonuses"`. A tag is only valid there, as the whole `summands`. A list can mix IDs and inline values.
+The `operands` of a `sum` take one provider, a list of at least one provider (IDs and inline values can be mixed), or a tag of number providers: `sum(NumberProviderTagArgument("bonuses", "my_pack"))` writes `"operands": "#my_pack:bonuses"`. A tag is only valid as the whole `operands`, and a `sum` without operands isn't possible because the game rejects an empty list.
 
 A provider that references itself, directly or through other files, makes the pack fail to load.
 
