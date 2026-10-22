@@ -5,9 +5,9 @@ import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.PosNumber
 import io.github.ayfri.kore.commands.particle.particle
+import io.github.ayfri.kore.data.particle.ParticleOptions
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.generatedFunction
-import io.github.ayfri.kore.generated.arguments.types.ParticleTypeArgument
 import io.github.ayfri.kore.helpers.HelpersConstants
 import kotlin.math.PI
 import kotlin.math.cos
@@ -62,8 +62,8 @@ class VfxShape {
 	 */
 	var origin: Vec3 = vec3(0, 0, 0)
 
-	/** Particle type used for every generated point. */
-	lateinit var particle: ParticleTypeArgument
+	/** Particle and options used for every generated point: `simpleParticle(Particles.FLAME)`, `dustParticle(Color.RED)`... */
+	lateinit var particle: ParticleOptions
 
 	/** Number of points to generate along the shape. Must be strictly positive. */
 	var points: Int = 20
@@ -108,7 +108,7 @@ private fun VfxShape.at(x: Double, y: Double, z: Double) = (origin + vec3(x, y, 
  * ```kotlin
  * val ring = drawShape("fire_ring") {
  * 	shape = Shape.CIRCLE
- * 	particle = Particles.FLAME
+ * 	particle = simpleParticle(Particles.FLAME)
  * 	radius = 5.0
  * 	points = 16
  * }
@@ -145,7 +145,7 @@ fun DataPack.drawShape(name: String, block: VfxShape.() -> Unit) =
  * Shorthand for [drawShape] with [Shape.CIRCLE].
  *
  * @param name shape name, turned into the function name by [HelpersConstants.vfxShapeFunctionName]
- * @param particle particle type used for every generated point
+ * @param particle particle and options used for every generated point
  * @param radius circle radius
  * @param points number of points to generate around the circle
  * @param positionType coordinate space the generated `particle` commands are written in
@@ -153,7 +153,7 @@ fun DataPack.drawShape(name: String, block: VfxShape.() -> Unit) =
  */
 fun DataPack.drawCircle(
 	name: String,
-	particle: ParticleTypeArgument,
+	particle: ParticleOptions,
 	radius: Double = 1.0,
 	points: Int = 20,
 	positionType: PosNumber.Type = PosNumber.Type.RELATIVE,

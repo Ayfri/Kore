@@ -5,7 +5,7 @@ nav-title: VFX Particles
 description: "Generate geometric particle effects with Kore: circles, lines, spheres, spirals and helixes, in world, relative or local coordinates."
 keywords: minecraft, datapack, kore, helpers, vfx, particles, shape, circle, line, sphere, spiral, helix, geometry, coordinates, relative, local
 date-created: 2026-03-03
-date-modified: 2026-10-07
+date-modified: 2026-10-22
 routeOverride: /docs/helpers/vfx-particles
 ---
 
@@ -22,12 +22,15 @@ You describe the geometry once and then call the generated function wherever you
 
 ## Drawing shapes
 
+The particle is a [`ParticleOptions`](/docs/commands/commands#particle-options): `simpleParticle(...)` for a particle without options, or
+a factory such as `dustParticle` for a colored one.
+
 ```kotlin
-drawCircle("fire_ring", Particles.FLAME, radius = 5.0, points = 16)
+drawCircle("fire_ring", simpleParticle(Particles.FLAME), radius = 5.0, points = 16)
 
 drawShape("soul_helix") {
 	shape = Shape.HELIX
-	particle = Particles.SOUL_FIRE_FLAME
+	particle = simpleParticle(Particles.SOUL_FIRE_FLAME)
 	radius = 2.0
 	points = 40
 	height = 5.0
@@ -41,7 +44,7 @@ Both helpers return the generated `Function`, which you call with the `function`
 the relative coordinate space, running it under `execute at` centers the shape on the target:
 
 ```kotlin
-val ring = drawCircle("fire_ring", Particles.FLAME, radius = 5.0, points = 16)
+val ring = drawCircle("fire_ring", simpleParticle(Particles.FLAME), radius = 5.0, points = 16)
 
 function("cast_ring") {
 	execute {
@@ -101,7 +104,7 @@ Every generated point is written in `positionType`'s coordinate space:
   regardless of where the function is executed.
 
 ```kotlin
-drawCircle("fire_ring", Particles.FLAME, radius = 5.0, points = 4, positionType = PosNumber.Type.LOCAL)
+drawCircle("fire_ring", simpleParticle(Particles.FLAME), radius = 5.0, points = 4, positionType = PosNumber.Type.LOCAL)
 ```
 
 ```mcfunction
@@ -120,7 +123,7 @@ ground or to place a world-space shape somewhere other than `0 0 0`:
 ```kotlin
 drawShape("halo") {
 	shape = Shape.CIRCLE
-	particle = Particles.END_ROD
+	particle = simpleParticle(Particles.END_ROD)
 	radius = 0.5
 	points = 12
 	origin = vec3(0, 2.2, 0)
@@ -135,12 +138,19 @@ alone decides the coordinate space of the output.
 ```kotlin
 drawShape("arena_intro") {
 	shape = Shape.SPIRAL
-	particle = Particles.HAPPY_VILLAGER
+	particle = dustParticle(rgb(0x55FF55), 1.5f)
 	radius = 4.0
 	points = 60
 	height = 6.0
 	turns = 5
 }
+```
+
+Every point is written with the options of the particle, here a green dust of scale 1.5:
+
+```mcfunction
+particle minecraft:dust{color:5635925,scale:1.5f} ~ ~ ~
+...
 ```
 
 This kind of effect works well for spawn platforms, ritual circles, victory moments, or waypoint markers.

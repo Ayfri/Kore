@@ -5,7 +5,7 @@ nav-title: Raycasts
 description: Recursive raycast system with the Kore helpers module - step-based raycasting with block hit, max distance, and per-step callbacks.
 keywords: minecraft, datapack, kore, helpers, raycast, ray, block, hit, step, recursive
 date-created: 2026-03-03
-date-modified: 2026-10-07
+date-modified: 2026-10-22
 routeOverride: /docs/helpers/raycasts
 ---
 
@@ -89,6 +89,17 @@ val scanner = raycast {
 function("scan_once") {
 	with(scanner) { cast() }
 }
+```
+
+The callbacks are plain function bodies, so a step can draw any [particle option](/docs/commands/commands#particle-options), a colored
+dust beam for instance:
+
+```kotlin
+onStep = { particle(dustParticle(rgb(0x55FFFF), 0.5f), vec3()) }
+```
+
+```mcfunction
+particle minecraft:dust{color:5636095,scale:0.5f} ~ ~ ~
 ```
 
 For precise interaction beams, prefer a smaller `step`; for cheaper "good enough" scans, use a larger one.
