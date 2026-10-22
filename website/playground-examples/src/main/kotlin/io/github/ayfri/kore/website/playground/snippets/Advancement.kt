@@ -11,6 +11,7 @@ import io.github.ayfri.kore.features.advancements.triggers.inventoryChanged
 import io.github.ayfri.kore.features.advancements.triggers.items
 import io.github.ayfri.kore.features.predicates.sub.itemStackPredicate
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.Textures
 import io.github.ayfri.kore.pack.pack
 
 fun playground() = dataPack("advancement_demo") {
@@ -19,6 +20,7 @@ fun playground() = dataPack("advancement_demo") {
 	advancement("sharp_start") {
 		display(Items.DIAMOND_SWORD, "Sharp start", "Hold a diamond sword") {
 			frame = AdvancementFrameType.CHALLENGE
+			background = Textures.Gui.Advancements.Backgrounds.STONE
 		}
 
 		criteria {

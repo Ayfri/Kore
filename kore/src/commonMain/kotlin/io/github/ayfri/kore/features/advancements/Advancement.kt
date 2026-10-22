@@ -28,7 +28,7 @@ import kotlinx.serialization.Transient
  * JSON format reference: https://minecraft.wiki/w/Advancement_definition
  * Docs: https://kore.ayfri.com/docs/data-driven/advancements
  *
- * @param display - The display properties for the advancement.
+ * @param display - The display properties for the advancement. A root advancement (no `parent`) with a display needs a `background`, a child can't set one.
  * @param parent - The parent advancement for this advancement.
  * @param criteria - The criteria for the advancement.
  * @param requirements - The requirements for the advancement.
@@ -46,7 +46,16 @@ data class Advancement(
 	var rewards: AdvancementReward? = null,
 	var sendsTelemetryEvent: Boolean? = null,
 ) : Generator("advancement") {
-	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
+	override fun generateJson(dataPack: DataPack): String {
+		val background = display?.background
+		require(parent != null || display == null || background != null) {
+			"Root advancement '$fileName' needs a display `background`, the texture of its tab."
+		}
+		require(parent == null || background == null) {
+			"Advancement '$fileName' has a parent, so its display can't set a `background`."
+		}
+		return dataPack.jsonEncoder.encodeToString(this)
+	}
 }
 
 /**

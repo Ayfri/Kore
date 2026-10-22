@@ -22,7 +22,7 @@ data class AdvancementDisplay(
 	var description: ChatComponents,
 	/** The frame type for the advancement. */
 	var frame: AdvancementFrameType = AdvancementFrameType.TASK,
-	/** The background texture for the advancement. */
+	/** The background texture of the advancement tab, required on a root advancement (no `parent`), forbidden on a child. */
 	var background: ModelArgument? = null,
 	var showToast: Boolean? = null,
 	var announceToChat: Boolean? = null,

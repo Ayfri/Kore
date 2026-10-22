@@ -13,6 +13,7 @@ import io.github.ayfri.kore.features.advancements.display
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.functions.generatedFunctionName
 import io.github.ayfri.kore.generated.Items
+import io.github.ayfri.kore.generated.Textures
 import io.github.ayfri.kore.optimization.optimization
 import io.github.ayfri.kore.utils.asInvariantPathSeparator
 import io.kotest.core.spec.style.FunSpec
@@ -26,7 +27,9 @@ fun exportAsStringsTests() {
 		}
 
 		advancement("my_advancement") {
-			display(Items.DIAMOND_SWORD, "Hello", "World")
+			display(Items.DIAMOND_SWORD, "Hello", "World") {
+				background = Textures.Gui.Advancements.Backgrounds.STONE
+			}
 		}
 	}.exportAsStrings()
 

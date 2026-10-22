@@ -33,6 +33,7 @@ import io.github.ayfri.kore.generated.arguments.tagged.LootTableTagArgument
 import io.github.ayfri.kore.generated.arguments.tagged.PotionTagArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.advancementTests() {
@@ -1775,6 +1776,7 @@ private fun DataPack.allTriggersTests() {
 	advancement("round_trip_simple_advancement") {
 		display(Items.DIAMOND_SWORD, "Legendary Sword", "A powerful enchanted blade") {
 			frame = AdvancementFrameType.CHALLENGE
+			background = Textures.Gui.Advancements.Backgrounds.STONE
 			showToast = true
 			announceToChat = true
 		}
@@ -1811,6 +1813,7 @@ private fun DataPack.componentsDisplay() {
 			}
 
 			frame = AdvancementFrameType.CHALLENGE
+			background = Textures.Gui.Advancements.Backgrounds.STONE
 			showToast = true
 			announceToChat = true
 		}
@@ -1854,6 +1857,7 @@ private fun DataPack.componentsDisplay() {
 				"title": "Legendary Sword",
 				"description": "A powerful enchanted blade",
 				"frame": "challenge",
+				"background": "minecraft:gui/advancements/backgrounds/stone",
 				"show_toast": true,
 				"announce_to_chat": true
 			},
@@ -2126,6 +2130,29 @@ class AdvancementTests : FunSpec({
 		dataPack("features_tests") {
 			pretty()
 			advancementTests()
+		}
+	}
+
+	test("root advancement with a display needs a background") {
+		dataPack("features_tests") {
+			advancement("root_without_background") {
+				display(Items.DIAMOND_SWORD, "Hello", "World")
+			}
+
+			shouldThrow<IllegalArgumentException> { advancements.last().generateJson(this) }
+		}
+	}
+
+	test("child advancement can't set a background") {
+		dataPack("features_tests") {
+			advancement("child_with_background") {
+				parent = Advancements.Story.ROOT
+				display(Items.DIAMOND_SWORD, "Hello", "World") {
+					background = Textures.Gui.Advancements.Backgrounds.STONE
+				}
+			}
+
+			shouldThrow<IllegalArgumentException> { advancements.last().generateJson(this) }
 		}
 	}
 

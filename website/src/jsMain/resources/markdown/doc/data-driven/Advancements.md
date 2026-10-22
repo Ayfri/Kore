@@ -5,7 +5,7 @@ nav-title: Advancements
 description: Create custom Minecraft advancements with Kore's Kotlin DSL. Covers all triggers, criteria, rewards (functions, loot, recipes), display settings, and frames. Replace hand-written JSON with type-safe Kotlin.
 keywords: minecraft advancements, datapack advancements, advancement triggers, using_item trigger, inventory_changed, minecraft achievement, kore advancements, custom advancements, advancement criteria, advancement rewards
 date-created: 2024-01-08
-date-modified: 2026-10-21
+date-modified: 2026-10-22
 routeOverride: /docs/data-driven/advancements
 ---
 
@@ -43,6 +43,7 @@ Use the `advancement` builder function to create advancements in Kore:
 ```kotlin
 dataPack("my_datapack") {
 	advancement("my_first_advancement") {
+		parent = Advancements.Story.ROOT
 		display(Items.DIAMOND, "My First Advancement", "Complete this challenge!")
 
 		criteria {
@@ -56,6 +57,8 @@ dataPack("my_datapack") {
 
 This generates `data/my_datapack/advancement/my_first_advancement.json`.
 
+Generation throws when a root advancement (no `parent`) has a display without a `background`, or when an advancement with a `parent` sets a `background`. An advancement without a display has neither rule.
+
 ## Display Properties
 
 The display configuration controls how the advancement appears in the advancement screen and notifications.
@@ -64,6 +67,7 @@ The display configuration controls how the advancement appears in the advancemen
 
 ```kotlin
 advancement("example") {
+	parent = Advancements.Story.ROOT
 	display(Items.DIAMOND_SWORD, "Title", "Description") {
 		frame = AdvancementFrameType.TASK
 	}
@@ -76,6 +80,7 @@ For styled text with colors and formatting:
 
 ```kotlin
 advancement("styled_advancement") {
+	parent = Advancements.Story.ROOT
 	display(
 		icon = Items.GOLDEN_APPLE,
 		title = textComponent("Golden Achievement") { color = Color.GOLD },
@@ -88,16 +93,16 @@ advancement("styled_advancement") {
 
 ### Display Properties Reference
 
-| Property         | Type                   | Default  | Description                                 |
-|------------------|------------------------|----------|---------------------------------------------|
-| `icon`           | `AdvancementIcon`      | Required | Item displayed as the advancement icon      |
-| `title`          | `ChatComponents`       | Required | Title shown in the advancement screen       |
-| `description`    | `ChatComponents`       | Required | Description text below the title            |
-| `frame`          | `AdvancementFrameType` | `TASK`   | Frame style: `TASK`, `GOAL`, or `CHALLENGE` |
-| `background`     | `ModelArgument?`       | `null`   | Background texture (root advancements only) |
-| `showToast`      | `Boolean?`             | `true`   | Show toast notification on completion       |
-| `announceToChat` | `Boolean?`             | `true`   | Announce completion in chat                 |
-| `hidden`         | `Boolean?`             | `false`  | Hide until completed (and hide children)    |
+| Property         | Type                   | Default  | Description                                                                          |
+|------------------|------------------------|----------|--------------------------------------------------------------------------------------|
+| `icon`           | `AdvancementIcon`      | Required | Item displayed as the advancement icon                                               |
+| `title`          | `ChatComponents`       | Required | Title shown in the advancement screen                                                |
+| `description`    | `ChatComponents`       | Required | Description text below the title                                                     |
+| `frame`          | `AdvancementFrameType` | `TASK`   | Frame style: `TASK`, `GOAL`, or `CHALLENGE`                                          |
+| `background`     | `ModelArgument?`       | `null`   | Background texture, required on root advancements (no parent), forbidden on children |
+| `showToast`      | `Boolean?`             | `true`   | Show toast notification on completion                                                |
+| `announceToChat` | `Boolean?`             | `true`   | Announce completion in chat                                                          |
+| `hidden`         | `Boolean?`             | `false`  | Hide until completed (and hide children)                                             |
 
 ### Frame Types
 
@@ -119,6 +124,7 @@ Customize the icon with item components like enchantments:
 
 ```kotlin
 advancement("enchanted_icon") {
+	parent = Advancements.Story.ROOT
 	display(Items.DIAMOND_SWORD, "Master Swordsman", "Wield a legendary blade") {
 		icon(Items.DIAMOND_SWORD, count = 1) {
 			enchantments {
@@ -138,6 +144,7 @@ Hidden advancements remain invisible (along with their children) until completed
 
 ```kotlin
 advancement("secret_discovery") {
+	parent = Advancements.Story.ROOT
 	display(Items.ENDER_EYE, "???", "A mysterious discovery") {
 		hidden = true
 		frame = AdvancementFrameType.CHALLENGE

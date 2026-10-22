@@ -193,6 +193,7 @@ val advancementShowcase = Showcase(
 	"""
 		dataPack("arena") {
 			advancement("first_kill") {
+				parent = Advancements.Adventure.ROOT
 				display(
 					Items.IRON_SWORD,
 					"First Blood",
@@ -220,6 +221,7 @@ val advancementShowcase = Showcase(
 						"description": "Win your first duel",
 						"frame": "goal"
 					},
+					"parent": "minecraft:adventure/root",
 					"criteria": {
 						"kill_player": {
 							"trigger": "minecraft:player_killed_entity"
