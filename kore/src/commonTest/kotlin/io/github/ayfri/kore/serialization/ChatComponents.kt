@@ -10,6 +10,7 @@ import io.github.ayfri.kore.arguments.components.item.lore
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.randomPlayer
 import io.github.ayfri.kore.arguments.types.literals.self
+import io.github.ayfri.kore.arguments.types.literals.uuid
 import io.github.ayfri.kore.arguments.types.resources.storage
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.assertions.assertsIsJson
@@ -173,6 +174,23 @@ fun chatComponentsTests() {
 			}
 		}
 	""".trimIndent()
+
+	val playerObjectWithId = playerObjectComponent(uuid("8667ba71-b85a-4004-af54-457a9734eed7"))
+	playerObjectWithId assertsIsJson """
+		{
+			"type": "object",
+			"object": "player",
+			"player": {
+				"id": [
+					-2040022415,
+					-1202044924,
+					-1353431686,
+					-1758138665
+				]
+			}
+		}
+	""".trimIndent()
+	playerObjectWithId.toNbtTag().toSnbt() assertsIs """{type:"object",object:"player",player:{id:[I;-2040022415,-1202044924,-1353431686,-1758138665]}}"""
 
 	val scoreComponent = scoreComponent("my_objective", randomPlayer())
 	scoreComponent assertsIsJson """

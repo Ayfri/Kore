@@ -13,7 +13,7 @@ import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.enums.DyeColors
 import io.github.ayfri.kore.arguments.enums.SwingAnimationType
 import io.github.ayfri.kore.arguments.maths.vec3
-import io.github.ayfri.kore.arguments.types.literals.randomUUID
+import io.github.ayfri.kore.arguments.types.literals.uuid
 import io.github.ayfri.kore.arguments.types.resources.model
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
@@ -693,9 +693,8 @@ fun itemComponentsTests() {
 	}
 	profileTest.asString() assertsIs """minecraft:player_head[profile={name:"Notch"}]"""
 
-	val randomId = randomUUID()
-	profileTest.components!!.playerProfile("Notch", id = randomId)
-	profileTest.asString() assertsIs """minecraft:player_head[profile={name:"Notch",id:"${randomId.asString()}"}]"""
+	profileTest.components!!.playerProfile("Notch", id = uuid("8667ba71-b85a-4004-af54-457a9734eed7"))
+	profileTest.asString() assertsIs """minecraft:player_head[profile={name:"Notch",id:[I;-2040022415,-1202044924,-1353431686,-1758138665]}]"""
 
 	profileTest.components!!.playerProfile("Notch") {
 		property("test", "test")

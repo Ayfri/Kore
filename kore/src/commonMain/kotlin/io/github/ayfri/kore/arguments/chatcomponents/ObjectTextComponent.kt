@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.types.resources.ModelArgument
 import io.github.ayfri.kore.generated.arguments.types.AtlasArgument
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import io.github.ayfri.kore.serializers.UUIDAsIntArraySerializer
 import io.github.ayfri.kore.utils.encodeToNbtTag
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
@@ -79,7 +80,7 @@ fun PlayerObjectTextComponent.player(block: PlayerProfile.() -> Unit) = apply { 
 @Serializable
 data class PlayerProfile(
 	/** UUID of the player. Takes priority over [name] for skin resolution. */
-	var id: UUIDArgument? = null,
+	@Serializable(with = UUIDAsIntArraySerializer::class) var id: UUIDArgument? = null,
 	/** Player name used to look up the profile when [id] is absent. */
 	var name: String? = null,
 	/** Pre-fetched skin property list. When provided, no network lookup is performed. */

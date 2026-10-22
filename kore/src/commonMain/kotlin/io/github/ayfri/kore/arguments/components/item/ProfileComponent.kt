@@ -8,6 +8,7 @@ import io.github.ayfri.kore.arguments.types.resources.model
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
+import io.github.ayfri.kore.serializers.UUIDAsIntArraySerializer
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
@@ -42,7 +43,7 @@ sealed class ProfileComponent : Component() {
 @Serializable
 data class PlayerProfile(
 	var name: String? = null,
-	var id: UUIDArgument? = null,
+	@Serializable(with = UUIDAsIntArraySerializer::class) var id: UUIDArgument? = null,
 	var properties: List<ProfileProperty>? = null,
 ) : ProfileComponent()
 

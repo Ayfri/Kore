@@ -9,6 +9,7 @@ import io.github.ayfri.kore.arguments.components.data.EquipmentSlot
 import io.github.ayfri.kore.arguments.components.item.*
 import io.github.ayfri.kore.arguments.components.matchers.exists
 import io.github.ayfri.kore.arguments.types.literals.self
+import io.github.ayfri.kore.arguments.types.literals.uuid
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.items
 import io.github.ayfri.kore.dataPack
@@ -722,6 +723,29 @@ fun DataPack.itemModifierTests() {
 			}
 		}
 	""".trimIndent()
+
+	itemModifier("set_components_player_profile") {
+		setComponents {
+			playerProfile(id = uuid("8667ba71-b85a-4004-af54-457a9734eed7"))
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_components",
+			"components": {
+				"profile": {
+					"id": [
+						-2040022415,
+						-1202044924,
+						-1353431686,
+						-1758138665
+					]
+				}
+			}
+		}
+	""".trimIndent()
+	roundTrip(PlayerProfile(id = uuid("8667ba71-b85a-4004-af54-457a9734eed7")))
 
 	itemModifier("set_contents") {
 		setContents(ContentComponentTypes.BUNDLE_CONTENTS) {
