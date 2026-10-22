@@ -1,12 +1,10 @@
 package io.github.ayfri.kore.features.slotsources
 
 import io.github.ayfri.kore.serializers.InlinableList
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /** Selects the slots stored in the [component] of the items selected by [slotSource], empty ones included. */
 @Serializable
-@SerialName("contents")
 data class ContentsSlotSource(
 	var component: InventoryComponentType,
 	override var slotSource: InlinableList<SlotSource> = emptyList(),

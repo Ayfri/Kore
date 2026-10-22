@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.features.testenvironments.types
 
 import io.github.ayfri.kore.generated.arguments.types.TimelineArgument
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -13,7 +12,6 @@ import kotlinx.serialization.Serializable
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Test_environment
  */
-@SerialName("timeline_attributes")
 @Serializable
 data class TimelineAttributesEnvironment(
 	var timelines: List<TimelineArgument>,

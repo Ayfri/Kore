@@ -14,7 +14,6 @@ import io.github.ayfri.kore.serializers.LazySerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import io.github.ayfri.kore.serializers.NbtAsJsonSerializer
 import io.github.ayfri.kore.utils.nbt as buildNbt
-import io.github.ayfri.kore.utils.snakeCase
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.MapSerializer
@@ -39,7 +38,7 @@ sealed class EntitySubPredicate {
 		data object EntitySubPredicateSerializer : NamespacedPolymorphicSerializer<EntitySubPredicate>(
 			entitySubPredicateSealedSerializer(),
 			skipOutputName = true,
-			contentName = { it.substringAfterLast('.').removeSuffix("SubPredicate").snakeCase() },
+			suffix = "SubPredicate",
 		)
 	}
 }

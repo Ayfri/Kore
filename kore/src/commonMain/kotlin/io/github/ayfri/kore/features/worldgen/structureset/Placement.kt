@@ -2,24 +2,30 @@ package io.github.ayfri.kore.features.worldgen.structureset
 
 import io.github.ayfri.kore.generated.arguments.worldgen.types.BiomeArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.StructureSetArgument
+import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.InlinableList
-import kotlinx.serialization.SerialName
+import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.Serializable
 
-@Serializable
+@GeneratedSealedSerializer
+@Serializable(with = Placement.Companion.PlacementSerializer::class)
 sealed interface Placement {
 	var salt: Int
 	var frequencyReductionMethod: FrequencyReductionMethod?
 	var frequency: Double?
 	var exclusionZone: ExclusionZone?
 	var locateOffset: List<Int>?
+
+	companion object {
+		data object PlacementSerializer :
+			NamespacedPolymorphicSerializer<Placement>(placementSealedSerializer(), suffix = "Placement")
+	}
 }
 
 fun Placement.exclusionZone(otherSet: StructureSetArgument, chunkCount: Int = 1) = apply {
 	exclusionZone = ExclusionZone(otherSet, chunkCount)
 }
 
-@SerialName("minecraft:concentric_rings")
 @Serializable
 data class ConcentricRingsPlacement(
 	override var salt: Int = 0,
@@ -37,7 +43,6 @@ fun ConcentricRingsPlacement.preferredBiomes(vararg biomes: BiomeArgument) = app
 	preferredBiomes += biomes
 }
 
-@SerialName("minecraft:dimension_origin")
 @Serializable
 data class DimensionOriginPlacement(
 	override var salt: Int = 0,
@@ -47,7 +52,6 @@ data class DimensionOriginPlacement(
 	override var locateOffset: List<Int>? = null,
 ) : Placement
 
-@SerialName("minecraft:random_spread")
 @Serializable
 data class RandomSpreadPlacement(
 	override var salt: Int = 0,

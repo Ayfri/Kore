@@ -2,7 +2,6 @@ package io.github.ayfri.kore.features.worldgen.heightproviders
 
 import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
 import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchor
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -16,7 +15,6 @@ import kotlinx.serialization.Serializable
  * @property inner Height of the uniform part at the bottom of the range, `1` by default, at most the range height.
  */
 @Serializable
-@SerialName("very_biased_to_bottom")
 data class VeryBiasedToBottomHeightProvider(
 	var minInclusive: VerticalAnchor,
 	var maxInclusive: VerticalAnchor,

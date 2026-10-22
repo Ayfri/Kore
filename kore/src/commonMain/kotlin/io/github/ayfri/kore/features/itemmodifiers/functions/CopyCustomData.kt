@@ -2,7 +2,9 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
+import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.LowercaseSerializer
+import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -21,16 +23,21 @@ data class CopyCustomData(
 ) : ItemFunction()
 
 /** Source descriptor for copy-custom-data. */
-@Serializable
-sealed interface NbtProvider
+@GeneratedSealedSerializer
+@Serializable(with = NbtProvider.Companion.NbtProviderSerializer::class)
+sealed interface NbtProvider {
+	companion object {
+		data object NbtProviderSerializer : NamespacedPolymorphicSerializer<NbtProvider>(nbtProviderSealedSerializer())
+	}
+}
 
 /** Use a loot-context source (e.g. `this`, `attacker`, `block_entity`). */
 @Serializable
-@SerialName("minecraft:context")
+@SerialName("context")
 data class CopyNbtContext(@SerialName("target") val source: Source) : NbtProvider
 
 @Serializable
-@SerialName("minecraft:storage")
+@SerialName("storage")
 data class CopyCustomDataStorage(
 	var source: String,
 ) : NbtProvider

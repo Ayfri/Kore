@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.serializers
 
+import io.github.ayfri.kore.utils.associateByContentName
 import io.github.ayfri.kore.utils.decodeFromNbtTag
 import io.github.ayfri.kore.utils.defaultContentName
 import io.github.ayfri.kore.utils.encodeToNbtTag
@@ -27,10 +28,15 @@ import net.benwoodworth.knbt.*
  * }
  * ```
  *
+ * A subtype is written under the snake_case of its class name, without [suffix] when it ends with it: `UniformFloatProvider`
+ * becomes `uniform` with `suffix = "FloatProvider"`. A subtype whose game name differs from that declares it with `@SerialName`
+ * (`@SerialName("type_specific/sheep") class SheepSubPredicate`). Names are prefixed with [namespace], `null` writes them bare
+ * (`namespace = "fabric"` writes `fabric:and`).
+ *
  * When [subtypeOf] is set, [outputName] is a property every subtype declares itself. Serializing writes the subtype body
- * unchanged, after checking that [subtypeOf] maps its `minecraft:` [outputName] value to the subtype being written (other
+ * unchanged, after checking that [subtypeOf] maps its [namespace] [outputName] value to the subtype being written (other
  * namespaces are not checked, since a mod can give them any shape). Decoding reads [outputName], passes its value without
- * the `minecraft:` prefix to [subtypeOf] to get the subtype's content name, and decodes the whole object, [outputName]
+ * the [namespace] prefix to [subtypeOf] to get the subtype's content name, and decodes the whole object, [outputName]
  * included. Content names are subtype names (`block_particle_options`), not discriminator values (`block`). For families
  * where several discriminator values share one subtype, like particle options.
  *
@@ -48,9 +54,9 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 	private val outputName: String = "type",
 	private val skipOutputName: Boolean = false,
 	private val moveIntoProperty: String? = null,
-	private val useMinecraftPrefix: Boolean = true,
+	private val namespace: String? = "minecraft",
 	private val skipEmptyOutput: Boolean = true,
-	private val contentName: (String) -> String = ::defaultContentName,
+	private val suffix: String = "",
 	private val subtypeOf: ((typeName: String) -> String)? = null,
 	private val inlinedSubtype: String? = null,
 	private val decodeUntyped: Boolean = false,
@@ -58,14 +64,20 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 	override val descriptor = serialDescriptor<JsonElement>()
 
 	private val baseName get() = dispatcher.serialName
-	private fun namespaced(name: String) = if (useMinecraftPrefix) "minecraft:$name" else name
-	private fun normalize(typeName: String) =
-		if (useMinecraftPrefix) typeName.removePrefix("minecraft:") else typeName
+	private fun namespaced(name: String) = if (namespace == null) name else "$namespace:$name"
+	private fun normalize(typeName: String) = if (namespace == null) typeName else typeName.removePrefix("$namespace:")
+	private fun contentName(serialName: String) = defaultContentName(serialName, suffix)
 
-	private val serialNameByContent = lazy { dispatcher.serializersBySerialName.keys.associateBy(contentName) }
+	private val serialNameByContent = lazy { dispatcher.serializersBySerialName.keys.associateByContentName(::contentName) }
 
-	/** Every subtype's Minecraft name, e.g. `["enchantments", "damage", ...]`. */
-	val contentNames get() = dispatcher.serializersBySerialName.keys.map(contentName)
+	/** Loads the family and fails when two subtypes share a written name, which decoding otherwise only reports on first use. */
+	internal fun checkSubtypeNames(): String {
+		serialNameByContent.value
+		return baseName
+	}
+
+	/** Every subtype's Minecraft name without its namespace, e.g. `["enchantments", "damage", ...]`. */
+	val contentNames get() = dispatcher.serializersBySerialName.keys.map(::contentName)
 
 	private fun generatedDeserializer(typeName: String): DeserializationStrategy<T> {
 		val name = normalize(typeName).let { subtypeOf?.invoke(it) ?: it }
@@ -167,10 +179,10 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 		}
 	}
 
-	/** With [subtypeOf] set, fails when a `minecraft:` [typeName] belongs to another subtype than the one being written. */
+	/** With [subtypeOf] set, fails when a [namespace] [typeName] belongs to another subtype than the one being written. */
 	private fun requireSubtype(typeName: String?, subtype: String) {
 		if (subtypeOf == null || typeName == null) return
-		val id = typeName.removePrefix("minecraft:")
+		val id = normalize(typeName)
 		if (':' in id) return
 
 		val expected = subtypeOf.invoke(id)
@@ -179,6 +191,6 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 		}
 	}
 
-	/** The Minecraft name (namespaced, per [contentName]) that [value] would serialize under. */
+	/** The Minecraft name, with its [namespace], that [value] would serialize under. */
 	fun getContentName(value: T) = namespaced(contentName(dispatcher.serializerOf(value).descriptor.serialName))
 }

@@ -8,7 +8,6 @@ import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import io.github.ayfri.kore.utils.encodeToNbtTag
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -35,12 +34,12 @@ sealed class ObjectTextComponent : ChatComponent(), SimpleComponent {
 data object ObjectTextComponentSerializer : NamespacedPolymorphicSerializer<ObjectTextComponent>(
 	objectTextComponentSealedSerializer(),
 	outputName = "object",
-	useMinecraftPrefix = false
+	namespace = null,
+	suffix = "ObjectTextComponent",
 )
 
 /** An [ObjectTextComponent] that renders a sprite from a texture atlas. */
 @Serializable
-@SerialName("atlas")
 data class AtlasObjectTextComponent(
 	/** Atlas resource location to sample the sprite from. Defaults to the item atlas when `null`. */
 	var atlas: AtlasArgument? = null,
@@ -58,7 +57,6 @@ data class AtlasObjectTextComponent(
 
 /** An [ObjectTextComponent] that renders a player's skin as a head or full-body model. */
 @Serializable
-@SerialName("player")
 data class PlayerObjectTextComponent(
 	/** Profile used to resolve the player's skin textures. */
 	var player: PlayerProfile,

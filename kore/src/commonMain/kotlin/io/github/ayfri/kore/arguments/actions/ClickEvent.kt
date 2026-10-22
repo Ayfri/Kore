@@ -19,7 +19,7 @@ sealed interface ClickEvent : ActionType {
 		data object ClickEventSerializer : NamespacedPolymorphicSerializer<ClickEvent>(
 			clickEventSealedSerializer(),
 			outputName = "action",
-			useMinecraftPrefix = false
+			namespace = null,
 		)
 	}
 }

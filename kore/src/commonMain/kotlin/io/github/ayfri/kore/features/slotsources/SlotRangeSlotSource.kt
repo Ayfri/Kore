@@ -1,12 +1,10 @@
 package io.github.ayfri.kore.features.slotsources
 
 import io.github.ayfri.kore.arguments.ItemSlot
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /** Selects the [slots] of an inventory, the context's container when [source] is `null`. */
 @Serializable
-@SerialName("slot_range")
 data class SlotRangeSlotSource(
 	var source: SlotSourceOrigin? = null,
 	var slots: String,

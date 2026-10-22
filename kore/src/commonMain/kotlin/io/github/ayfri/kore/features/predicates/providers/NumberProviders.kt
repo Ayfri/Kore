@@ -11,7 +11,6 @@ import io.github.ayfri.kore.serializers.IdOrTagReferenceSerializer
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
@@ -35,6 +34,7 @@ sealed class NumberProvider {
 		data object NumberProviderSerializer : NamespacedPolymorphicSerializer<NumberProvider>(
 			numberProviderSealedSerializer(),
 			inlinedSubtype = "constant",
+			suffix = "NumberProvider",
 		)
 	}
 }
@@ -47,7 +47,6 @@ sealed class NumberProvider {
  * @property n The number of trials.
  * @property p The probability of success of each individual trial, between `0` and `1`.
  */
-@SerialName("binomial")
 @Serializable
 data class BinomialNumberProvider(var n: NumberProvider, var p: NumberProvider) : NumberProvider()
 
@@ -60,7 +59,6 @@ data class BinomialNumberProvider(var n: NumberProvider, var p: NumberProvider) 
  * @property onFalse The provider used when [condition] fails, `0` when `null`.
  * @property onTrue The provider used when [condition] passes.
  */
-@SerialName("conditional")
 @Serializable
 data class ConditionalNumberProvider(
 	var condition: PredicateCondition,
@@ -96,7 +94,6 @@ data class ConstantNumberProvider(val value: Float) : NumberProvider() {
  *
  * @property amount The level-based value evaluated at the current enchantment level.
  */
-@SerialName("enchantment_level")
 @Serializable
 data class EnchantmentLevelNumberProvider(var amount: LevelBased) : NumberProvider()
 
@@ -109,7 +106,6 @@ data class EnchantmentLevelNumberProvider(var amount: LevelBased) : NumberProvid
  *
  * @property attribute The environment attribute to read, which must hold a number.
  */
-@SerialName("environment_attribute")
 @Serializable
 data class EnvironmentAttributeNumberProvider(
 	var attribute: EnvironmentAttributeArgument,
@@ -123,7 +119,6 @@ data class EnvironmentAttributeNumberProvider(
  * @property cases The cases, checked in order.
  * @property default The provider used when no case matches, `0` when `null`.
  */
-@SerialName("number_dispatcher")
 @Serializable
 data class NumberDispatcherNumberProvider(
 	var cases: List<NumberDispatcherCase>,
@@ -151,7 +146,6 @@ data class NumberDispatcherCase(
  * @property score The scoreboard objective to read.
  * @property scale The multiplier applied to the score before returning it, `1` when `null`.
  */
-@SerialName("score")
 @Serializable
 data class ScoreNumberProvider(
 	var target: ScoreProvider,
@@ -190,7 +184,6 @@ data class NumberProviderReference(var id: NumberProviderOrTagArgument) : Number
  * @property storage Resource location of the storage, e.g. `my_pack:data`.
  * @property path NBT path of the value inside the storage.
  */
-@SerialName("storage")
 @Serializable
 data class StorageNumberProvider(var storage: String, var path: String) : NumberProvider()
 
@@ -201,7 +194,6 @@ data class StorageNumberProvider(var storage: String, var path: String) : Number
  *
  * @property summands The providers whose values are added together: one provider, a list, or a tag of number providers.
  */
-@SerialName("sum")
 @Serializable
 data class SumNumberProvider(var summands: InlinableList<NumberProvider>) : NumberProvider()
 
@@ -213,7 +205,6 @@ data class SumNumberProvider(var summands: InlinableList<NumberProvider>) : Numb
  * @property min Lowest value that can be drawn.
  * @property max Highest value that can be drawn, which must be at or above [min].
  */
-@SerialName("uniform")
 @Serializable
 data class UniformNumberProvider(var min: NumberProvider, var max: NumberProvider) : NumberProvider()
 
@@ -224,7 +215,6 @@ data class UniformNumberProvider(var min: NumberProvider, var max: NumberProvide
  *
  * @property distribution The entries to draw from, which must not be empty.
  */
-@SerialName("weighted_list")
 @Serializable
 data class WeightedListNumberProvider(var distribution: List<WeightedListNumberProviderEntry>) : NumberProvider()
 

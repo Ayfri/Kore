@@ -2,12 +2,10 @@ package io.github.ayfri.kore.features.slotsources
 
 import io.github.ayfri.kore.features.predicates.sub.ItemStackPredicate
 import io.github.ayfri.kore.serializers.InlinableList
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /** Applies a filter to the selected slots, excluding any non-matching slots. */
 @Serializable
-@SerialName("filtered")
 data class FilteredSlotSource(
 	var itemFilter: ItemStackPredicate = ItemStackPredicate(),
 	override var slotSource: InlinableList<SlotSource> = emptyList(),

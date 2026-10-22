@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.serializers
 
+import io.github.ayfri.kore.utils.associateByContentName
 import io.github.ayfri.kore.utils.defaultContentName
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
@@ -18,6 +19,8 @@ import kotlinx.serialization.json.*
  * - Each configurable leaf (a `data class`) serializes to `{ "type": <snake_case name>, ...its fields }`
  *   (e.g. `BlendToGray(...)` -> `{ "type": "blend_to_gray", ... }`). Every leaf must be `@Serializable`.
  *
+ * A leaf whose game name differs from the snake_case of its class name declares it with `@SerialName`.
+ *
  * ```kotlin
  * @GeneratedSealedSerializer
  * @Serializable(with = MyModifier.Companion.MyModifierSerializer::class)
@@ -33,7 +36,13 @@ open class EnumLikeSerializer<T : Any>(private val dispatcher: SealedDispatcher<
 
 	override val descriptor = PrimitiveSerialDescriptor(baseName, PrimitiveKind.STRING)
 
-	private val serialNameByContentName = lazy { dispatcher.serializersBySerialName.keys.associateBy(::defaultContentName) }
+	private val serialNameByContentName = lazy { dispatcher.serializersBySerialName.keys.associateByContentName(::defaultContentName) }
+
+	/** Loads the family and fails when two cases share a written name, which decoding otherwise only reports on first use. */
+	internal fun checkCaseNames(): String {
+		serialNameByContentName.value
+		return baseName
+	}
 
 	private fun caseSerializer(contentName: String): DeserializationStrategy<T> {
 		val serialName = serialNameByContentName.value[contentName] ?: contentName

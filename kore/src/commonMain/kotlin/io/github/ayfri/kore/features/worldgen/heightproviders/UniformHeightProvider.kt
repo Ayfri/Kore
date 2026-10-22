@@ -2,7 +2,6 @@ package io.github.ayfri.kore.features.worldgen.heightproviders
 
 import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
 import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchor
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -14,7 +13,6 @@ import kotlinx.serialization.Serializable
  * @property maxInclusive Highest level that can be drawn, which must resolve at or above [minInclusive].
  */
 @Serializable
-@SerialName("uniform")
 data class UniformHeightProvider(
 	var minInclusive: VerticalAnchor,
 	var maxInclusive: VerticalAnchor,

@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features.predicates.providers
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -15,7 +14,10 @@ import kotlinx.serialization.Serializable
 @Serializable(with = ScoreProvider.Companion.ScoreProviderSerializer::class)
 sealed class ScoreProvider {
 	companion object {
-		data object ScoreProviderSerializer : NamespacedPolymorphicSerializer<ScoreProvider>(scoreProviderSealedSerializer())
+		data object ScoreProviderSerializer : NamespacedPolymorphicSerializer<ScoreProvider>(
+			scoreProviderSealedSerializer(),
+			suffix = "ScoreProvider",
+		)
 	}
 }
 
@@ -24,7 +26,6 @@ sealed class ScoreProvider {
  *
  * @property target The loot context entity holding the score.
  */
-@SerialName("context")
 @Serializable
 data class ContextScoreProvider(var target: EntityTarget) : ScoreProvider()
 
@@ -36,7 +37,6 @@ fun contextScore(target: EntityTarget): ScoreProvider = ContextScoreProvider(tar
  *
  * @property name The player name, UUID or fake player the score belongs to.
  */
-@SerialName("fixed")
 @Serializable
 data class FixedScoreProvider(var name: String) : ScoreProvider()
 

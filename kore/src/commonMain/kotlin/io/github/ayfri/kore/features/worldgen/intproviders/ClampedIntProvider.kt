@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.intproviders
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -13,7 +12,6 @@ import kotlinx.serialization.Serializable
  * @property source The int provider the value is drawn from before being clamped.
  */
 @Serializable
-@SerialName("clamped")
 data class ClampedIntProvider(
 	var minInclusive: Int,
 	var maxInclusive: Int,

@@ -19,7 +19,7 @@ import kotlinx.serialization.Serializable
 sealed class BlockPredicate {
 	companion object {
 		data object BlockPredicateSerializer :
-			NamespacedPolymorphicSerializer<BlockPredicate>(blockPredicateSealedSerializer())
+			NamespacedPolymorphicSerializer<BlockPredicate>(blockPredicateSealedSerializer(), suffix = "BlockPredicate")
 	}
 }
 

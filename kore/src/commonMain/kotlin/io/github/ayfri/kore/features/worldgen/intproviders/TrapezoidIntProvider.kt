@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.intproviders
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -14,7 +13,6 @@ import kotlinx.serialization.Serializable
  * @property plateau Width of the flat top of the distribution, `0` making it a triangle.
  */
 @Serializable
-@SerialName("trapezoid")
 data class TrapezoidIntProvider(
 	var min: Int,
 	var max: Int,

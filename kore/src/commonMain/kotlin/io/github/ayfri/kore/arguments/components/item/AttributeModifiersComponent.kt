@@ -24,7 +24,7 @@ sealed class AttributeModifierDisplay {
 	companion object {
 		data object AttributeModifierDisplaySerializer : NamespacedPolymorphicSerializer<AttributeModifierDisplay>(
 			attributeModifierDisplaySealedSerializer(),
-			useMinecraftPrefix = false
+			namespace = null,
 		)
 	}
 }

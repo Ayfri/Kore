@@ -20,7 +20,10 @@ import kotlinx.serialization.Serializable
 @Serializable(with = IntProvider.Companion.IntProviderSerializer::class)
 sealed interface IntProvider {
 	companion object {
-		data object IntProviderSerializer :
-			NamespacedPolymorphicSerializer<IntProvider>(intProviderSealedSerializer(), inlinedSubtype = "constant")
+		data object IntProviderSerializer : NamespacedPolymorphicSerializer<IntProvider>(
+			intProviderSealedSerializer(),
+			inlinedSubtype = "constant",
+			suffix = "IntProvider",
+		)
 	}
 }

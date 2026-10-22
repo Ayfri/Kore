@@ -53,8 +53,21 @@ private val lazyJsonSerializer = lazy {
 /** The JSON format of chat and item components outside a data pack file: snake_case keys, no defaults, no class discriminator. */
 val jsonSerializer get() = lazyJsonSerializer.value
 
-/** The Minecraft name of a sealed subtype, the snake_case simple name of its [serialName]: `foo.BlendToGray` -> `blend_to_gray`. */
-internal fun defaultContentName(serialName: String) = serialName.substringAfterLast('.').snakeCase()
+/**
+ * The Minecraft name of a sealed subtype, the snake_case simple name of its [serialName] without [suffix]:
+ * `foo.BlendToGray` -> `blend_to_gray`, `foo.UniformIntProvider` with the suffix `IntProvider` -> `uniform`.
+ */
+internal fun defaultContentName(serialName: String, suffix: String = "") =
+	serialName.substringAfterLast('.').removeSuffix(suffix).snakeCase()
+
+/** The serial names of a sealed family by [contentName], failing when two subtypes are written under the same name. */
+internal fun Set<String>.associateByContentName(contentName: (String) -> String) =
+	associateBy(contentName).also { byName ->
+		check(byName.size == size) {
+			val shared = groupBy(contentName).filterValues { it.size > 1 }
+			"Several subtypes are written under the same name, add a @SerialName to one of them: $shared"
+		}
+	}
 
 /** The key [json] writes the [serialName] element of this descriptor under, after its naming strategy. */
 internal fun SerialDescriptor.jsonKey(json: Json, serialName: String) =

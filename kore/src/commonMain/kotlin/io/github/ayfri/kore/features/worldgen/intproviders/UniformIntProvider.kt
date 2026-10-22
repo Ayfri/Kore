@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.intproviders
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -12,7 +11,6 @@ import kotlinx.serialization.Serializable
  * @property maxInclusive Highest value that can be drawn, which must be at or above [minInclusive].
  */
 @Serializable
-@SerialName("uniform")
 data class UniformIntProvider(
 	var minInclusive: Int,
 	var maxInclusive: Int,

@@ -8,7 +8,6 @@ import io.github.ayfri.kore.arguments.types.resources.model
 import io.github.ayfri.kore.generated.ItemComponentTypes
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
@@ -35,12 +34,12 @@ sealed class ProfileComponent : Component() {
 		data object ProfileComponentSerializer : NamespacedPolymorphicSerializer<ProfileComponent>(
 			profileComponentSealedSerializer(),
 			skipOutputName = true,
+			suffix = "Profile",
 		)
 	}
 }
 
 @Serializable
-@SerialName("player")
 data class PlayerProfile(
 	var name: String? = null,
 	var id: UUIDArgument? = null,
@@ -48,7 +47,6 @@ data class PlayerProfile(
 ) : ProfileComponent()
 
 @Serializable
-@SerialName("texture")
 data class TextureProfile(
 	var cape: ModelArgument? = null,
 	var elytra: ModelArgument? = null,

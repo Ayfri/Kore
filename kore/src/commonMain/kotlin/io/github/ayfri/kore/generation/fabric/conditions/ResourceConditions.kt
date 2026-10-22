@@ -3,7 +3,6 @@ package io.github.ayfri.kore.generation.fabric.conditions
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /** The root JSON key Fabric API reads resource conditions from. */
@@ -26,40 +25,34 @@ sealed class ResourceCondition {
 		data object ResourceConditionSerializer : NamespacedPolymorphicSerializer<ResourceCondition>(
 			resourceConditionSealedSerializer(),
 			outputName = "condition",
-			useMinecraftPrefix = false,
-			contentName = { "fabric:$it" },
+			namespace = "fabric",
+			suffix = "ResourceCondition",
 		)
 	}
 }
 
 /** Succeeds when all mod ids in [values] are loaded. Serialized as `fabric:all_mods_loaded`. */
 @Serializable
-@SerialName("all_mods_loaded")
 data class AllModsLoadedResourceCondition(val values: List<String>) : ResourceCondition()
 
 /** Succeeds when every condition in [values] succeeds (and when empty). Serialized as `fabric:and`. */
 @Serializable
-@SerialName("and")
 data class AndResourceCondition(val values: List<ResourceCondition>) : ResourceCondition()
 
 /** Succeeds when at least one mod id in [values] is loaded. Serialized as `fabric:any_mods_loaded`. */
 @Serializable
-@SerialName("any_mods_loaded")
 data class AnyModsLoadedResourceCondition(val values: List<String>) : ResourceCondition()
 
 /** Succeeds when every feature flag in [features] is enabled. Serialized as `fabric:features_enabled`. */
 @Serializable
-@SerialName("features_enabled")
 data class FeaturesEnabledResourceCondition(val features: List<String>) : ResourceCondition()
 
 /** Succeeds when the wrapped [value] fails. Serialized as `fabric:not`. */
 @Serializable
-@SerialName("not")
 data class NotResourceCondition(val value: ResourceCondition) : ResourceCondition()
 
 /** Succeeds when at least one condition in [values] succeeds (and never when empty). Serialized as `fabric:or`. */
 @Serializable
-@SerialName("or")
 data class OrResourceCondition(val values: List<ResourceCondition>) : ResourceCondition()
 
 /**
@@ -67,7 +60,6 @@ data class OrResourceCondition(val values: List<ResourceCondition>) : ResourceCo
  * [values]. Serialized as `fabric:registry_contains`.
  */
 @Serializable
-@SerialName("registry_contains")
 data class RegistryContainsResourceCondition(
 	val registry: String? = null,
 	val values: List<String>,
@@ -78,7 +70,6 @@ data class RegistryContainsResourceCondition(
  * when omitted). Serialized as `fabric:tags_populated`.
  */
 @Serializable
-@SerialName("tags_populated")
 data class TagsPopulatedResourceCondition(
 	val registry: String? = null,
 	val values: List<String>,
@@ -86,7 +77,6 @@ data class TagsPopulatedResourceCondition(
 
 /** Always succeeds. Serialized as `{"condition": "fabric:true"}`. */
 @Serializable
-@SerialName("true")
 data object TrueResourceCondition : ResourceCondition()
 
 /**

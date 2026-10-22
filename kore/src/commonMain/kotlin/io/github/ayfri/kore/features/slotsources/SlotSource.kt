@@ -17,7 +17,10 @@ import kotlinx.serialization.Serializable
 @Serializable(with = SlotSource.Companion.SlotSourceSerializer::class)
 sealed class SlotSource {
 	companion object {
-		data object SlotSourceSerializer : NamespacedPolymorphicSerializer<SlotSource>(slotSourceSealedSerializer())
+		data object SlotSourceSerializer : NamespacedPolymorphicSerializer<SlotSource>(
+			slotSourceSealedSerializer(),
+			suffix = "SlotSource",
+		)
 	}
 }
 

@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.blockpredicate
 
 import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchor
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -13,7 +12,6 @@ import kotlinx.serialization.Serializable
  * @property minInclusive The lowest Y level that passes.
  */
 @Serializable
-@SerialName("height_range")
 data class HeightRangeBlockPredicate(
 	var maxInclusive: VerticalAnchor,
 	var minInclusive: VerticalAnchor,

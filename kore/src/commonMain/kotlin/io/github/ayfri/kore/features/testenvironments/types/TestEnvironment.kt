@@ -19,6 +19,6 @@ import kotlinx.serialization.Serializable
 sealed class TestEnvironment {
 	companion object {
 		data object TestEnvironmentSerializer :
-			NamespacedPolymorphicSerializer<TestEnvironment>(testEnvironmentSealedSerializer())
+			NamespacedPolymorphicSerializer<TestEnvironment>(testEnvironmentSealedSerializer(), suffix = "Environment")
 	}
 }

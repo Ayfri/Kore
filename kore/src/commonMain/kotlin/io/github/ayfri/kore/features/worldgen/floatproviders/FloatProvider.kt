@@ -20,7 +20,10 @@ import kotlinx.serialization.Serializable
 @Serializable(with = FloatProvider.Companion.FloatProviderSerializer::class)
 sealed interface FloatProvider {
 	companion object {
-		data object FloatProviderSerializer :
-			NamespacedPolymorphicSerializer<FloatProvider>(floatProviderSealedSerializer(), inlinedSubtype = "constant")
+		data object FloatProviderSerializer : NamespacedPolymorphicSerializer<FloatProvider>(
+			floatProviderSealedSerializer(),
+			inlinedSubtype = "constant",
+			suffix = "FloatProvider",
+		)
 	}
 }

@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.floatproviders
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -12,7 +11,6 @@ import kotlinx.serialization.Serializable
  * @property maxExclusive Upper bound of the range, excluded, which must be at or above [minInclusive].
  */
 @Serializable
-@SerialName("uniform")
 data class UniformFloatProvider(
 	var minInclusive: Float,
 	var maxExclusive: Float,

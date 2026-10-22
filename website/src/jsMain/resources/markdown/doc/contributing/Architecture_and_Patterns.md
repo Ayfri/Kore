@@ -165,12 +165,31 @@ generates a reflection-free `fooSealedSerializer()` factory at compile time, whi
 to `NamespacedPolymorphicSerializer`'s constructor. The factory returns a `SealedDispatcher` that switches on the
 subtype's simple name, so serializing one subtype only loads that subtype, not the whole family.
 
+### Subtype names
+
+A subtype is written under the snake_case of its class name: `LinearPos` becomes `linear_pos`. When the subtypes of a
+family end with a word the game name leaves out, the family's serializer sets it once as `suffix`, and the name drops it
+when present:
+
+```kotlin
+data object IntProviderSerializer : NamespacedPolymorphicSerializer<IntProvider>(
+	intProviderSealedSerializer(),
+	suffix = "IntProvider",
+)
+```
+
+`UniformIntProvider` is then written as `uniform`. `@SerialName` stays only on a subtype whose game name isn't that name,
+such as `@SerialName("type_specific/sheep") class SheepSubPredicate`, written as its exact value without the namespace.
+`namespace` is the prefix of the written names, `minecraft` by default, `null` for names written bare and `fabric` for the
+Fabric resource conditions. Two subtypes of a family written under the same name make its serializer fail.
+
 ### Property names
 
 Properties are written in snake_case in both JSON and SNBT, so `maxDamage` becomes `max_damage` with no annotation.
 `@JsonSerialName("offsetX")` overrides the key in both formats, as `LocationCheck` does for its camel-case offsets.
-A `@SerialName` is only needed on a sealed subtype (its `type` name) or when the key isn't the snake_case of the
-property, and in SNBT it is snake_cased as well, so a key such as `offsetX` needs `@JsonSerialName`.
+A `@SerialName` is only needed on a sealed subtype whose name isn't its class name in snake_case (see
+[Subtype names](#subtype-names)) or when the key isn't the snake_case of the property, and in SNBT it is snake_cased
+as well, so a key such as `offsetX` needs `@JsonSerialName`.
 Map keys and raw `NbtCompound` content are never renamed.
 
 SNBT is read the same way: `decodeFromSnbt` and `decodeFromNbtTag` look the keys of a class up under their snake_case

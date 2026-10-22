@@ -2,7 +2,6 @@ package io.github.ayfri.kore.features.worldgen.heightproviders
 
 import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
 import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchor
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -17,7 +16,6 @@ import kotlinx.serialization.Serializable
  * @property plateau Height of the flat top of the distribution, `0` by default, which makes it a triangle.
  */
 @Serializable
-@SerialName("trapezoid")
 data class TrapezoidHeightProvider(
 	var minInclusive: VerticalAnchor,
 	var maxInclusive: VerticalAnchor,

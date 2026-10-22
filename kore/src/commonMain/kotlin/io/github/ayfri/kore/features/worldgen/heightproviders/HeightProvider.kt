@@ -21,7 +21,10 @@ import kotlinx.serialization.Serializable
 @Serializable(with = HeightProvider.Companion.HeightProviderSerializer::class)
 sealed interface HeightProvider {
 	companion object {
-		data object HeightProviderSerializer :
-			NamespacedPolymorphicSerializer<HeightProvider>(heightProviderSealedSerializer(), inlinedSubtype = "constant")
+		data object HeightProviderSerializer : NamespacedPolymorphicSerializer<HeightProvider>(
+			heightProviderSealedSerializer(),
+			inlinedSubtype = "constant",
+			suffix = "HeightProvider",
+		)
 	}
 }
