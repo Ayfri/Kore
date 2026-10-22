@@ -13,6 +13,7 @@ import io.github.ayfri.kore.entities.kill
 import io.github.ayfri.kore.entities.swing
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generated.Textures
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.helpers.mannequins.*
 import io.kotest.core.spec.style.FunSpec
@@ -29,12 +30,18 @@ fun Function.mannequinTests() {
 	m.toNbt().toString() assertsIs "{hidden_layers:[\"cape\",\"hat\"],main_hand:\"left\",profile:{name:\"Ayfri\"}}"
 
 	val m2 = mannequin {
-		textureProfile("tex") {
+		textureProfile(Textures.Entity.Player.Slim.ALEX) {
 			model = MannequinModel.SLIM
 		}
 	}
 
-	m2.toNbt().toString() assertsIs "{profile:{model:\"slim\",texture:\"minecraft:tex\"}}"
+	m2.toNbt().toString() assertsIs "{profile:{model:\"slim\",texture:\"minecraft:entity/player/slim/alex\"}}"
+
+	val m2String = mannequin {
+		textureProfile("mypack:skins/bob")
+	}
+
+	m2String.toNbt().toString() assertsIs "{profile:{texture:\"mypack:skins/bob\"}}"
 
 	val m3 = mannequin {
 		description = textComponent("Test")

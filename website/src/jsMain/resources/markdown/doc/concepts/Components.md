@@ -277,11 +277,19 @@ Items.PLAYER_HEAD {
 
 #### Texture Profile
 
-A texture profile allows you to specify textures and models:
+A texture profile points at textures instead of a player. `texture` takes a `PlayerSkinTextureArgument` (the game's skins are in `Textures.Entity.Player.Slim` and `Textures.Entity.Player.Wide`), `elytra` an `ElytraTextureArgument` (`Textures.Entity.Equipment.Wings.ELYTRA`), `cape` a `CapeTextureArgument` and `model` the arm width:
 
 ```kotlin
 Items.PLAYER_HEAD {
-	textureProfile(texture = "tex", model = MannequinModel.SLIM)
+	textureProfile(texture = Textures.Entity.Player.Slim.ALEX, model = MannequinModel.SLIM)
+}
+```
+
+A texture from a resource pack is given as a `namespace:path` string, a bare path stays in `minecraft`:
+
+```kotlin
+Items.PLAYER_HEAD {
+	textureProfile(texture = "mypack:skins/bob", cape = "mypack:capes/guild")
 }
 ```
 

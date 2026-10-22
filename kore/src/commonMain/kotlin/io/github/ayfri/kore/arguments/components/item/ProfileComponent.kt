@@ -3,12 +3,14 @@ package io.github.ayfri.kore.arguments.components.item
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
 import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
-import io.github.ayfri.kore.arguments.types.resources.ModelArgument
-import io.github.ayfri.kore.arguments.types.resources.model
 import io.github.ayfri.kore.generated.ItemComponentTypes
+import io.github.ayfri.kore.generated.arguments.types.CapeTextureArgument
+import io.github.ayfri.kore.generated.arguments.types.ElytraTextureArgument
+import io.github.ayfri.kore.generated.arguments.types.PlayerSkinTextureArgument
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import io.github.ayfri.kore.serializers.UUIDAsIntArraySerializer
+import io.github.ayfri.kore.serializers.splitNamespacedId
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
@@ -49,10 +51,10 @@ data class PlayerProfile(
 
 @Serializable
 data class TextureProfile(
-	var cape: ModelArgument? = null,
-	var elytra: ModelArgument? = null,
+	var cape: CapeTextureArgument? = null,
+	var elytra: ElytraTextureArgument? = null,
 	var model: MannequinModel? = null,
-	var texture: ModelArgument? = null,
+	var texture: PlayerSkinTextureArgument? = null,
 ) : ProfileComponent()
 
 /** Sets the player skin displayed on a player head item using a player name or UUID lookup. */
@@ -85,26 +87,39 @@ fun PlayerProfile.property(name: String, value: ByteArray, signature: String? = 
 	property(name, value.decodeToString(), signature)
 }
 
-/** Sets the player skin displayed on a player head item using direct texture/model references. */
+/**
+ * Sets the player skin displayed on a player head item using direct texture references.
+ *
+ * ```
+ * textureProfile(texture = Textures.Entity.Player.Slim.ALEX) // profile={texture:"minecraft:entity/player/slim/alex"}
+ * ```
+ */
 fun ComponentsScope.textureProfile(
-	cape: ModelArgument? = null,
-	elytra: ModelArgument? = null,
+	cape: CapeTextureArgument? = null,
+	elytra: ElytraTextureArgument? = null,
 	model: MannequinModel? = null,
-	texture: ModelArgument? = null,
+	texture: PlayerSkinTextureArgument? = null,
 ) = apply {
 	this[ItemComponentTypes.PROFILE] = TextureProfile(cape, elytra, model, texture)
 }
 
+/**
+ * Same as the typed overload, with textures given as resource locations, `namespace:path` or a bare path in `minecraft`.
+ *
+ * ```
+ * textureProfile(texture = "mypack:skins/bob") // profile={texture:"mypack:skins/bob"}
+ * ```
+ */
 fun ComponentsScope.textureProfile(
 	cape: String? = null,
 	elytra: String? = null,
 	model: MannequinModel? = null,
 	texture: String,
 ) = textureProfile(
-	cape = cape?.let { model(it) },
-	elytra = elytra?.let { model(it) },
+	cape = cape?.splitNamespacedId()?.let { (path, namespace) -> CapeTextureArgument(path, namespace) },
+	elytra = elytra?.splitNamespacedId()?.let { (path, namespace) -> ElytraTextureArgument(path, namespace) },
 	model = model,
-	texture = model(texture),
+	texture = texture.splitNamespacedId().let { (path, namespace) -> PlayerSkinTextureArgument(path, namespace) },
 )
 
 fun ComponentsScope.textureProfile(block: TextureProfile.() -> Unit) = apply {

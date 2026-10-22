@@ -14,7 +14,6 @@ import io.github.ayfri.kore.arguments.enums.DyeColors
 import io.github.ayfri.kore.arguments.enums.SwingAnimationType
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.literals.uuid
-import io.github.ayfri.kore.arguments.types.resources.model
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.data.item.ItemStack
@@ -30,7 +29,10 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovid
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.states
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
+import io.github.ayfri.kore.generated.arguments.types.CapeTextureArgument
+import io.github.ayfri.kore.generated.arguments.types.ElytraTextureArgument
 import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
+import io.github.ayfri.kore.generated.arguments.types.PlayerSkinTextureArgument
 import io.github.ayfri.kore.utils.decodeFromSnbt
 import io.github.ayfri.kore.utils.set
 import io.kotest.assertions.throwables.shouldThrow
@@ -706,11 +708,14 @@ fun itemComponentsTests() {
 	profileTest.asString() assertsIs """minecraft:player_head[profile={model:"slim",texture:"minecraft:tex"}]"""
 
 	profileTest.components!!.textureProfile {
-		texture = model("tex2")
-		cape = model("cape")
-		elytra = model("elytra")
+		texture = PlayerSkinTextureArgument("tex2")
+		cape = CapeTextureArgument("cape")
+		elytra = ElytraTextureArgument("elytra")
 	}
 	profileTest.asString() assertsIs """minecraft:player_head[profile={cape:"minecraft:cape",elytra:"minecraft:elytra",texture:"minecraft:tex2"}]"""
+
+	profileTest.components!!.textureProfile(texture = Textures.Entity.Player.Slim.ALEX, elytra = Textures.Entity.Equipment.Wings.ELYTRA)
+	profileTest.asString() assertsIs """minecraft:player_head[profile={elytra:"minecraft:entity/equipment/wings/elytra",texture:"minecraft:entity/player/slim/alex"}]"""
 
 	val providesBannerPatternsTest = Items.PLAYER_HEAD {
 		providesBannerPatterns(Tags.BannerPattern.PatternItem.CREEPER)

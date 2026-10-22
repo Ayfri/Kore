@@ -102,7 +102,10 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 				"DecoratedPot" to "arguments.types.DecoratedPotPatternAssetArgument",
 				"Moon" to "arguments.types.MoonPhaseArgument",
 				"Painting" to "arguments.types.PaintingAssetArgument",
+				"Slim" to "arguments.types.PlayerSkinTextureArgument",
 				"Trim" to "arguments.types.TrimColorPaletteArgument",
+				"Wide" to "arguments.types.PlayerSkinTextureArgument",
+				"Wings" to "arguments.types.ElytraTextureArgument",
 			)
 		},
 		gen("Timelines", "timeline"),

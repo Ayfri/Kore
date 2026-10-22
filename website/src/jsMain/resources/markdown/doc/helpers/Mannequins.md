@@ -52,7 +52,7 @@ heads. It takes four forms:
 | Name       | `profile:"Ayfri"` or `profile:{name:"Ayfri"}`                            | `playerProfile("Ayfri")`                                                             | The current skin of that player, looked up by name          |
 | UUID       | `profile:{id:[I;-2040022415,-1202044924,-1353431686,-1758138665]}`       | `playerProfile(id = uuid("8667ba71-b85a-4004-af54-457a9734eed7"))`                   | The current skin of that player, kept after a name change   |
 | Properties | `profile:{properties:[{name:"textures",value:"<base64>"}]}`              | `playerProfile { property("textures", "<base64>") }`                                 | The skin encoded in `value`, with no lookup                 |
-| Texture    | `profile:{texture:"entity/player/slim/alex",model:"slim"}`               | `textureProfile("entity/player/slim/alex") { model = MannequinModel.SLIM }`          | A texture shipped by the game or a resource pack            |
+| Texture    | `profile:{model:"slim",texture:"minecraft:entity/player/slim/alex"}`     | `textureProfile(Textures.Entity.Player.Slim.ALEX) { model = MannequinModel.SLIM }`   | A texture shipped by the game or a resource pack            |
 
 ### Player Profile
 
@@ -78,13 +78,12 @@ mannequin {
 
 ### Texture Profile
 
-A texture profile points at a texture ID instead of a player, a texture from the game (`entity/player/wide/steve`,
-`entity/player/slim/alex`...) or from a resource pack. `model` picks the arm width, `WIDE` (4 pixels, Steve) or `SLIM` (3 pixels, Alex),
-and `cape` and `elytra` take a texture ID the same way.
+A texture profile points at a texture ID instead of a player. `model` picks the arm width, `WIDE` (4 pixels, Steve) or `SLIM` (3 pixels,
+Alex).
 
 ```kotlin
 mannequin {
-	textureProfile("entity/player/slim/alex") {
+	textureProfile(Textures.Entity.Player.Slim.ALEX) {
 		model = MannequinModel.SLIM
 	}
 }
@@ -92,6 +91,26 @@ mannequin {
 
 ```mcfunction
 summon minecraft:mannequin ~ ~ ~ {profile:{model:"slim",texture:"minecraft:entity/player/slim/alex"}}
+```
+
+The game's skins are `ALEX`, `ARI`, `EFE`, `KAI`, `MAKENA`, `NOOR`, `STEVE`, `SUNNY` and `ZURI`, under `Textures.Entity.Player.Slim` and
+`Textures.Entity.Player.Wide`. A texture from a resource pack is given as a `namespace:path` string, a bare path stays in `minecraft`:
+
+```kotlin
+mannequin {
+	textureProfile("mypack:entity/npc/bob")
+}
+```
+
+`elytra` takes an `ElytraTextureArgument`, like `Textures.Entity.Equipment.Wings.ELYTRA`, and `cape` a `CapeTextureArgument`:
+
+```kotlin
+mannequin {
+	textureProfile(Textures.Entity.Player.Wide.STEVE) {
+		elytra = Textures.Entity.Equipment.Wings.ELYTRA
+		cape = CapeTextureArgument("capes/guild", "mypack")
+	}
+}
 ```
 
 The game also accepts a name or UUID with `texture`, `cape`, `elytra` or `model` overrides in the same profile, like

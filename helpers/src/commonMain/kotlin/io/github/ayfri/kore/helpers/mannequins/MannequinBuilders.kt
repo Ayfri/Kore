@@ -5,10 +5,11 @@ import io.github.ayfri.kore.arguments.components.item.TextureProfile
 import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.literals.UUIDArgument
 import io.github.ayfri.kore.arguments.types.literals.entityUUID
-import io.github.ayfri.kore.arguments.types.resources.model
 import io.github.ayfri.kore.commands.summon
 import io.github.ayfri.kore.entities.MannequinEntity
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.generated.arguments.types.PlayerSkinTextureArgument
+import io.github.ayfri.kore.serializers.splitNamespacedId
 import net.benwoodworth.knbt.NbtCompound
 import kotlin.uuid.Uuid
 
@@ -72,6 +73,15 @@ fun Mannequin.summon(position: Vec3): MannequinEntity {
  * @param texture The main texture.
  * @param block The builder block for the profile.
  */
-fun Mannequin.textureProfile(texture: String, block: TextureProfile.() -> Unit = {}) {
-	profile = TextureProfile(texture = model(texture)).apply(block)
+fun Mannequin.textureProfile(texture: PlayerSkinTextureArgument, block: TextureProfile.() -> Unit = {}) {
+	profile = TextureProfile(texture = texture).apply(block)
 }
+
+/**
+ * Sets the profile of the mannequin to a texture-based profile.
+ *
+ * @param texture The main texture as `namespace:path`, or a bare path in `minecraft`.
+ * @param block The builder block for the profile.
+ */
+fun Mannequin.textureProfile(texture: String, block: TextureProfile.() -> Unit = {}) =
+	texture.splitNamespacedId().let { (path, namespace) -> textureProfile(PlayerSkinTextureArgument(path, namespace), block) }
