@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.placedfeature.modifiers
 
 import io.github.ayfri.kore.features.worldgen.HeightMap
-import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -11,7 +10,7 @@ data class SurfaceRelativeThresholdFilter(
 	var maxInclusive: Int? = null,
 ) : PlacementModifier()
 
-fun PlacedFeature.surfaceRelativeThresholdFilter(
+fun PlacementModifiersScope.surfaceRelativeThresholdFilter(
 	heightMap: HeightMap,
 	minInclusive: Int? = null,
 	maxInclusive: Int? = null,

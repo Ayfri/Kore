@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.placedfeature.modifiers
 
-import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -19,6 +18,6 @@ enum class Step {
 	}
 }
 
-fun PlacedFeature.carvingMask(step: Step) {
+fun PlacementModifiersScope.carvingMask(step: Step) {
 	placementModifiers += CarvingMask(step)
 }

@@ -5,7 +5,6 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicateScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicatesScope
 import io.github.ayfri.kore.features.worldgen.blockpredicate.True
 import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
-import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
 /**
@@ -36,7 +35,7 @@ data class BlockPredicateFilter(
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Placed_feature#block_predicate_filter
  */
-fun PlacedFeature.blockPredicateFilter(block: BlockPredicateFilter.() -> Unit = {}) {
+fun PlacementModifiersScope.blockPredicateFilter(block: BlockPredicateFilter.() -> Unit = {}) {
 	placementModifiers += BlockPredicateFilter().apply(block)
 }
 

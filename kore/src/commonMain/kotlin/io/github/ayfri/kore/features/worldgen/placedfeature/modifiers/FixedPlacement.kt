@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.placedfeature.modifiers
 
-import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import io.github.ayfri.kore.serializers.TripleAsArray
 import kotlinx.serialization.Serializable
 
@@ -9,11 +8,11 @@ data class FixedPlacement(
 	var positions: List<TripleAsArray<Int, Int, Int>> = emptyList(),
 ) : PlacementModifier()
 
-fun PlacedFeature.fixedPlacement(vararg positions: Triple<Int, Int, Int>) {
+fun PlacementModifiersScope.fixedPlacement(vararg positions: Triple<Int, Int, Int>) {
 	placementModifiers += FixedPlacement(positions.map { TripleAsArray(it.first, it.second, it.third) })
 }
 
-fun PlacedFeature.fixedPlacement(init: FixedPlacement.() -> Unit) {
+fun PlacementModifiersScope.fixedPlacement(init: FixedPlacement.() -> Unit) {
 	placementModifiers += FixedPlacement().apply(init)
 }
 

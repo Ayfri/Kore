@@ -5,7 +5,7 @@ nav-title: Features
 description: Generate trees, ores and vegetation in Minecraft with Kore - configured features, placement modifiers and block state providers.
 keywords: minecraft, datapack, kore, worldgen, configured feature, placed feature, tree, ore, block state provider
 date-created: 2026-02-03
-date-modified: 2026-10-21
+date-modified: 2026-10-22
 routeOverride: /docs/data-driven/worldgen/features
 ---
 
@@ -539,6 +539,7 @@ final position.
 | `noiseThresholdCount(...)`            | One of two counts, chosen by a noise threshold      | `flower_plains`, `noiseLevel = -0.8`, `belowNoise = 15`, `aboveNoise = 4` |
 | `offset(x, y, z)`                     | Shifts the position, each axis `-16..16`            | `cave_vines`, `y = -1`                                                    |
 | `randomChance(chance)`                | Keeps the position with a `0..1` probability        | -                                                                         |
+| `randomlySelected { }`                | Sends each position through one random modifier     | `feature/desert_well`, suspicious sand at one of five `offset`s           |
 | `rarityFilter(chance)`                | Keeps the position with a `1/chance` probability    | `lake_lava_surface`, `200`                                                |
 | `surfaceRelativeThresholdFilter(...)` | Filters on the distance to the surface              | `glow_lichen`, `OCEAN_FLOOR_WG` with `maxInclusive = -13`                 |
 | `surfaceWaterDepthFilter(maxDepth)`   | Drops positions under deeper water than `maxDepth`  | `dark_forest_vegetation`, `0`                                             |
@@ -547,7 +548,23 @@ final position.
 `countOnEveryLayer` and `cuboid` take int providers or plain `Int`s (`count(10)` is `count(constant(10))`), `heightRange` takes a height
 provider, `randomChance` a `Float` from `0` to `1` and `rarityFilter` a positive `Int`; `cuboid` also takes optional `includeEdges` and
 `includeInterior` booleans, both `true` in the game when left out; see [Providers](/docs/data-driven/worldgen/providers) for the distributions available. `offset` takes one int provider per axis:
-`constant(1)` moves every position the same way, `uniform(-2, 2)` scatters it.
+`constant(1)` moves every position the same way, `uniform(-2, 2)` scatters it. `randomlySelected { }` takes a block of at least one modifier, built with
+the same builders as the placed feature itself, and picks one of them at random for each position:
+
+```kotlin
+placedFeature("shifted_acacia", Features.ACACIA) {
+	randomlySelected {
+		offset(y = constant(-1))
+		offset(x = constant(-1), y = constant(-1))
+		offset(y = constant(-1), z = constant(1))
+		offset(x = constant(1), y = constant(-1))
+		offset(y = constant(-1), z = constant(-1))
+	}
+}
+```
+
+Vanilla uses it in the `desert_well` configured feature, where the suspicious sand of the well is placed at one of five offsets under it. An empty
+block isn't possible because the game requires at least one modifier, so `randomlySelected {}` throws.
 
 Reference: [Placement modifier](https://minecraft.wiki/w/Placed_feature#Placement_modifiers)
 

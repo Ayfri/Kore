@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features.worldgen.placedfeature.modifiers
 import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
-import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
 /**
@@ -38,7 +37,7 @@ data class Offset(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Placed_feature#offset
  */
-fun PlacedFeature.offset(
+fun PlacementModifiersScope.offset(
 	x: IntProvider = ConstantIntProvider(0),
 	y: IntProvider = ConstantIntProvider(0),
 	z: IntProvider = ConstantIntProvider(0),

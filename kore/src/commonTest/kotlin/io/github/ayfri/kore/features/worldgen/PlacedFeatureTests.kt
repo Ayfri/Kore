@@ -14,6 +14,7 @@ import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Features
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.utils.pretty
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.placedFeatureTests() {
@@ -258,6 +259,98 @@ fun DataPack.placedFeatureTests() {
 		}
 	""".trimIndent()
 
+	placedFeature("randomly_selected", Features.ACACIA) {
+		randomlySelected {
+			offset(y = constant(-1))
+			offset(x = constant(-1), y = constant(-1))
+			offset(y = constant(-1), z = constant(1))
+			offset(x = constant(1), y = constant(-1))
+			offset(y = constant(-1), z = constant(-1))
+		}
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:randomly_selected",
+					"placements": [
+						{
+							"type": "minecraft:offset",
+							"x": 0,
+							"y": -1,
+							"z": 0
+						},
+						{
+							"type": "minecraft:offset",
+							"x": -1,
+							"y": -1,
+							"z": 0
+						},
+						{
+							"type": "minecraft:offset",
+							"x": 0,
+							"y": -1,
+							"z": 1
+						},
+						{
+							"type": "minecraft:offset",
+							"x": 1,
+							"y": -1,
+							"z": 0
+						},
+						{
+							"type": "minecraft:offset",
+							"x": 0,
+							"y": -1,
+							"z": -1
+						}
+					]
+				}
+			]
+		}
+	""".trimIndent()
+
+	placedFeature("randomly_selected_nested", Features.ACACIA) {
+		randomlySelected {
+			randomlySelected {
+				count(2)
+			}
+			inSquare()
+		}
+		rarityFilter(4)
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:randomly_selected",
+					"placements": [
+						{
+							"type": "minecraft:randomly_selected",
+							"placements": [
+								{
+									"type": "minecraft:count",
+									"count": 2
+								}
+							]
+						},
+						{
+							"type": "minecraft:in_square"
+						}
+					]
+				},
+				{
+					"type": "minecraft:rarity_filter",
+					"chance": 4
+				}
+			]
+		}
+	""".trimIndent()
+
 	placedFeature("fixed_placement", Features.END_PLATFORM) {
 		fixedPlacement {
 			position(0, 0, 0)
@@ -288,6 +381,14 @@ class PlacedFeatureTests : FunSpec({
 		dataPack("placedFeature") {
 			pretty()
 			placedFeatureTests()
+		}
+	}
+
+	test("randomly selected rejects an empty block") {
+		shouldThrow<IllegalArgumentException> {
+			dataPack("randomlySelectedEmpty") {
+				placedFeature("empty", Features.ACACIA) { randomlySelected {} }
+			}
 		}
 	}
 })

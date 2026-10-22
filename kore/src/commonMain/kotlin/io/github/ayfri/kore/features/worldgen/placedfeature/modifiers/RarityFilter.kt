@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.placedfeature.modifiers
 
-import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
 /**
@@ -28,6 +27,6 @@ data class RarityFilter(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Placed_feature#rarity_filter
  */
-fun PlacedFeature.rarityFilter(chance: Int) {
+fun PlacementModifiersScope.rarityFilter(chance: Int) {
 	placementModifiers += RarityFilter(chance)
 }

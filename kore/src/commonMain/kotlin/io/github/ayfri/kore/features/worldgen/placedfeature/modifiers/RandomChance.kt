@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.placedfeature.modifiers
 
-import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
 /**
@@ -28,6 +27,6 @@ data class RandomChance(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Java_Edition_26.3-snapshot-3
  */
-fun PlacedFeature.randomChance(chance: Float) {
+fun PlacementModifiersScope.randomChance(chance: Float) {
 	placementModifiers += RandomChance(chance)
 }

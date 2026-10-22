@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.placedfeature.modifiers
 
 import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProvider
-import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
 /**
@@ -29,6 +28,6 @@ data class HeightRange(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Placed_feature#height_range
  */
-fun PlacedFeature.heightRange(height: HeightProvider) {
+fun PlacementModifiersScope.heightRange(height: HeightProvider) {
 	placementModifiers += HeightRange(height)
 }

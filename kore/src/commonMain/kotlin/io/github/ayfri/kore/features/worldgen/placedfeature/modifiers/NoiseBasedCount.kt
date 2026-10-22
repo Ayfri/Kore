@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.worldgen.placedfeature.modifiers
 
-import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -10,7 +9,7 @@ data class NoiseBasedCount(
 	var noiseOffset: Double? = null,
 ) : PlacementModifier()
 
-fun PlacedFeature.noiseBasedCount(
+fun PlacementModifiersScope.noiseBasedCount(
 	noiseToCountRatio: Int = 0,
 	noiseFactor: Double = 0.0,
 	noiseOffset: Double? = null,

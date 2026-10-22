@@ -2,9 +2,8 @@ package io.github.ayfri.kore.features.worldgen.placedfeature
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
-import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProviderScope
-import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.PlacementModifier
+import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.PlacementModifiersScope
 import io.github.ayfri.kore.generated.arguments.worldgen.types.FeatureArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
 import kotlinx.serialization.SerialName
@@ -25,8 +24,8 @@ data class PlacedFeature(
 	override var fileName: String = "placed_feature",
 	var feature: FeatureArgument,
 	@SerialName("placement")
-	var placementModifiers: List<PlacementModifier> = emptyList(),
-) : Generator("worldgen/placed_feature"), HeightProviderScope, IntProviderScope {
+	override var placementModifiers: List<PlacementModifier> = emptyList(),
+) : Generator("worldgen/placed_feature"), PlacementModifiersScope {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }
 

@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features.worldgen.placedfeature.modifiers
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
-import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
 /**
@@ -34,7 +33,7 @@ data class CountOnEveryLayer(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Placed_feature#count_on_every_layer
  */
-fun PlacedFeature.countOnEveryLayer(count: IntProvider) {
+fun PlacementModifiersScope.countOnEveryLayer(count: IntProvider) {
 	placementModifiers += CountOnEveryLayer(count)
 }
 
@@ -47,4 +46,4 @@ fun PlacedFeature.countOnEveryLayer(count: IntProvider) {
  * }
  * ```
  */
-fun PlacedFeature.countOnEveryLayer(count: Int) = countOnEveryLayer(constant(count))
+fun PlacementModifiersScope.countOnEveryLayer(count: Int) = countOnEveryLayer(constant(count))

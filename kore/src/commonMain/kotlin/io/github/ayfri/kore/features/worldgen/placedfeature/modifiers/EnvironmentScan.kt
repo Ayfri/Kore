@@ -6,7 +6,6 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicatesScop
 import io.github.ayfri.kore.features.worldgen.blockpredicate.True
 import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
 import io.github.ayfri.kore.features.worldgen.configuredfeature.VerticalDirection
-import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
 /**
@@ -45,7 +44,7 @@ data class EnvironmentScan(
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Placed_feature#environment_scan
  */
-fun PlacedFeature.environmentScan(
+fun PlacementModifiersScope.environmentScan(
 	directionOfSearch: VerticalDirection,
 	maxSteps: Int,
 	block: EnvironmentScan.() -> Unit = {},

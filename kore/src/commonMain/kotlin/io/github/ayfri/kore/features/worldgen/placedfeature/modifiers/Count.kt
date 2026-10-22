@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features.worldgen.placedfeature.modifiers
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
-import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
 /**
@@ -31,7 +30,7 @@ data class Count(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Placed_feature#count
  */
-fun PlacedFeature.count(count: IntProvider) {
+fun PlacementModifiersScope.count(count: IntProvider) {
 	placementModifiers += Count(count)
 }
 
@@ -44,4 +43,4 @@ fun PlacedFeature.count(count: IntProvider) {
  * }
  * ```
  */
-fun PlacedFeature.count(count: Int) = count(constant(count))
+fun PlacementModifiersScope.count(count: Int) = count(constant(count))

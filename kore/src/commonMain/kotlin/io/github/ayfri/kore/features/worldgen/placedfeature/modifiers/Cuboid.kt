@@ -3,7 +3,6 @@ package io.github.ayfri.kore.features.worldgen.placedfeature.modifiers
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
-import io.github.ayfri.kore.features.worldgen.placedfeature.PlacedFeature
 import kotlinx.serialization.Serializable
 
 /**
@@ -38,7 +37,7 @@ data class Cuboid(
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen/features
  * Minecraft Wiki: https://minecraft.wiki/w/Java_Edition_26.3-snapshot-3
  */
-fun PlacedFeature.cuboid(
+fun PlacementModifiersScope.cuboid(
 	xzSize: IntProvider,
 	ySize: IntProvider,
 	includeEdges: Boolean? = null,
@@ -56,7 +55,7 @@ fun PlacedFeature.cuboid(
  * }
  * ```
  */
-fun PlacedFeature.cuboid(
+fun PlacementModifiersScope.cuboid(
 	xzSize: Int,
 	ySize: Int,
 	includeEdges: Boolean? = null,
