@@ -2,8 +2,11 @@ package io.github.ayfri.kore.serializers
 
 import kotlinx.serialization.KSerializer
 
-/** The simple class name generated dispatchers switch on, `Class.getSimpleName` on the JVM: `KClass.simpleName` makes two native calls there. */
-internal expect fun subtypeName(value: Any): String?
+/**
+ * The simple class name generated dispatchers switch on, `Class.getSimpleName` on the JVM: `KClass.simpleName` makes two native calls there.
+ * Public for the kore-ksp generated [SealedDispatcher] factories of other modules, not meant to be called directly.
+ */
+expect fun subtypeName(value: Any): String?
 
 /**
  * Resolves the serializers of a sealed family's subtypes on demand, so serializing a value only loads its own subtype

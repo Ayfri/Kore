@@ -139,7 +139,7 @@ fun Function.displayNbtTests() {
 		glowColorOverride = RGB(255, 0, 0)
 	}
 
-	summon(textDisplay.entityType, vec3(), textDisplay.toNbt()) assertsIs """summon minecraft:text_display ~ ~ ~ {background:-2130771968,text:"hi",billboard:"center",brightness:{block:15,sky:10},glow_color_override:16711680}"""
+	summon(textDisplay.entityType, vec3(), textDisplay.toNbt()) assertsIs """summon minecraft:text_display ~ ~ ~ {billboard:"center",brightness:{block:15,sky:10},glow_color_override:16711680,background:-2130771968,text:"hi"}"""
 
 	val richTextDisplay = textDisplay {
 		text = textComponent("Legendary ", Color.GOLD) + textComponent("Sword")

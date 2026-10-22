@@ -4,18 +4,13 @@ import io.github.ayfri.kore.arguments.chatcomponents.ChatComponents
 import io.github.ayfri.kore.arguments.colors.ARGB
 import io.github.ayfri.kore.arguments.colors.ColorAsARGBDecimalSerializer
 import io.github.ayfri.kore.generated.EntityTypes
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.encodeStructure
-import net.benwoodworth.knbt.NbtTag
+import kotlinx.serialization.Transient
 
-@Serializable(with = TextDisplay.Companion.DisplayEntitySerializer::class)
+@Serializable
 data class TextDisplay(
 	var alignment: TextAlignment? = null,
+	@Serializable(with = ColorAsARGBDecimalSerializer::class)
 	var background: ARGB? = null,
 	var defaultBackground: Boolean? = null,
 	var lineWidth: Int? = null,
@@ -24,40 +19,6 @@ data class TextDisplay(
 	var text: ChatComponents? = null,
 	var textOpacity: Byte? = null,
 ) : DisplayEntity() {
+	@Transient
 	override val entityType = EntityTypes.TEXT_DISPLAY
-
-	override fun toString() =
-		"TextDisplay(alignment=$alignment, background=$background, defaultBackground=$defaultBackground, lineWidth=$lineWidth, seeThrough=$seeThrough, shadow=$shadow, text=$text, textOpacity=$textOpacity, billboardMode=$billboardMode, brightness=$brightness, glowColorOverride=$glowColorOverride, height=$height, interpolationDuration=$interpolationDuration, startInterpolation=$startInterpolation, shadowRadius=$shadowRadius, shadowStrength=$shadowStrength, transformation=$transformation, viewRange=$viewRange, width=$width)"
-
-	companion object {
-		object DisplayEntitySerializer : KSerializer<TextDisplay> {
-			override val descriptor = buildClassSerialDescriptor("TextDisplay") {
-				element("alignment", TextAlignment.serializer().descriptor)
-				element("background", ColorAsARGBDecimalSerializer.descriptor)
-				element("default_background", Boolean.serializer().descriptor)
-				element("line_width", Int.serializer().descriptor)
-				element("see_through", Boolean.serializer().descriptor)
-				element("shadow", Boolean.serializer().descriptor)
-				element("text", NbtTag.serializer().descriptor)
-				element("text_opacity", Byte.serializer().descriptor)
-				addDisplayEntity()
-			}
-
-			override fun deserialize(decoder: Decoder) = error("Not implemented")
-
-			override fun serialize(encoder: Encoder, value: TextDisplay) {
-				encoder.encodeStructure(descriptor) {
-					value.alignment?.let { encodeSerializableElement(descriptor, 0, TextAlignment.serializer(), it) }
-					value.background?.let { encodeSerializableElement(descriptor, 1, ColorAsARGBDecimalSerializer, it) }
-					value.defaultBackground?.let { encodeSerializableElement(descriptor, 2, Boolean.serializer(), it) }
-					value.lineWidth?.let { encodeSerializableElement(descriptor, 3, Int.serializer(), it) }
-					value.seeThrough?.let { encodeSerializableElement(descriptor, 4, Boolean.serializer(), it) }
-					value.shadow?.let { encodeSerializableElement(descriptor, 5, Boolean.serializer(), it) }
-					value.text?.let { encodeSerializableElement(descriptor, 6, NbtTag.serializer(), it.toNbtTag()) }
-					value.textOpacity?.let { encodeSerializableElement(descriptor, 7, Byte.serializer(), it) }
-					encodeDisplayEntity(value, descriptor, 8)
-				}
-			}
-		}
-	}
 }
