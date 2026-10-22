@@ -332,6 +332,8 @@ The interaction is as wide and tall as the mannequin's `pose` plus 0.1, so a cli
 | `SWIMMING` and `FALL_FLYING` | 0.6 x 0.6                         | 0.7 x 0.7   |
 | `SLEEPING`                   | 0.2 x 0.2                         | 0.3 x 0.3   |
 
+{{{ .components.doc.NpcHitboxes }}}
+
 A mannequin in a lying pose is drawn well outside its hitbox, the model of a swimming or sleeping one covers more than the
 interaction. Set `interaction { width = 1.8f; height = 0.6f }` to cover the drawing.
 

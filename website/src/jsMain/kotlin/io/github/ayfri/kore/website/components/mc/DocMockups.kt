@@ -47,15 +47,18 @@ private fun McScene(caption: String, kind: SceneKind, panorama: Int = 0, height:
 	}
 }
 
-/** A dialog screen: [title] in the header, [body] in the middle, then the [footer] buttons. */
+/** A dialog screen: [title] in the header, wrapped at [titleWidth] GUI pixels, [body] in the middle, then the [footer] buttons. */
 @Composable
-private fun McDialog(
+internal fun McDialog(
 	title: String,
 	titleColor: String = McColor.WHITE,
+	titleWidth: Int = Int.MAX_VALUE,
 	footer: (@Composable () -> Unit)? = null,
 	body: @Composable () -> Unit,
 ) {
-	Div({ classes(DocMockupsStyle.dialogHeader) }) { McLine(title, titleColor) }
+	Div({ classes(DocMockupsStyle.dialogHeader) }) {
+		Div({ classes(McUiStyle.paragraph) }) { McFont.wrap(title, titleWidth).forEach { McLine(it, titleColor) } }
+	}
 	Div({ classes(DocMockupsStyle.dialogBody) }) { body() }
 	footer?.let { Div({ classes(DocMockupsStyle.dialogFooter) }) { it() } }
 }

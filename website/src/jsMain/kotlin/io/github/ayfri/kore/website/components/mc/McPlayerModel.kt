@@ -47,7 +47,8 @@ private const val ITEM_TEXELS = 16
 private const val SCENE_HEIGHT = 52
 private const val SCENE_WIDTH = 44
 private const val SEAM_PX = 1.5
-private const val TILT_DEGREES = 12.0
+/** The downward tilt of the turntable, shared with [McHitbox] so a hitbox drawn over the model stays aligned. */
+internal const val PLAYER_MODEL_TILT_DEGREES = 12.0
 private const val TOOL_SIZE = 14.0
 private const val TOOL_TILT_DEGREES = 25.0
 
@@ -225,7 +226,7 @@ fun McPlayerModel(
 			style {
 				transform {
 					if (fit) translate((-(bounds.left + bounds.right) / 2 * s).px, (-(bounds.top + bounds.bottom) / 2 * s).px)
-					rotateX((-TILT_DEGREES).deg)
+					rotateX((-PLAYER_MODEL_TILT_DEGREES).deg)
 					rotateY(yaw.deg)
 				}
 			}
@@ -236,7 +237,7 @@ fun McPlayerModel(
 					transform {
 						translate3d(0.px, ((tagY - 8) * s).px, 0.px)
 						rotateY((-yaw).deg)
-						rotateX(TILT_DEGREES.deg)
+						rotateX(PLAYER_MODEL_TILT_DEGREES.deg)
 						translate((-50).percent, (-100).percent)
 					}
 				}

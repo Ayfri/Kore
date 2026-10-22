@@ -175,6 +175,8 @@ tellraw @s {type:"translatable",translate:"chat.type.text",with:[{type:"text",co
 tellraw @s [{type:"text",text:""},{type:"text",click_event:{action:"run_command",command:"trigger my_pack.conversation.help.choice set 1"},extra:[{type:"text",color:"green",text:"["},{type:"text",color:"green",text:"Accept"},{type:"text",color:"green",text:"]"}],hover_event:{action:"show_text",value:"Take the pickaxe"},text:""},{type:"text",text:"  "},{type:"text",click_event:{action:"run_command",command:"trigger my_pack.conversation.help.choice set 2"},extra:[{type:"text",color:"red",text:"["},{type:"text",color:"red",text:"Decline"},{type:"text",color:"red",text:"]"}],text:""}]
 ```
 
+{{{ .components.mc.ConversationChatMockup }}}
+
 `ChatChoiceFormat` customizes the look. It is set for the conversation with `chatFormat`, and overridden for one choice with
 `chat { }`:
 
@@ -219,6 +221,8 @@ conversation("help") {
 	}
 }
 ```
+
+{{{ .components.mc.ConversationDialogMockup }}}
 
 Closing the dialog with Escape leaves the choice pending, and `advance()` or `resume()` shows it again. With
 `canCloseWithEscape = false` the player has to pick.
@@ -309,6 +313,11 @@ val questGiver = npc("quest_giver") {
 
 function("place_mira") { questGiver.summon(vec3(0, 64, 0)) }
 ```
+
+Played as the game runs it, the first click writes the two lines two seconds apart and asks the choice, accepting gives the
+pickaxe, and every later click gets the reminder line instead.
+
+{{{ .components.doc.ConversationPlayer }}}
 
 The conversation is declared inside the `npc { }` block to share the `quest` objective of the [NPC](/docs/helpers/interactions#npcs).
 The choice of that conversation compiles to:

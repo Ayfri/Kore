@@ -151,15 +151,15 @@ fun McNameTag(text: String) {
 	Div({ classes(McUiStyle.nameTag) }) { McLine(text, shadow = false) }
 }
 
-/** A button drawn with the vanilla 9-slice `widget/button` sprite, [width] in GUI pixels (null to fit the label). */
+/** A button drawn with the vanilla 9-slice `widget/button` sprite, [width] in GUI pixels (null to fit the label), its [label] in [color] when enabled. */
 @Composable
-fun McButton(label: String, enabled: Boolean = true, width: Int? = null, onClick: () -> Unit = {}) {
+fun McButton(label: String, enabled: Boolean = true, width: Int? = null, color: String = McColor.WHITE, onClick: () -> Unit = {}) {
 	Button({
 		classes(McUiStyle.button)
 		if (!enabled) disabled()
 		width?.let { style { width(gui(it)) } }
 		onClick { onClick() }
-	}) { McLine(label, if (enabled) McColor.WHITE else "#a0a0a0") }
+	}) { McLine(label, if (enabled) color else "#a0a0a0") }
 }
 
 /** An item texture, [item] being its id without namespace, e.g. `diamond_sword`. */
