@@ -33,7 +33,6 @@ data class ARGB(var alpha: Int, var red: Int, var green: Int, var blue: Int) : C
 	val decimal get() = alpha shl 24 or (red shl 16) or (green shl 8) or blue
 
 	val array get() = intArrayOf(alpha, red, green, blue)
-	val normalizedArray get() = doubleArrayOf(alpha / 255.0, red / 255.0, green / 255.0, blue / 255.0)
 	val rgbaArray get() = intArrayOf(red, green, blue, alpha)
 	val rgbaNormalizedArray get() = doubleArrayOf(red / 255.0, green / 255.0, blue / 255.0, alpha / 255.0)
 

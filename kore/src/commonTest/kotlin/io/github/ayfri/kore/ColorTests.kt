@@ -20,7 +20,6 @@ fun colorTests() {
 	red[0] assertsIs 255
 
 	red.array.toList() assertsIs listOf(255, 85, 85)
-	red.normalizedArray.toList() assertsIs doubleArrayOf(1.0, 0.3333333333333333, 0.3333333333333333).toList()
 
 	red.grayscale().hex assertsIs "8d8d8d"
 	red.invert().hex assertsIs "00aaaa"

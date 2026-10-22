@@ -33,7 +33,6 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 	val b get() = blue
 
 	val array get() = intArrayOf(red, green, blue)
-	val normalizedArray get() = doubleArrayOf(red / 255.0, green / 255.0, blue / 255.0)
 
 	operator fun plus(other: RGB) = RGB(
 		(red + other.red).coerceIn(0, 255),
@@ -104,12 +103,6 @@ data class RGB(var red: Int, var green: Int, var blue: Int) : Color {
 
 			return RGB(red, green, blue)
 		}
-
-		fun fromDoubleArray(array: DoubleArray) = RGB(
-			(array[0] * 255).roundToInt().coerceIn(0, 255),
-			(array[1] * 255).roundToInt().coerceIn(0, 255),
-			(array[2] * 255).roundToInt().coerceIn(0, 255),
-		)
 
 		/** Builds an [RGB] from a hex string with or without leading '#'. */
 		fun fromHex(hex: String) = RGB(hex.removePrefix("#"))
