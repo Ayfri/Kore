@@ -4,6 +4,7 @@ import io.github.ayfri.kore.arguments.components.item.CustomComponent
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.data.item.ItemStack
 import io.github.ayfri.kore.generated.arguments.types.DataComponentTypeArgument
+import io.github.ayfri.kore.serializers.encodeToCanonicalJsonElement
 import io.github.ayfri.kore.utils.encodeToNbtTag
 import io.github.ayfri.kore.utils.jsonSerializer
 import io.github.ayfri.kore.utils.nbt
@@ -69,7 +70,7 @@ abstract class ComponentsScope(open val components: MutableMap<String, Component
 	/** Converts the scope to a [JsonObject] for serialization as JSON. */
 	open fun asJson() = buildJsonObject {
 		components.forEach { (key, value) ->
-			put(key, jsonSerializer.encodeToJsonElement(componentSerializerFor(value), value))
+			put(key, jsonSerializer.encodeToCanonicalJsonElement(componentSerializerFor(value), value))
 		}
 	}
 

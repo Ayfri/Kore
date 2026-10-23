@@ -2,7 +2,6 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.maths.Vec3
-import io.github.ayfri.kore.arguments.numbers.toStringWithDecimal
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.float
 import io.github.ayfri.kore.arguments.types.literals.literal
@@ -137,7 +136,10 @@ private fun ContextIntProvider.asArgument(): Argument = when (this) {
 private fun ContextFloatProvider.asArgument(): Argument = when (this) {
 	is ConstantContextFloatProvider -> {
 		require(value.isFinite()) { "A 'compute' constant must be finite, got $value." }
-		literal("{type:\"minecraft:constant\",value:${value.toStringWithDecimal}f}")
+		literal(nbt {
+			put("type", "minecraft:constant")
+			put("value", value)
+		}.toSnbt())
 	}
 	is ContextFloatProviderReference -> id
 	else -> literal(encodeToDataPackSnbt(ContextFloatProvider.serializer(), this))

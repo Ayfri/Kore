@@ -73,6 +73,7 @@ import io.github.ayfri.kore.generation.DatapackGenerationMode
 import io.github.ayfri.kore.generation.platform.runSuspendBlocking
 import io.github.ayfri.kore.optimization.runOptimizationPasses
 import io.github.ayfri.kore.pack.*
+import io.github.ayfri.kore.serializers.DataPackJson
 import io.github.ayfri.kore.serializers.JsonNamingSnakeCaseStrategy
 import io.github.ayfri.kore.utils.*
 import io.github.ayfri.kore.utils.KoreLogger.warn
@@ -291,17 +292,17 @@ class DataPack(val name: String) {
 	}
 
 	private var jsonEncoderCacheKey: Pair<Boolean, String>? = null
-	private lateinit var jsonEncoderCacheValue: Json
+	private lateinit var jsonEncoderCacheValue: DataPackJson
 
-	val jsonEncoder: Json
+	val jsonEncoder: DataPackJson
 		get() {
 			val key = configuration.prettyPrint to configuration.prettyPrintIndent
 			if (jsonEncoderCacheKey != key) {
 				jsonEncoderCacheKey = key
-				jsonEncoderCacheValue = Json(jsonFormat) {
+				jsonEncoderCacheValue = DataPackJson(Json(jsonFormat) {
 					prettyPrint = configuration.prettyPrint
 					if (prettyPrint) prettyPrintIndent = configuration.prettyPrintIndent
-				}
+				})
 			}
 			return jsonEncoderCacheValue
 		}
@@ -310,7 +311,7 @@ class DataPack(val name: String) {
 		/** The default folder where the generated functions are stored, can be changed with [Configuration.generatedFunctionsFolder]. */
 		const val DEFAULT_GENERATED_FUNCTIONS_FOLDER = "generated_scopes"
 
-		/** The JSON settings of every data pack file, [jsonEncoder] adds the pack's pretty printing on top. */
+		/** The JSON settings of every data pack file, [jsonEncoder] adds the pack's pretty printing and the canonical number text on top. */
 		val jsonFormat = Json {
 			encodeDefaults = true
 			explicitNulls = false

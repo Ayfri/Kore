@@ -52,7 +52,7 @@ open class SinglePropertySimplifierSerializer<T : Any>(
 
 	override fun serialize(encoder: Encoder, value: T) = when (encoder) {
 		is JsonEncoder -> {
-			val obj = encoder.json.encodeToJsonElement(delegate, value).jsonObject
+			val obj = encoder.json.encodeToCanonicalJsonElement(delegate, value).jsonObject
 			encoder.encodeJsonElement(obj.singleValueAt(descriptor.jsonKey(encoder.json, propertyName)) ?: obj)
 		}
 

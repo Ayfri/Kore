@@ -19,7 +19,7 @@ open class DataPackShapedSerializer<T>(private val serializer: KSerializer<T>) :
 	override val descriptor = serializer.descriptor
 
 	override fun serialize(encoder: Encoder, value: T) {
-		val element = DataPack.jsonFormat.encodeToJsonElement(serializer, value)
+		val element = DataPack.jsonFormat.encodeToCanonicalJsonElement(serializer, value)
 		when (encoder) {
 			is JsonEncoder -> encoder.encodeJsonElement(element)
 			else -> encoder.nbtEncoder?.encodeNbtTag(NbtAsJsonSerializer.fromJson(element, valueBasedNumbers = true))

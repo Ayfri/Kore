@@ -1,6 +1,5 @@
 package io.github.ayfri.kore.features.predicates.providers
 
-import io.github.ayfri.kore.arguments.numbers.toStringWithDecimal
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.utils.requireTagOnlyAlone
@@ -13,11 +12,7 @@ import io.github.ayfri.kore.serializers.IdOrTagReferenceSerializer
 import io.github.ayfri.kore.serializers.InlinableList
 import io.github.ayfri.kore.serializers.InlineAutoSerializer
 import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.JsonEncoder
-import kotlinx.serialization.json.JsonUnquotedLiteral
 import kotlinx.serialization.serializer
 
 /**
@@ -129,19 +124,13 @@ data class ConditionalContextFloatProvider(
 @Serializable(with = ConstantContextFloatProvider.Companion.ConstantContextFloatProviderSerializer::class)
 data class ConstantContextFloatProvider(val value: Float) : ContextFloatProvider() {
 	companion object {
-		@OptIn(ExperimentalSerializationApi::class)
 		data object ConstantContextFloatProviderSerializer :
 			InlineAutoSerializer<ConstantContextFloatProvider, Float>(
 				serializer<Float>(),
 				ConstantContextFloatProvider::value,
 				::ConstantContextFloatProvider,
 				"constant",
-			) {
-			override fun serialize(encoder: Encoder, value: ConstantContextFloatProvider) =
-				if (encoder is JsonEncoder && value.value.isFinite()) {
-					encoder.encodeJsonElement(JsonUnquotedLiteral(value.value.toStringWithDecimal))
-				} else super.serialize(encoder, value)
-		}
+			)
 	}
 }
 

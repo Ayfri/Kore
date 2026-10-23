@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.utils
 
+import io.github.ayfri.kore.arguments.numbers.toCanonicalString
 import io.github.ayfri.kore.serializers.DataPackShapedSerializer
 import io.github.ayfri.kore.serializers.snakeCased
 import kotlinx.serialization.DeserializationStrategy
@@ -58,7 +59,8 @@ operator fun NbtCompoundBuilder.set(name: String, value: LongArray) = put(name, 
 
 /**
  * SNBT form of this tag, like knbt's `toString()` but escaping backslashes and line breaks in strings too, which knbt
- * writes raw so the game reads `a\b` as an escape: `NbtString("a\\b").toSnbt()` is `"a\\b"`.
+ * writes raw so the game reads `a\b` as an escape: `NbtString("a\\b").toSnbt()` is `"a\\b"`. A finite float or double is
+ * written like Java's `toString()` on every platform: `NbtFloat(5f).toSnbt()` is `5.0f`, `NbtDouble(1e-5).toSnbt()` is `1.0E-5d`.
  *
  * A string value is written bare when it starts with a letter or `_` and only holds `[A-Za-z0-9_-]`, and is not
  * `true` or `false` in any case: `{color:aqua}`. Any other value stays quoted (`"minecraft:stone"`, `"@s"`, `"5"`, `"true"`).
@@ -116,6 +118,8 @@ private fun StringBuilder.appendSnbt(tag: NbtTag): StringBuilder = when (tag) {
 	}
 
 	is NbtString -> appendSnbtString(tag.value, isKey = false)
+	is NbtFloat -> if (tag.value.isFinite()) append(tag.value.toCanonicalString()).append('f') else append(tag.toString())
+	is NbtDouble -> if (tag.value.isFinite()) append(tag.value.toCanonicalString()).append('d') else append(tag.toString())
 	else -> append(tag.toString())
 }
 

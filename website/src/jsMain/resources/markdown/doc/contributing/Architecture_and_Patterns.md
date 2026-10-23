@@ -5,7 +5,7 @@ nav-title: "Architecture and Patterns"
 description: Detailed internal architecture, project layout, module responsibilities, and recurring implementation patterns for Kore contributors.
 keywords: architecture, bindings, commands, generator, kore, patterns, serializers, website
 date-created: 2026-04-10
-date-modified: 2026-10-22
+date-modified: 2026-10-24
 routeOverride: /docs/contributing/architecture-and-patterns
 ---
 
@@ -195,6 +195,19 @@ Map keys and raw `NbtCompound` content are never renamed.
 SNBT is read the same way: `decodeFromSnbt` and `decodeFromNbtTag` look the keys of a class up under their snake_case
 names. A serializer that reads NBT by hand goes through `Decoder.nbtDecoder` instead of an `is NbtDecoder` check, and
 decodes nested values with `decodeFromNbtTag`.
+
+### Number text
+
+A finite `Float` or `Double` is written with Java's `toString()` layout on the JVM and on JS, in JSON and in SNBT: plain with
+at least one decimal from `0.001` to below `10000000` (`1f` is `1.0`, `0.1` is `0.1`), else a mantissa with at least one
+decimal and an exponent (`1e-5` is `1.0E-5`, `3e7` is `3.0E7`, `16777216f` is `1.6777216E7`). Kotlin/JS prints `1f` as `1`
+and `1e-5` as `0.00001`, so it needs the rewrite, and the JVM does nothing: `toCanonicalString()` is `toString()` there.
+
+`DataPack.jsonEncoder` applies it to every data pack file. On the JVM it encodes like a plain `Json`, on JS it wraps the
+encoder to write `toCanonicalString()` for each float and double. A serializer that builds a nested JSON tree from
+`encoder.json` calls `encodeToCanonicalJsonElement` instead of `encodeToJsonElement`, and SNBT goes through `toSnbt()`.
+A plain `Json` instance prints the platform text. When the shortest digits are a single one, Java prints the closest
+two-digit form, and so does `toCanonicalString()` on JS (`Double.MIN_VALUE` is `4.9E-324`, `Float.MIN_VALUE` is `1.4E-45`).
 
 ### Per-pack state
 

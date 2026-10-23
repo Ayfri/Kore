@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.serializers
 
+import io.github.ayfri.kore.arguments.numbers.toCanonicalString
 import io.github.ayfri.kore.utils.unwrapMixedElements
 import io.github.ayfri.kore.utils.wrapMixedElements
 import kotlinx.serialization.KSerializer
@@ -87,7 +88,7 @@ data object NbtAsJsonSerializer : KSerializer<NbtTag> {
 		is NbtShort -> JsonPrimitive(value)
 		is NbtInt -> JsonPrimitive(value)
 		is NbtLong -> JsonPrimitive(value)
-		is NbtFloat -> JsonPrimitive(value)
-		is NbtDouble -> JsonPrimitive(value)
+		is NbtFloat -> if (value.isFinite()) JsonUnquotedLiteral(value.toCanonicalString()) else JsonPrimitive(value)
+		is NbtDouble -> if (value.isFinite()) JsonUnquotedLiteral(value.toCanonicalString()) else JsonPrimitive(value)
 	}
 }

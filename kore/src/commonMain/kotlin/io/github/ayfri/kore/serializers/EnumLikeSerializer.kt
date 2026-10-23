@@ -54,7 +54,7 @@ open class EnumLikeSerializer<T : Any>(private val dispatcher: SealedDispatcher<
 
 		val actual = dispatcher.serializerOf(value)
 		val name = defaultContentName(actual.descriptor.serialName)
-		val body = encoder.json.encodeToJsonElement(actual, value).jsonObject
+		val body = encoder.json.encodeToCanonicalJsonElement(actual, value).jsonObject
 
 		if (body.isEmpty()) encoder.encodeString(name)
 		else encoder.encodeJsonElement(JsonObject(mapOf<String, JsonElement>("type" to JsonPrimitive(name)) + (body - "type")))

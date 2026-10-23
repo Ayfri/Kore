@@ -45,7 +45,7 @@ sealed interface KeyframeValue {
 						value.type
 					)
 
-					is FloatPrimitive -> (encoder as JsonEncoder).encodeJsonElement(JsonPrimitive(value.value))
+					is FloatPrimitive -> encoder.encodeFloat(value.value)
 					is IntPrimitive -> (encoder as JsonEncoder).encodeJsonElement(JsonPrimitive(value.value))
 					is BooleanPrimitive -> (encoder as JsonEncoder).encodeJsonElement(JsonPrimitive(value.value))
 					is StringPrimitive -> (encoder as JsonEncoder).encodeJsonElement(JsonPrimitive(value.value))

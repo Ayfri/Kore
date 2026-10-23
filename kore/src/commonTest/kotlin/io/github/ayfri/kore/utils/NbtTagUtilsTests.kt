@@ -8,6 +8,8 @@ import io.github.ayfri.kore.functions.function
 import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import net.benwoodworth.knbt.NbtDouble
+import net.benwoodworth.knbt.NbtFloat
 import net.benwoodworth.knbt.NbtString
 
 class NbtTagUtilsTests : FunSpec({
@@ -35,6 +37,25 @@ class NbtTagUtilsTests : FunSpec({
 		nbtListOf(0.5, 1.5).toSnbt() shouldBe "[0.5d,1.5d]"
 		nbtListOf("a", "b").toSnbt() shouldBe "[a,b]"
 		nbtListOf(nbt { this["x"] = 1 }).toSnbt() shouldBe "[{x:1}]"
+	}
+
+	test("floats and doubles are written with a decimal point on every platform") {
+		NbtFloat(5f).toSnbt() shouldBe "5.0f"
+		NbtDouble(1.0).toSnbt() shouldBe "1.0d"
+		NbtFloat(0.1f).toSnbt() shouldBe "0.1f"
+		NbtFloat(1e-5f).toSnbt() shouldBe "1.0E-5f"
+		NbtFloat(16777216f).toSnbt() shouldBe "1.6777216E7f"
+		NbtDouble(3e7).toSnbt() shouldBe "3.0E7d"
+		NbtDouble(Double.NaN).toSnbt() shouldBe "NaNd"
+
+		nbt {
+			this["byte"] = 1.toByte()
+			this["double"] = -3.0
+			this["float"] = 2f
+			this["int"] = 4
+			this["list"] = nbtListOf(1f, 2.5f)
+			this["long"] = 5L
+		}.toSnbt() shouldBe "{byte:1b,double:-3.0d,float:2.0f,int:4,list:[1.0f,2.5f],long:5L}"
 	}
 
 	test("snbt strings escape backslashes, quotes and line breaks") {

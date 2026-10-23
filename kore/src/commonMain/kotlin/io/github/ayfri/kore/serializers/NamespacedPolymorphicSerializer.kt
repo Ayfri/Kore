@@ -171,7 +171,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 
 		when (encoder) {
 			is JsonEncoder -> encoder.encodeJsonElement(
-				when (val body = encoder.json.encodeToJsonElement(actual, value)) {
+				when (val body = encoder.json.encodeToCanonicalJsonElement(actual, value)) {
 					is JsonObject -> {
 						requireSubtype(body[outputName]?.jsonPrimitive?.content, subtype)
 						if (subtype == inlinedSubtype) body else JsonObject(wrap(body, JsonPrimitive(namespaced(subtype)), ::JsonObject))

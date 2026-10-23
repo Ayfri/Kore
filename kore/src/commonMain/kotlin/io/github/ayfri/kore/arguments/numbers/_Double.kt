@@ -37,6 +37,22 @@ val Double.toStringWithDecimal
 val Float.toStringWithDecimal
 	get() = toString().toDouble().toStringWithDecimal
 
+/**
+ * The text of a finite float in JSON and SNBT, Java's `Float.toString()` layout on every platform: plain with at least one
+ * decimal when `1e-3 <= |x| < 1e7`, else a mantissa with at least one decimal and an exponent. Kotlin/JS prints `1f` as `1`.
+ *
+ * ```kotlin
+ * 1f.toCanonicalString() // "1.0"
+ * 0.1f.toCanonicalString() // "0.1"
+ * 1e-5f.toCanonicalString() // "1.0E-5"
+ * 16777216f.toCanonicalString() // "1.6777216E7"
+ * ```
+ */
+internal expect fun Float.toCanonicalString(): String
+
+/** Like [Float.toCanonicalString] for a double: `3e7.toCanonicalString()` is `"3.0E7"`. */
+internal expect fun Double.toCanonicalString(): String
+
 fun Double.toStringTruncatedIfRound() = when {
 	this % 1 == 0.0 -> toLong().toString()
 	else -> toPlainString()
