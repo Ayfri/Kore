@@ -5,7 +5,7 @@ nav-title: Loot Tables
 description: Create and customize Minecraft loot tables using Kore's type-safe Kotlin DSL for drops, container contents, fishing, and more.
 keywords: minecraft, datapack, kore, loot tables, pools, entries, item modifiers, drops
 date-created: 2025-08-11
-date-modified: 2026-10-22
+date-modified: 2026-10-23
 routeOverride: /docs/data-driven/loot-tables
 ---
 
@@ -94,21 +94,25 @@ lootTable("entity_drops") {
 ```
 
 Available types: `ADVANCEMENT_ENTITY`, `ADVANCEMENT_LOCATION`, `ADVANCEMENT_REWARD`, `ARCHAEOLOGY`, `BARTER`, `BLOCK`,
-`BLOCK_INTERACT`, `BLOCK_USE`, `CHEST`, `COMMAND`, `COMMAND_SLOT_SOURCE`, `CONTAINER_PROCESS`, `EMPTY`,
+`BLOCK_INTERACT`, `BLOCK_USE`, `CHEST`, `COMMAND`, `COMMAND_COMPUTE_DEFAULT`, `COMMAND_COMPUTE_ENTITY`,
+`COMMAND_COMPUTE_POSITION`, `COMMAND_SLOT_SOURCE`, `CONTAINER_PROCESS`, `EMPTY`,
 `ENCHANTED_DAMAGE`, `ENCHANTED_ENTITY`, `ENCHANTED_ITEM`, `ENCHANTED_LOCATION`, `ENTITY`, `ENTITY_INTERACT`,
 `EQUIPMENT`, `FISHING`, `GENERIC`, `GIFT`, `HIT_BLOCK`, `SELECTOR`, `SHEARING`, `VAULT`, `VILLAGER_TRADE`.
 
-The types used by [enchantment](/docs/data-driven/enchantments) effects and by container processing provide these
-parameters:
+The types used by [enchantment](/docs/data-driven/enchantments) effects, by container processing and by the
+[`compute`](/docs/commands/commands#compute-command) command provide these parameters:
 
-| Type                 | Parameters                                                                                                    |
-|----------------------|---------------------------------------------------------------------------------------------------------------|
-| `CONTAINER_PROCESS`  | block entity, block state, container, origin                                                                  |
-| `ENCHANTED_DAMAGE`   | this entity, enchantment level, origin, damage source, optionally the direct attacker and the attacker         |
-| `ENCHANTED_ENTITY`   | this entity, enchantment level, origin                                                                        |
-| `ENCHANTED_ITEM`     | tool, enchantment level                                                                                       |
-| `ENCHANTED_LOCATION` | this entity, enchantment level, origin, whether the enchantment is active                                     |
-| `HIT_BLOCK`          | this entity, enchantment level, origin, block state                                                           |
+| Type                       | Parameters                                                                                              |
+|----------------------------|---------------------------------------------------------------------------------------------------------|
+| `COMMAND_COMPUTE_DEFAULT`  | origin, optionally this entity                                                                          |
+| `COMMAND_COMPUTE_ENTITY`   | origin, optionally this entity, target entity                                                           |
+| `COMMAND_COMPUTE_POSITION` | origin, optionally this entity, block entity, block state                                               |
+| `CONTAINER_PROCESS`        | block entity, block state, container, origin                                                            |
+| `ENCHANTED_DAMAGE`         | this entity, enchantment level, origin, damage source, optionally the direct attacker and the attacker   |
+| `ENCHANTED_ENTITY`         | this entity, enchantment level, origin                                                                  |
+| `ENCHANTED_ITEM`           | tool, enchantment level                                                                                 |
+| `ENCHANTED_LOCATION`       | this entity, enchantment level, origin, whether the enchantment is active                               |
+| `HIT_BLOCK`                | this entity, enchantment level, origin, block state                                                     |
 
 ### Global Modifier
 
