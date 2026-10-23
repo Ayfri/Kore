@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.predicates.providers
 import io.github.ayfri.kore.arguments.numbers.toStringWithDecimal
 import io.github.ayfri.kore.features.enchantments.values.LevelBased
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
+import io.github.ayfri.kore.features.predicates.providers.utils.requireTagOnlyAlone
 import io.github.ayfri.kore.generated.arguments.ContextFloatProviderOrTagArgument
 import io.github.ayfri.kore.generated.arguments.tagged.ContextFloatProviderTagArgument
 import io.github.ayfri.kore.generated.arguments.types.ContextFloatProviderArgument
@@ -64,12 +65,13 @@ data class AbsContextFloatProvider(var input: ContextFloatProvider) : ContextFlo
  *
  * Minecraft Wiki: [Number provider - add](https://minecraft.wiki/w/Number_provider#add)
  *
- * @property inputs The providers whose values are added together: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of float providers. Never empty.
+ * @property inputs The providers whose values are added together: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of float providers, only as the whole list. Never empty.
  */
 @Serializable
 data class AddContextFloatProvider(var inputs: InlinableList<ContextFloatProvider>) : ContextFloatProvider() {
 	init {
 		require(inputs.isNotEmpty()) { "An 'add' provider needs at least one input." }
+		inputs.requireTagOnlyAlone()
 	}
 }
 
@@ -78,12 +80,13 @@ data class AddContextFloatProvider(var inputs: InlinableList<ContextFloatProvide
  *
  * Minecraft Wiki: [Number provider - avg](https://minecraft.wiki/w/Number_provider#avg)
  *
- * @property inputs The providers whose values are averaged: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of float providers. Never empty.
+ * @property inputs The providers whose values are averaged: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of float providers, only as the whole list. Never empty.
  */
 @Serializable
 data class AvgContextFloatProvider(var inputs: InlinableList<ContextFloatProvider>) : ContextFloatProvider() {
 	init {
 		require(inputs.isNotEmpty()) { "An 'avg' provider needs at least one input." }
+		inputs.requireTagOnlyAlone()
 	}
 }
 
@@ -210,12 +213,13 @@ data class FromIntContextFloatProvider(var input: ContextIntProvider) : ContextF
  *
  * Minecraft Wiki: [Number provider - length](https://minecraft.wiki/w/Number_provider#length)
  *
- * @property inputs The providers holding the components: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of float providers. Never empty.
+ * @property inputs The providers holding the components: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of float providers, only as the whole list. Never empty.
  */
 @Serializable
 data class LengthContextFloatProvider(var inputs: InlinableList<ContextFloatProvider>) : ContextFloatProvider() {
 	init {
 		require(inputs.isNotEmpty()) { "A 'length' provider needs at least one input." }
+		inputs.requireTagOnlyAlone()
 	}
 }
 
@@ -224,12 +228,13 @@ data class LengthContextFloatProvider(var inputs: InlinableList<ContextFloatProv
  *
  * Minecraft Wiki: [Number provider - max](https://minecraft.wiki/w/Number_provider#max)
  *
- * @property inputs The providers to compare: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of float providers. Never empty.
+ * @property inputs The providers to compare: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of float providers, only as the whole list. Never empty.
  */
 @Serializable
 data class MaxContextFloatProvider(var inputs: InlinableList<ContextFloatProvider>) : ContextFloatProvider() {
 	init {
 		require(inputs.isNotEmpty()) { "A 'max' provider needs at least one input." }
+		inputs.requireTagOnlyAlone()
 	}
 }
 
@@ -238,12 +243,13 @@ data class MaxContextFloatProvider(var inputs: InlinableList<ContextFloatProvide
  *
  * Minecraft Wiki: [Number provider - min](https://minecraft.wiki/w/Number_provider#min)
  *
- * @property inputs The providers to compare: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of float providers. Never empty.
+ * @property inputs The providers to compare: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of float providers, only as the whole list. Never empty.
  */
 @Serializable
 data class MinContextFloatProvider(var inputs: InlinableList<ContextFloatProvider>) : ContextFloatProvider() {
 	init {
 		require(inputs.isNotEmpty()) { "A 'min' provider needs at least one input." }
+		inputs.requireTagOnlyAlone()
 	}
 }
 
@@ -263,12 +269,13 @@ data class ModContextFloatProvider(var left: ContextFloatProvider, var right: Co
  *
  * Minecraft Wiki: [Number provider - mul](https://minecraft.wiki/w/Number_provider#mul)
  *
- * @property inputs The providers whose values are multiplied together: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of float providers. Never empty.
+ * @property inputs The providers whose values are multiplied together: one provider or ID, a list mixing IDs and inline providers, or a `#` tag of float providers, only as the whole list. Never empty.
  */
 @Serializable
 data class MulContextFloatProvider(var inputs: InlinableList<ContextFloatProvider>) : ContextFloatProvider() {
 	init {
 		require(inputs.isNotEmpty()) { "A 'mul' provider needs at least one input." }
+		inputs.requireTagOnlyAlone()
 	}
 }
 

@@ -278,7 +278,7 @@ pool {
 }
 ```
 
-The `inputs` of `add`, `avg`, `max`, `min` and `mul` (and of `length` for float providers) take one provider or ID, a list mixing IDs and inline providers, or a whole `#tag` of providers of the family: `add(ContextIntProviderTagArgument("bonuses", "my_pack"))` writes `"inputs": "#my_pack:bonuses"`. A tag is only valid as the whole `inputs`, not as one element of a list. The list can't be empty: the game reports an aggregate without any input, and Kore throws.
+The `inputs` of `add`, `avg`, `max`, `min` and `mul` (and of `length` for float providers) take one provider or ID, a list mixing IDs and inline providers, or a whole `#tag` of providers of the family: `add(ContextIntProviderTagArgument("bonuses", "my_pack"))` writes `"inputs": "#my_pack:bonuses"`. A tag is only valid as the whole `inputs`, not as one element of a list: the game reads `inputs` as a set of providers, and Kore throws an `IllegalArgumentException` when a list of several elements holds a tag. The list can't be empty either: the game reports an aggregate without any input, and Kore throws.
 
 `min` caps a value, here the roll count at 5 whatever the score is:
 

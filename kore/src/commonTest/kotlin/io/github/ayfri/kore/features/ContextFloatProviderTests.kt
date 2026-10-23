@@ -33,6 +33,11 @@ fun DataPack.contextFloatProviderTests() {
 	check("""{"type":"minecraft:add","inputs":"#my_pack:speeds"}""") { add(ContextFloatProviderTagArgument("speeds", "my_pack")) }
 	shouldThrow<IllegalArgumentException> { object : NumberProviderScope {}.add(emptyList<ContextFloatProvider>()) }
 	shouldThrow<IllegalArgumentException> { object : NumberProviderScope {}.avg(emptyList<ContextFloatProvider>()) }
+	val speeds = ContextFloatProviderReference(ContextFloatProviderTagArgument("speeds", "my_pack"))
+	shouldThrow<IllegalArgumentException> { AddContextFloatProvider(listOf(ConstantContextFloatProvider(1f), speeds)) }
+	shouldThrow<IllegalArgumentException> { LengthContextFloatProvider(listOf(speeds, ContextFloatProviderReference(speed))) }
+	shouldThrow<IllegalArgumentException> { MaxContextFloatProvider(listOf(speeds, speeds)) }
+	shouldThrowAny { jsonEncoder.decodeFromString(ContextFloatProvider.serializer(), """{"type":"minecraft:mul","inputs":[1.0,"#my_pack:t"]}""") }
 	check("""{"type":"minecraft:avg","inputs":[1.0,{"type":"minecraft:uniform","max":3.0,"min":1.0}]}""") { avg(constant(1f), uniform(1f, 3f)) }
 	check("""{"type":"minecraft:ceil","input":1.2}""") { ceil(constant(1.2f)) }
 	check("""{"type":"minecraft:conditional","condition":{"type":"minecraft:survives_explosion"},"on_false":2.0,"on_true":5.0}""") {

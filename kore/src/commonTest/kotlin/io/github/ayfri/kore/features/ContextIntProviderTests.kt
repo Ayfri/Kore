@@ -36,6 +36,11 @@ fun DataPack.contextIntProviderTests() {
 	check("""{"type":"minecraft:add","inputs":"#my_pack:bonuses"}""") { add(ContextIntProviderTagArgument("bonuses", "my_pack")) }
 	shouldThrow<IllegalArgumentException> { object : NumberProviderScope {}.add(emptyList<ContextIntProvider>()) }
 	shouldThrow<IllegalArgumentException> { object : NumberProviderScope {}.avg(emptyList<ContextIntProvider>()) }
+	val bonuses = ContextIntProviderReference(ContextIntProviderTagArgument("bonuses", "my_pack"))
+	shouldThrow<IllegalArgumentException> { AddContextIntProvider(listOf(ConstantContextIntProvider(1), bonuses)) }
+	shouldThrow<IllegalArgumentException> { MulContextIntProvider(listOf(bonuses, ContextIntProviderReference(bonus))) }
+	shouldThrow<IllegalArgumentException> { MinContextIntProvider(listOf(bonuses, bonuses)) }
+	shouldThrowAny { jsonEncoder.decodeFromString(ContextIntProvider.serializer(), """{"type":"minecraft:max","inputs":[1,"#my_pack:t"]}""") }
 	check("""{"type":"minecraft:add","inputs":[1,2]}""") { add(listOf(constant(1), constant(2))) }
 	check("""{"type":"minecraft:avg","inputs":[1,{"type":"minecraft:uniform","max":3,"min":1}]}""") { avg(constant(1), uniform(1, 3)) }
 	check("""{"type":"minecraft:binomial","n":10,"p":0.5}""") { binomial(10, 0.5f) }
