@@ -8,7 +8,7 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleBlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import kotlinx.serialization.Serializable
 
@@ -28,8 +28,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class HugeBrownMushroom(
 	var canPlaceOn: BlockPredicate = True,
-	var capProvider: BlockStateProvider = SimpleStateProvider(),
-	var stemProvider: BlockStateProvider = SimpleStateProvider(),
+	var capProvider: BlockStateProvider = SimpleBlockStateProvider(),
+	var stemProvider: BlockStateProvider = SimpleBlockStateProvider(),
 	var foliageRadius: Int? = null,
 ) : FeatureConfig(), BlockPredicateScope, BlockStateProviderScope
 

@@ -70,7 +70,7 @@ class PlaceCommandTests : FunSpec({
 			load {
 				placeFeature(vec3(0, 64, 0)) {
 					simpleBlock("inline", scheduleTick = true) { toPlace = simpleStateProvider(blockState(Blocks.DIAMOND_BLOCK)) }
-				} assertsIs """place feature {type:"minecraft:simple_block",to_place:{type:"minecraft:simple_state_provider",state:"minecraft:diamond_block"},schedule_tick:1b} 0 64 0"""
+				} assertsIs """place feature {type:"minecraft:simple_block",to_place:{type:"minecraft:simple",state:"minecraft:diamond_block"},schedule_tick:1b} 0 64 0"""
 			}
 		}
 	}

@@ -8,7 +8,7 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleBlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
@@ -33,7 +33,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Disk(
-	var stateProvider: BlockStateProvider = SimpleStateProvider(),
+	var stateProvider: BlockStateProvider = SimpleBlockStateProvider(),
 	var target: BlockPredicate = True,
 	var radius: IntProvider = ConstantIntProvider(0),
 	var halfHeight: Int = 0,

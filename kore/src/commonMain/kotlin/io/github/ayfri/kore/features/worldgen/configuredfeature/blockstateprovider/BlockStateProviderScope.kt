@@ -10,8 +10,8 @@ import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
  * interface, so they only resolve inside a block that actually accepts a block state provider, such as
  * `simpleBlock("...") { }`, `tree("...") { }` or `weightedStateProvider { }`.
  *
- * It extends [IntProviderScope], so the int providers the `randomized_int_state_provider` and the
- * `dual_noise_provider` take are available in the same block.
+ * It extends [IntProviderScope], so the int providers the `randomized_int` and the `dual_noise` block state providers
+ * take are available in the same block.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider
  */

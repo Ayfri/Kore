@@ -9,7 +9,7 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleBlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -53,8 +53,8 @@ data class RootSystem(
 	var hangingRootsVerticalSpan: Int = 1,
 	var hangingRootPlacementAttempts: Int = 0,
 	var allowedVerticalWaterForTree: Int = 1,
-	var rootStateProvider: BlockStateProvider = SimpleStateProvider(),
-	var hangingRootStateProvider: BlockStateProvider = SimpleStateProvider(),
+	var rootStateProvider: BlockStateProvider = SimpleBlockStateProvider(),
+	var hangingRootStateProvider: BlockStateProvider = SimpleBlockStateProvider(),
 	var allowedTreePosition: BlockPredicate = True,
 	var levelTestDistance: Int = 0,
 	var maxLevelDeviation: Int = 0,

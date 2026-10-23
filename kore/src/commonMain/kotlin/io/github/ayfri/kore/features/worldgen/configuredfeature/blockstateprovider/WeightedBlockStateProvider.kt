@@ -8,44 +8,44 @@ import kotlinx.serialization.Serializable
 /**
  * Picks one of [entries] at random, each entry being drawn proportionally to its weight.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted_state_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted
  *
  * @property entries The weighted providers to pick from, which cannot be empty.
  */
 @Serializable
-data class WeightedStateProvider(
-	var entries: List<WeightedStateProviderEntry> = emptyList(),
+data class WeightedBlockStateProvider(
+	var entries: List<WeightedBlockStateProviderEntry> = emptyList(),
 ) : BlockStateProvider()
 
 /**
- * A single entry of a [WeightedStateProvider]: [data] is picked proportionally to [weight].
+ * A single entry of a [WeightedBlockStateProvider]: [data] is picked proportionally to [weight].
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted_state_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted
  *
  * @property weight The relative chance of picking [data], which has to be at least `1`.
  * @property data The provider used when this entry is picked.
  */
 @Serializable
-data class WeightedStateProviderEntry(
+data class WeightedBlockStateProviderEntry(
 	var weight: Int = 1,
-	var data: BlockStateProvider = SimpleStateProvider(),
+	var data: BlockStateProvider = SimpleBlockStateProvider(),
 ) : BlockStateProviderScope
 
 /**
- * Builder scope for declaring the entries of a [WeightedStateProvider] via [weightedStateProvider].
+ * Builder scope for declaring the entries of a [WeightedBlockStateProvider] via [weightedStateProvider].
  *
  * [entry] is an extension on this class, so it only resolves inside a `weightedStateProvider { }` block.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted_state_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted
  *
  * @property entries The entries appended so far.
  */
 class WeightedStateProviderScope : BlockStateProviderScope {
-	val entries = mutableListOf<WeightedStateProviderEntry>()
+	val entries = mutableListOf<WeightedBlockStateProviderEntry>()
 }
 
 /**
- * Creates a `weighted_state_provider`, picking one of the entries declared in [block] proportionally to its weight.
+ * Creates a `weighted` block state provider, picking one of the entries declared in [block] proportionally to its weight.
  *
  * ```kotlin
  * simpleBlock("random_flower") {
@@ -59,36 +59,36 @@ class WeightedStateProviderScope : BlockStateProviderScope {
  * }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted_state_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted
  */
 fun BlockStateProviderScope.weightedStateProvider(block: WeightedStateProviderScope.() -> Unit) =
-	WeightedStateProvider(WeightedStateProviderScope().apply(block).entries)
+	WeightedBlockStateProvider(WeightedStateProviderScope().apply(block).entries)
 
 /**
  * Appends an entry picking [data] proportionally to [weight].
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted_state_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted
  */
 fun WeightedStateProviderScope.entry(data: BlockStateProvider, weight: Int = 1) {
-	entries += WeightedStateProviderEntry(weight, data)
+	entries += WeightedBlockStateProviderEntry(weight, data)
 }
 
 /**
- * Appends an entry placing [state] proportionally to [weight], a shorthand for a [SimpleStateProvider] entry.
+ * Appends an entry placing [state] proportionally to [weight], a shorthand for a [SimpleBlockStateProvider] entry.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted_state_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted
  */
 fun WeightedStateProviderScope.entry(state: BlockState, weight: Int = 1) {
-	entries += WeightedStateProviderEntry(weight, SimpleStateProvider(state))
+	entries += WeightedBlockStateProviderEntry(weight, SimpleBlockStateProvider(state))
 }
 
 /**
  * Appends an entry placing the default block state of [block] proportionally to [weight].
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted_state_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted
  */
 fun WeightedStateProviderScope.entry(block: BlockArgument, weight: Int = 1) {
-	entries += WeightedStateProviderEntry(weight, SimpleStateProvider(blockState(block)))
+	entries += WeightedBlockStateProviderEntry(weight, SimpleBlockStateProvider(blockState(block)))
 }
 
 /**
@@ -102,8 +102,8 @@ fun WeightedStateProviderScope.entry(block: BlockArgument, weight: Int = 1) {
  * }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted_state_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#weighted
  */
-fun WeightedStateProviderScope.entry(weight: Int = 1, block: WeightedStateProviderEntry.() -> Unit) {
-	entries += WeightedStateProviderEntry(weight).apply(block)
+fun WeightedStateProviderScope.entry(weight: Int = 1, block: WeightedBlockStateProviderEntry.() -> Unit) {
+	entries += WeightedBlockStateProviderEntry(weight).apply(block)
 }

@@ -2,22 +2,25 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovi
 
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
  * Places the default state of a random block among [blocks].
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#random_block_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#random_block
  *
  * @property blocks A block, a block tag or a list of blocks, one of them being picked at every position.
  */
 @Serializable
-data class RandomBlockProvider(
+@SerialName("random_block")
+data class RandomBlockStateProvider(
 	var blocks: InlinableList<BlockOrTagArgument> = emptyList(),
 ) : BlockStateProvider()
 
 /**
- * Creates a `random_block_provider`, placing the default state of a random block among [blocks] (blocks or block tags).
+ * Creates a `random_block` block state provider, placing the default state of a random block among [blocks] (blocks or
+ * block tags).
  *
  * ```kotlin
  * simpleBlock("flower") {
@@ -25,6 +28,6 @@ data class RandomBlockProvider(
  * }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#random_block_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#random_block
  */
-fun BlockStateProviderScope.randomBlockProvider(vararg blocks: BlockOrTagArgument) = RandomBlockProvider(blocks.toList())
+fun BlockStateProviderScope.randomBlockProvider(vararg blocks: BlockOrTagArgument) = RandomBlockStateProvider(blocks.toList())

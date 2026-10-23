@@ -5,7 +5,7 @@ import io.github.ayfri.kore.data.block.BlockState
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleBlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
@@ -80,11 +80,11 @@ data class Geode(
  */
 @Serializable
 data class GeodeBlocks(
-	var filling: BlockStateProvider = SimpleStateProvider(),
-	var innerLayer: BlockStateProvider = SimpleStateProvider(),
-	var alternateInnerLayer: BlockStateProvider = SimpleStateProvider(),
-	var middleLayer: BlockStateProvider = SimpleStateProvider(),
-	var outerLayer: BlockStateProvider = SimpleStateProvider(),
+	var filling: BlockStateProvider = SimpleBlockStateProvider(),
+	var innerLayer: BlockStateProvider = SimpleBlockStateProvider(),
+	var alternateInnerLayer: BlockStateProvider = SimpleBlockStateProvider(),
+	var middleLayer: BlockStateProvider = SimpleBlockStateProvider(),
+	var outerLayer: BlockStateProvider = SimpleBlockStateProvider(),
 	var innerPlacements: List<BlockState> = emptyList(),
 	var cannotReplace: InlinableList<BlockOrTagArgument> = listOf(Tags.Block.FEATURES_CANNOT_REPLACE),
 	var invalidBlocks: InlinableList<BlockOrTagArgument> = listOf(Tags.Block.GEODE_INVALID_BLOCKS),

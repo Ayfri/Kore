@@ -55,7 +55,7 @@ Generated `data/<namespace>/block_transformer/strip_oak.json`:
 [
 	{
 		"block_state_provider": {
-			"type": "minecraft:rule_based_state_provider",
+			"type": "minecraft:rule_based",
 			"rules": [
 				{
 					"if_true": {
@@ -63,9 +63,9 @@ Generated `data/<namespace>/block_transformer/strip_oak.json`:
 						"blocks": "minecraft:oak_log"
 					},
 					"then": {
-						"type": "minecraft:copy_properties_provider",
+						"type": "minecraft:copy_properties",
 						"source": {
-							"type": "minecraft:simple_state_provider",
+							"type": "minecraft:simple",
 							"state": {
 								"id": "minecraft:stripped_oak_log",
 								"properties": {
@@ -81,7 +81,7 @@ Generated `data/<namespace>/block_transformer/strip_oak.json`:
 	},
 	{
 		"block_state_provider": {
-			"type": "minecraft:simple_state_provider",
+			"type": "minecraft:simple",
 			"state": "minecraft:dirt_path"
 		},
 		"disallowed_faces": [

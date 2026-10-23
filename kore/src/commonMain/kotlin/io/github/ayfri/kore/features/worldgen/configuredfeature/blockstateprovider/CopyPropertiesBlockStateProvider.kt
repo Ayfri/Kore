@@ -6,18 +6,18 @@ import kotlinx.serialization.Serializable
  * Takes the block state given by [source] and copies onto it the properties it shares with the block already at the
  * position.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#copy_properties_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#copy_properties
  *
  * @property source The provider giving the block state the properties are copied onto.
  */
 @Serializable
-data class CopyPropertiesProvider(
-	var source: BlockStateProvider = SimpleStateProvider(),
+data class CopyPropertiesBlockStateProvider(
+	var source: BlockStateProvider = SimpleBlockStateProvider(),
 ) : BlockStateProvider()
 
 /**
- * Creates a `copy_properties_provider`, copying the properties the block already at the position shares with the
- * state given by [source].
+ * Creates a `copy_properties` block state provider, copying the properties the block already at the position shares
+ * with the state given by [source].
  *
  * ```kotlin
  * simpleBlock("waxed_copper") {
@@ -25,6 +25,6 @@ data class CopyPropertiesProvider(
  * }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#copy_properties_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#copy_properties
  */
-fun BlockStateProviderScope.copyPropertiesProvider(source: BlockStateProvider) = CopyPropertiesProvider(source)
+fun BlockStateProviderScope.copyPropertiesProvider(source: BlockStateProvider) = CopyPropertiesBlockStateProvider(source)

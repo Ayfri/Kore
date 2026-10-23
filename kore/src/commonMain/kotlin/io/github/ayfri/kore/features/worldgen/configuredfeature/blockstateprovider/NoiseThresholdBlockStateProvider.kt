@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
  * Picks a block state by comparing a sampled Perlin [noise] against [threshold]: below it a state of [lowStates] is
  * picked, above it a state of [highStates] is picked with a probability of [highChance], [defaultState] otherwise.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#noise_threshold_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#noise_threshold
  *
  * @property seed The seed of the noise, positions sharing a seed sampling the same values.
  * @property noise The noise parameters.
@@ -23,7 +23,7 @@ import kotlinx.serialization.Serializable
  * @property highStates The block states picked above the threshold.
  */
 @Serializable
-data class NoiseThresholdProvider(
+data class NoiseThresholdBlockStateProvider(
 	override var seed: Long = 0,
 	override var noise: NoiseParameters = NoiseParameters(),
 	override var scale: Double = 0.0,
@@ -35,8 +35,8 @@ data class NoiseThresholdProvider(
 ) : BlockStateProvider(), NoiseBasedStateProvider
 
 /**
- * Creates a `noise_threshold_provider`, picking between [NoiseThresholdProvider.lowStates] and
- * [NoiseThresholdProvider.highStates] depending on a sampled Perlin noise.
+ * Creates a `noise_threshold` block state provider, picking between [NoiseThresholdBlockStateProvider.lowStates] and
+ * [NoiseThresholdBlockStateProvider.highStates] depending on a sampled Perlin noise.
  *
  * ```kotlin
  * simpleBlock("grass_patch") {
@@ -53,27 +53,27 @@ data class NoiseThresholdProvider(
  * }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#noise_threshold_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#noise_threshold
  */
-fun BlockStateProviderScope.noiseThresholdProvider(block: NoiseThresholdProvider.() -> Unit = {}) =
-	NoiseThresholdProvider().apply(block)
+fun BlockStateProviderScope.noiseThresholdProvider(block: NoiseThresholdBlockStateProvider.() -> Unit = {}) =
+	NoiseThresholdBlockStateProvider().apply(block)
 
-/** Sets [NoiseThresholdProvider.lowStates] to [states], the block states picked below the threshold. */
-fun NoiseThresholdProvider.lowStates(vararg states: BlockState) {
+/** Sets [NoiseThresholdBlockStateProvider.lowStates] to [states], the block states picked below the threshold. */
+fun NoiseThresholdBlockStateProvider.lowStates(vararg states: BlockState) {
 	lowStates = states.toList()
 }
 
-/** Sets [NoiseThresholdProvider.lowStates] to the default block state of each of [blocks]. */
-fun NoiseThresholdProvider.lowStates(vararg blocks: BlockArgument) {
+/** Sets [NoiseThresholdBlockStateProvider.lowStates] to the default block state of each of [blocks]. */
+fun NoiseThresholdBlockStateProvider.lowStates(vararg blocks: BlockArgument) {
 	lowStates = blocks.map { blockState(it) }
 }
 
-/** Sets [NoiseThresholdProvider.highStates] to [states], the block states picked above the threshold. */
-fun NoiseThresholdProvider.highStates(vararg states: BlockState) {
+/** Sets [NoiseThresholdBlockStateProvider.highStates] to [states], the block states picked above the threshold. */
+fun NoiseThresholdBlockStateProvider.highStates(vararg states: BlockState) {
 	highStates = states.toList()
 }
 
-/** Sets [NoiseThresholdProvider.highStates] to the default block state of each of [blocks]. */
-fun NoiseThresholdProvider.highStates(vararg blocks: BlockArgument) {
+/** Sets [NoiseThresholdBlockStateProvider.highStates] to the default block state of each of [blocks]. */
+fun NoiseThresholdBlockStateProvider.highStates(vararg blocks: BlockArgument) {
 	highStates = blocks.map { blockState(it) }
 }

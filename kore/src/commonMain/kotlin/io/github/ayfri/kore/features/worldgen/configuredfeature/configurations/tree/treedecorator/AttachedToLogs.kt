@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.
 import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleBlockStateProvider
 import kotlinx.serialization.Serializable
 
 /**
@@ -19,7 +19,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class AttachedToLogs(
-	var blockProvider: BlockStateProvider = SimpleStateProvider(),
+	var blockProvider: BlockStateProvider = SimpleBlockStateProvider(),
 	var directions: List<Direction>,
 	var probability: Double = 0.0,
 ) : TreeDecorator(), BlockStateProviderScope

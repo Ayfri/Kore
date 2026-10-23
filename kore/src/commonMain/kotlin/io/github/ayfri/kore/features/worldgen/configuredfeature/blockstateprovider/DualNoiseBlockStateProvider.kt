@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
  *
  * Vanilla uses it for the nether forest floors, where the variety of the vegetation itself varies across the biome.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#dual_noise_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#dual_noise
  *
  * @property seed The seed of both noises, positions sharing a seed sampling the same values.
  * @property noise The parameters of the fast noise, picking a state among the ones selected by [slowNoise].
@@ -27,7 +27,7 @@ import kotlinx.serialization.Serializable
  * @property states The block states to pick from.
  */
 @Serializable
-data class DualNoiseProvider(
+data class DualNoiseBlockStateProvider(
 	override var seed: Long = 0,
 	override var noise: NoiseParameters = NoiseParameters(),
 	override var scale: Double = 0.0,
@@ -38,7 +38,7 @@ data class DualNoiseProvider(
 ) : BlockStateProvider(), NoiseBasedStateProvider, BlockStatesHolder, IntProviderScope
 
 /**
- * Creates a `dual_noise_provider`, picking a block state out of [DualNoiseProvider.states] by sampling two Perlin
+ * Creates a `dual_noise` block state provider, picking a block state out of [DualNoiseBlockStateProvider.states] by sampling two Perlin
  * noises.
  *
  * ```kotlin
@@ -55,24 +55,24 @@ data class DualNoiseProvider(
  * }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#dual_noise_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#dual_noise
  */
-fun BlockStateProviderScope.dualNoiseProvider(block: DualNoiseProvider.() -> Unit = {}) = DualNoiseProvider().apply(block)
+fun BlockStateProviderScope.dualNoiseProvider(block: DualNoiseBlockStateProvider.() -> Unit = {}) = DualNoiseBlockStateProvider().apply(block)
 
 /**
- * Sets [DualNoiseProvider.variety] to a uniform int provider between [min] and [max], the amount of states in play at
+ * Sets [DualNoiseBlockStateProvider.variety] to a uniform int provider between [min] and [max], the amount of states in play at
  * a position.
  *
  * Both bounds have to be between `1` and `64`.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#dual_noise_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#dual_noise
  */
-fun DualNoiseProvider.variety(min: Int, max: Int) {
+fun DualNoiseBlockStateProvider.variety(min: Int, max: Int) {
 	variety = uniform(min, max)
 }
 
 /**
- * Sets [DualNoiseProvider.slowNoise] to the parameters built in [block], starting at [baseOctave].
+ * Sets [DualNoiseBlockStateProvider.slowNoise] to the parameters built in [block], starting at [baseOctave].
  *
  * ```kotlin
  * slowNoise(baseOctave = -10) { amplitudeModifiers(1.0, 1.0) }
@@ -80,12 +80,12 @@ fun DualNoiseProvider.variety(min: Int, max: Int) {
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Noise_settings
  */
-fun DualNoiseProvider.slowNoise(baseOctave: Int = 0, block: NoiseParameters.() -> Unit = {}) {
+fun DualNoiseBlockStateProvider.slowNoise(baseOctave: Int = 0, block: NoiseParameters.() -> Unit = {}) {
 	slowNoise = noiseParameters(baseOctave, block)
 }
 
 /**
- * Sets [DualNoiseProvider.slowNoise] to [baseOctave] and [amplitudeModifiers], one modifier per octave, which also sets the octave count.
+ * Sets [DualNoiseBlockStateProvider.slowNoise] to [baseOctave] and [amplitudeModifiers], one modifier per octave, which also sets the octave count.
  *
  * ```kotlin
  * slowNoise(-10, 1.0, 1.0)
@@ -93,6 +93,6 @@ fun DualNoiseProvider.slowNoise(baseOctave: Int = 0, block: NoiseParameters.() -
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Noise_settings
  */
-fun DualNoiseProvider.slowNoise(baseOctave: Int, vararg amplitudeModifiers: Double) {
+fun DualNoiseBlockStateProvider.slowNoise(baseOctave: Int, vararg amplitudeModifiers: Double) {
 	slowNoise = noiseParameters(baseOctave, *amplitudeModifiers)
 }

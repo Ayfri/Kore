@@ -454,18 +454,20 @@ Every builder extends `BlockStateProviderScope`, so they resolve inside the conf
 nowhere else. Providers nest freely: any of them can be the `source` of a `randomizedIntStateProvider`, the `data` of a weighted entry or
 the `then` of a rule.
 
-| Builder                                    | Picks the state from                                              |
-|--------------------------------------------|-------------------------------------------------------------------|
-| `copyPropertiesProvider(source)`           | A source provider, with the existing block's properties copied    |
-| `dualNoiseProvider { }`                    | Two Perlin noises, one selecting the variety, one picking a state |
-| `noiseProvider { }`                        | A single Perlin noise mapped onto a list of states                |
-| `noiseThresholdProvider { }`               | A Perlin noise compared against a threshold                       |
-| `randomBlockProvider(blocks)`              | The default state of a random block or block tag                  |
-| `randomizedIntStateProvider(property) { }` | Another provider, with one integer property randomized            |
-| `rotatedBlockProvider(state, direction)`   | A block or provider, rotated on its `axis` or `facing`            |
-| `ruleBasedStateProvider { }`               | Ordered block predicate rules, with an optional fallback          |
-| `simpleStateProvider(block)`               | A fixed block                                                     |
-| `weightedStateProvider { }`                | A weighted random pick across several providers                   |
+| Builder                                    | Written type      | Picks the state from                                              |
+|--------------------------------------------|-------------------|-------------------------------------------------------------------|
+| `copyPropertiesProvider(source)`           | `copy_properties` | A source provider, with the existing block's properties copied    |
+| `dualNoiseProvider { }`                    | `dual_noise`      | Two Perlin noises, one selecting the variety, one picking a state |
+| `noiseProvider { }`                        | `noise`           | A single Perlin noise mapped onto a list of states                |
+| `noiseThresholdProvider { }`               | `noise_threshold` | A Perlin noise compared against a threshold                       |
+| `randomBlockProvider(blocks)`              | `random_block`    | The default state of a random block or block tag                  |
+| `randomizedIntStateProvider(property) { }` | `randomized_int`  | Another provider, with one integer property randomized            |
+| `rotatedBlockProvider(state, direction)`   | `rotated`         | A block or provider, rotated on its `axis` or `facing`            |
+| `ruleBasedStateProvider { }`               | `rule_based`      | Ordered block predicate rules, with an optional fallback          |
+| `simpleStateProvider(block)`               | `simple`          | A fixed block                                                     |
+| `weightedStateProvider { }`                | `weighted`        | A weighted random pick across several providers                   |
+
+The Kotlin classes carry the full name (`SimpleBlockStateProvider`, `RuleBasedBlockStateProvider`, and so on).
 
 Reference: [Block state provider](https://minecraft.wiki/w/Block_state_provider)
 
@@ -557,8 +559,8 @@ randomizedIntStateProvider("age") {
 
 ### Rule Based
 
-Rules are evaluated top-to-bottom and the first matching one wins, falling back to `fallback` when nothing matches. With no `fallback` and
-no matching rule, the feature places nothing.
+Rules are evaluated top-to-bottom and the first rule that yields a result wins, falling back to `fallback` when none does. When no rule nor
+the `fallback` yields one, the provider yields none.
 
 ```kotlin
 ruleBasedStateProvider {

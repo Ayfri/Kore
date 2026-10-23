@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleBlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.TreeDecorator
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
@@ -30,7 +30,7 @@ data class FallenTree(
 	var logDecorators: List<TreeDecorator> = emptyList(),
 	var logLength: IntProvider = ConstantIntProvider(0),
 	var stumpDecorators: List<TreeDecorator> = emptyList(),
-	var trunkProvider: BlockStateProvider = SimpleStateProvider(),
+	var trunkProvider: BlockStateProvider = SimpleBlockStateProvider(),
 ) : FeatureConfig(), BlockStateProviderScope, IntProviderScope
 
 /**

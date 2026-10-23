@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.
 
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleBlockStateProvider
 import kotlinx.serialization.Serializable
 
 /**
@@ -18,7 +18,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class PlaceOnGround(
-	var blockStateProvider: BlockStateProvider = SimpleStateProvider(),
+	var blockStateProvider: BlockStateProvider = SimpleBlockStateProvider(),
 	var height: Int? = null,
 	var radius: Int? = null,
 	var tries: Int? = null,

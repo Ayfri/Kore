@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.
 
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleBlockStateProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
@@ -42,7 +42,7 @@ sealed class RootPlacer : BlockStateProviderScope, IntProviderScope {
  */
 @Serializable
 data class AboveRootPlacement(
-	var aboveRootProvider: BlockStateProvider = SimpleStateProvider(),
+	var aboveRootProvider: BlockStateProvider = SimpleBlockStateProvider(),
 	var aboveRootPlacementChance: Double = 0.0,
 ) : BlockStateProviderScope
 

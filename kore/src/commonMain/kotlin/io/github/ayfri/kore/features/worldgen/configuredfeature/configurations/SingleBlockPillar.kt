@@ -8,7 +8,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatur
 import io.github.ayfri.kore.features.worldgen.configuredfeature.VerticalDirection
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleBlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
 import io.github.ayfri.kore.generated.arguments.worldgen.types.PlacedFeatureArgument
 import kotlinx.serialization.Serializable
@@ -30,7 +30,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SingleBlockPillar(
-	var block: BlockStateProvider = SimpleStateProvider(),
+	var block: BlockStateProvider = SimpleBlockStateProvider(),
 	var canReplace: BlockPredicate? = null,
 	var capFeature: PlacedFeatureArgument? = null,
 	var chanceToContinue: Float? = null,

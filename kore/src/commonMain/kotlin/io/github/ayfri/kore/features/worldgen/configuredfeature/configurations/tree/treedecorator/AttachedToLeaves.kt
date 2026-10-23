@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.
 import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleBlockStateProvider
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -30,7 +30,7 @@ data class AttachedToLeaves(
 	var exclusionRadiusXZ: Int = 0,
 	var exclusionRadiusY: Int = 0,
 	var requiredEmptyBlocks: Int = 0,
-	var blockProvider: BlockStateProvider = SimpleStateProvider(),
+	var blockProvider: BlockStateProvider = SimpleBlockStateProvider(),
 	var directions: List<Direction> = emptyList(),
 ) : TreeDecorator(), BlockStateProviderScope
 

@@ -18,6 +18,6 @@ import kotlinx.serialization.Serializable
 sealed class BlockStateProvider {
 	companion object {
 		data object BlockStateProviderSerializer :
-			NamespacedPolymorphicSerializer<BlockStateProvider>(blockStateProviderSealedSerializer())
+			NamespacedPolymorphicSerializer<BlockStateProvider>(blockStateProviderSealedSerializer(), suffix = "BlockStateProvider")
 	}
 }

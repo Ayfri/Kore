@@ -10,17 +10,17 @@ import kotlinx.serialization.Serializable
 /**
  * Always places [state], the simplest and most common block state provider.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#simple_state_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#simple
  *
  * @property state The block state placed at every position.
  */
 @Serializable
-data class SimpleStateProvider(
+data class SimpleBlockStateProvider(
 	var state: BlockState = blockStateStone(),
 ) : BlockStateProvider()
 
 /**
- * Creates a `simple_state_provider`, always placing [state].
+ * Creates a `simple` block state provider, always placing [state].
  *
  * ```kotlin
  * simpleBlock("dandelion") {
@@ -28,24 +28,24 @@ data class SimpleStateProvider(
  * }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#simple_state_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#simple
  */
-fun BlockStateProviderScope.simpleStateProvider(state: BlockState = blockStateStone()) = SimpleStateProvider(state)
+fun BlockStateProviderScope.simpleStateProvider(state: BlockState = blockStateStone()) = SimpleBlockStateProvider(state)
 
 /**
- * Creates a `simple_state_provider` placing [id] with [properties].
+ * Creates a `simple` block state provider placing [id] with [properties].
  *
  * ```kotlin
  * simpleStateProvider(Blocks.OAK_LOG, mapOf("axis" to "y"))
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#simple_state_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#simple
  */
 fun BlockStateProviderScope.simpleStateProvider(id: BlockArgument, properties: Map<String, String>) =
-	SimpleStateProvider(blockState(id, properties))
+	SimpleBlockStateProvider(blockState(id, properties))
 
 /**
- * Creates a `simple_state_provider` placing [id], its block state properties being set in [block].
+ * Creates a `simple` block state provider placing [id], its block state properties being set in [block].
  *
  * ```kotlin
  * simpleStateProvider(Blocks.OAK_LOG) {
@@ -53,7 +53,7 @@ fun BlockStateProviderScope.simpleStateProvider(id: BlockArgument, properties: M
  * }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#simple_state_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#simple
  */
 fun BlockStateProviderScope.simpleStateProvider(id: BlockArgument, block: BlockStateBuilder.() -> Unit = {}) =
-	SimpleStateProvider(blockState(id, block))
+	SimpleBlockStateProvider(blockState(id, block))

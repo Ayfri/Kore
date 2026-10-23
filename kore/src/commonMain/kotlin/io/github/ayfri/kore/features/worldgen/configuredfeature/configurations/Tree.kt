@@ -3,8 +3,8 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.RuleBasedStateProvider
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.RuleBasedBlockStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleBlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.FancyFoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.FoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.layersfeaturesize.LayersFeatureSize
@@ -26,7 +26,7 @@ import kotlinx.serialization.Serializable
  * Minecraft Wiki: https://minecraft.wiki/w/Configured_feature#tree
  *
  * @property ignoreVines Whether the tree grows even when vines block it, `false` in vanilla when `null`.
- * @property belowTrunkProvider The [RuleBasedStateProvider] replacing the block below the trunk, such as the dirt
+ * @property belowTrunkProvider The [RuleBasedBlockStateProvider] replacing the block below the trunk, such as the dirt
  * under most trees, placing nothing when it has no rule.
  * @property minimumSize The width the tree needs at each height to be placed.
  * @property trunkProvider The block state provider of the trunk, which needs an `axis` property with a fancy trunk
@@ -40,10 +40,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Tree(
 	var ignoreVines: Boolean? = null,
-	var belowTrunkProvider: BlockStateProvider = RuleBasedStateProvider(),
+	var belowTrunkProvider: BlockStateProvider = RuleBasedBlockStateProvider(),
 	var minimumSize: LayersFeatureSize = TwoLayersFeatureSize(),
-	var trunkProvider: BlockStateProvider = SimpleStateProvider(),
-	var foliageProvider: BlockStateProvider = SimpleStateProvider(),
+	var trunkProvider: BlockStateProvider = SimpleBlockStateProvider(),
+	var foliageProvider: BlockStateProvider = SimpleBlockStateProvider(),
 	var rootPlacer: RootPlacer? = null,
 	var trunkPlacer: TrunkPlacer,
 	var foliagePlacer: FoliagePlacer,

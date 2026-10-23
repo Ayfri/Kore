@@ -13,21 +13,21 @@ import kotlinx.serialization.Serializable
  * Vanilla uses it to randomize the `age` of the crops and the `berries` of the cave vines. The block placed by
  * [source] has to actually declare [property], the state is left untouched otherwise.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#randomized_int_state_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#randomized_int
  *
  * @property property The name of the integer block state property to override, e.g. `age`.
  * @property values The values [property] is sampled from.
  * @property source The provider giving the block state [property] is applied to.
  */
 @Serializable
-data class RandomizedIntStateProvider(
+data class RandomizedIntBlockStateProvider(
 	var property: String = "",
 	var values: IntProvider = ConstantIntProvider(0),
-	var source: BlockStateProvider = SimpleStateProvider(),
+	var source: BlockStateProvider = SimpleBlockStateProvider(),
 ) : BlockStateProvider(), BlockStateProviderScope, IntProviderScope
 
 /**
- * Creates a `randomized_int_state_provider`, overriding the integer [property] of the state given by [source].
+ * Creates a `randomized_int` block state provider, overriding the integer [property] of the state given by [source].
  *
  * ```kotlin
  * simpleBlock("random_wheat") {
@@ -38,23 +38,23 @@ data class RandomizedIntStateProvider(
  * }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#randomized_int_state_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#randomized_int
  */
 fun BlockStateProviderScope.randomizedIntStateProvider(
 	property: String = "",
 	values: IntProvider = ConstantIntProvider(0),
-	block: RandomizedIntStateProvider.() -> Unit = {},
-) = RandomizedIntStateProvider(property, values).apply(block)
+	block: RandomizedIntBlockStateProvider.() -> Unit = {},
+) = RandomizedIntBlockStateProvider(property, values).apply(block)
 
 /**
- * Sets [RandomizedIntStateProvider.values] to a uniform int provider between [min] and [max].
+ * Sets [RandomizedIntBlockStateProvider.values] to a uniform int provider between [min] and [max].
  *
  * ```kotlin
  * randomizedIntStateProvider("age") { values(0, 7) }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#randomized_int_state_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#randomized_int
  */
-fun RandomizedIntStateProvider.values(min: Int, max: Int) {
+fun RandomizedIntBlockStateProvider.values(min: Int, max: Int) {
 	values = uniform(min, max)
 }

@@ -3,7 +3,7 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.
 import io.github.ayfri.kore.arguments.types.BlockOrTagArgument
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleBlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.Tree
 import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
@@ -24,7 +24,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class MangroveRootPlacer(
-	override var rootProvider: BlockStateProvider = SimpleStateProvider(),
+	override var rootProvider: BlockStateProvider = SimpleBlockStateProvider(),
 	override var trunkOffsetY: IntProvider = ConstantIntProvider(0),
 	override var aboveRootPlacement: AboveRootPlacement? = null,
 	var mangroveRootPlacement: MangroveRootPlacement = MangroveRootPlacement(),
@@ -51,7 +51,7 @@ data class MangroveRootPlacement(
 	var randomSkewChance: Double = 0.0,
 	var canGrowThrough: InlinableList<BlockOrTagArgument> = emptyList(),
 	var muddyRootsIn: InlinableList<BlockOrTagArgument> = emptyList(),
-	var muddyRootsProvider: BlockStateProvider = SimpleStateProvider(),
+	var muddyRootsProvider: BlockStateProvider = SimpleBlockStateProvider(),
 ) : BlockStateProviderScope
 
 /**

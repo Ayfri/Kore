@@ -36,7 +36,7 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"simple_state_provider", """
 			{
-				"type": "minecraft:simple_state_provider",
+				"type": "minecraft:simple",
 				"state": "minecraft:dandelion"
 			}
 		""".trimIndent()
@@ -45,7 +45,7 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"simple_state_provider_properties", """
 			{
-				"type": "minecraft:simple_state_provider",
+				"type": "minecraft:simple",
 				"state": {
 					"id": "minecraft:oak_log",
 					"properties": {
@@ -59,9 +59,9 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"copy_properties_provider", """
 			{
-				"type": "minecraft:copy_properties_provider",
+				"type": "minecraft:copy_properties",
 				"source": {
-					"type": "minecraft:simple_state_provider",
+					"type": "minecraft:simple",
 					"state": "minecraft:waxed_copper_block"
 				}
 			}
@@ -71,9 +71,9 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"rotated_block_provider", """
 			{
-				"type": "minecraft:rotated_block_provider",
+				"type": "minecraft:rotated",
 				"state": {
-					"type": "minecraft:simple_state_provider",
+					"type": "minecraft:simple",
 					"state": "minecraft:oak_log"
 				}
 			}
@@ -83,10 +83,10 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"rotated_block_provider_direction", """
 			{
-				"type": "minecraft:rotated_block_provider",
+				"type": "minecraft:rotated",
 				"direction": "north",
 				"state": {
-					"type": "minecraft:simple_state_provider",
+					"type": "minecraft:simple",
 					"state": "minecraft:dispenser"
 				}
 			}
@@ -96,15 +96,15 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"rotated_block_provider_nested", """
 			{
-				"type": "minecraft:rotated_block_provider",
+				"type": "minecraft:rotated",
 				"direction": "up",
 				"state": {
-					"type": "minecraft:weighted_state_provider",
+					"type": "minecraft:weighted",
 					"entries": [
 						{
 							"weight": 1,
 							"data": {
-								"type": "minecraft:simple_state_provider",
+								"type": "minecraft:simple",
 								"state": "minecraft:oak_log"
 							}
 						}
@@ -122,7 +122,7 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"random_block_provider", """
 			{
-				"type": "minecraft:random_block_provider",
+				"type": "minecraft:random_block",
 				"blocks": [
 					"minecraft:dandelion",
 					"minecraft:poppy"
@@ -134,7 +134,7 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"random_block_provider_tag", """
 			{
-				"type": "minecraft:random_block_provider",
+				"type": "minecraft:random_block",
 				"blocks": "#minecraft:flowers"
 			}
 		""".trimIndent()
@@ -143,28 +143,28 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"weighted_state_provider", """
 			{
-				"type": "minecraft:weighted_state_provider",
+				"type": "minecraft:weighted",
 				"entries": [
 					{
 						"weight": 3,
 						"data": {
-							"type": "minecraft:simple_state_provider",
+							"type": "minecraft:simple",
 							"state": "minecraft:dandelion"
 						}
 					},
 					{
 						"weight": 1,
 						"data": {
-							"type": "minecraft:simple_state_provider",
+							"type": "minecraft:simple",
 							"state": "minecraft:poppy"
 						}
 					},
 					{
 						"weight": 2,
 						"data": {
-							"type": "minecraft:rotated_block_provider",
+							"type": "minecraft:rotated",
 							"state": {
-								"type": "minecraft:simple_state_provider",
+								"type": "minecraft:simple",
 								"state": "minecraft:oak_log"
 							}
 						}
@@ -185,7 +185,7 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"noise_provider", """
 			{
-				"type": "minecraft:noise_provider",
+				"type": "minecraft:noise",
 				"seed": 2345,
 				"noise": {
 					"amplitude_modifiers": [
@@ -214,7 +214,7 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"dual_noise_provider", """
 			{
-				"type": "minecraft:dual_noise_provider",
+				"type": "minecraft:dual_noise",
 				"seed": 2345,
 				"noise": {
 					"amplitude_modifiers": [
@@ -259,7 +259,7 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"noise_threshold_provider", """
 			{
-				"type": "minecraft:noise_threshold_provider",
+				"type": "minecraft:noise_threshold",
 				"seed": 2345,
 				"noise": {
 					"amplitude_modifiers": [
@@ -296,7 +296,7 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"randomized_int_state_provider", """
 			{
-				"type": "minecraft:randomized_int_state_provider",
+				"type": "minecraft:randomized_int",
 				"property": "age",
 				"values": {
 					"type": "minecraft:uniform",
@@ -304,7 +304,7 @@ fun DataPack.blockStateProviderTests() {
 					"max_inclusive": 7
 				},
 				"source": {
-					"type": "minecraft:simple_state_provider",
+					"type": "minecraft:simple",
 					"state": "minecraft:wheat"
 				}
 			}
@@ -319,7 +319,7 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"randomized_int_state_provider_values", """
 			{
-				"type": "minecraft:randomized_int_state_provider",
+				"type": "minecraft:randomized_int",
 				"property": "berries",
 				"values": {
 					"type": "minecraft:uniform",
@@ -327,7 +327,7 @@ fun DataPack.blockStateProviderTests() {
 					"max_inclusive": 1
 				},
 				"source": {
-					"type": "minecraft:simple_state_provider",
+					"type": "minecraft:simple",
 					"state": "minecraft:cave_vines"
 				}
 			}
@@ -337,9 +337,9 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"rule_based_state_provider", """
 			{
-				"type": "minecraft:rule_based_state_provider",
+				"type": "minecraft:rule_based",
 				"fallback": {
-					"type": "minecraft:simple_state_provider",
+					"type": "minecraft:simple",
 					"state": "minecraft:dirt"
 				},
 				"rules": [
@@ -349,7 +349,7 @@ fun DataPack.blockStateProviderTests() {
 							"direction": "down"
 						},
 						"then": {
-							"type": "minecraft:simple_state_provider",
+							"type": "minecraft:simple",
 							"state": "minecraft:grass_block"
 						}
 					},
@@ -359,7 +359,7 @@ fun DataPack.blockStateProviderTests() {
 							"blocks": "minecraft:stone"
 						},
 						"then": {
-							"type": "minecraft:simple_state_provider",
+							"type": "minecraft:simple",
 							"state": "minecraft:podzol"
 						}
 					}
@@ -382,7 +382,7 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"rule_based_state_provider_empty", """
 			{
-				"type": "minecraft:rule_based_state_provider",
+				"type": "minecraft:rule_based",
 				"rules": []
 			}
 		""".trimIndent()
@@ -391,12 +391,12 @@ fun DataPack.blockStateProviderTests() {
 	assertProvider(
 		"nested_providers", """
 			{
-				"type": "minecraft:weighted_state_provider",
+				"type": "minecraft:weighted",
 				"entries": [
 					{
 						"weight": 1,
 						"data": {
-							"type": "minecraft:randomized_int_state_provider",
+							"type": "minecraft:randomized_int",
 							"property": "age",
 							"values": {
 								"type": "minecraft:uniform",
@@ -404,7 +404,7 @@ fun DataPack.blockStateProviderTests() {
 								"max_inclusive": 7
 							},
 							"source": {
-								"type": "minecraft:simple_state_provider",
+								"type": "minecraft:simple",
 								"state": "minecraft:wheat"
 							}
 						}
@@ -412,14 +412,14 @@ fun DataPack.blockStateProviderTests() {
 					{
 						"weight": 4,
 						"data": {
-							"type": "minecraft:rule_based_state_provider",
+							"type": "minecraft:rule_based",
 							"rules": [
 								{
 									"if_true": {
 										"type": "minecraft:solid"
 									},
 									"then": {
-										"type": "minecraft:simple_state_provider",
+										"type": "minecraft:simple",
 										"state": "minecraft:carrots"
 									}
 								}

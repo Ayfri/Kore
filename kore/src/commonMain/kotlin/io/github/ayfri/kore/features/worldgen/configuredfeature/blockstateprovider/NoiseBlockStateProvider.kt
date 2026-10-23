@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * The sampled value is mapped onto the whole [states] list, so the blocks appear as continuous patches instead of
  * being randomized per position.
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#noise_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#noise
  *
  * @property seed The seed of the noise, positions sharing a seed sampling the same values.
  * @property noise The noise parameters.
@@ -18,7 +18,7 @@ import kotlinx.serialization.Serializable
  * @property states The block states to pick from, mapped onto the sampled value.
  */
 @Serializable
-data class NoiseProvider(
+data class NoiseBlockStateProvider(
 	override var seed: Long = 0,
 	override var noise: NoiseParameters = NoiseParameters(),
 	override var scale: Double = 0.0,
@@ -26,7 +26,7 @@ data class NoiseProvider(
 ) : BlockStateProvider(), NoiseBasedStateProvider, BlockStatesHolder
 
 /**
- * Creates a `noise_provider`, picking a block state out of [NoiseProvider.states] by sampling a Perlin noise.
+ * Creates a `noise` block state provider, picking a block state out of [NoiseBlockStateProvider.states] by sampling a Perlin noise.
  *
  * ```kotlin
  * simpleBlock("mossy_patch") {
@@ -39,6 +39,6 @@ data class NoiseProvider(
  * }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#noise_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#noise
  */
-fun BlockStateProviderScope.noiseProvider(block: NoiseProvider.() -> Unit = {}) = NoiseProvider().apply(block)
+fun BlockStateProviderScope.noiseProvider(block: NoiseBlockStateProvider.() -> Unit = {}) = NoiseBlockStateProvider().apply(block)

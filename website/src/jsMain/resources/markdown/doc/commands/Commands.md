@@ -505,7 +505,7 @@ Generated output:
 
 ```mcfunction
 place feature minecraft:bonus_chest ~ ~ ~
-place feature {type:"minecraft:simple_block",to_place:{type:"minecraft:simple_state_provider",state:"minecraft:diamond_block"},schedule_tick:1b} 0 64 0
+place feature {type:"minecraft:simple_block",to_place:{type:"minecraft:simple",state:"minecraft:diamond_block"},schedule_tick:1b} 0 64 0
 place structure minecraft:mineshaft ~ ~ ~
 ```
 

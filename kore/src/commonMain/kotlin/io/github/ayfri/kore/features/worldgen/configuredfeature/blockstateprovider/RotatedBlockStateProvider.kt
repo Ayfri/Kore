@@ -12,20 +12,20 @@ import kotlinx.serialization.Serializable
  * Places the block state of [state] rotated towards [direction], or a random one when it is omitted. It rotates the
  * `axis` property of a block (logs, pillars) and the `facing` property of a block (dispensers, pistons).
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rotated_block_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rotated
  *
  * @property direction The direction the block faces, random at every position when `null`.
  * @property state The provider of the block state placed at every position, its `axis` or `facing` property being
  * rotated.
  */
 @Serializable
-data class RotatedBlockProvider(
+data class RotatedBlockStateProvider(
 	var direction: Direction? = null,
-	var state: BlockStateProvider = SimpleStateProvider(),
+	var state: BlockStateProvider = SimpleBlockStateProvider(),
 ) : BlockStateProvider()
 
 /**
- * Creates a `rotated_block_provider`, rotating the block state of [state] towards [direction] (random when omitted).
+ * Creates a `rotated` block state provider, rotating the block state of [state] towards [direction] (random when omitted).
  *
  * ```kotlin
  * tree("oak") {
@@ -33,37 +33,37 @@ data class RotatedBlockProvider(
  * }
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rotated_block_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rotated
  */
 fun BlockStateProviderScope.rotatedBlockProvider(state: BlockStateProvider, direction: Direction? = null) =
-	RotatedBlockProvider(direction, state)
+	RotatedBlockStateProvider(direction, state)
 
 /**
- * Creates a `rotated_block_provider` placing [state] rotated towards [direction] (random when omitted).
+ * Creates a `rotated` block state provider placing [state] rotated towards [direction] (random when omitted).
  *
  * ```kotlin
  * rotatedBlockProvider(blockState(Blocks.OAK_LOG), Direction.UP)
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rotated_block_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rotated
  */
 fun BlockStateProviderScope.rotatedBlockProvider(state: BlockState = blockStateStone(), direction: Direction? = null) =
-	RotatedBlockProvider(direction, SimpleStateProvider(state))
+	RotatedBlockStateProvider(direction, SimpleBlockStateProvider(state))
 
 /**
- * Creates a `rotated_block_provider` placing [id] with [properties], rotated towards [direction] (random when
+ * Creates a `rotated` block state provider placing [id] with [properties], rotated towards [direction] (random when
  * omitted).
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rotated_block_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rotated
  */
 fun BlockStateProviderScope.rotatedBlockProvider(
 	id: BlockArgument,
 	properties: Map<String, String>,
 	direction: Direction? = null,
-) = RotatedBlockProvider(direction, SimpleStateProvider(blockState(id, properties)))
+) = RotatedBlockStateProvider(direction, SimpleBlockStateProvider(blockState(id, properties)))
 
 /**
- * Creates a `rotated_block_provider` placing [id] rotated towards [direction] (random when omitted), its other block
+ * Creates a `rotated` block state provider placing [id] rotated towards [direction] (random when omitted), its other block
  * state properties being set in [block].
  *
  * ```kotlin
@@ -71,10 +71,10 @@ fun BlockStateProviderScope.rotatedBlockProvider(
  * rotatedBlockProvider(Blocks.DISPENSER, Direction.NORTH)
  * ```
  *
- * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rotated_block_provider
+ * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider#rotated
  */
 fun BlockStateProviderScope.rotatedBlockProvider(
 	id: BlockArgument,
 	direction: Direction? = null,
 	block: BlockStateBuilder.() -> Unit = {},
-) = RotatedBlockProvider(direction, SimpleStateProvider(blockState(id, block)))
+) = RotatedBlockStateProvider(direction, SimpleBlockStateProvider(blockState(id, block)))

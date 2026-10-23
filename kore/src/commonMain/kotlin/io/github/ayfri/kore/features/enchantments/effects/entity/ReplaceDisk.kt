@@ -10,7 +10,7 @@ import io.github.ayfri.kore.features.worldgen.blockpredicate.BlockPredicatesScop
 import io.github.ayfri.kore.features.worldgen.blockpredicate.blockPredicate
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleStateProvider
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleBlockStateProvider
 import io.github.ayfri.kore.generated.arguments.types.GameEventArgument
 import io.github.ayfri.kore.serializers.TripleAsArray
 import kotlinx.serialization.Serializable
@@ -30,7 +30,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ReplaceDisk(
-	var blockState: BlockStateProvider = SimpleStateProvider(),
+	var blockState: BlockStateProvider = SimpleBlockStateProvider(),
 	var radius: LevelBased = Constant(0f),
 	var height: LevelBased = Constant(0f),
 	var offset: TripleAsArray<Int, Int, Int>? = null,
