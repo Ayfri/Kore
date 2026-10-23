@@ -56,6 +56,8 @@ fun Function.computeTests() {
 	compute(self()) { score("kills", EntityTarget.TARGET_ENTITY) } assertsIs "compute entity @s integer $kills"
 	compute(self()) { add(reference(bonus), reference(bonus)) } assertsIs "compute entity @s integer {type:\"minecraft:add\",inputs:[\"my_pack:bonus\",\"my_pack:bonus\"]}"
 
+	compute(self()) { add(reference(bonus), constant(1)) } assertsIs "compute entity @s integer {type:\"minecraft:add\",inputs:[\"my_pack:bonus\",1]}"
+
 	compute { constant(5f) } assertsIs "compute default float $fiveFloat"
 	compute(3f) { constant(5f) } assertsIs "compute default float $fiveFloat 3"
 	compute(vec3(0, 64, 0)) { constant(5f) } assertsIs "compute block 0 64 0 float $fiveFloat"
@@ -75,6 +77,7 @@ fun Function.computeTests() {
 		set("bar", ComputeSource(self()) { constant(5f) }) assertsIs "data modify storage minecraft:foo bar set compute entity @s float $fiveFloat"
 		set("bar", ComputeSource(5)) assertsIs "data modify storage minecraft:foo bar set compute default integer $five"
 		set("bar", ComputeSource(vec3(1, 2, 3), 5f)) assertsIs "data modify storage minecraft:foo bar set compute block 1 2 3 float $fiveFloat"
+		set("bar", ComputeSource(self()) { add(reference(bonus), constant(1)) }) assertsIs "data modify storage minecraft:foo bar set compute entity @s integer {type:\"minecraft:add\",inputs:[\"my_pack:bonus\",1]}"
 		set("bar", ComputeSource(self(), 2.5f)) assertsIs "data modify storage minecraft:foo bar set compute entity @s float {type:\"minecraft:constant\",value:2.5f}"
 	}
 }

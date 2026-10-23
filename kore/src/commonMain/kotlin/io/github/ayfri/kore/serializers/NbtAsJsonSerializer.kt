@@ -1,5 +1,7 @@
 package io.github.ayfri.kore.serializers
 
+import io.github.ayfri.kore.utils.unwrapMixedElements
+import io.github.ayfri.kore.utils.wrapMixedElements
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -36,7 +38,7 @@ data object NbtAsJsonSerializer : KSerializer<NbtTag> {
 	 */
 	fun fromJson(element: JsonElement, valueBasedNumbers: Boolean) = element.toNbtTag(valueBasedNumbers)
 
-	/** NBT lists hold a single tag type, so a mixed JSON array falls back to a list of strings. */
+	/** NBT lists hold a single tag type, so a mixed JSON array becomes the game's list of compounds keyed by `""`, see [wrapMixedElements]. */
 	private fun JsonElement.toNbtTag(valueBasedNumbers: Boolean = false): NbtTag = when (this) {
 		is JsonObject -> NbtCompound(mapValues { it.value.toNbtTag(valueBasedNumbers) })
 		is JsonArray -> map { it.toNbtTag(valueBasedNumbers) }.let { elements ->
@@ -46,7 +48,7 @@ data object NbtAsJsonSerializer : KSerializer<NbtTag> {
 					if (elements.any { it is NbtDouble }) NbtList(elements.map { NbtDouble(it.numberValue().toDouble()) })
 					else NbtList(elements.map { NbtLong(it.numberValue().toLong()) })
 
-				else -> NbtList(elements.map { it as? NbtString ?: NbtString(it.toString()) })
+				else -> elements.wrapMixedElements()
 			}
 		}
 
@@ -69,7 +71,7 @@ data object NbtAsJsonSerializer : KSerializer<NbtTag> {
 
 	private fun NbtTag.toJsonElement(): JsonElement = when (this) {
 		is NbtCompound -> JsonObject(mapValues { it.value.toJsonElement() })
-		is NbtList<*> -> JsonArray(map { it.toJsonElement() })
+		is NbtList<*> -> JsonArray(unwrapMixedElements().map { it.toJsonElement() })
 		is NbtByteArray -> JsonArray(map { JsonPrimitive(it) })
 		is NbtIntArray -> JsonArray(map { JsonPrimitive(it) })
 		is NbtLongArray -> JsonArray(map { JsonPrimitive(it) })

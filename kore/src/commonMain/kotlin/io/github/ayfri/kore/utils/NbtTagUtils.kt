@@ -89,6 +89,13 @@ fun <T> encodeToDataPackSnbt(serializer: KSerializer<T>, value: T) = encodeToDat
 inline fun <reified T> encodeToDataPackNbtTag(value: T) = encodeToDataPackNbtTag(serializer<T>(), value)
 fun <T> encodeToDataPackNbtTag(serializer: KSerializer<T>, value: T) = encodeToNbtTag(DataPackShapedSerializer(serializer), value)
 
+/** NBT lists hold one tag type, so the game stores a list of mixed types as compounds holding each element under the empty key. */
+internal fun List<NbtTag>.wrapMixedElements() = NbtList(map { NbtCompound(mapOf("" to it)) })
+
+/** The elements of a list built by [wrapMixedElements], or the list itself when it isn't one: `[{"":1},{"":"a"}]` is `[1,"a"]`. */
+internal fun NbtList<*>.unwrapMixedElements(): List<NbtTag> =
+	if (isNotEmpty() && all { it is NbtCompound && it.size == 1 && "" in it }) map { (it as NbtCompound).getValue("") } else this
+
 private fun StringBuilder.appendSnbt(tag: NbtTag): StringBuilder = when (tag) {
 	is NbtCompound -> {
 		append('{')
@@ -101,7 +108,7 @@ private fun StringBuilder.appendSnbt(tag: NbtTag): StringBuilder = when (tag) {
 
 	is NbtList<*> -> {
 		append('[')
-		tag.forEachIndexed { index, value ->
+		tag.unwrapMixedElements().forEachIndexed { index, value ->
 			if (index > 0) append(',')
 			appendSnbt(value)
 		}

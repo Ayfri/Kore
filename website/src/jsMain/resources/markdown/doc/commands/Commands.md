@@ -983,7 +983,7 @@ function("data_modify_compute") {
 	data(storage("foo")) {
 		modify("bar", ComputeSource(bonus))
 		modify("bar") { append(ComputeSource(vec3(1, 2, 3), bonus)) }
-		set("baz", ComputeSource(self()) { mul(constant(2), constant(3)) })
+		set("baz", ComputeSource(self()) { add(reference(bonus), constant(1)) })
 		set("qux", ComputeSource(self(), 2.5f))
 	}
 }
@@ -994,7 +994,7 @@ Generated output:
 ```mcfunction
 data modify storage minecraft:foo bar set compute default integer my_pack:bonus
 data modify storage minecraft:foo bar append compute block 1 2 3 integer my_pack:bonus
-data modify storage minecraft:foo baz set compute entity @s integer {type:"minecraft:mul",inputs:[2,3]}
+data modify storage minecraft:foo baz set compute entity @s integer {type:"minecraft:add",inputs:["my_pack:bonus",1]}
 data modify storage minecraft:foo qux set compute entity @s float {type:"minecraft:constant",value:2.5f}
 ```
 
