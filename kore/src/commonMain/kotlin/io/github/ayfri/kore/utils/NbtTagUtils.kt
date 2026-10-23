@@ -80,7 +80,11 @@ fun <T> decodeFromSnbt(deserializer: DeserializationStrategy<T>, snbt: String) =
 
 /** Encodes a data pack resource to SNBT like its data pack file (snake_case keys, defaults), see [DataPackShapedSerializer]. */
 inline fun <reified T> encodeToDataPackSnbt(value: T) = encodeToDataPackSnbt(serializer<T>(), value)
-fun <T> encodeToDataPackSnbt(serializer: KSerializer<T>, value: T) = encodeToSnbt(DataPackShapedSerializer(serializer), value)
+fun <T> encodeToDataPackSnbt(serializer: KSerializer<T>, value: T) = encodeToDataPackNbtTag(serializer, value).toSnbt()
+
+/** Encodes a data pack resource to an NBT tag like its data pack file, see [encodeToDataPackSnbt]. */
+inline fun <reified T> encodeToDataPackNbtTag(value: T) = encodeToDataPackNbtTag(serializer<T>(), value)
+fun <T> encodeToDataPackNbtTag(serializer: KSerializer<T>, value: T) = encodeToNbtTag(DataPackShapedSerializer(serializer), value)
 
 private fun StringBuilder.appendSnbt(tag: NbtTag): StringBuilder = when (tag) {
 	is NbtCompound -> {

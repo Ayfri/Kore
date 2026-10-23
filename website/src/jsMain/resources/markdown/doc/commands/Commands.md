@@ -5,7 +5,7 @@ nav-title: Commands
 description: Every Minecraft command in a type-safe Kotlin DSL. From /say, /teleport, and /give to /execute, /data, /scoreboard, and /summon -- all with code examples and generated mcfunction output.
 keywords: minecraft commands, kore commands, kotlin commands dsl, mcfunction generator, execute command, data command, teleport command, summon command, minecraft command builder, type-safe commands
 date-created: 2026-02-03
-date-modified: 2026-10-22
+date-modified: 2026-10-23
 routeOverride: /docs/commands/commands
 ---
 
@@ -653,6 +653,41 @@ spectate @s
 spectate @s @s
 ```
 
+### Compute Command
+
+The `compute` command evaluates a [number provider](/docs/data-driven/loot-tables#number-provider-files) and returns the result as the
+command result, so it can feed `execute store`. It needs permission level gamemasters. The first argument decides what the provider can
+read: nothing gives it no position and no entity, a position (`vec3(...)`) a block entity and a block state, and an entity
+(`self()`) a target entity (a single entity, not a selector matching several). The provider is a `NumberProviderArgument` ID, a plain
+`Float` for a constant, or an inline provider built in a lambda (`compute { myProvider }` for one you already hold). The game reads
+a bare number as an ID (`5` is `minecraft:5`), so Kore writes a constant as `{type:"minecraft:constant",value:5}`. The result is multiplied by
+`scale` (`1.0` by default) and rounded toward negative infinity. `computeInteger` is the integer mode: it rounds to the nearest
+integer instead (`2.5` gives `3`) and takes no `scale`.
+
+```kotlin
+function("compute_examples") {
+	val bonus = NumberProviderArgument("bonus", "my_pack")
+
+	compute(bonus)
+	compute(vec3(0, 64, 0), bonus, scale = 2f)
+	compute(self()) { scoreNumber("kills", EntityTarget.TARGET_ENTITY) }
+	compute(5f, 3f)
+	computeInteger(self(), bonus)
+}
+```
+
+Generated output:
+
+```mcfunction
+compute default my_pack:bonus
+compute block 0 64 0 my_pack:bonus 2
+compute entity @s {type:"minecraft:score",target:{type:"minecraft:context",target:"target_entity"},score:"kills"}
+compute default {type:"minecraft:constant",value:5} 3
+compute entity @s my_pack:bonus integer
+```
+
+The same providers are also a source of [`data modify`](#data-modify).
+
 ### Swing Command
 
 The `swing` command plays the arm-swing animation of entities. An animation (`whack` by default, or `stab`) needs an explicit hand,
@@ -909,6 +944,30 @@ data modify entity @s foo insert 0 string entity @s name 0 4
 data modify entity @s foo merge string entity @s name -5
 data modify entity @s foo prepend string entity @s name 0 2
 data modify entity @s foo set string entity @s name 0 3
+```
+
+A number provider can also be the source of every operation, through a `ComputeSource`: it takes the same target (none, a position or an
+entity) and provider as the [`compute`](#compute-command) command, stores an int or a float tag, and has no scale. `integer = true`
+forces the integer mode.
+
+```kotlin
+function("data_modify_compute") {
+	val bonus = NumberProviderArgument("bonus", "my_pack")
+
+	data(storage("foo")) {
+		modify("bar", ComputeSource(bonus))
+		modify("bar") { append(ComputeSource(vec3(1, 2, 3), bonus, integer = true)) }
+		set("baz", ComputeSource(self()) { scoreNumber("kills", EntityTarget.TARGET_ENTITY) })
+	}
+}
+```
+
+Generated output:
+
+```mcfunction
+data modify storage minecraft:foo bar set compute default my_pack:bonus
+data modify storage minecraft:foo bar append compute block 1 2 3 my_pack:bonus integer
+data modify storage minecraft:foo baz set compute entity @s {type:"minecraft:score",target:{type:"minecraft:context",target:"target_entity"},score:"kills"}
 ```
 
 #### Data Remove

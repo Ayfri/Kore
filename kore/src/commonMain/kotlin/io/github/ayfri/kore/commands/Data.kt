@@ -25,6 +25,8 @@ import net.benwoodworth.knbt.NbtTag
  * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/data)
  */
 object DataModifyOperation {
+	fun append(compute: ComputeSource) = listOf(literal("append")) + compute.arguments()
+
 	fun append(from: DataArgument, path: String) =
 		listOf(literal("append"), literal("from"), literal(from.literalName), from, literal(path))
 
@@ -46,6 +48,8 @@ object DataModifyOperation {
 	fun append(value: Boolean) = listOf(literal("append"), literal("value"), bool(value))
 	inline fun <reified T : Any> append(value: @Serializable T) =
 		listOf(literal("append"), literal("value"), literal(encodeToSnbt(value)))
+
+	fun insert(index: Int, compute: ComputeSource) = listOf(literal("insert"), int(index)) + compute.arguments()
 
 	fun insert(index: Int, from: DataArgument, path: String) =
 		listOf(literal("insert"), int(index), literal("from"), literal(from.literalName), from, literal(path))
@@ -72,6 +76,8 @@ object DataModifyOperation {
 	inline fun <reified T : Any> insert(index: Int, value: @Serializable T) =
 		listOf(literal("insert"), int(index), literal("value"), literal(encodeToSnbt(value)))
 
+	fun merge(compute: ComputeSource) = listOf(literal("merge")) + compute.arguments()
+
 	fun merge(from: DataArgument, path: String) =
 		listOf(literal("merge"), literal("from"), literal(from.literalName), from, literal(path))
 
@@ -94,6 +100,8 @@ object DataModifyOperation {
 	inline fun <reified T : Any> merge(value: @Serializable T) =
 		listOf(literal("merge"), literal("value"), literal(encodeToSnbt(value)))
 
+	fun prepend(compute: ComputeSource) = listOf(literal("prepend")) + compute.arguments()
+
 	fun prepend(from: DataArgument, path: String) =
 		listOf(literal("prepend"), literal("from"), literal(from.literalName), from, literal(path))
 
@@ -115,6 +123,8 @@ object DataModifyOperation {
 	fun prepend(value: Boolean) = listOf(literal("prepend"), literal("value"), bool(value))
 	inline fun <reified T : Any> prepend(value: @Serializable T) =
 		listOf(literal("prepend"), literal("value"), literal(encodeToSnbt(value)))
+
+	fun set(compute: ComputeSource) = listOf(literal("set")) + compute.arguments()
 
 	operator fun set(from: DataArgument, path: String) =
 		listOf(literal("set"), literal("from"), literal(from.literalName), from, literal(path))
@@ -189,6 +199,8 @@ class Data(val fn: Function, val target: DataArgument) {
 
 	/** Copies the value from [from]/[fromPath] into [path]. */
 	fun modify(path: String, from: DataArgument, fromPath: String) = modify(path) { set(from, fromPath) }
+	/** Writes the result of [compute] into [path]. */
+	fun modify(path: String, compute: ComputeSource) = modify(path) { set(compute) }
 	/** Writes [value] into [path]. */
 	fun modify(path: String, value: NbtTag) = modify(path) { set(value) }
 	/** Writes [value] into [path]. */
@@ -205,6 +217,8 @@ class Data(val fn: Function, val target: DataArgument) {
 	/** Removes the value stored at [path]. */
 	fun remove(path: String) = fn.addLine(command("data", literal("remove"), literal(target.literalName), target, literal(path)))
 
+	/** Writes the result of [compute] into [path]. */
+	operator fun set(path: String, compute: ComputeSource) = modify(path, compute)
 	/** Copies [value] into [path]. */
 	operator fun set(path: String, value: NbtTag) = modify(path) { set(value) }
 	/** Copies [value] into [path]. */
