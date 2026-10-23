@@ -319,7 +319,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("exploration_map_cartographer") {
 		explorationMap(
-			Tags.Worldgen.Structure.ON_OCEAN_EXPLORER_MAPS,
+			Tags.Worldgen.Structure.ON_OCEAN_MONUMENT_MAPS,
 			decoration = MapDecorationTypes.MONUMENT,
 			searchRadius = 100,
 		)
@@ -329,7 +329,7 @@ fun DataPack.itemModifierTests() {
 		{
 			"type": "minecraft:exploration_map",
 			"decoration": "minecraft:monument",
-			"destination": "#minecraft:on_ocean_explorer_maps",
+			"destination": "#minecraft:on_ocean_monument_maps",
 			"search_radius": 100
 		}
 	""".trimIndent()
