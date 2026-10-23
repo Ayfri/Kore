@@ -18,6 +18,7 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 			argumentClassName = "Atlas"
 		},
 		gen("BannerPatterns", "banner_pattern"),
+		gen("BlockTransformers", "block_transformer"),
 		gen("CatSoundVariants", "cat_sound_variant"),
 		gen("CatVariants", "cat_variant"),
 		gen("ChatTypes", "chat_type"),

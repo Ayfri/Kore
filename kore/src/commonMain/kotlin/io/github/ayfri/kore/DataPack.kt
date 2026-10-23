@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.chatcomponents.textComponent
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.features.advancements.Advancement
 import io.github.ayfri.kore.features.bannerpatterns.BannerPattern
+import io.github.ayfri.kore.features.blocktransformers.BlockTransformerFile
 import io.github.ayfri.kore.features.catsoundvariants.CatSoundVariant
 import io.github.ayfri.kore.features.catvariants.CatVariant
 import io.github.ayfri.kore.features.chattypes.ChatType
@@ -95,6 +96,7 @@ class DataPack(val name: String) {
 	val advancements = registerGenerator<Advancement>()
 	val bannerPatterns = registerGenerator<BannerPattern>()
 	val biomes = registerGenerator<Biome>()
+	val blockTransformers = registerGenerator<BlockTransformerFile>()
 	val carvers = registerGenerator<Carver>()
 	val catSoundVariants = registerGenerator<CatSoundVariant>()
 	val catVariants = registerGenerator<CatVariant>()

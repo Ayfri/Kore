@@ -5,7 +5,7 @@ nav-title: Components
 description: A guide for using components in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, components
 date-created: 2024-01-08
-date-modified: 2026-10-22
+date-modified: 2026-10-23
 routeOverride: /docs/concepts/components
 ---
 
@@ -116,42 +116,31 @@ val blockEntityDataTest = Items.BEE_NEST {
 ### Block Transformer
 
 `blockTransformer` turns the block the item is used on into another one, like axes stripping logs or honeycombs waxing copper.
-Each `rule` takes a [block state provider](/docs/data-driven/worldgen/features#block-state-providers) picking the new state, usually a
-`ruleBasedStateProvider` checking the clicked block. Rules are tried in order until one gives a state, 1 to 200 of them are allowed.
+It takes the ID of a [block transformer file](/docs/data-driven/block-transformers), either a vanilla one (`axe`, `hoe`, `shovel`) or one of
+your own. Inline rule lists aren't possible because the game only reads this component from a file.
 
 ```kotlin
-import io.github.ayfri.kore.features.worldgen.blockpredicate.matchingBlocks
-import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
-import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.*
-import io.github.ayfri.kore.generated.*
+val strip = blockTransformer("strip_oak") {
+	rule(ruleBasedStateProvider {
+		rule(copyPropertiesProvider(simpleStateProvider(Blocks.STRIPPED_OAK_LOG, mapOf("axis" to "y")))) {
+			matchingBlocks(Blocks.OAK_LOG)
+		}
+	}) {
+		sound = SoundEvents.Item.Axe.STRIP
+	}
+}
 
 val axe = Items.IRON_AXE {
-	blockTransformer {
-		rule(ruleBasedStateProvider {
-			rule(copyPropertiesProvider(simpleStateProvider(Blocks.STRIPPED_OAK_LOG, mapOf("axis" to "y")))) {
-				matchingBlocks(Blocks.OAK_LOG)
-			}
-		}) {
-			sound = SoundEvents.Item.Axe.STRIP
-		}
-		rule(simpleStateProvider(Blocks.DIRT_PATH)) {
-			disallowedFaces = listOf(Direction.DOWN)
-		}
-	}
+	blockTransformer(strip)
+}
+
+val vanillaAxe = Items.IRON_AXE {
+	blockTransformer(BlockTransformers.AXE)
 }
 ```
 
-Options of a rule:
-
-- `consumeOnUse`: whether the item is consumed on use, for stackable items only (default `true`).
-- `disallowedFaces`: the clicked faces the rule ignores, the next rule is tried instead (default none, so every face works).
-- `dropStrategy`: `CLICKED_FACE` or `FROM_MIDDLE`, where `loot` drops (default `FROM_MIDDLE`).
-- `itemDamagePerUse`: the durability lost per use, for unstackable items only (default `1`).
-- `loot`: the loot table dropped on success (default nothing).
-- `particle`: `NONE`, `SCRAPE`, `WAX_OFF` or `WAX_ON`, spawned on success (default `NONE`).
-- `sound`: the sound played on success (default none).
-- `transformType`: `SINGLE_BLOCK` or `COPPER_CHEST`, which also transforms the other half of a double copper chest (default `SINGLE_BLOCK`).
-- `updateFromNeighbors`: whether the transformed block updates its shape from its neighbors (default `true`).
+The rules, their options (`sound`, `loot`, `itemDamagePerUse`, ...) and their defaults are described on the
+[Block Transformers](/docs/data-driven/block-transformers) page.
 
 ### Compostable
 
@@ -376,7 +365,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `blockEntityData(..)`                | Attaches custom NBT data to a block entity when the item is placed.                                      |
 | `blocksAttacks(..)`                  | Configures how the item blocks incoming attacks when used (like a shield).                               |
 | `blockState(..)`                     | Sets block state properties (e.g., facing, powered) when the item is placed.                             |
-| `blockTransformer { .. }`            | Turns the block the item is used on into another one (strip logs, scrape or wax copper, till dirt).      |
+| `blockTransformer(..)`               | Turns the block the item is used on into another one (strip logs, scrape or wax copper, till dirt).      |
 | `breakSound(..)`                     | Specifies the sound played when the item breaks from durability loss.                                    |
 | `brewingFuel(..)`                    | Makes the item a brewing stand fuel, with a speed and a number of brews, as numbers or provider files.   |
 | `bucketEntityData(..)`               | Stores entity data for mobs captured in buckets (e.g., fish, axolotl).                                   |
