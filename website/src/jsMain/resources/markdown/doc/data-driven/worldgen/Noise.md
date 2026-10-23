@@ -447,20 +447,20 @@ function, which is overloaded for both a `Double` and a `DensityFunctionArgument
 noiseRouter {
 	continents(DensityFunctions.Overworld.CONTINENTS)
 	finalDensity(myTerrainDensity)
-	preliminarySurfaceLevel(63.0)
+	chunkSurfaceLevel(63.0)
 }
 ```
 
-| Field                     | Role                                                            |
-|---------------------------|-----------------------------------------------------------------|
-| `continents`              | Continentalness climate parameter, ocean vs inland              |
-| `depth`                   | Depth climate parameter, distance below the surface             |
-| `erosion`                 | Erosion climate parameter, flat vs mountainous                  |
-| `finalDensity`            | Final solid/air decision for every position                     |
-| `preliminarySurfaceLevel` | Estimated surface height, used by material rules and structures |
-| `ridges`                  | Weirdness climate parameter, driving ridged terrain             |
-| `temperature`             | Temperature climate parameter for biome placement               |
-| `vegetation`              | Humidity climate parameter for biome placement                  |
+| Field                | Role                                                       |
+|----------------------|------------------------------------------------------------|
+| `chunkSurfaceLevel`  | Estimated surface height of the chunk, used by generation  |
+| `continents`         | Continentalness climate parameter, ocean vs inland         |
+| `depth`              | Depth climate parameter, distance below the surface        |
+| `erosion`            | Erosion climate parameter, flat vs mountainous             |
+| `finalDensity`       | Final solid/air decision for every position                |
+| `ridges`             | Weirdness climate parameter, driving ridged terrain        |
+| `temperature`        | Temperature climate parameter for biome placement          |
+| `vegetation`         | Humidity climate parameter for biome placement             |
 
 Unset fields serialize as `0.0`, which means flat, featureless terrain - so a hand-written router usually starts from the vanilla density
 functions in the generated `DensityFunctions` object.

@@ -61,11 +61,11 @@ fun DataPack.noiseSettingsTests() {
 		noiseOptions(-64, 384, 1, 2)
 
 		noiseRouter {
+			chunkSurfaceLevel(4.5)
 			continents(DensityFunctions.Overworld.CONTINENTS)
 			depth(DensityFunctions.Overworld.DEPTH)
 			erosion(DensityFunctions.Overworld.EROSION)
 			finalDensity(DensityFunctions.Overworld.SLOPED_CHEESE)
-			preliminarySurfaceLevel(4.5)
 			ridges(DensityFunctions.Overworld.RIDGES)
 			temperature(DensityFunctions.Overworld.BASE_3D_NOISE)
 			vegetation(3.5)
@@ -312,11 +312,11 @@ fun DataPack.noiseSettingsTests() {
 				"size_vertical": 2
 			},
 			"noise_router": {
+				"chunk_surface_level": 4.5,
 				"continents": "minecraft:overworld/continents",
 				"depth": "minecraft:overworld/depth",
 				"erosion": "minecraft:overworld/erosion",
 				"final_density": "minecraft:overworld/sloped_cheese",
-				"preliminary_surface_level": 4.5,
 				"ridges": "minecraft:overworld/ridges",
 				"temperature": "minecraft:overworld/base_3d_noise",
 				"vegetation": 3.5
