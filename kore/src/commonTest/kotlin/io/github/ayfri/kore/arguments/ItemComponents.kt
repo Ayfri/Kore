@@ -242,6 +242,15 @@ fun itemComponentsTests() {
 	}
 	consumableTest.asString() assertsIs """minecraft:potion[consumable={consume_seconds:1.5f,animation:"drink",sound:"minecraft:item.bottle.empty",has_consume_particles:1b,on_consume_effects:{"minecraft:apply_effects":{effects:[{id:"minecraft:poison",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b}],probability:1.0f},"minecraft:teleport_randomly":{diameter:2.5f},"minecraft:play_sound":{sound:"minecraft:entity.cow.step"}}}]"""
 
+	val teleportRandomlyTest = Items.POTION {
+		consumable(consumeSeconds = 1.5f, animation = ConsumeAnimation.DRINK, sound = SoundEvents.Item.Bottle.EMPTY) {
+			onConsumeEffects {
+				teleportRandomly(diameter = 8f, directionalParticles = false)
+			}
+		}
+	}
+	teleportRandomlyTest.asString() assertsIs """minecraft:potion[consumable={consume_seconds:1.5f,animation:"drink",sound:"minecraft:item.bottle.empty",has_consume_particles:1b,on_consume_effects:{"minecraft:teleport_randomly":{diameter:8.0f,directional_particles:0b}}}]"""
+
 	val containerTest = stone {
 		container {
 			slot(0, itemStack(Items.DIAMOND))

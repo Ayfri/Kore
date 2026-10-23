@@ -320,6 +320,17 @@ recipes {
 }
 ```
 
+`onConsumeEffects` also takes `teleportRandomly(diameter, directionalParticles)`, where `directionalParticles` (`true` when omitted)
+sets whether the teleport particles follow the direction of the move:
+
+```kotlin
+consumable(consumeSeconds = 1.6f, animation = ConsumeAnimation.EAT, sound = SoundEvents.Entity.Generic.EAT) {
+	onConsumeEffects {
+		teleportRandomly(diameter = 8f, directionalParticles = false)
+	}
+}
+```
+
 ## Example Usage
 
 To give yourself an item with custom components using the
