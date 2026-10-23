@@ -2,6 +2,7 @@ package io.github.ayfri.kore.features.worldgen
 
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
+import io.github.ayfri.kore.assertions.assertsThrows
 import io.github.ayfri.kore.data.block.blockState
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.blockpredicate.hasSturdyFace
@@ -13,10 +14,13 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeatur
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.SimpleBlock
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.simpleBlock
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
+import io.github.ayfri.kore.generated.BlockStateProviders
 import io.github.ayfri.kore.generated.Blocks
 import io.github.ayfri.kore.generated.Tags
+import io.github.ayfri.kore.utils.decodeFromSnbt
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.types.shouldBeInstanceOf
 
 private fun DataPack.assertProvider(name: String, expected: String, block: SimpleBlock.() -> BlockStateProvider) {
 	configuredFeaturesBuilder.simpleBlock(name) { toPlace = block() }
@@ -447,11 +451,112 @@ fun DataPack.blockStateProviderTests() {
 	}
 }
 
+fun DataPack.blockStateProviderFileTests() {
+	assertProvider("reference", "\"minecraft:soil_beneath_tree\"") { reference(BlockStateProviders.SOIL_BENEATH_TREE) }
+
+	assertProvider(
+		"reference_in_rule", """
+			{
+				"type": "minecraft:rule_based",
+				"rules": [
+					{
+						"if_true": {
+							"type": "minecraft:solid"
+						},
+						"then": "minecraft:podzol_beneath_tree"
+					}
+				]
+			}
+		""".trimIndent()
+	) {
+		ruleBasedStateProvider {
+			rule(reference(BlockStateProviders.PODZOL_BENEATH_TREE)) { solid() }
+		}
+	}
+
+	val dirtOrGrass = blockStateProvider("dirt_or_grass") {
+		weightedStateProvider {
+			entry(Blocks.DIRT, weight = 3)
+			entry(Blocks.GRASS_BLOCK)
+		}
+	}
+
+	dirtOrGrass.asId() assertsIs "blockStateProvider:dirt_or_grass"
+
+	blockStateProviders.last() assertsIs """
+		{
+			"type": "minecraft:weighted",
+			"entries": [
+				{
+					"weight": 3,
+					"data": {
+						"type": "minecraft:simple",
+						"state": "minecraft:dirt"
+					}
+				},
+				{
+					"weight": 1,
+					"data": {
+						"type": "minecraft:simple",
+						"state": "minecraft:grass_block"
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	assertProvider("reference_to_file", "\"blockStateProvider:dirt_or_grass\"") { reference(dirtOrGrass) }
+
+	blockStateProvider("reference_file") { reference(BlockStateProviders.SOIL_BENEATH_TREE) }
+
+	assertsThrows("Block state provider file 'reference_file' must hold an inline provider, not a reference.") {
+		blockStateProviders.last().generateJson(this)
+	}
+
+	val frostedIce = """
+		{
+			"type": "minecraft:simple",
+			"state": {
+				"id": "minecraft:frosted_ice",
+				"properties": {
+					"age": "0"
+				}
+			}
+		}
+	""".trimIndent()
+
+	val fromState = jsonEncoder.decodeFromString(
+		BlockStateProvider.serializer(),
+		"""{"id":"minecraft:frosted_ice","properties":{"age":"0"}}"""
+	)
+	fromState.shouldBeInstanceOf<SimpleBlockStateProvider>()
+	jsonEncoder.encodeToString(BlockStateProvider.serializer(), fromState) assertsIs frostedIce
+	jsonEncoder.encodeToString(
+		BlockStateProvider.serializer(),
+		decodeFromSnbt<BlockStateProvider>("""{id:"minecraft:frosted_ice",properties:{age:"0"}}""")
+	) assertsIs frostedIce
+	jsonEncoder.encodeToString(
+		BlockStateProvider.serializer(),
+		jsonEncoder.decodeFromString(BlockStateProvider.serializer(), frostedIce)
+	) assertsIs frostedIce
+
+	jsonEncoder.decodeFromString(BlockStateProvider.serializer(), "\"my_pack:soil\"")
+		.shouldBeInstanceOf<BlockStateProviderReference>().id.asString() assertsIs "my_pack:soil"
+	jsonEncoder.encodeToString(BlockStateProvider.serializer(), BlockStateProviderReference(BlockStateProviders.FLOWER_PLAIN)) assertsIs "\"minecraft:flower_plain\""
+}
+
 class BlockStateProviderTests : FunSpec({
 	test("block state provider") {
 		dataPack("blockStateProvider") {
 			pretty()
 			blockStateProviderTests()
+		}
+	}
+
+	test("block state provider files and references") {
+		dataPack("blockStateProvider") {
+			pretty()
+			blockStateProviderFileTests()
 		}
 	}
 })

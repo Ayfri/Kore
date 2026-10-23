@@ -585,6 +585,38 @@ ruleBasedStateProvider {
 Both predicate blocks run on a block predicate scope: a single predicate is used as-is, several are wrapped in an `all_of`. See
 [Block Predicates](/docs/data-driven/worldgen/block-predicates) for the full list.
 
+### Block State Provider Files
+
+`blockStateProvider` writes a provider to `data/<namespace>/worldgen/block_state_provider/<name>.json` and returns its `BlockStateProviderArgument`.
+`reference(id)` then puts that ID wherever a provider is expected, written as the bare ID. A file holds an inline provider, never a
+reference.
+
+```kotlin
+val dirtOrGrass = blockStateProvider("dirt_or_grass") {
+	weightedStateProvider {
+		entry(Blocks.DIRT, weight = 3)
+		entry(Blocks.GRASS_BLOCK)
+	}
+}
+
+simpleBlock("patch") {
+	toPlace = reference(dirtOrGrass)
+}
+```
+
+The game ships eight providers under the `BlockStateProviders` enum, such as `BlockStateProviders.SOIL_BENEATH_TREE` for the `below_trunk_provider`
+of a tree: `CAVE_VINES_BODY`, `CAVE_VINES_HEAD`, `FLOWER_FLOWER_FOREST`, `FLOWER_MEADOW`, `FLOWER_PLAIN`, `MANGROVE_PROPAGULE`,
+`PODZOL_BENEATH_TREE` and `SOIL_BENEATH_TREE`.
+
+```kotlin
+tree("oak") {
+	belowTrunkProvider = reference(BlockStateProviders.SOIL_BENEATH_TREE)
+}
+```
+
+Kore writes every provider as a typed object. When reading a pack, a bare ID is a reference and an object with an `id` and no `type`, a full
+block state like `{ "id": "minecraft:frosted_ice", "properties": { "age": "0" } }`, is a `simple` provider.
+
 ---
 
 ## Placed Features

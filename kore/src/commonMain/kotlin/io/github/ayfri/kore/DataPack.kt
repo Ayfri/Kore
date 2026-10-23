@@ -47,6 +47,7 @@ import io.github.ayfri.kore.features.worldclock.WorldClock
 import io.github.ayfri.kore.features.worldgen.biome.Biome
 import io.github.ayfri.kore.features.worldgen.carver.Carver
 import io.github.ayfri.kore.features.worldgen.configuredfeature.ConfiguredFeature
+import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderFile
 import io.github.ayfri.kore.features.worldgen.densityfunction.DensityFunction
 import io.github.ayfri.kore.features.worldgen.dimension.Dimension
 import io.github.ayfri.kore.features.worldgen.dimensiontype.DimensionType
@@ -97,6 +98,7 @@ class DataPack(val name: String) {
 	val advancements = registerGenerator<Advancement>()
 	val bannerPatterns = registerGenerator<BannerPattern>()
 	val biomes = registerGenerator<Biome>()
+	val blockStateProviders = registerGenerator<BlockStateProviderFile>()
 	val blockTransformers = registerGenerator<BlockTransformerFile>()
 	val carvers = registerGenerator<Carver>()
 	val catSoundVariants = registerGenerator<CatSoundVariant>()

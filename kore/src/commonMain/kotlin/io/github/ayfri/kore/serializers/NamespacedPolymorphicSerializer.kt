@@ -45,6 +45,10 @@ import net.benwoodworth.knbt.*
  * Decoding reads it from that bare value or from `{ "type": "<it>", "value": <bare value> }`. An object without
  * [outputName] is decoded as that subtype only, so it fails when it belongs to another one.
  *
+ * [untypedObjectAs] is a content name and a property: an object without [outputName] is decoded as that subtype, the whole
+ * object becoming the value of that property (`"simple" to "state"` reads `{ "id": "minecraft:stone" }` as
+ * `{ "type": "minecraft:simple", "state": { "id": "minecraft:stone" } }`). Serializing is unchanged.
+ *
  * [decodeUntyped] lets an object without [outputName] be decoded by trying every subtype, for a family whose subtypes
  * are written without it, like the vertical anchors `{ "absolute": 64 }`. Each subtype needs a required field the others
  * lack, otherwise a subtype whose fields all have defaults accepts any object.
@@ -60,6 +64,7 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 	private val subtypeOf: ((typeName: String) -> String)? = null,
 	private val inlinedSubtype: String? = null,
 	private val decodeUntyped: Boolean = false,
+	private val untypedObjectAs: Pair<String, String>? = null,
 ) : KSerializer<T> {
 	override val descriptor = serialDescriptor<JsonElement>()
 
@@ -123,6 +128,11 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 			is JsonObject -> when (val typeName = element[outputName]?.jsonPrimitive?.content) {
 				null -> when {
 					inlinedSubtype != null -> decoder.json.decodeFromJsonElement(generatedDeserializer(inlinedSubtype), element)
+					untypedObjectAs != null -> decoder.json.decodeFromJsonElement(
+						generatedDeserializer(untypedObjectAs.first),
+						JsonObject(mapOf(untypedObjectAs.second to element)),
+					)
+
 					decodeUntyped -> decodeBare(element) { decoder.json.decodeFromJsonElement(it, element) }
 					else -> error("Missing '$outputName' field in JSON object for $baseName")
 				}
@@ -138,6 +148,11 @@ open class NamespacedPolymorphicSerializer<T : Any>(
 			is NbtCompound -> when (val typeName = (tag[outputName] as? NbtString)?.value) {
 				null -> when {
 					inlinedSubtype != null -> decodeFromNbtTag(generatedDeserializer(inlinedSubtype), tag)
+					untypedObjectAs != null -> decodeFromNbtTag(
+						generatedDeserializer(untypedObjectAs.first),
+						NbtCompound(mapOf(untypedObjectAs.second to tag)),
+					)
+
 					decodeUntyped -> decodeBare(tag) { decodeFromNbtTag(it, tag) }
 					else -> error("Missing '$outputName' field in NBT compound for $baseName")
 				}

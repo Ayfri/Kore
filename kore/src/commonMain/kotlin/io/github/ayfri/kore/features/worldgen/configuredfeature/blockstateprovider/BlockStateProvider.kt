@@ -11,6 +11,9 @@ import kotlinx.serialization.Serializable
  * Every builder is an extension on [BlockStateProviderScope], so they only resolve inside a block that actually
  * accepts a block state provider, such as `simpleBlock("...") { }` or `weightedStateProvider { }`.
  *
+ * The game also takes a block state provider as a bare ID, read as a [BlockStateProviderReference], and as a block state
+ * object (`{ "id": ..., "properties": ... }`), read as a [SimpleBlockStateProvider].
+ *
  * Minecraft Wiki: https://minecraft.wiki/w/Block_state_provider
  */
 @GeneratedSealedSerializer
@@ -18,6 +21,10 @@ import kotlinx.serialization.Serializable
 sealed class BlockStateProvider {
 	companion object {
 		data object BlockStateProviderSerializer :
-			NamespacedPolymorphicSerializer<BlockStateProvider>(blockStateProviderSealedSerializer(), suffix = "BlockStateProvider")
+			NamespacedPolymorphicSerializer<BlockStateProvider>(
+				blockStateProviderSealedSerializer(),
+				suffix = "BlockStateProvider",
+				untypedObjectAs = "simple" to "state",
+			)
 	}
 }
