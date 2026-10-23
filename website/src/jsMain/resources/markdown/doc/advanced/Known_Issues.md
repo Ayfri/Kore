@@ -5,7 +5,7 @@ nav-title: Known Issues
 description: Kore-focused limitations, documented DSL constraints, and generation rough edges with links to docs and source.
 keywords: kore, guide, documentation, known issues, compatibility, limitations, workarounds
 date-created: 2025-08-27
-date-modified: 2026-10-21
+date-modified: 2026-10-23
 routeOverride: /docs/advanced/known-issues
 ---
 
@@ -116,16 +116,6 @@ Kore’s JSON `namingStrategy` for that shape. The guide shows this in context (
 with `durability_damages`).
 
 **Workaround:** Copy patterns from [Components](/docs/concepts/components) and match the keys your target **pack format** expects (use Minecraft’s registry JSON or Kore’s generators as reference, not guesswork).
-
-### `set_loot_table` item function
-
-**Category:** Kore limitation
-
-`set_loot_table` isn't usable in 26.3-snapshot-4 because its block entity `type` field collides with the item function's
-`type` key. Kore writes only `"type": "minecraft:set_loot_table"`, and the game can't decode the function either. Later
-snapshots drop `type` and rename `tag` to `loot_table_id`. See [Item Modifiers](/docs/data-driven/item-modifiers).
-
-**Workaround:** Set the `container_loot` [item component](/docs/concepts/components) with `containerLoot(...)` instead.
 
 ---
 

@@ -5,7 +5,7 @@ nav-title: Item Modifiers
 description: Transform item stacks using Kore's type-safe DSL for loot functions - set counts, add enchantments, copy data, and more.
 keywords: minecraft, datapack, kore, item modifiers, loot functions, /item modify, components
 date-created: 2025-08-11
-date-modified: 2026-10-22
+date-modified: 2026-10-23
 routeOverride: /docs/data-driven/item-modifiers
 ---
 
@@ -449,11 +449,11 @@ Set a container's loot table:
 
 ```kotlin
 itemModifier("chest_loot") {
-	setLootTable(BlockEntityTypes.CHEST, LootTables.Chests.SIMPLE_DUNGEON, seed = 42)
+	setLootTable(LootTables.Chests.SIMPLE_DUNGEON, seed = 42)
 }
 ```
 
-`set_loot_table` isn't usable in 26.3-snapshot-4: the block entity `type` collides with the function's `type` key, so Kore writes `"type": "minecraft:set_loot_table"` without the block entity. See [Known Issues](/docs/advanced/known-issues). The `containerLoot` item component sets the same loot table.
+The `containerLoot` item component sets the same loot table.
 
 #### modifyContents
 

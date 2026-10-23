@@ -1081,14 +1081,14 @@ fun DataPack.itemModifierTests() {
 	""".trimIndent()
 
 	itemModifier("set_loot_table") {
-		setLootTable(BlockEntityTypes.CHEST, LootTables.Chests.SIMPLE_DUNGEON, seed = 42)
+		setLootTable(LootTables.Chests.SIMPLE_DUNGEON, seed = 42)
 	}
 
 	itemModifiers.last() assertsIs """
 		{
 			"type": "minecraft:set_loot_table",
-			"seed": 42,
-			"tag": "minecraft:chests/simple_dungeon"
+			"loot_table_id": "minecraft:chests/simple_dungeon",
+			"seed": 42
 		}
 	""".trimIndent()
 
