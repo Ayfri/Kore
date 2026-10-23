@@ -46,7 +46,7 @@ For the full JSON specification see:
 ### Creating a Trade
 
 Use `villagerTrade` on your `DataPack`. Call `wants` and `gives` inside the block to set the required
-items - both accept an `ItemArgument`, an optional fixed `count`, and an optional component builder.
+items - both accept an `ItemArgument`, an optional `count`, and an optional component builder.
 
 ```kotlin
 datapack.villagerTrade("wheat_for_emerald") {
@@ -60,7 +60,7 @@ datapack.villagerTrade("wheat_for_emerald") {
 ### Item Slots
 
 `wants`, `gives`, and `additionalWants` all follow the same shape: an item id, an optional stack size,
-and an optional block to set data components on the item.
+and an optional block to set data components on the item. `gives` is an item stack with a fixed `count`:
 
 ```kotlin
 datapack.villagerTrade("enchanted_sword") {
@@ -87,6 +87,43 @@ datapack.villagerTrade("book_trade") {
 }
 ```
 
+### Trade Costs
+
+`wants` and `additionalWants` are trade costs (`TradeCost`), written as `{ "id": ..., "count": ..., "components": ... }`:
+
+| Field        | Type                  | Description                                                                              |
+|--------------|-----------------------|------------------------------------------------------------------------------------------|
+| `components` | `Components?`         | Components the traded item must match exactly, any item of that type matches when unset. |
+| `count`      | `ContextIntProvider?` | Number of items requested, `1` when unset. Rolled each time the trade is offered.        |
+| `id`         | `ItemArgument`        | Item requested.                                                                          |
+
+`count` takes a fixed number or an [int provider](/docs/data-driven/loot-tables#context-providers), including the ID of a
+[context provider file](/docs/data-driven/loot-tables#context-provider-files) through `reference(...)`:
+
+```kotlin
+datapack.villagerTrade("wheat_for_emerald") {
+    wants(Items.WHEAT, count = 20)  // "wants": {"count": 20, "id": "minecraft:wheat"}
+    gives(Items.EMERALD)
+}
+
+datapack.villagerTrade("variable_price") {
+    wants(Items.WHEAT, uniform(16, 24))  // "count": {"type": "minecraft:uniform", "max": 24, "min": 16}
+    additionalWants(Items.PAPER, reference(contextIntProvider("paper_cost", 2)))  // "count": "my_pack:paper_cost"
+    gives(Items.EMERALD)
+}
+```
+
+The component block restricts the cost to items carrying exactly those component values, here an undamaged sword:
+
+```kotlin
+datapack.villagerTrade("sword_for_emeralds") {
+    wants(Items.DIAMOND_SWORD) {
+        damage(0)  // "components": {"damage": 0}
+    }
+    gives(Items.EMERALD, count = 8)
+}
+```
+
 {{{ .components.mc.VillagerTradesMockup }}}
 
 ### VillagerTrade Fields
@@ -95,14 +132,14 @@ All fields are optional except `wants` and `gives`, which must be set before the
 
 | Field                          | Type                                       | Description                                                                       |
 |--------------------------------|--------------------------------------------|-----------------------------------------------------------------------------------|
-| `additionalWants`              | `ItemStack?`                               | Second item slot the villager requests alongside `wants`.                         |
+| `additionalWants`              | `TradeCost?`                               | Second item the villager requests alongside `wants`.                              |
 | `doubleTradePriceEnchantments` | `InlinableList<EnchantmentOrTagArgument>?` | Enchantments on the player's item that double the trade cost.                     |
 | `givenItemModifier`            | `InlinableItemModifier?`                   | Item modifier applied to the output item before delivery.                         |
 | `gives`                        | `ItemStack?`                               | Item the villager offers in return. **Required.**                                 |
 | `maxUses`                      | `ContextIntProvider?`                      | Maximum uses before the trade locks. Unlocks when the villager restocks.          |
 | `merchantPredicate`            | `PredicateCondition?`                      | Condition checked against the merchant entity; trade only appears when it passes. |
 | `reputationDiscount`           | `ContextFloatProvider?`                    | Price multiplier applied based on the player's village reputation.                |
-| `wants`                        | `ItemStack?`                               | Primary item the villager requests. **Required.**                                 |
+| `wants`                        | `TradeCost`                                | Primary item the villager requests. **Required.**                                 |
 | `xp`                           | `ContextIntProvider?`                      | XP points awarded to the villager when the trade completes.                       |
 
 `maxUses` and `xp` take [int providers](/docs/data-driven/loot-tables#context-providers) (`constant(12)`, `uniform(1, 5)`),

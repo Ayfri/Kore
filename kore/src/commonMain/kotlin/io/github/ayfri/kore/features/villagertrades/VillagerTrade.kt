@@ -12,6 +12,7 @@ import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
+import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.VillagerTradeArgument
@@ -32,14 +33,14 @@ import kotlinx.serialization.Transient
 data class VillagerTrade(
 	@Transient
 	override var fileName: String = "villager_trade",
-	var additionalWants: ItemStack? = null,
+	var additionalWants: TradeCost? = null,
 	var doubleTradePriceEnchantments: InlinableList<EnchantmentOrTagArgument>? = null,
 	var givenItemModifier: InlinableItemModifier? = null,
 	var gives: ItemStack,
 	var maxUses: ContextIntProvider? = null,
 	var merchantPredicate: PredicateCondition? = null,
 	var reputationDiscount: ContextFloatProvider? = null,
-	var wants: ItemStack,
+	var wants: TradeCost,
 	var xp: ContextIntProvider? = null,
 ) : Generator("villager_trade"), NumberProviderScope {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
@@ -57,7 +58,7 @@ data class VillagerTrade(
 fun DataPack.villagerTrade(
 	fileName: String = "villager_trade",
 	gives: ItemStack = itemStack(Items.AIR),
-	wants: ItemStack = itemStack(Items.AIR),
+	wants: TradeCost = TradeCost(id = Items.AIR),
 	init: VillagerTrade.() -> Unit,
 ): VillagerTradeArgument {
 	val trade = VillagerTrade(fileName = fileName, gives = gives, wants = wants).apply(init)
@@ -65,9 +66,17 @@ fun DataPack.villagerTrade(
 	return VillagerTradeArgument(fileName, trade.namespace ?: name)
 }
 
-/** Set an optional second item the villager requests alongside [wants]. */
-fun VillagerTrade.additionalWants(id: ItemArgument, count: Short? = null, block: Components.() -> Unit = {}) {
-	additionalWants = itemStack(id, count, block)
+private fun tradeCost(id: ItemArgument, count: ContextIntProvider?, block: Components.() -> Unit) =
+	TradeCost(Components().apply(block).takeIf { it.components.isNotEmpty() }, count, id)
+
+/** Set an optional second item the villager requests alongside [VillagerTrade.wants], [count] being a fixed number. */
+fun VillagerTrade.additionalWants(id: ItemArgument, count: Int? = null, block: Components.() -> Unit = {}) {
+	additionalWants = tradeCost(id, count?.let { constant(it) }, block)
+}
+
+/** Set an optional second item the villager requests alongside [VillagerTrade.wants], [count] being an int provider. */
+fun VillagerTrade.additionalWants(id: ItemArgument, count: ContextIntProvider, block: Components.() -> Unit = {}) {
+	additionalWants = tradeCost(id, count, block)
 }
 
 /**
@@ -83,7 +92,24 @@ fun VillagerTrade.gives(id: ItemArgument, count: Short? = null, block: Component
 	gives = itemStack(id, count, block)
 }
 
-/** Set the item the villager requests as the primary input. */
-fun VillagerTrade.wants(id: ItemArgument, count: Short? = null, block: Components.() -> Unit = {}) {
-	wants = itemStack(id, count, block)
+/**
+ * Set the item the villager requests as the primary input, [count] being a fixed number.
+ *
+ * ```
+ * wants(Items.WHEAT, count = 20)  // "wants": {"count": 20, "id": "minecraft:wheat"}
+ * ```
+ */
+fun VillagerTrade.wants(id: ItemArgument, count: Int? = null, block: Components.() -> Unit = {}) {
+	wants = tradeCost(id, count?.let { constant(it) }, block)
+}
+
+/**
+ * Set the item the villager requests as the primary input, [count] being an int provider.
+ *
+ * ```
+ * wants(Items.WHEAT, uniform(16, 24))  // "wants": {"count": {"type": "minecraft:uniform", ...}, "id": "minecraft:wheat"}
+ * ```
+ */
+fun VillagerTrade.wants(id: ItemArgument, count: ContextIntProvider, block: Components.() -> Unit = {}) {
+	wants = tradeCost(id, count, block)
 }

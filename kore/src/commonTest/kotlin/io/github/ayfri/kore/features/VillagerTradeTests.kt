@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.features
 
 import io.github.ayfri.kore.DataPack
+import io.github.ayfri.kore.arguments.components.item.damage
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.itemmodifiers.functions.explosionDecay
@@ -8,6 +9,7 @@ import io.github.ayfri.kore.features.itemmodifiers.functions.limitCount
 import io.github.ayfri.kore.features.itemmodifiers.functions.reference
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.providers.reference
+import io.github.ayfri.kore.features.predicates.providers.uniform
 import io.github.ayfri.kore.features.villagertrades.*
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.arguments.types.ContextFloatProviderArgument
@@ -74,8 +76,8 @@ fun DataPack.villagerTradeTests() {
 	villagerTrades.last() assertsIs """
 		{
 			"additional_wants": {
-				"id": "minecraft:paper",
-				"count": 1
+				"count": 1,
+				"id": "minecraft:paper"
 			},
 			"given_item_modifier": {
 				"type": "minecraft:limit_count",
@@ -88,11 +90,64 @@ fun DataPack.villagerTradeTests() {
 			},
 			"max_uses": 3,
 			"wants": {
-				"id": "minecraft:wheat",
-				"count": 10
+				"count": 10,
+				"id": "minecraft:wheat"
 			}
 		}
 	""".trimIndent()
+
+	villagerTrade("trade_with_count_providers") {
+		wants(Items.WHEAT, uniform(16, 24))
+		additionalWants(Items.PAPER, reference(ContextIntProviderArgument("paper", "p")))
+		gives(Items.EMERALD)
+	}
+
+	villagerTrades.last() assertsIs """
+		{
+			"additional_wants": {
+				"count": "p:paper",
+				"id": "minecraft:paper"
+			},
+			"gives": {
+				"id": "minecraft:emerald"
+			},
+			"wants": {
+				"count": {
+					"type": "minecraft:uniform",
+					"max": 24,
+					"min": 16
+				},
+				"id": "minecraft:wheat"
+			}
+		}
+	""".trimIndent()
+	roundTrip(villagerTrades.last())
+
+	villagerTrade("trade_with_component_cost") {
+		wants(Items.DIAMOND_SWORD) {
+			damage(0)
+		}
+		additionalWants(Items.PAPER)
+		gives(Items.EMERALD)
+	}
+
+	villagerTrades.last() assertsIs """
+		{
+			"additional_wants": {
+				"id": "minecraft:paper"
+			},
+			"gives": {
+				"id": "minecraft:emerald"
+			},
+			"wants": {
+				"components": {
+					"damage": 0
+				},
+				"id": "minecraft:diamond_sword"
+			}
+		}
+	""".trimIndent()
+	roundTrip(villagerTrades.last())
 
 	villagerTrade("trade_with_two_modifiers") {
 		wants(Items.EMERALD)
