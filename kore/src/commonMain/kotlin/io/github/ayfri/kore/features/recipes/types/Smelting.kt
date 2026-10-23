@@ -25,7 +25,7 @@ data class Smelting(
 	override var group: String? = null,
 	override var experience: Double? = null,
 	@SerialName("cookingtime")
-	override var cookingTime: Int? = null,
+	override var cookingTime: Int,
 	var showNotification: Boolean? = null,
 ) : Recipe(), CookingRecipe {
 	override val type = RecipeTypes.SMELTING
@@ -35,10 +35,11 @@ data class Smelting(
  * Adds a `smelting` recipe to the data pack.
  *
  * Use [IngredientsRecipe.ingredient] and [ResultedRecipe.result] inside the block to configure the recipe.
+ * [cookingTime] is required, the vanilla smelting recipes use `200` ticks.
  * Produces `data/<namespace>/recipe/<name>.json`.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#smelting
  */
-fun Recipes.smelting(name: String, namespace: String? = null, block: CookingRecipe.() -> Unit) =
-	register(RecipeFile(name, Smelting(result = CraftingResult("")).apply(block)), namespace)
+fun Recipes.smelting(name: String, cookingTime: Int, namespace: String? = null, block: CookingRecipe.() -> Unit) =
+	register(RecipeFile(name, Smelting(result = CraftingResult(""), cookingTime = cookingTime).apply(block)), namespace)

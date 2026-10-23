@@ -25,7 +25,7 @@ data class Smoking(
 	override var group: String? = null,
 	override var experience: Double? = null,
 	@SerialName("cookingtime")
-	override var cookingTime: Int? = null,
+	override var cookingTime: Int,
 	var showNotification: Boolean? = null,
 ) : Recipe(), CookingRecipe {
 	override val type = RecipeTypes.SMOKING
@@ -35,10 +35,11 @@ data class Smoking(
  * Adds a `smoking` recipe to the data pack.
  *
  * Use [IngredientsRecipe.ingredient] and [ResultedRecipe.result] inside the block to configure the recipe.
+ * [cookingTime] is required, the vanilla smoking recipes use `200` ticks.
  * Produces `data/<namespace>/recipe/<name>.json`.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/recipes
  * Minecraft Wiki: https://minecraft.wiki/w/Recipe#smoking
  */
-fun Recipes.smoking(name: String, namespace: String? = null, block: CookingRecipe.() -> Unit) =
-	register(RecipeFile(name, Smoking(result = CraftingResult("")).apply(block)), namespace)
+fun Recipes.smoking(name: String, cookingTime: Int, namespace: String? = null, block: CookingRecipe.() -> Unit) =
+	register(RecipeFile(name, Smoking(result = CraftingResult(""), cookingTime = cookingTime).apply(block)), namespace)

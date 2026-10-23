@@ -26,14 +26,13 @@ import kotlinx.serialization.json.Json
 
 fun DataPack.recipeTest() {
 	recipes {
-		blasting("test_blasting") {
+		blasting("test_blasting", 2000) {
 			ingredient(Tags.Item.STONE_CRAFTING_MATERIALS)
 
 			result(Items.DIAMOND) {
 				damage(4)
 			}
 			experience = 10.0
-			cookingTime = 2000
 		}
 
 		craftingShaped("diamond_drows") {
@@ -151,12 +150,11 @@ private fun DataPack.allRecipeTypesTests() {
 		}
 	""".trimIndent()
 
-	recipesBuilder.smelting("test_smelting") {
+	recipesBuilder.smelting("test_smelting", 200) {
 		category = CookingRecipeCategory.FOOD
 		ingredient(Items.BEEF)
 		result(Items.COOKED_BEEF)
 		experience = 0.35
-		cookingTime = 200
 	}
 	recipes.last() assertsIs """
 		{
@@ -166,6 +164,32 @@ private fun DataPack.allRecipeTypesTests() {
 			"category": "food",
 			"experience": 0.35,
 			"cookingtime": 200
+		}
+	""".trimIndent()
+
+	recipesBuilder.campfireCooking("test_campfire_cooking", 600) {
+		ingredient(Items.BEEF)
+		result(Items.COOKED_BEEF)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:campfire_cooking",
+			"ingredient": "minecraft:beef",
+			"result": "minecraft:cooked_beef",
+			"cookingtime": 600
+		}
+	""".trimIndent()
+
+	recipesBuilder.smoking("test_smoking", 100) {
+		ingredient(Items.BEEF)
+		result(Items.COOKED_BEEF)
+	}
+	recipes.last() assertsIs """
+		{
+			"type": "minecraft:smoking",
+			"ingredient": "minecraft:beef",
+			"result": "minecraft:cooked_beef",
+			"cookingtime": 100
 		}
 	""".trimIndent()
 

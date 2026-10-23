@@ -480,7 +480,7 @@ like `result` does on the other recipes.
 
 ## Cooking Recipes
 
-All cooking recipes share a similar structure:
+All cooking recipes share a similar structure. `cookingTime` is required, so every builder takes it right after the recipe name:
 
 | Property      | Description                                                           |
 |---------------|-----------------------------------------------------------------------|
@@ -488,19 +488,19 @@ All cooking recipes share a similar structure:
 | `result`      | Output item                                                           |
 | `category`    | Recipe book tab, a `CookingRecipeCategory` (`BLOCKS`, `FOOD`, `MISC`) |
 | `experience`  | XP awarded when collecting output                                     |
-| `cookingTime` | Time in ticks                                                         |
+| `cookingTime` | Required time in ticks                                                |
+
+The vanilla recipes use 200 ticks (10 seconds) for smelting, blasting and smoking, and 600 ticks (30 seconds) for campfire cooking.
+The blast furnace and the smoker cook twice as fast as the furnace through their own speed.
 
 ### Blasting (Blast Furnace)
 
-Twice as fast as smelting (100 ticks default):
-
 ```kotlin
 recipes {
-	blasting("iron_ingot_fast") {
+	blasting("iron_ingot_fast", cookingTime = 200) {
 		ingredient(Items.RAW_IRON)
 		result(Items.IRON_INGOT)
 		experience = 0.7
-		cookingTime = 100  // 5 seconds (default)
 	}
 }
 ```
@@ -511,11 +511,10 @@ Slow cooking without fuel:
 
 ```kotlin
 recipes {
-	campfireCooking("baked_potato") {
+	campfireCooking("baked_potato", cookingTime = 600) {
 		ingredient(Items.POTATO)
 		result(Items.BAKED_POTATO)
 		experience = 0.35
-		cookingTime = 600  // 30 seconds (default)
 	}
 }
 ```
@@ -524,15 +523,14 @@ recipes {
 
 ```kotlin
 recipes {
-	smelting("iron_ingot") {
+	smelting("iron_ingot", cookingTime = 200) {
 		ingredient(Items.RAW_IRON)
 		result(Items.IRON_INGOT)
 		experience = 0.7
-		cookingTime = 200  // 10 seconds (default)
 	}
 
 	// Using tags
-	smelting("glass") {
+	smelting("glass", cookingTime = 200) {
 		ingredient(Tags.Item.SMELTS_TO_GLASS)
 		result(Items.GLASS)
 		experience = 0.1
@@ -544,15 +542,14 @@ recipes {
 
 ### Smoking (Smoker)
 
-For food items, twice as fast as furnace:
+For food items:
 
 ```kotlin
 recipes {
-	smoking("cooked_beef") {
+	smoking("cooked_beef", cookingTime = 200) {
 		ingredient(Items.BEEF)
 		result(Items.COOKED_BEEF)
 		experience = 0.35
-		cookingTime = 100
 	}
 }
 ```
@@ -838,11 +835,10 @@ dataPack("custom_recipes") {
 		}
 
 		// Smelting with experience
-		smelting("ancient_debris") {
+		smelting("ancient_debris", cookingTime = 200) {
 			ingredient(Items.ANCIENT_DEBRIS)
 			result(Items.NETHERITE_SCRAP)
 			experience = 2.0
-			cookingTime = 200
 		}
 
 		// Smithing upgrade

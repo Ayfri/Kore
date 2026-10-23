@@ -20,6 +20,6 @@ interface CookingRecipe : IngredientsRecipe, ResultedRecipe {
 	/** XP awarded when collecting the output. */
 	var experience: Double?
 
-	/** Processing time in ticks. */
-	var cookingTime: Int?
+	/** Required processing time in ticks, `200` for the vanilla smelting, blasting and smoking recipes, `600` for campfire cooking. */
+	var cookingTime: Int
 }

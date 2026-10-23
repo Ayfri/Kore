@@ -318,7 +318,7 @@ fun ShapedRecipeMockup() = McScene("In game: my_pickaxe in a crafting table", Sc
 	McCraftingTable(listOf("DDD", " S ", " S "), mapOf('D' to "diamond", 'S' to "stick"), "diamond_pickaxe")
 }
 
-/** The arrow fills in the default 200 ticks cooking time, while the coal flame burns down. */
+/** The arrow fills in the 200 ticks cooking time, while the coal flame burns down. */
 @Composable
 fun SmeltingRecipeMockup() = McScene("In game: iron_ingot smelting in a furnace, the arrow fills in cookingTime (10 seconds)", SceneKind.SCREEN, panorama = 1) {
 	McContainer("furnace") {

@@ -30,11 +30,10 @@ fun playground() = dataPack("custom_recipes") {
 			result(Items.DIAMOND_SWORD)
 		}
 
-		blasting("stone_to_diamond") {
+		blasting("stone_to_diamond", 200) {
 			ingredient(Tags.Item.STONE_CRAFTING_MATERIALS)
 
 			result(Items.DIAMOND)
-			cookingTime = 200
 			experience = 10.0
 		}
 	}
