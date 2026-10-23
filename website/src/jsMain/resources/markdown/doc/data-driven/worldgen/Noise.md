@@ -5,7 +5,7 @@ nav-title: Noise
 description: Shape Minecraft terrain from Kotlin - noise definitions, density functions, noise routers and material rules, fully type-safe with Kore.
 keywords: minecraft datapack, kore, worldgen, noise settings, density function, noise router, material rule, terrain generation, perlin noise, octaves
 date-created: 2026-02-03
-date-modified: 2026-10-22
+date-modified: 2026-10-23
 routeOverride: /docs/data-driven/worldgen/noise
 ---
 
@@ -135,7 +135,7 @@ val terrain = with(dp.densityFunctionsBuilder) {
 ```
 
 Most builders accept either a `Double` or a `DensityFunctionArgument` for their inputs, in every combination. `constant` takes a `Double`
-only, and `noise`, `shift`, `shiftA`, `shiftB` and `shiftedNoise` take either a `NoiseArgument` or inline noise parameters built with
+only, and `noise`, `shift`, `shiftA` and `shiftB` take either a `NoiseArgument` or inline noise parameters built with
 `noiseParameters(...)`, since they sample a noise directly. Their `noise` property is a `NoiseOrParameters`, set with `noiseOrParameters(...)`.
 
 ```kotlin
@@ -192,7 +192,7 @@ node classes.
 | `min`                  | `min(...)`                | Smaller of two inputs.                                                        |
 | `mul`                  | `mul(...)`                | Multiplies two inputs.                                                        |
 | `negate`               | `negate(...)`             | Flips the sign of the input.                                                  |
-| `noise`                | `noise(...)`              | Samples a noise ID or inline parameters, scaled horizontally and vertically.  |
+| `noise`                | `noise(...)`              | Samples a noise ID or inline parameters, scaled and optionally shifted.       |
 | `old_blended_noise`    | `oldBlendedNoise(...)`    | Legacy blended noise used before the 1.18 terrain rewrite.                    |
 | `pow`                  | `pow(...)`                | Raises `base` to the power of `exponent`.                                     |
 | `quarter_negative`     | `quarterNegative(...)`    | Quarters the input when negative, otherwise leaves it unchanged.              |
@@ -202,7 +202,6 @@ node classes.
 | `shift`                | `shift(...)`              | Samples a noise ID or inline parameters at `(x/4, y/4, z/4)`, scaled up by 4. |
 | `shift_a`              | `shiftA(...)`             | Samples a noise ID or inline parameters at `(x/4, 0, z/4)`, scaled up by 4.   |
 | `shift_b`              | `shiftB(...)`             | Samples a noise ID or inline parameters at `(z/4, x/4, 0)`, scaled up by 4.   |
-| `shifted_noise`        | `shiftedNoise(...)`       | Like `noise`, but with the sampled coordinates shifted.                       |
 | `sign`                 | `sign(...)`               | Outputs the sign of the input.                                                |
 | `slice`                | `slice(...)`              | Evaluates the input with one axis coordinate fixed, flattening 3D to 2D.      |
 | `spline`               | `spline(...)`             | Cubic spline interpolating control points over a coordinate.                  |
@@ -251,9 +250,7 @@ dp.densityFunctions {
 		toValue = -1.0
 	}
 
-	shiftedNoise("shifted_hills", Noises.CONTINENTALNESS) {
-		xzScale = 0.25
-		yScale = 0.0
+	noise("shifted_hills", Noises.CONTINENTALNESS, xzScale = 0.25, yScale = 0.0) {
 		shiftX(DensityFunctions.SHIFT_X)
 		shiftZ(DensityFunctions.SHIFT_Z)
 	}
@@ -269,6 +266,9 @@ dp.densityFunctions {
 	findTopSurface("top_surface", DensityFunctions.Overworld.BASE_3D_NOISE, DensityFunctions.Y, lowerBound = -64, cellHeight = 8)
 }
 ```
+
+`noise` offsets the sampled coordinates with `shiftX`, `shiftY` and `shiftZ`, each a `Double` or a density function. A shift left out isn't
+written and counts as a constant `0`. Vanilla passes the `shift_x` and `shift_z` density functions to bend its climate noises (`overworld/temperature`, `overworld/vegetation`, `overworld/continents`...).
 
 `intervalSelect` holds one more function than it has thresholds: the first function applies below the first threshold, each following one
 applies between two consecutive thresholds, and the last one applies at or above the last threshold. Thresholds must be sorted ascending.

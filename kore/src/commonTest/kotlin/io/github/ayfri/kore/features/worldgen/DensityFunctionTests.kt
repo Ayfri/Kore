@@ -6,7 +6,6 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.roundTrip
 import io.github.ayfri.kore.features.worldgen.densityfunction.densityFunctionsBuilder
-import io.github.ayfri.kore.features.worldgen.densityfunction.noiseOrParameters
 import io.github.ayfri.kore.features.worldgen.densityfunction.types.*
 import io.github.ayfri.kore.features.worldgen.noise.noiseParameters
 import io.github.ayfri.kore.generated.DensityFunctions
@@ -417,6 +416,49 @@ fun DataPack.densityFunctionTests() {
 
 	roundTrip(densityFunctions.last().type)
 
+	densityFunctionsBuilder.noise("noise_shifted", Noises.CALCITE, xzScale = 0.1, yScale = 1.0) {
+		shiftX(1.0)
+		shiftY(DensityFunctions.Overworld.BASE_3D_NOISE)
+		shiftZ(DensityFunctions.Nether.BASE_3D_NOISE)
+	}
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:noise",
+			"noise": "minecraft:calcite",
+			"shift_x": 1.0,
+			"shift_y": "minecraft:overworld/base_3d_noise",
+			"shift_z": "minecraft:nether/base_3d_noise",
+			"xz_scale": 0.1,
+			"y_scale": 1.0
+		}
+	""".trimIndent()
+
+	roundTrip(densityFunctions.last().type)
+
+	densityFunctionsBuilder.noise("noise_shifted_x", noiseParameters(-3, 1.0, 1.0), xzScale = 0.25) {
+		shiftX(DensityFunctions.SHIFT_X)
+	}
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:noise",
+			"noise": {
+				"amplitude_modifiers": [
+					1.0,
+					1.0
+				],
+				"base_octave": -3,
+				"octave_count": 2
+			},
+			"shift_x": "minecraft:shift_x",
+			"xz_scale": 0.25,
+			"y_scale": 0.0
+		}
+	""".trimIndent()
+
+	roundTrip(densityFunctions.last().type)
+
 	densityFunctionsBuilder.oldBlendedNoise("old_blended_noise") {
 		xzScale = 1.0
 		yScale = 1.0
@@ -576,56 +618,6 @@ fun DataPack.densityFunctionTests() {
 			"noise": "minecraft:calcite"
 		}
 	""".trimIndent()
-
-	densityFunctionsBuilder.shiftedNoise("shifted_noise", Noises.CALCITE) {
-		xzScale = 0.1
-		yScale = 1.0
-		noise = noiseOrParameters(Noises.CALCITE)
-
-		shiftX(1.0)
-		shiftY(DensityFunctions.Overworld.BASE_3D_NOISE)
-		shiftZ(DensityFunctions.Nether.BASE_3D_NOISE)
-	}
-
-	densityFunctions.last() assertsIs """
-		{
-			"type": "minecraft:shifted_noise",
-			"noise": "minecraft:calcite",
-			"xz_scale": 0.1,
-			"y_scale": 1.0,
-			"shift_x": 1.0,
-			"shift_y": "minecraft:overworld/base_3d_noise",
-			"shift_z": "minecraft:nether/base_3d_noise"
-		}
-	""".trimIndent()
-
-	roundTrip(densityFunctions.last().type)
-
-	densityFunctionsBuilder.shiftedNoise("shifted_noise_inline", noiseParameters(-3, 1.0, 1.0)) {
-		xzScale = 0.25
-		shiftX(DensityFunctions.Overworld.BASE_3D_NOISE)
-	}
-
-	densityFunctions.last() assertsIs """
-		{
-			"type": "minecraft:shifted_noise",
-			"noise": {
-				"amplitude_modifiers": [
-					1.0,
-					1.0
-				],
-				"base_octave": -3,
-				"octave_count": 2
-			},
-			"xz_scale": 0.25,
-			"y_scale": 0.0,
-			"shift_x": "minecraft:overworld/base_3d_noise",
-			"shift_y": 0.0,
-			"shift_z": 0.0
-		}
-	""".trimIndent()
-
-	roundTrip(densityFunctions.last().type)
 
 	densityFunctionsBuilder.sign("sign", -2.0)
 
