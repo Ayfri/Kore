@@ -286,14 +286,29 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
-	densityFunctionsBuilder.interpolated("interpolated", DensityFunctions.Overworld.BASE_3D_NOISE)
+	densityFunctionsBuilder.interpolated("interpolated", DensityFunctions.Overworld.BASE_3D_NOISE, cellSizeXz = 4, cellSizeY = 8)
 
 	densityFunctions.last() assertsIs """
 		{
 			"type": "minecraft:interpolated",
+			"cell_size_xz": 4,
+			"cell_size_y": 8,
 			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
+
+	densityFunctionsBuilder.interpolated("interpolated_constant", 0.5, cellSizeXz = 8, cellSizeY = 4)
+
+	densityFunctions.last() assertsIs """
+		{
+			"type": "minecraft:interpolated",
+			"cell_size_xz": 8,
+			"cell_size_y": 4,
+			"input": 0.5
+		}
+	""".trimIndent()
+
+	roundTrip(densityFunctions.last().type)
 
 	densityFunctionsBuilder.intervalSelect("interval_select") {
 		input(DensityFunctions.Overworld.BASE_3D_NOISE)

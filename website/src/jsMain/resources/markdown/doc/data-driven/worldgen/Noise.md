@@ -184,7 +184,7 @@ node classes.
 | `floor`                | `floor(...)`              | Rounds the input down to a multiple of `multiple` (1 by default).             |
 | `gradient`             | `gradient(...)`           | Linear gradient between two values along any axis, with a tiling mode.        |
 | `half_negative`        | `halfNegative(...)`       | Halves the input when negative, otherwise leaves it unchanged.                |
-| `interpolated`         | `interpolated(...)`       | Interpolates the input across the surrounding grid cells.                     |
+| `interpolated`         | `interpolated(...)`       | Interpolates the input across grid cells of `cellSizeXz` x `cellSizeY` blocks. |
 | `interval_select`      | `intervalSelect(...)`     | Picks one of several functions from where the input falls between thresholds. |
 | `lerp`                 | `lerp(...)`               | Interpolates from `first` to `second` by `alpha`.                             |
 | `log`                  | `log(...)`                | Takes the logarithm of the input.                                             |
@@ -269,6 +269,15 @@ dp.densityFunctions {
 
 `noise` offsets the sampled coordinates with `shiftX`, `shiftY` and `shiftZ`, each a `Double` or a density function. A shift left out isn't
 written and counts as a constant `0`. Vanilla passes the `shift_x` and `shift_z` density functions to bend its climate noises (`overworld/temperature`, `overworld/vegetation`, `overworld/continents`...).
+
+`interpolated` has no default cell sizes: `cellSizeXz` and `cellSizeY` are required, at least `1`. Vanilla's Overworld uses `4` and `8`
+and the End `8` and `4`:
+
+```kotlin
+dp.densityFunctions {
+	interpolated("smooth_terrain", DensityFunctions.Overworld.BASE_3D_NOISE, cellSizeXz = 4, cellSizeY = 8)
+}
+```
 
 `intervalSelect` holds one more function than it has thresholds: the first function applies below the first threshold, each following one
 applies between two consecutive thresholds, and the last one applies at or above the last threshold. Thresholds must be sorted ascending.
