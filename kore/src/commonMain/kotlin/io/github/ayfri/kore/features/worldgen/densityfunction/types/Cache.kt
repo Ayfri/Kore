@@ -7,35 +7,34 @@ import io.github.ayfri.kore.generated.arguments.worldgen.types.DensityFunctionAr
 import kotlinx.serialization.Serializable
 
 /**
- * Caches [input] for the duration of the interpolation cell it's evaluated in.
+ * Caches [input], computing it once per block position even if referenced multiple times.
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
 @Serializable
-data class CacheAllInCell(
+data class Cache(
 	var input: DensityFunctionOrDouble = densityFunctionOrDouble(0.0),
 ) : DensityFunctionType()
 
 /**
- * Adds a `cache_all_in_cell` density function to the data pack, caching [constant] for the duration of the
- * interpolation cell it's evaluated in.
+ * Adds a `cache` density function to the data pack, caching [constant] so it's only computed once per
+ * block position, even if referenced multiple times.
  *
  * Produces `data/<namespace>/worldgen/density_function/<fileName>.json`.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.cacheAllInCell(fileName: String, constant: Double) =
-	register(fileName, CacheAllInCell(densityFunctionOrDouble(constant)))
+fun DensityFunctionsScope.cache(fileName: String, constant: Double) = register(fileName, Cache(densityFunctionOrDouble(constant)))
 
 /**
- * Adds a `cache_all_in_cell` density function to the data pack, caching [reference] for the duration of the
- * interpolation cell it's evaluated in.
+ * Adds a `cache` density function to the data pack, caching [reference] so it's only computed once per
+ * block position, even if referenced multiple times.
  *
  * Produces `data/<namespace>/worldgen/density_function/<fileName>.json`.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/worldgen
  * Minecraft Wiki: https://minecraft.wiki/w/Density_function
  */
-fun DensityFunctionsScope.cacheAllInCell(fileName: String, reference: DensityFunctionArgument) =
-	register(fileName, CacheAllInCell(densityFunctionOrDouble(reference)))
+fun DensityFunctionsScope.cache(fileName: String, reference: DensityFunctionArgument) =
+	register(fileName, Cache(densityFunctionOrDouble(reference)))

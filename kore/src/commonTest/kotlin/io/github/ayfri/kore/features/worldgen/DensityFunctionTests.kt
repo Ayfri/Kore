@@ -66,32 +66,25 @@ fun DataPack.densityFunctionTests() {
 		}
 	""".trimIndent()
 
-	densityFunctionsBuilder.cache2D("cache_2d", DensityFunctions.Overworld.BASE_3D_NOISE)
+	densityFunctionsBuilder.cache("cache", DensityFunctions.Overworld.BASE_3D_NOISE)
 
 	densityFunctions.last() assertsIs """
 		{
-			"type": "minecraft:cache_2d",
+			"type": "minecraft:cache",
 			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 
-	densityFunctionsBuilder.cacheAllInCell("cache_all_in_cell", DensityFunctions.Overworld.BASE_3D_NOISE)
+	densityFunctionsBuilder.cache("cache_constant", 0.5)
 
 	densityFunctions.last() assertsIs """
 		{
-			"type": "minecraft:cache_all_in_cell",
-			"input": "minecraft:overworld/base_3d_noise"
+			"type": "minecraft:cache",
+			"input": 0.5
 		}
 	""".trimIndent()
 
-	densityFunctionsBuilder.cacheOnce("cache_once", DensityFunctions.Overworld.BASE_3D_NOISE)
-
-	densityFunctions.last() assertsIs """
-		{
-			"type": "minecraft:cache_once",
-			"input": "minecraft:overworld/base_3d_noise"
-		}
-	""".trimIndent()
+	roundTrip(densityFunctions.last().type)
 
 	densityFunctionsBuilder.ceil("ceil", DensityFunctions.Overworld.BASE_3D_NOISE)
 
@@ -202,15 +195,6 @@ fun DataPack.densityFunctionTests() {
 			"upper_bound": "minecraft:nether/base_3d_noise",
 			"lower_bound": 0,
 			"cell_height": 2
-		}
-	""".trimIndent()
-
-	densityFunctionsBuilder.flatCache("flat_cache", DensityFunctions.Overworld.BASE_3D_NOISE)
-
-	densityFunctions.last() assertsIs """
-		{
-			"type": "minecraft:flat_cache",
-			"input": "minecraft:overworld/base_3d_noise"
 		}
 	""".trimIndent()
 
@@ -615,13 +599,13 @@ fun DataPack.densityFunctionTests() {
 	""".trimIndent()
 
 	with(densityFunctionsBuilder) {
-		flatCache("shift_x", cache2D("shift_x_cache", shiftA("shift_x_offset", Noises.OFFSET)))
+		cache("shift_x", shiftA("shift_x_offset", Noises.OFFSET))
 	}
 
 	densityFunctions.last() assertsIs """
 		{
-			"type": "minecraft:flat_cache",
-			"input": "densityFunction:shift_x_cache"
+			"type": "minecraft:cache",
+			"input": "densityFunction:shift_x_offset"
 		}
 	""".trimIndent()
 

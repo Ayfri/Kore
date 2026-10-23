@@ -169,9 +169,7 @@ node classes.
 | `blend_alpha`          | `blendAlpha(...)`         | Smooths transitions between chunk generation versions. No parameters.         |
 | `blend_density`        | `blendDensity(...)`       | Blends the input across chunk generation version transitions.                 |
 | `blend_offset`         | `blendOffset(...)`        | Supports legacy chunk compatibility blending. No parameters.                  |
-| `cache_2d`             | `cache2D(...)`            | Caches the input once per horizontal (X/Z) position.                          |
-| `cache_all_in_cell`    | `cacheAllInCell(...)`     | Caches the input for the duration of its interpolation cell.                  |
-| `cache_once`           | `cacheOnce(...)`          | Caches the input once per block position, even if referenced multiple times.  |
+| `cache`                | `cache(...)`              | Caches the input once per block position, even if referenced multiple times.  |
 | `ceil`                 | `ceil(...)`               | Rounds the input up to a multiple of `multiple` (1 by default).               |
 | `clamp`                | `clamp(...)`              | Restricts the input between `min` and `max`.                                  |
 | `constant`             | `constant(...)`           | A fixed value, ignoring the input position.                                   |
@@ -180,7 +178,6 @@ node classes.
 | `div`                  | `div(...)`                | Divides the first input by the second.                                        |
 | `end_outer_islands`    | `endOuterIslands(...)`    | Samples the End's outer islands, without the central island. No parameters.   |
 | `find_top_surface`     | `findTopSurface(...)`     | Scans a column for the topmost position where a density is above zero.        |
-| `flat_cache`           | `flatCache(...)`          | Caches the input per 4x4 column, computed once at Y=0.                        |
 | `floor`                | `floor(...)`              | Rounds the input down to a multiple of `multiple` (1 by default).             |
 | `gradient`             | `gradient(...)`           | Linear gradient between two values along any axis, with a tiling mode.        |
 | `half_negative`        | `halfNegative(...)`       | Halves the input when negative, otherwise leaves it unchanged.                |
@@ -224,7 +221,7 @@ dp.densityFunctions {
 }
 ```
 
-`blend_alpha`, `blend_offset`, `blend_density` and `cache_all_in_cell` are internal to vanilla generation and are not meant to
+`blend_alpha`, `blend_offset` and `blend_density` are internal to vanilla generation and are not meant to
 be referenced from a datapack, even though the builders exist. `beardifier` is added to the `finalDensity` by hand, see the
 [noise router](#noise-router).
 
