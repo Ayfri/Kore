@@ -10,8 +10,8 @@ import io.github.ayfri.kore.functions.load
 import io.kotest.core.spec.style.FunSpec
 
 fun Function.tellrawTests() {
-	tellraw(allPlayers(), textComponent("test")) assertsIs "tellraw @a \"test\""
-	tellraw(allPlayers(), "test", color = Color.RED) assertsIs "tellraw @a {type:\"text\",color:\"red\",text:\"test\"}"
+	tellraw(allPlayers(), textComponent("test")) assertsIs "tellraw @a test"
+	tellraw(allPlayers(), "test", color = Color.RED) assertsIs "tellraw @a {type:text,color:red,text:test}"
 	tellraw(allPlayers(), textComponent("line 1\nline 2"))
 	lines.last() assertsIs """tellraw @a "line 1\nline 2""""
 	tellraw(allPlayers(), textComponent("""C:\temp""")) assertsIs """tellraw @a "C:\\temp""""

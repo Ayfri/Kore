@@ -20,7 +20,7 @@ fun stringsTests() = dataPack("unit_tests") {
 	val other = dynamicString("other")
 
 	function("string_set") {
-		greeting.set("hello") assertsIs """data modify storage $LIB heap.greeting set value "hello""""
+		greeting.set("hello") assertsIs """data modify storage $LIB heap.greeting set value hello"""
 		lines.size assertsIs 1
 	}
 
@@ -62,13 +62,13 @@ fun stringsTests() = dataPack("unit_tests") {
 
 	function("string_as_argument") {
 		tellraw(allPlayers(), greeting.asChatComponents()) assertsIs
-			"""tellraw @a {type:"nbt",interpret:1b,nbt:"heap.greeting",source:"storage",storage:"$LIB"}"""
+			"""tellraw @a {type:nbt,interpret:1b,nbt:"heap.greeting",source:storage,storage:"$LIB"}"""
 		lines.size assertsIs 1
 	}
 
 	function("string_as_raw_argument") {
 		tellraw(allPlayers(), greeting.asChatComponents(interpret = false)) assertsIs
-			"""tellraw @a {type:"nbt",interpret:0b,nbt:"heap.greeting",source:"storage",storage:"$LIB"}"""
+			"""tellraw @a {type:nbt,interpret:0b,nbt:"heap.greeting",source:storage,storage:"$LIB"}"""
 	}
 
 	greeting.asChatComponents() assertsIsJson """
@@ -114,8 +114,8 @@ fun substringTests() = dataPack("unit_tests") {
 			"execute store result score #kore_string_takelast_len kore_string_len run data get storage $LIB heap.greeting",
 			"scoreboard players operation #kore_string_takelast_start kore_string_len = #kore_string_takelast_len kore_string_len",
 			"scoreboard players remove #kore_string_takelast_start kore_string_len 3",
-			"""data modify storage $LIB args.kore_string_substring.src set value "greeting"""",
-			"""data modify storage $LIB args.kore_string_substring.dst set value "other"""",
+			"""data modify storage $LIB args.kore_string_substring.src set value greeting""",
+			"""data modify storage $LIB args.kore_string_substring.dst set value other""",
 			"execute store result storage $LIB args.kore_string_substring.start int 1.0 run scoreboard players get #kore_string_takelast_start kore_string_len",
 			"execute store result storage $LIB args.kore_string_substring.end int 1.0 run scoreboard players get #kore_string_takelast_len kore_string_len",
 			"function unit_tests:kore_string_substring with storage $LIB args.kore_string_substring",
@@ -138,7 +138,7 @@ fun substringTests() = dataPack("unit_tests") {
 		val start = ScoreboardEntity("bounds", fakePlayer("start"))
 		val end = ScoreboardEntity("bounds", fakePlayer("end"))
 		greeting.substringDynamic(start, end, other)
-		lines.first() assertsIs """data modify storage $LIB args.kore_string_substring.src set value "greeting""""
+		lines.first() assertsIs """data modify storage $LIB args.kore_string_substring.src set value greeting"""
 		lines.last() assertsIs "function unit_tests:kore_string_substring with storage $LIB args.kore_string_substring"
 		lines.size assertsIs 5
 	}
@@ -169,7 +169,7 @@ fun concatTests() = dataPack("unit_tests") {
 			+"x"
 			+'y'
 		}
-		lines assertsIs listOf("""data modify storage $LIB heap.target set value "xy"""")
+		lines assertsIs listOf("""data modify storage $LIB heap.target set value xy""")
 	}
 
 	function("build_mixed") {
@@ -277,7 +277,7 @@ fun compareTests() = dataPack("unit_tests") {
 		result.holder assertsIs "#kore_string_equals"
 		result.objective assertsIs "kore_string_len"
 		lines assertsIs listOf(
-			"""data modify storage $LIB tmp.kore_string_equality_check set value "hello"""",
+			"""data modify storage $LIB tmp.kore_string_equality_check set value hello""",
 			"execute store success score #kore_string_diff kore_string_len run data modify storage $LIB tmp.kore_string_equality_check set from storage $LIB heap.greeting",
 			"scoreboard players set #kore_string_equals kore_string_len 0",
 			"execute if score #kore_string_diff kore_string_len matches 0 run scoreboard players set #kore_string_equals kore_string_len 1",
@@ -349,14 +349,14 @@ fun findTests() = dataPack("unit_tests") {
 	function("index_of_literal") {
 		greeting.indexOf("lo").holder assertsIs "#kore_string_find"
 		lines assertsIs listOf(
-			"""data modify storage $LIB tmp.kore_string_find_needle set value "lo"""",
+			"""data modify storage $LIB tmp.kore_string_find_needle set value lo""",
 			"execute store result score #kore_string_find_srclen kore_string_len run data get storage $LIB heap.greeting",
 			"scoreboard players set #kore_string_find_sublen kore_string_len 2",
 			"scoreboard players operation #kore_string_find_bound kore_string_len = #kore_string_find_srclen kore_string_len",
 			"scoreboard players operation #kore_string_find_bound kore_string_len -= #kore_string_find_sublen kore_string_len",
 			"scoreboard players set #kore_string_find_i kore_string_len 0",
 			"scoreboard players set #kore_string_find kore_string_len -1",
-			"""data modify storage $LIB args.kore_string_find_step.src set value "greeting"""",
+			"""data modify storage $LIB args.kore_string_find_step.src set value greeting""",
 			"""data modify storage $LIB args.kore_string_find_step.needlePath set value "tmp.kore_string_find_needle"""",
 			"execute if score #kore_string_find_bound kore_string_len matches 0.. run function unit_tests:kore_string_find",
 		)
@@ -410,8 +410,8 @@ fun caseTests() = dataPack("unit_tests") {
 		greeting.uppercase(other)
 		lines assertsIs listOf(
 			"""data modify storage $LIB heap.kore_string_case_scratch set value """"",
-			"""data modify storage $LIB args.kore_string_upper_step.src set value "greeting"""",
-			"""data modify storage $LIB args.kore_string_upper_step.dst set value "kore_string_case_scratch"""",
+			"""data modify storage $LIB args.kore_string_upper_step.src set value greeting""",
+			"""data modify storage $LIB args.kore_string_upper_step.dst set value kore_string_case_scratch""",
 			"execute store result score #kore_string_case_len kore_string_len run data get storage $LIB heap.greeting",
 			"scoreboard players set #kore_string_case_i kore_string_len 0",
 			"execute if score #kore_string_case_i kore_string_len < #kore_string_case_len kore_string_len run function unit_tests:kore_string_upper",
@@ -421,7 +421,7 @@ fun caseTests() = dataPack("unit_tests") {
 
 	function("lowercase") {
 		greeting.lowercase()
-		lines[1] assertsIs """data modify storage $LIB args.kore_string_lower_step.src set value "greeting""""
+		lines[1] assertsIs """data modify storage $LIB args.kore_string_lower_step.src set value greeting"""
 		lines.size assertsIs 7
 	}
 
@@ -461,8 +461,8 @@ fun caseTests() = dataPack("unit_tests") {
 
 	generatedFunctions.first { it.name == "kore_string_upper_table_init" }.lines assertsIs listOf(
 		"""data modify storage $LIB tables.kore_string_upper_table set value """ +
-			"""{a:"A",b:"B",c:"C",d:"D",e:"E",f:"F",g:"G",h:"H",i:"I",j:"J",k:"K",l:"L",m:"M",""" +
-			"""n:"N",o:"O",p:"P",q:"Q",r:"R",s:"S",t:"T",u:"U",v:"V",w:"W",x:"X",y:"Y",z:"Z"}""",
+			"""{a:A,b:B,c:C,d:D,e:E,f:F,g:G,h:H,i:I,j:J,k:K,l:L,m:M,""" +
+			"""n:N,o:O,p:P,q:Q,r:R,s:S,t:T,u:U,v:V,w:W,x:X,y:Y,z:Z}""",
 	)
 }
 
@@ -492,12 +492,12 @@ fun replaceTests() = dataPack("unit_tests") {
 	function("replace_all") {
 		greeting.replace("a", "aa")
 		lines assertsIs listOf(
-			"""data modify storage $LIB tmp.kore_string_replace_new set value "aa"""",
-			"""data modify storage $LIB tmp.kore_string_replace_needle set value "a"""",
-			"""data modify storage $LIB args.kore_string_find_step.src set value "greeting"""",
+			"""data modify storage $LIB tmp.kore_string_replace_new set value aa""",
+			"""data modify storage $LIB tmp.kore_string_replace_needle set value a""",
+			"""data modify storage $LIB args.kore_string_find_step.src set value greeting""",
 			"""data modify storage $LIB args.kore_string_find_step.needlePath set value "tmp.kore_string_replace_needle"""",
-			"""data modify storage $LIB args.kore_string_replace.srcName set value "greeting"""",
-			"""data modify storage $LIB args.kore_string_replace_step.srcName set value "greeting"""",
+			"""data modify storage $LIB args.kore_string_replace.srcName set value greeting""",
+			"""data modify storage $LIB args.kore_string_replace_step.srcName set value greeting""",
 			"scoreboard players set #kore_string_find_sublen kore_string_len 1",
 			"scoreboard players set #kore_string_replace_cap kore_string_len 2147483647",
 			"scoreboard players set #kore_string_replace_newlen kore_string_len 2",
@@ -564,8 +564,8 @@ fun trimPadRepeatTests() = dataPack("unit_tests") {
 		// The repeated unit lives in its own slot: reusing the accumulator would double the padding each step.
 		lines[5] assertsIs """data modify storage $LIB heap.kore_string_pad_char set value "0""""
 		lines[6] assertsIs """data modify storage $LIB heap.kore_string_pad_scratch set value "0""""
-		lines[9] assertsIs """data modify storage $LIB args.kore_string_repeat_step.src set value "kore_string_pad_char""""
-		lines[10] assertsIs """data modify storage $LIB args.kore_string_repeat_step.dst set value "kore_string_pad_scratch""""
+		lines[9] assertsIs """data modify storage $LIB args.kore_string_repeat_step.src set value kore_string_pad_char"""
+		lines[10] assertsIs """data modify storage $LIB args.kore_string_repeat_step.dst set value kore_string_pad_scratch"""
 	}
 
 	function("pad_end") {
@@ -629,7 +629,7 @@ fun parseTests() = dataPack("unit_tests") {
 		greeting.setFromNbt(greeting.storage, "out.value")
 		lines assertsIs listOf(
 			"data modify storage $LIB args.kore_string_to_string.value set from storage $LIB out.value",
-			"""data modify storage $LIB args.kore_string_to_string.dstName set value "greeting"""",
+			"""data modify storage $LIB args.kore_string_to_string.dstName set value greeting""",
 			"function unit_tests:kore_string_to_string with storage $LIB args.kore_string_to_string",
 		)
 	}
@@ -643,21 +643,21 @@ fun stringListTests() = dataPack("unit_tests") {
 
 	function("list_basics") {
 		tokens.clear() assertsIs "data modify storage $LIB lists.tokens set value []"
-		tokens.append("alpha") assertsIs """data modify storage $LIB lists.tokens append value "alpha""""
+		tokens.append("alpha") assertsIs """data modify storage $LIB lists.tokens append value alpha"""
 		tokens.append(current) assertsIs
 			"data modify storage $LIB lists.tokens append from storage $LIB heap.current"
-		tokens.prepend("beta") assertsIs """data modify storage $LIB lists.tokens prepend value "beta""""
+		tokens.prepend("beta") assertsIs """data modify storage $LIB lists.tokens prepend value beta"""
 		tokens.prepend(current) assertsIs
 			"data modify storage $LIB lists.tokens prepend from storage $LIB heap.current"
 		lines.size assertsIs 5
 	}
 
 	function("list_indexing") {
-		tokens.insertAt(1, "middle") assertsIs """data modify storage $LIB lists.tokens insert 1 value "middle""""
+		tokens.insertAt(1, "middle") assertsIs """data modify storage $LIB lists.tokens insert 1 value middle"""
 		tokens.insertAt(2, current) assertsIs
 			"data modify storage $LIB lists.tokens insert 2 from storage $LIB heap.current"
 		tokens.removeAt(2) assertsIs "data remove storage $LIB lists.tokens[2]"
-		tokens.setAt(0, "first") assertsIs """data modify storage $LIB lists.tokens[0] set value "first""""
+		tokens.setAt(0, "first") assertsIs """data modify storage $LIB lists.tokens[0] set value first"""
 		tokens.setAt(0, current) assertsIs
 			"data modify storage $LIB lists.tokens[0] set from storage $LIB heap.current"
 		tokens.elementAt(3, current) assertsIs
@@ -711,7 +711,7 @@ fun joinTests() = dataPack("unit_tests") {
 		lines assertsIs listOf(
 			"""data modify storage $LIB heap.summary set value "["""",
 			"""data modify storage $LIB tmp.kore_string_join_sep set value ", """",
-			"""data modify storage $LIB args.kore_string_join_step.dst set value "summary"""",
+			"""data modify storage $LIB args.kore_string_join_step.dst set value summary""",
 			"""data modify storage $LIB args.kore_string_join_step.listPath set value "lists.tokens"""",
 			"execute store result score #kore_string_join_size kore_string_len run data get storage $LIB lists.tokens",
 			"scoreboard players set #kore_string_join_i kore_string_len 0",
@@ -791,7 +791,7 @@ fun customConfigTests() = dataPack("unit_tests") {
 	val pong = koreStringList("pong")
 
 	function("custom_paths") {
-		ping.set("pong") assertsIs """data modify storage my_pack:strings h.ping set value "pong""""
+		ping.set("pong") assertsIs """data modify storage my_pack:strings h.ping set value pong"""
 		pong.clear() assertsIs "data modify storage my_pack:strings ls.pong set value []"
 		ping.length().holder assertsIs "#my_len"
 		lines.last() assertsIs
@@ -802,12 +802,12 @@ fun customConfigTests() = dataPack("unit_tests") {
 
 	function("custom_tmp_and_args") {
 		ping.equalsTo("x")
-		lines.first() assertsIs """data modify storage my_pack:strings t.kore_string_equality_check set value "x""""
+		lines.first() assertsIs """data modify storage my_pack:strings t.kore_string_equality_check set value x"""
 		lines[2] assertsIs "scoreboard players set #kore_string_equals my_len 0"
 
 		val before = lines.size
 		ping.takeLast(2)
-		lines[before + 3] assertsIs """data modify storage my_pack:strings a.kore_string_substring.src set value "ping""""
+		lines[before + 3] assertsIs """data modify storage my_pack:strings a.kore_string_substring.src set value ping"""
 	}
 
 	function("custom_tables_and_trim") {
@@ -819,7 +819,7 @@ fun customConfigTests() = dataPack("unit_tests") {
 		ping.setFromNbt(ping.storage, "out.value")
 		lines assertsIs listOf(
 			"data modify storage my_pack:strings a.kore_string_to_string.value set from storage my_pack:strings out.value",
-			"""data modify storage my_pack:strings a.kore_string_to_string.dstName set value "ping"""",
+			"""data modify storage my_pack:strings a.kore_string_to_string.dstName set value ping""",
 			"function unit_tests:kore_string_to_string with storage my_pack:strings a.kore_string_to_string",
 		)
 	}
@@ -847,9 +847,9 @@ fun advancedStringsTests() = dataPack("unit_tests") {
 	function("reverse") {
 		greeting.reverse(other)
 		lines.first() assertsIs """data modify storage $LIB heap.kore_string_rev_out set value """""
-		lines[1] assertsIs """data modify storage $LIB args.kore_string_substring.src set value "greeting""""
+		lines[1] assertsIs """data modify storage $LIB args.kore_string_substring.src set value greeting"""
 		// The destination slot never changes, so it is written once instead of on every iteration.
-		lines[2] assertsIs """data modify storage $LIB args.kore_string_substring.dst set value "kore_string_reverse_scratch""""
+		lines[2] assertsIs """data modify storage $LIB args.kore_string_substring.dst set value kore_string_reverse_scratch"""
 		lines.last() assertsIs "data modify storage $LIB heap.other set from storage $LIB heap.kore_string_rev_out"
 	}
 
@@ -896,10 +896,10 @@ fun dynamicOperandTests() = dataPack("unit_tests") {
 		lines assertsIs listOf(
 			"data modify storage $LIB tmp.kore_string_replace_new set from storage $LIB heap.replacement",
 			"data modify storage $LIB tmp.kore_string_replace_needle set from storage $LIB heap.needle",
-			"""data modify storage $LIB args.kore_string_find_step.src set value "greeting"""",
+			"""data modify storage $LIB args.kore_string_find_step.src set value greeting""",
 			"""data modify storage $LIB args.kore_string_find_step.needlePath set value "tmp.kore_string_replace_needle"""",
-			"""data modify storage $LIB args.kore_string_replace.srcName set value "greeting"""",
-			"""data modify storage $LIB args.kore_string_replace_step.srcName set value "greeting"""",
+			"""data modify storage $LIB args.kore_string_replace.srcName set value greeting""",
+			"""data modify storage $LIB args.kore_string_replace_step.srcName set value greeting""",
 			"execute store result score #kore_string_find_sublen kore_string_len run " +
 				"data get storage $LIB tmp.kore_string_replace_needle 1.0",
 			"scoreboard players set #kore_string_replace_cap kore_string_len 2147483647",
@@ -940,10 +940,10 @@ fun dynamicOperandTests() = dataPack("unit_tests") {
 			"execute if score #kore_string_repeat_cap kore_string_len matches 1.. run " +
 				"data modify storage $LIB heap.other set from storage $LIB heap.kore_string_repeat_src",
 			"scoreboard players remove #kore_string_repeat_cap kore_string_len 1",
-			"""data modify storage $LIB args.kore_string_repeat_step.src set value "kore_string_repeat_src"""",
-			"""data modify storage $LIB args.kore_string_repeat_step.dst set value "other"""",
-			"""data modify storage $LIB args.kore_string_repeat.src set value "kore_string_repeat_src"""",
-			"""data modify storage $LIB args.kore_string_repeat.dst set value "other"""",
+			"""data modify storage $LIB args.kore_string_repeat_step.src set value kore_string_repeat_src""",
+			"""data modify storage $LIB args.kore_string_repeat_step.dst set value other""",
+			"""data modify storage $LIB args.kore_string_repeat.src set value kore_string_repeat_src""",
+			"""data modify storage $LIB args.kore_string_repeat.dst set value other""",
 			"execute if score #kore_string_repeat_cap kore_string_len matches 1.. " +
 				"run function unit_tests:kore_string_repeat with storage $LIB args.kore_string_repeat",
 		)
@@ -971,14 +971,14 @@ fun scoreBridgeTests() = dataPack("unit_tests") {
 		lines assertsIs listOf(
 			"execute store result storage $LIB tmp.kore_string_score int 1.0 run scoreboard players get #kills stats",
 			"data modify storage $LIB args.kore_string_to_string.value set from storage $LIB tmp.kore_string_score",
-			"""data modify storage $LIB args.kore_string_to_string.dstName set value "label"""",
+			"""data modify storage $LIB args.kore_string_to_string.dstName set value label""",
 			"function unit_tests:kore_string_to_string with storage $LIB args.kore_string_to_string",
 		)
 	}
 
 	function("score_appended") {
 		label.appendFrom(kills)
-		lines[2] assertsIs """data modify storage $LIB args.kore_string_to_string.dstName set value "kore_string_score_text""""
+		lines[2] assertsIs """data modify storage $LIB args.kore_string_to_string.dstName set value kore_string_score_text"""
 		lines.last() assertsIs "data modify storage $LIB heap.label append string storage $LIB heap.kore_string_score_text"
 	}
 
@@ -1032,7 +1032,7 @@ fun operatorTests() = dataPack("unit_tests") {
 		tokens += "a"
 		tokens += greeting
 		lines assertsIs listOf(
-			"""data modify storage $LIB lists.tokens append value "a"""",
+			"""data modify storage $LIB lists.tokens append value a""",
 			"data modify storage $LIB lists.tokens append from storage $LIB heap.greeting",
 		)
 	}
@@ -1053,11 +1053,11 @@ fun operatorTests() = dataPack("unit_tests") {
 	function("result_branches") {
 		(greeting eq "hi").then { greeting.set("matched") }
 		lines.last() assertsIs
-			"""execute if score #kore_string_equals kore_string_len matches 1 run data modify storage $LIB heap.greeting set value "matched""""
+			"""execute if score #kore_string_equals kore_string_len matches 1 run data modify storage $LIB heap.greeting set value matched"""
 
 		(greeting startsWith "h").otherwise { greeting.set("nope") }
 		lines.last() assertsIs
-			"""execute if score #kore_string_starts kore_string_len matches 0 run data modify storage $LIB heap.greeting set value "nope""""
+			"""execute if score #kore_string_starts kore_string_len matches 0 run data modify storage $LIB heap.greeting set value nope"""
 
 		(greeting contains other).then { greeting.clear() }
 		lines.last() assertsIs

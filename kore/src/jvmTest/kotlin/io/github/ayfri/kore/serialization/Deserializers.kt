@@ -102,10 +102,10 @@ fun blockStateDeserializer() {
 	roundTripsAs(serializer, stairs)
 
 	encodeToNbtTag(serializer, stone).toSnbt() assertsIs "\"minecraft:stone\""
-	encodeToNbtTag(serializer, stairs).toSnbt() assertsIs """{id:"minecraft:oak_stairs",properties:{facing:"north"}}"""
+	encodeToNbtTag(serializer, stairs).toSnbt() assertsIs """{id:"minecraft:oak_stairs",properties:{facing:north}}"""
 	encodeToNbtTag(serializer, decodeFromNbtTag(serializer, encodeToNbtTag(serializer, stone))).toSnbt() assertsIs "\"minecraft:stone\""
 	encodeToNbtTag(serializer, decodeFromNbtTag(serializer, encodeToNbtTag(serializer, stairs))).toSnbt() assertsIs
-		"""{id:"minecraft:oak_stairs",properties:{facing:"north"}}"""
+		"""{id:"minecraft:oak_stairs",properties:{facing:north}}"""
 }
 
 fun tripleAsArrayDeserializer() {

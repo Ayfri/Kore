@@ -32,15 +32,15 @@ class SidebarTests : FunSpec({
 		dataPack("sidebar_tests") {
 			function("create") { lobby.create() }.withStableNames() assertsIs """
 				scoreboard objectives remove lobby
-				scoreboard objectives add lobby dummy {type:"text",color:"gold",text:"Mini-game"}
+				scoreboard objectives add lobby dummy {type:text,color:gold,text:Mini-game}
 				scoreboard objectives modify lobby numberformat blank
 				scoreboard players set $0 lobby 0
 				scoreboard players display name $0 lobby "Map: Castle"
 				scoreboard players set $1 lobby -1
 				scoreboard players display name $1 lobby ""
 				scoreboard players set $2 lobby -2
-				scoreboard players display name $2 lobby {type:"text",color:"red",text:"Kills"}
-				scoreboard players display numberformat $2 lobby fixed {type:"score",score:{name:"Ayfri",objective:"kills"}}
+				scoreboard players display name $2 lobby {type:text,color:red,text:Kills}
+				scoreboard players display numberformat $2 lobby fixed {type:score,score:{name:Ayfri,objective:kills}}
 				execute if predicate stonks run function sidebar_tests:generated_scopes/generated
 				execute unless predicate stonks run scoreboard players reset $3 lobby
 				scoreboard objectives setdisplay sidebar lobby
@@ -49,7 +49,7 @@ class SidebarTests : FunSpec({
 			generatedFunctions.single().toString() assertsIs """
 				scoreboard players set $3 lobby -3
 				scoreboard players display name $3 lobby "Richest player"
-				scoreboard players display numberformat $3 lobby fixed {type:"text",color:"green",text:"Ayfri"}
+				scoreboard players display numberformat $3 lobby fixed {type:text,color:green,text:Ayfri}
 			""".trimIndent()
 		}
 	}
@@ -58,8 +58,8 @@ class SidebarTests : FunSpec({
 		dataPack("sidebar_tests") {
 			function("refresh") { lobby.refresh() }.withStableNames() assertsIs """
 				scoreboard players set $2 lobby -2
-				scoreboard players display name $2 lobby {type:"text",color:"red",text:"Kills"}
-				scoreboard players display numberformat $2 lobby fixed {type:"score",score:{name:"Ayfri",objective:"kills"}}
+				scoreboard players display name $2 lobby {type:text,color:red,text:Kills}
+				scoreboard players display numberformat $2 lobby fixed {type:score,score:{name:Ayfri,objective:kills}}
 				execute if predicate stonks run function sidebar_tests:generated_scopes/generated
 				execute unless predicate stonks run scoreboard players reset $3 lobby
 			""".trimIndent()

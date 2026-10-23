@@ -264,10 +264,10 @@ fun miniMessageRendererTests() {
 
     // Serialized output checks
     val simpleSerialized = miniMessageToTextComponents("<red>Hello")
-    simpleSerialized.asString() assertsIs """{type:"text",color:"red",text:"Hello"}"""
+    simpleSerialized.asString() assertsIs """{type:text,color:red,text:Hello}"""
 
     val multiSerialized = miniMessageToTextComponents("<bold>Hello</bold> world")
-    multiSerialized.asString() assertsIs """[{type:"text",text:""},{type:"text",bold:1b,text:"Hello"},{type:"text",text:" world"}]"""
+    multiSerialized.asString() assertsIs """[{type:text,text:""},{type:text,bold:1b,text:Hello},{type:text,text:" world"}]"""
 }
 
 class MiniMessageRendererTests : FunSpec({

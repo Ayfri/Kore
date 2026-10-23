@@ -52,7 +52,7 @@ class SnakeCaseNbtTests : FunSpec({
 	}
 
 	test("JsonSerialName names, map keys and raw compounds are kept, nested classes renamed, nulls and arrays untouched") {
-		encodeToSnbt(fixture) assertsIs "{camel_case:1,KeptName:\"a\",nested_class:{inner_value:2},list_of_classes:[{inner_value:3}]," +
+		encodeToSnbt(fixture) assertsIs "{camel_case:1,KeptName:a,nested_class:{inner_value:2},list_of_classes:[{inner_value:3}]," +
 			"map_of_classes:{camelKey:{inner_value:4}},raw_compound:{CustomKey:5},byte_array:[B;6B,7B],int_array:[I;8,9]}"
 	}
 

@@ -150,7 +150,7 @@ summon(legendary.entityType, vec3(), legendary.toNbt())
 ```
 
 ```mcfunction
-summon minecraft:text_display ~ ~ ~ {text:[{type:"text",text:""},{type:"text",color:"gold",text:"Legendary "},{type:"text",text:"Sword"}]}
+summon minecraft:text_display ~ ~ ~ {text:[{type:text,text:""},{type:text,color:gold,text:"Legendary "},{type:text,text:Sword}]}
 ```
 
 ## Transformations

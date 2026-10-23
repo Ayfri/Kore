@@ -85,7 +85,7 @@ function("shop_display") {
 Generated output:
 
 ```mcfunction
-summon minecraft:item 0.0 0.0 0.0 {CustomName:{text:"Shop",color:"gold"},CustomNameVisible:1b,Invulnerable:1b,NoGravity:1b,Tags:["display"],Age:-32768s,PickupDelay:32767s,Item:{id:"minecraft:diamond_sword",components:{custom_name:{text:"Shop",color:"gold"}}}}
+summon minecraft:item 0.0 0.0 0.0 {CustomName:{text:Shop,color:gold},CustomNameVisible:1b,Invulnerable:1b,NoGravity:1b,Tags:[display],Age:-32768s,PickupDelay:32767s,Item:{id:"minecraft:diamond_sword",components:{custom_name:{text:Shop,color:gold}}}}
 ```
 
 `showcase = true` is a shortcut for a static display item: it sets `PickupDelay` and `Age` so the entity never
@@ -146,7 +146,7 @@ function("launch_item") {
 ```
 
 ```mcfunction
-summon minecraft:item 0.0 0.0 0.0 {CustomName:{text:"Boom",color:"red"},CustomNameVisible:1b,data:{quest:"intro"},Fire:100s,Glowing:1b,Motion:[0.0d,0.6d,0.0d],Rotation:[90.0f,0.0f],Tags:["loot","quest"],Team:"red",Item:{id:"minecraft:tnt"}}
+summon minecraft:item 0.0 0.0 0.0 {CustomName:{text:Boom,color:red},CustomNameVisible:1b,data:{quest:intro},Fire:100s,Glowing:1b,Motion:[0.0d,0.6d,0.0d],Rotation:[90.0f,0.0f],Tags:[loot,quest],Team:red,Item:{id:"minecraft:tnt"}}
 ```
 
 `passenger(entity)` adds a model with its `id`, as the model is when it is added. Mannequins, display entities and interactions take it,
@@ -163,7 +163,7 @@ summon(label.entityType, vec3(), label.toNbt())
 ```
 
 ```mcfunction
-summon minecraft:text_display ~ ~ ~ {Passengers:[{id:"minecraft:block_display",block_state:"minecraft:stone"},{id:"minecraft:mannequin",pose:"standing"}],text:"Boss"}
+summon minecraft:text_display ~ ~ ~ {Passengers:[{id:"minecraft:block_display",block_state:"minecraft:stone"},{id:"minecraft:mannequin",pose:standing}],text:Boss}
 ```
 
 ### Item-only fields

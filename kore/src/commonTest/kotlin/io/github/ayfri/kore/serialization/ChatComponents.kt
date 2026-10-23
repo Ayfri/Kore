@@ -62,7 +62,7 @@ fun chatComponentsTests() {
 	prefix assertsIsJson "\"[Kore] \""
 
 	val root = text("root") { extra = textComponent("own") }
-	ChatComponents(root, text("next")).toComponent().toNbtTag().toSnbt() assertsIs """{type:"text",extra:["own","next"],text:"root"}"""
+	ChatComponents(root, text("next")).toComponent().toNbtTag().toSnbt() assertsIs """{type:text,extra:[own,next],text:root}"""
 	root.extra assertsIs textComponent("own")
 
 	val entityComponent = entityComponent(self(), separator = " ")
@@ -190,7 +190,7 @@ fun chatComponentsTests() {
 			}
 		}
 	""".trimIndent()
-	playerObjectWithId.toNbtTag().toSnbt() assertsIs """{type:"object",object:"player",player:{id:[I;-2040022415,-1202044924,-1353431686,-1758138665]}}"""
+	playerObjectWithId.toNbtTag().toSnbt() assertsIs """{type:object,object:player,player:{id:[I;-2040022415,-1202044924,-1353431686,-1758138665]}}"""
 
 	val scoreComponent = scoreComponent("my_objective", randomPlayer())
 	scoreComponent assertsIsJson """
@@ -370,12 +370,12 @@ private fun chatComponentsExtra() {
 	val withExtraMultiple = entityComponent(self()) {
 		extra = textComponent("test1") + text("test2")
 	}
-	withExtraMultiple assertsIs """{type:"selector",extra:["test1","test2"],selector:"@s"}"""
+	withExtraMultiple assertsIs """{type:selector,extra:[test1,test2],selector:"@s"}"""
 
 	val withExtraSingle = entityComponent(self()) {
 		extra = textComponent("test1")
 	}
-	withExtraSingle assertsIs """{type:"selector",extra:["test1"],selector:"@s"}"""
+	withExtraSingle assertsIs """{type:selector,extra:[test1],selector:"@s"}"""
 }
 
 private fun chatComponentsOnClick() {
@@ -572,13 +572,13 @@ class ChatComponentsSerializationTests : FunSpec({
 
 	test("a styled first component gets an empty root so its style stays its own") {
 		val components = textComponent("a", Color.RED) + text("b")
-		components.asString() assertsIs """[{type:"text",text:""},{type:"text",color:"red",text:"a"},{type:"text",text:"b"}]"""
+		components.asString() assertsIs """[{type:text,text:""},{type:text,color:red,text:a},{type:text,text:b}]"""
 		jsonSerializer.encodeToString(components) assertsIs """["",{"text":"a","color":"red"},"b"]"""
 		jsonSerializer.decodeFromString<ChatComponents>(jsonSerializer.encodeToString(components)) shouldBe components
 
-		(textComponent("a") + text("b", Color.RED)).asString() assertsIs """[{type:"text",text:"a"},{type:"text",color:"red",text:"b"}]"""
-		text("a") { extra = ChatComponents(text("b")) }.toNbtTag().toSnbt() assertsIs """{type:"text",extra:["b"],text:"a"}"""
+		(textComponent("a") + text("b", Color.RED)).asString() assertsIs """[{type:text,text:a},{type:text,color:red,text:b}]"""
+		text("a") { extra = ChatComponents(text("b")) }.toNbtTag().toSnbt() assertsIs """{type:text,extra:[b],text:a}"""
 		jsonSerializer.encodeToString(text("a") { extra = ChatComponents(text("b")) }) assertsIs """{"text":"a","extra":["b"]}"""
-		components.toNbtList().toSnbt() assertsIs """[{type:"text",color:"red",text:"a"},{type:"text",text:"b"}]"""
+		components.toNbtList().toSnbt() assertsIs """[{type:text,color:red,text:a},{type:text,text:b}]"""
 	}
 })

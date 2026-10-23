@@ -309,7 +309,7 @@ function("place_greeter") { greeter.summon(vec3(0, 64, 0)) }
 ```
 
 ```mcfunction
-summon minecraft:mannequin 0 64 0 {CustomName:{text:"Bob",color:"gold"},Invulnerable:1b,Tags:["my_pack.npc.greeter"],immovable:1b,profile:{name:"Ayfri"},UUID:[I;698108564,1678478208,-1383230621,-2104385281]}
+summon minecraft:mannequin 0 64 0 {CustomName:{text:Bob,color:gold},Invulnerable:1b,Tags:["my_pack.npc.greeter"],immovable:1b,profile:{name:Ayfri},UUID:[I;698108564,1678478208,-1383230621,-2104385281]}
 summon minecraft:interaction 0 64 0 {Tags:["my_pack.interaction.npc_greeter"],height:1.9f,width:0.7f,UUID:[I;-1579629773,-2071100508,-114521633,248843919]}
 ```
 
@@ -443,7 +443,7 @@ function("place_npc") {
 ```
 
 ```mcfunction
-summon minecraft:mannequin ~ ~ ~ {CustomName:{text:"Bob",color:"gold"},Invulnerable:1b,Tags:["my_pack.npc.greeter"],immovable:1b,profile:{name:"Ayfri"}}
+summon minecraft:mannequin ~ ~ ~ {CustomName:{text:Bob,color:gold},Invulnerable:1b,Tags:["my_pack.npc.greeter"],immovable:1b,profile:{name:Ayfri}}
 summon minecraft:interaction ~ ~ ~ {Tags:["my_pack.interaction.npc_greeter"],height:1.9f,width:0.7f}
 ```
 
@@ -481,7 +481,7 @@ function("place_bob") { shopkeeper.summon(vec3(0, 64, 0)) }
 
 ```mcfunction
 # place_bob
-summon minecraft:mannequin 0 64 0 {CustomName:{text:"Bob",color:"gold"},CustomNameVisible:1b,Invulnerable:1b,Tags:["my_pack.npc.shopkeeper"],immovable:1b,pose:"crouching",profile:{name:"Ayfri"},UUID:[I;1986223431,821987320,-494237298,-530125415]}
+summon minecraft:mannequin 0 64 0 {CustomName:{text:Bob,color:gold},CustomNameVisible:1b,Invulnerable:1b,Tags:["my_pack.npc.shopkeeper"],immovable:1b,pose:crouching,profile:{name:Ayfri},UUID:[I;1986223431,821987320,-494237298,-530125415]}
 summon minecraft:interaction 0 64 0 {Tags:["my_pack.interaction.npc_shopkeeper"],height:1.6f,width:0.7f,UUID:[I;-725450195,-1726051519,-1557154389,87209692]}
 
 # generated_460f5ccb
@@ -490,7 +490,7 @@ dialog show @s my_pack:shop
 
 # interaction_npc_shopkeeper_left_click_hit
 tag @s add my_pack.interaction.clicked
-execute at @s on attacker run tellraw @s {type:"text",color:"gray",text:"Bob: Right click to trade."}
+execute at @s on attacker run tellraw @s {type:text,color:gray,text:"Bob: Right click to trade."}
 data remove entity @s attack
 tag @s remove my_pack.interaction.clicked
 

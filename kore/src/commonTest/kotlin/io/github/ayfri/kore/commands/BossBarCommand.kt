@@ -9,12 +9,12 @@ import io.github.ayfri.kore.functions.load
 import io.kotest.core.spec.style.FunSpec
 
 fun Function.bossBarTests() {
-	bossBars.add("bar", displayName = "foo") assertsIs "bossbar add minecraft:bar \"foo\""
+	bossBars.add("bar", displayName = "foo") assertsIs "bossbar add minecraft:bar foo"
 	bossBars.list() assertsIs "bossbar list"
 	bossBars.get("bar", "foo").remove() assertsIs "bossbar remove foo:bar"
 
 	bossBar("bar", "foo") {
-		add("bar") assertsIs "bossbar add foo:bar \"bar\""
+		add("bar") assertsIs "bossbar add foo:bar bar"
 
 		getMax() assertsIs "bossbar get foo:bar max"
 		getPlayers() assertsIs "bossbar get foo:bar players"

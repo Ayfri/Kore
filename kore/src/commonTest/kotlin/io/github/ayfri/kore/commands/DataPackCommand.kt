@@ -9,7 +9,7 @@ import io.kotest.core.spec.style.FunSpec
 
 fun Function.dataPackTests() {
 	dataPack("test") {
-		create("id", textComponent("name")) assertsIs "datapack create id \"name\""
+		create("id", textComponent("name")) assertsIs "datapack create id name"
 		disable() assertsIs "datapack disable test"
 		enable() assertsIs "datapack enable test"
 		enable(DatapackPriority.FIRST) assertsIs "datapack enable test first"

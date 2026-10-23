@@ -24,7 +24,7 @@ fun Function.scoreboardTests() {
 	scoreboard {
 		objectives {
 			add("test") assertsIs "scoreboard objectives add test dummy"
-			add("test", ScoreboardCriteria.DUMMY, "Test") assertsIs "scoreboard objectives add test dummy \"Test\""
+			add("test", ScoreboardCriteria.DUMMY, "Test") assertsIs "scoreboard objectives add test dummy Test"
 			add("test", ScoreboardCriteria.PLAYER_KILL_COUNT) assertsIs "scoreboard objectives add test playerKillCount"
 			add("test", ScoreboardCriteria.TOTAL_KILL_COUNT) assertsIs "scoreboard objectives add test totalKillCount"
 
@@ -43,18 +43,18 @@ fun Function.scoreboardTests() {
 			list() assertsIs "scoreboard objectives list"
 
 			modifyDisplayAutoUpdate("test", true) assertsIs "scoreboard objectives modify test displayautoupdate true"
-			modifyDisplayName("test", "Test") assertsIs "scoreboard objectives modify test displayname \"Test\""
+			modifyDisplayName("test", "Test") assertsIs "scoreboard objectives modify test displayname Test"
 
 			modifyNumberFormatBlank("test") assertsIs "scoreboard objectives modify test numberformat blank"
 			modifyNumberFormatFixed(
 				"test",
 				textComponent("test")
-			) assertsIs "scoreboard objectives modify test numberformat fixed \"test\""
+			) assertsIs "scoreboard objectives modify test numberformat fixed test"
 			modifyNumberFormatFixed(
 				"test",
 				"test",
 				color = Color.RED
-			) assertsIs "scoreboard objectives modify test numberformat fixed {type:\"text\",color:\"red\",text:\"test\"}"
+			) assertsIs "scoreboard objectives modify test numberformat fixed {type:text,color:red,text:test}"
 
 			modifyNumberFormatStyled("test") {
 				bold = true
@@ -63,7 +63,7 @@ fun Function.scoreboardTests() {
 				obfuscated = true
 				strikethrough = true
 				underlined = true
-			} assertsIs "scoreboard objectives modify test numberformat styled {bold:1b,color:\"red\",italic:1b,obfuscated:1b,strikethrough:1b,underlined:1b}"
+			} assertsIs "scoreboard objectives modify test numberformat styled {bold:1b,color:red,italic:1b,obfuscated:1b,strikethrough:1b,underlined:1b}"
 
 			modifyRenderType("test", RenderType.HEARTS) assertsIs "scoreboard objectives modify test rendertype hearts"
 
@@ -83,20 +83,20 @@ fun Function.scoreboardTests() {
 				self(),
 				"test",
 				textComponent("test")
-			) assertsIs "scoreboard players display name @s test \"test\""
+			) assertsIs "scoreboard players display name @s test test"
 
 			displayNumberFormatBlank(self(), "test") assertsIs "scoreboard players display numberformat @s test blank"
 			displayNumberFormatFixed(
 				self(),
 				"test",
 				textComponent("test")
-			) assertsIs "scoreboard players display numberformat @s test fixed \"test\""
+			) assertsIs "scoreboard players display numberformat @s test fixed test"
 			displayNumberFormatFixed(
 				self(),
 				"test",
 				"test",
 				color = Color.RED
-			) assertsIs "scoreboard players display numberformat @s test fixed {type:\"text\",color:\"red\",text:\"test\"}"
+			) assertsIs "scoreboard players display numberformat @s test fixed {type:text,color:red,text:test}"
 
 			displayNumberFormatStyled(self(), "test") {
 				bold = true
@@ -105,7 +105,7 @@ fun Function.scoreboardTests() {
 				obfuscated = true
 				strikethrough = true
 				underlined = true
-			} assertsIs "scoreboard players display numberformat @s test styled {bold:1b,color:\"red\",italic:1b,obfuscated:1b,strikethrough:1b,underlined:1b}"
+			} assertsIs "scoreboard players display numberformat @s test styled {bold:1b,color:red,italic:1b,obfuscated:1b,strikethrough:1b,underlined:1b}"
 
 			enable(self(), "test") assertsIs "scoreboard players enable @s test"
 			get(self(), "test") assertsIs "scoreboard players get @s test"
@@ -125,18 +125,18 @@ fun Function.scoreboardTests() {
 		}
 
 		objective("test") {
-			add(ScoreboardCriteria.DUMMY, "Test") assertsIs "scoreboard objectives add test dummy \"Test\""
+			add(ScoreboardCriteria.DUMMY, "Test") assertsIs "scoreboard objectives add test dummy Test"
 			clearNumberFormat() assertsIs "scoreboard objectives modify test numberformat"
-			create(ScoreboardCriteria.DUMMY, "Test") assertsIs "scoreboard objectives add test dummy \"Test\""
+			create(ScoreboardCriteria.DUMMY, "Test") assertsIs "scoreboard objectives add test dummy Test"
 			modifyDisplayAutoUpdate(true) assertsIs "scoreboard objectives modify test displayautoupdate true"
-			modifyDisplayName("Test") assertsIs "scoreboard objectives modify test displayname \"Test\""
+			modifyDisplayName("Test") assertsIs "scoreboard objectives modify test displayname Test"
 
 			modifyNumberFormatBlank() assertsIs "scoreboard objectives modify test numberformat blank"
-			modifyNumberFormatFixed(textComponent("test")) assertsIs "scoreboard objectives modify test numberformat fixed \"test\""
+			modifyNumberFormatFixed(textComponent("test")) assertsIs "scoreboard objectives modify test numberformat fixed test"
 			modifyNumberFormatFixed(
 				"test",
 				color = Color.RED
-			) assertsIs "scoreboard objectives modify test numberformat fixed {type:\"text\",color:\"red\",text:\"test\"}"
+			) assertsIs "scoreboard objectives modify test numberformat fixed {type:text,color:red,text:test}"
 
 			modifyNumberFormatStyled {
 				bold = true
@@ -145,7 +145,7 @@ fun Function.scoreboardTests() {
 				obfuscated = true
 				strikethrough = true
 				underlined = true
-			} assertsIs "scoreboard objectives modify test numberformat styled {bold:1b,color:\"red\",italic:1b,obfuscated:1b,strikethrough:1b,underlined:1b}"
+			} assertsIs "scoreboard objectives modify test numberformat styled {bold:1b,color:red,italic:1b,obfuscated:1b,strikethrough:1b,underlined:1b}"
 
 			modifyRenderType(RenderType.HEARTS) assertsIs "scoreboard objectives modify test rendertype hearts"
 			remove() assertsIs "scoreboard objectives remove test"

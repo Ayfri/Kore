@@ -148,7 +148,7 @@ class InventoryManagerTests : FunSpec({
 			generatedFunctions.first { it.name.endsWith("load_inventory_manager_0") }.lines shouldBe listOf(
 				"scoreboard objectives add $score dummy",
 				"kill @e[tag=${score}_marker,type=minecraft:marker]",
-				"summon minecraft:marker ~ ~ ~ {Tags:[\"${score}_marker\",\"inventory_manager\"]}",
+				"summon minecraft:marker ~ ~ ~ {Tags:[${score}_marker,inventory_manager]}",
 				"scoreboard players set $marker $score 0",
 			)
 			val tick = generatedFunctions.first { it.name.endsWith("tick_inventory_manager_0") }.lines

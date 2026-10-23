@@ -340,7 +340,7 @@ Generated output:
 
 ```mcfunction
 summon minecraft:zombie 0 64 0
-summon minecraft:creeper ~ ~ ~ {CustomName:"Boom",NoAI:1b}
+summon minecraft:creeper ~ ~ ~ {CustomName:Boom,NoAI:1b}
 ```
 
 The trailing block is the raw [NBT builder](/docs/concepts/nbts), so entity tags are written by name and are not
@@ -681,7 +681,7 @@ Generated output:
 ```mcfunction
 compute default my_pack:bonus
 compute block 0 64 0 my_pack:bonus 2
-compute entity @s {type:"minecraft:score",target:{type:"minecraft:context",target:"target_entity"},score:"kills"}
+compute entity @s {type:"minecraft:score",target:{type:"minecraft:context",target:target_entity},score:kills}
 compute default {type:"minecraft:constant",value:5} 3
 compute entity @s my_pack:bonus integer
 ```
@@ -898,7 +898,7 @@ assignment patterns in commands, predicates, and chat-related APIs.
 Generated output:
 
 ```mcfunction
-data merge entity @s {CustomName:"Hero",Invulnerable:1b}
+data merge entity @s {CustomName:Hero,Invulnerable:1b}
 ```
 
 #### Data Modify
@@ -969,7 +969,7 @@ Generated output:
 ```mcfunction
 data modify storage minecraft:foo bar set compute default my_pack:bonus
 data modify storage minecraft:foo bar append compute block 1 2 3 my_pack:bonus integer
-data modify storage minecraft:foo baz set compute entity @s {type:"minecraft:score",target:{type:"minecraft:context",target:"target_entity"},score:"kills"}
+data modify storage minecraft:foo baz set compute entity @s {type:"minecraft:score",target:{type:"minecraft:context",target:target_entity},score:kills}
 ```
 
 #### Data Remove
@@ -1292,7 +1292,7 @@ SNBT. Colors are packed ints: RGB for `dust`, `dust_color_transition`, `effect`,
 | `shriekParticle`              | `shriek`                                                          | A delay in ticks                                            | `particle minecraft:shriek{delay:100}`                                             |
 | `simpleParticle`              | every other particle                                              | None                                                        | `particle minecraft:ash`                                                           |
 | `trailParticle`               | `trail`                                                           | An RGB color, a duration in ticks and a target position     | `particle minecraft:trail{color:16733525,duration:10,target:[1.0d,2.0d,3.0d]}`     |
-| `vibrationParticle`           | `vibration`                                                       | A target block position and an arrival time in ticks        | `particle minecraft:vibration{arrival_in_ticks:10,destination:{pos:[1,2,3],type:"block"}}` |
+| `vibrationParticle`           | `vibration`                                                       | A target block position and an arrival time in ticks        | `particle minecraft:vibration{arrival_in_ticks:10,destination:{pos:[1,2,3],type:block}}` |
 
 Factories that cover several IDs take the ID as a last parameter, defaulting to the first one of their row: `blockParticle(Blocks.SAND,
 Particles.DUST_PILLAR)`, `colorParticle(Color.WHITE, Particles.FLASH)`.
@@ -1332,7 +1332,7 @@ function("particle_options") {
 Generated output:
 
 ```mcfunction
-particle minecraft:block{block_state:{id:"minecraft:stone_slab",properties:{half:"top"}}}
+particle minecraft:block{block_state:{id:"minecraft:stone_slab",properties:{half:top}}}
 particle minecraft:block_crumble{block_state:"minecraft:stone"}
 particle minecraft:entity_effect{color:-11141291}
 particle minecraft:flash{color:-1}
@@ -1343,7 +1343,7 @@ particle minecraft:instant_effect{color:5635925,power:2.0f}
 particle minecraft:geyser_poof{burst_impulse_base:1.5f,water_blocks:4}
 particle minecraft:item{item:{id:"minecraft:diamond_sword",components:{enchantments:{"minecraft:sharpness":5}}}}
 particle minecraft:sculk_charge{roll:1.5707964f}
-particle minecraft:vibration{arrival_in_ticks:10,destination:{pos:[1,2,3],type:"block"}} ~ ~ ~ 0 0 0 0 1 force
+particle minecraft:vibration{arrival_in_ticks:10,destination:{pos:[1,2,3],type:block}} ~ ~ ~ 0 0 0 0 1 force
 ```
 
 A ring of colored dust, one command per point, each one visible from far away:

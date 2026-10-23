@@ -111,8 +111,8 @@ class EventsTests : FunSpec({
 		files["$fn/kore_oop_death_dispatcher.mcfunction"] assertsIs
 			"execute as @e[type=minecraft:item] if items entity @s contents minecraft:structure_void[custom_data~{kore_oop_death:1b}] at @s run function death_tests:generated_scopes/kore_oop_death_handle"
 		files["$fn/kore_oop_death_handle.mcfunction"] assertsIs """
-			execute if items entity @s contents *[custom_data~{tags:["kore_oop_death_c3f864bc"]}] run function #death_tests:kore_oop_death_c3f864bc
-			execute if items entity @s contents *[custom_data~{tags:["kore_oop_death_13e63c2c"]}] run function #death_tests:kore_oop_death_13e63c2c
+			execute if items entity @s contents *[custom_data~{tags:[kore_oop_death_c3f864bc]}] run function #death_tests:kore_oop_death_c3f864bc
+			execute if items entity @s contents *[custom_data~{tags:[kore_oop_death_13e63c2c]}] run function #death_tests:kore_oop_death_13e63c2c
 			kill @s
 		""".trimIndent()
 		files["data/death_tests/loot_table/kore_oop/death_trigger_zombie.json"] assertsIs

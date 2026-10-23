@@ -23,7 +23,7 @@ player statues in a datapack. Mannequins only spawn through commands such as `su
 Put the player's name in `profile`: the game looks up that player's current skin and puts it on the mannequin.
 
 ```mcfunction
-summon minecraft:mannequin ~ ~ ~ {profile:"Ayfri"}
+summon minecraft:mannequin ~ ~ ~ {profile:Ayfri}
 ```
 
 With Kore, `playerProfile(name)` sets the same field, written in its object form:
@@ -37,7 +37,7 @@ summon(statue.entityType, vec3(), statue.toNbt())
 ```
 
 ```mcfunction
-summon minecraft:mannequin ~ ~ ~ {profile:{name:"Ayfri"}}
+summon minecraft:mannequin ~ ~ ~ {profile:{name:Ayfri}}
 ```
 
 Without a `profile`, a mannequin wears the default slim Alex skin.
@@ -94,7 +94,7 @@ mannequin {
 ```
 
 ```mcfunction
-summon minecraft:mannequin ~ ~ ~ {profile:{model:"slim",texture:"minecraft:entity/player/slim/alex"}}
+summon minecraft:mannequin ~ ~ ~ {profile:{model:slim,texture:"minecraft:entity/player/slim/alex"}}
 ```
 
 The game's skins are `ALEX`, `ARI`, `EFE`, `KAI`, `MAKENA`, `NOOR`, `STEVE`, `SUNNY` and `ZURI`, under `Textures.Entity.Player.Slim` and
@@ -128,7 +128,7 @@ mannequin {
 ```
 
 ```mcfunction
-summon minecraft:mannequin ~ ~ ~ {profile:{model:"slim",name:"Ayfri"}}
+summon minecraft:mannequin ~ ~ ~ {profile:{model:slim,name:Ayfri}}
 ```
 
 ## Customization
@@ -255,7 +255,7 @@ summon(shopkeeper.entityType, vec3(0, 64, 0), shopkeeper.toNbt())
 ```
 
 ```mcfunction
-summon minecraft:mannequin 0 64 0 {CustomName:"Bob",CustomNameVisible:1b,Invulnerable:1b,Tags:["shopkeeper"],description:{text:"Shopkeeper",color:"gold"},equipment:{mainhand:{id:"minecraft:emerald"}},hidden_layers:["cape"],immovable:1b,main_hand:"left",pose:"crouching",profile:{name:"Ayfri"}}
+summon minecraft:mannequin 0 64 0 {CustomName:Bob,CustomNameVisible:1b,Invulnerable:1b,Tags:[shopkeeper],description:{text:Shopkeeper,color:gold},equipment:{mainhand:{id:"minecraft:emerald"}},hidden_layers:[cape],immovable:1b,main_hand:left,pose:crouching,profile:{name:Ayfri}}
 ```
 
 `Mannequin` doesn't cover every field a living entity has: attributes (such as `minecraft:scale`) and `Health` aren't part of it. They can
@@ -270,7 +270,7 @@ summon(giant.entityType, vec3(), nbt {
 ```
 
 ```mcfunction
-summon minecraft:mannequin ~ ~ ~ {profile:{name:"Ayfri"},Health:40.0f}
+summon minecraft:mannequin ~ ~ ~ {profile:{name:Ayfri},Health:40.0f}
 ```
 
 ## Clickable NPC

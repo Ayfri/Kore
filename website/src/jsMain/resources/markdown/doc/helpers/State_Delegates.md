@@ -94,7 +94,7 @@ function("start_wave") {
 ```kotlin
 function("storage_demo") {
 	var customTag by player.storage("my_namespace:data", "customTag", default = "hello")
-	customTag = "world"  // emits: /data modify storage my_namespace:data customTag set value "world"
+	customTag = "world"  // emits: /data modify storage my_namespace:data customTag set value world
 }
 ```
 

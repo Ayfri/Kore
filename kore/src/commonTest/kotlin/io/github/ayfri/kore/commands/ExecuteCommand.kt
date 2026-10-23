@@ -59,7 +59,7 @@ fun Function.executeTests() {
 			debug("Validated ifCondition with multiple scores", Color.GREEN)
 		}
 	} assertsIs """
-		execute if score $selectorAsString a matches 0 if score $selectorAsString b matches 1 if score $selectorAsString c matches 2 run tellraw @a {type:"text",color:"green",text:"Validated ifCondition with multiple scores"}
+		execute if score $selectorAsString a matches 0 if score $selectorAsString b matches 1 if score $selectorAsString c matches 2 run tellraw @a {type:text,color:green,text:"Validated ifCondition with multiple scores"}
 	""".trimIndent()
 
 	val testFunction = datapack.function("test_execute_direct_return") {
@@ -327,7 +327,7 @@ fun Function.executeTests() {
 			tellraw(allPlayers(), textComponent("test"))
 		}
 	} assertsIs """
-		execute as @a run tellraw @a "test"
+		execute as @a run tellraw @a test
 	""".trimIndent()
 
 	execute {
@@ -337,7 +337,7 @@ fun Function.executeTests() {
 			tellraw(allEntities(true), textComponent("test"))
 		}
 	} assertsIs """
-		execute as @e[limit=1] run tellraw @s "test"
+		execute as @e[limit=1] run tellraw @s test
 	""".trimIndent()
 
 	execute {
@@ -347,7 +347,7 @@ fun Function.executeTests() {
 			tellraw(uuid("00000000-0000-0000-0000-000000000000"), textComponent("test"))
 		}
 	} assertsIs """
-		execute as 00000000-0000-0000-0000-000000000000 run tellraw @s "test"
+		execute as 00000000-0000-0000-0000-000000000000 run tellraw @s test
 	""".trimIndent()
 
 	execute {
@@ -357,7 +357,7 @@ fun Function.executeTests() {
 			tellraw(allPlayers(), textComponent("test"))
 		}
 	} assertsIs """
-		execute as 00000000-0000-0000-0000-000000000000 run tellraw @a "test"
+		execute as 00000000-0000-0000-0000-000000000000 run tellraw @a test
 	""".trimIndent()
 
 	execute {

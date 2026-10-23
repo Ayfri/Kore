@@ -30,12 +30,12 @@ function("talk") { greet.start() }
 
 ```mcfunction
 # conversation_greet_2
-tellraw @s {type:"translatable",translate:"chat.type.text",with:[{type:"text",text:"Bob"},{type:"text",text:"Bye!"}]}
+tellraw @s {type:translatable,translate:"chat.type.text",with:[{type:text,text:Bob},{type:text,text:"Bye!"}]}
 scoreboard players reset @s my_pack.conversation.greet
 scoreboard players reset @s my_pack.conversation.greet.wait
 
 # conversation_greet_1
-tellraw @s {type:"translatable",translate:"chat.type.text",with:[{type:"text",text:"Bob"},{type:"text",text:"Hello!"}]}
+tellraw @s {type:translatable,translate:"chat.type.text",with:[{type:text,text:Bob},{type:text,text:"Hello!"}]}
 scoreboard players set @s my_pack.conversation.greet 2
 scoreboard players set @s my_pack.conversation.greet.wait 40
 advancement revoke @s only my_pack:conversation/greet
@@ -109,7 +109,7 @@ the condition is the first line of the steps after it, the `miner` conversation 
 ```mcfunction
 # conversation_miner_2
 execute unless score @s my_pack.mined matches 10.. run return run advancement revoke @s only my_pack:conversation/miner
-tellraw @s {type:"translatable",translate:"chat.type.text",with:[{type:"text",text:"Bob"},{type:"text",text:"Well done."}]}
+tellraw @s {type:translatable,translate:"chat.type.text",with:[{type:text,text:Bob},{type:text,text:"Well done."}]}
 scoreboard players reset @s my_pack.conversation.miner
 scoreboard players reset @s my_pack.conversation.miner.wait
 ```
@@ -171,8 +171,8 @@ conversation("help") {
 ```
 
 ```mcfunction
-tellraw @s {type:"translatable",translate:"chat.type.text",with:[{type:"text",color:"gold",text:"Mira"},{type:"text",text:"Will you help?"}]}
-tellraw @s [{type:"text",text:""},{type:"text",click_event:{action:"run_command",command:"trigger my_pack.conversation.help.choice set 1"},extra:[{type:"text",color:"green",text:"["},{type:"text",color:"green",text:"Accept"},{type:"text",color:"green",text:"]"}],hover_event:{action:"show_text",value:"Take the pickaxe"},text:""},{type:"text",text:"  "},{type:"text",click_event:{action:"run_command",command:"trigger my_pack.conversation.help.choice set 2"},extra:[{type:"text",color:"red",text:"["},{type:"text",color:"red",text:"Decline"},{type:"text",color:"red",text:"]"}],text:""}]
+tellraw @s {type:translatable,translate:"chat.type.text",with:[{type:text,color:gold,text:Mira},{type:text,text:"Will you help?"}]}
+tellraw @s [{type:text,text:""},{type:text,click_event:{action:run_command,command:"trigger my_pack.conversation.help.choice set 1"},extra:[{type:text,color:green,text:"["},{type:text,color:green,text:Accept},{type:text,color:green,text:"]"}],hover_event:{action:show_text,value:"Take the pickaxe"},text:""},{type:text,text:"  "},{type:text,click_event:{action:run_command,command:"trigger my_pack.conversation.help.choice set 2"},extra:[{type:text,color:red,text:"["},{type:text,color:red,text:Decline},{type:text,color:red,text:"]"}],text:""}]
 ```
 
 {{{ .components.mc.ConversationChatMockup }}}
@@ -324,7 +324,7 @@ The choice of that conversation compiles to:
 
 ```mcfunction
 # conversation_quest_intro_2
-tellraw @s {type:"translatable",translate:"chat.type.text",with:[{type:"text",color:"gold",text:"Elder Mira"},{type:"text",text:"Something old woke up down there."}]}
+tellraw @s {type:translatable,translate:"chat.type.text",with:[{type:text,color:gold,text:"Elder Mira"},{type:text,text:"Something old woke up down there."}]}
 scoreboard players set @s my_pack.conversation.quest_intro 3
 scoreboard players set @s my_pack.conversation.quest_intro.wait 40
 advancement revoke @s only my_pack:conversation/quest_intro
@@ -333,15 +333,15 @@ advancement revoke @s only my_pack:conversation/quest_intro
 scoreboard players set @s my_pack.conversation.quest_intro 4
 scoreboard players enable @s my_pack.conversation.quest_intro.choice
 scoreboard players set @s my_pack.conversation.quest_intro.choice 0
-tellraw @s {type:"translatable",translate:"chat.type.text",with:[{type:"text",color:"gold",text:"Elder Mira"},{type:"text",text:"Will you take this pickaxe and look?"}]}
-tellraw @s [{type:"text",text:""},{type:"text",click_event:{action:"run_command",command:"trigger my_pack.conversation.quest_intro.choice set 1"},extra:[{type:"text",color:"green",text:"["},{type:"text",color:"green",text:"Accept"},{type:"text",color:"green",text:"]"}],hover_event:{action:"show_text",value:"Take the pickaxe"},text:""},{type:"text",text:"  "},{type:"text",click_event:{action:"run_command",command:"trigger my_pack.conversation.quest_intro.choice set 2"},extra:[{type:"text",color:"red",text:"["},{type:"text",color:"red",text:"Decline"},{type:"text",color:"red",text:"]"}],text:""}]
+tellraw @s {type:translatable,translate:"chat.type.text",with:[{type:text,color:gold,text:"Elder Mira"},{type:text,text:"Will you take this pickaxe and look?"}]}
+tellraw @s [{type:text,text:""},{type:text,click_event:{action:run_command,command:"trigger my_pack.conversation.quest_intro.choice set 1"},extra:[{type:text,color:green,text:"["},{type:text,color:green,text:Accept},{type:text,color:green,text:"]"}],hover_event:{action:show_text,value:"Take the pickaxe"},text:""},{type:text,text:"  "},{type:text,click_event:{action:run_command,command:"trigger my_pack.conversation.quest_intro.choice set 2"},extra:[{type:text,color:red,text:"["},{type:text,color:red,text:Decline},{type:text,color:red,text:"]"}],text:""}]
 advancement revoke @s only my_pack:conversation/quest_intro
 
 # conversation_quest_intro_5
 scoreboard players reset @s my_pack.conversation.quest_intro.choice
 give @s minecraft:iron_pickaxe
 scoreboard players set @s my_pack.npc.quest_giver.quest 1
-tellraw @s {type:"translatable",translate:"chat.type.text",with:[{type:"text",color:"gold",text:"Elder Mira"},{type:"text",text:"Good luck, and come back alive."}]}
+tellraw @s {type:translatable,translate:"chat.type.text",with:[{type:text,color:gold,text:"Elder Mira"},{type:text,text:"Good luck, and come back alive."}]}
 function my_pack:generated_scopes/conversation_quest_intro_4
 
 # conversation_quest_intro_reenable

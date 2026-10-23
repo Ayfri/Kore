@@ -9,11 +9,11 @@ import io.kotest.core.spec.style.FunSpec
 fun entityComponentsTests() {
 	Items.AXOLOTL_BUCKET {
 		axolotlVariant(AxolotlVariants.BLUE)
-	} assertsIs "minecraft:axolotl_bucket[axolotl/variant=\"blue\"]"
+	} assertsIs "minecraft:axolotl_bucket[axolotl/variant=blue]"
 
 	Items.CAT_SPAWN_EGG {
 		catCollar(DyeColors.RED)
-	} assertsIs "minecraft:cat_spawn_egg[cat/collar=\"red\"]"
+	} assertsIs "minecraft:cat_spawn_egg[cat/collar=red]"
 
 	Items.CAT_SPAWN_EGG {
 		catVariant(CatVariants.TABBY)
@@ -29,11 +29,11 @@ fun entityComponentsTests() {
 
 	Items.BLACK_CUSHION {
 		cushionColor(DyeColors.RED)
-	} assertsIs "minecraft:black_cushion[cushion/color=\"red\"]"
+	} assertsIs "minecraft:black_cushion[cushion/color=red]"
 
 	Items.FOX_SPAWN_EGG {
 		foxVariant(FoxVariants.SNOW)
-	} assertsIs "minecraft:fox_spawn_egg[fox/variant=\"snow\"]"
+	} assertsIs "minecraft:fox_spawn_egg[fox/variant=snow]"
 
 	Items.FROG_SPAWN_EGG {
 		frogVariant(FrogVariants.COLD)
@@ -41,15 +41,15 @@ fun entityComponentsTests() {
 
 	Items.HORSE_SPAWN_EGG {
 		horseVariant(HorseVariants.GRAY)
-	} assertsIs "minecraft:horse_spawn_egg[horse/variant=\"gray\"]"
+	} assertsIs "minecraft:horse_spawn_egg[horse/variant=gray]"
 
 	Items.LLAMA_SPAWN_EGG {
 		llamaVariant(LlamaVariants.BROWN)
-	} assertsIs "minecraft:llama_spawn_egg[llama/variant=\"brown\"]"
+	} assertsIs "minecraft:llama_spawn_egg[llama/variant=brown]"
 
 	Items.MOOSHROOM_SPAWN_EGG {
 		mooshroomVariant(MooshroomVariants.RED)
-	} assertsIs "minecraft:mooshroom_spawn_egg[mooshroom/variant=\"red\"]"
+	} assertsIs "minecraft:mooshroom_spawn_egg[mooshroom/variant=red]"
 
 	Items.PAINTING {
 		paintingVariant(PaintingVariants.KEBAB)
@@ -57,7 +57,7 @@ fun entityComponentsTests() {
 
 	Items.PARROT_SPAWN_EGG {
 		parrotVariant(ParrotVariants.BLUE)
-	} assertsIs "minecraft:parrot_spawn_egg[parrot/variant=\"blue\"]"
+	} assertsIs "minecraft:parrot_spawn_egg[parrot/variant=blue]"
 
 	Items.PIG_SPAWN_EGG {
 		pigVariant(PigVariants.COLD)
@@ -65,39 +65,39 @@ fun entityComponentsTests() {
 
 	Items.RABBIT_SPAWN_EGG {
 		rabbitVariant(RabbitVariants.EVIL)
-	} assertsIs "minecraft:rabbit_spawn_egg[rabbit/variant=\"evil\"]"
+	} assertsIs "minecraft:rabbit_spawn_egg[rabbit/variant=evil]"
 
 	Items.SALMON_BUCKET {
 		salmonSize(SalmonSizes.LARGE)
-	} assertsIs "minecraft:salmon_bucket[salmon/size=\"large\"]"
+	} assertsIs "minecraft:salmon_bucket[salmon/size=large]"
 
 	Items.SHEEP_SPAWN_EGG {
 		sheepColor(DyeColors.LIME)
-	} assertsIs "minecraft:sheep_spawn_egg[sheep/color=\"lime\"]"
+	} assertsIs "minecraft:sheep_spawn_egg[sheep/color=lime]"
 
 	Items.SHULKER_SPAWN_EGG {
 		shulkerColor(DyeColors.PURPLE)
-	} assertsIs "minecraft:shulker_spawn_egg[shulker/color=\"purple\"]"
+	} assertsIs "minecraft:shulker_spawn_egg[shulker/color=purple]"
 
 	Items.TROPICAL_FISH_BUCKET {
 		tropicalFishBaseColor(DyeColors.YELLOW)
-	} assertsIs "minecraft:tropical_fish_bucket[tropical_fish/base_color=\"yellow\"]"
+	} assertsIs "minecraft:tropical_fish_bucket[tropical_fish/base_color=yellow]"
 
 	Items.TROPICAL_FISH_BUCKET {
 		tropicalFishPattern(TropicalFishPatterns.BETTY)
-	} assertsIs "minecraft:tropical_fish_bucket[tropical_fish/pattern=\"betty\"]"
+	} assertsIs "minecraft:tropical_fish_bucket[tropical_fish/pattern=betty]"
 
 	Items.TROPICAL_FISH_BUCKET {
 		tropicalFishPatternColor(DyeColors.CYAN)
-	} assertsIs "minecraft:tropical_fish_bucket[tropical_fish/pattern_color=\"cyan\"]"
+	} assertsIs "minecraft:tropical_fish_bucket[tropical_fish/pattern_color=cyan]"
 
 	Items.VILLAGER_SPAWN_EGG {
 		villagerVariant(VillagerVariants.SAVANNA)
-	} assertsIs "minecraft:villager_spawn_egg[villager/variant=\"savanna\"]"
+	} assertsIs "minecraft:villager_spawn_egg[villager/variant=savanna]"
 
 	Items.WOLF_SPAWN_EGG {
 		wolfCollar(DyeColors.BLACK)
-	} assertsIs "minecraft:wolf_spawn_egg[wolf/collar=\"black\"]"
+	} assertsIs "minecraft:wolf_spawn_egg[wolf/collar=black]"
 
 	Items.WOLF_SPAWN_EGG {
 		wolfSoundVariant(WolfSoundVariants.CUTE)

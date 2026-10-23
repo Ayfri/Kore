@@ -121,28 +121,28 @@ fun markdownRendererTests() {
 
 	// Complete serialized text component checks
 	val boldSerialized = markdownToTextComponents("**hello** world")
-	boldSerialized[0].asString() assertsIs """[{type:"text",text:""},{type:"text",bold:1b,text:"hello"},{type:"text",text:" world"}]"""
+	boldSerialized[0].asString() assertsIs """[{type:text,text:""},{type:text,bold:1b,text:hello},{type:text,text:" world"}]"""
 
 	val headingSerialized = markdownToTextComponents("# Title")
-	headingSerialized[0].asString() assertsIs """{type:"text",bold:1b,color:"gold",text:"Title"}"""
+	headingSerialized[0].asString() assertsIs """{type:text,bold:1b,color:gold,text:Title}"""
 
 	val linkSerialized = markdownToTextComponents("Click [here](https://example.com) for **info**")
-	linkSerialized[0].asString() assertsIs """[{type:"text",text:"Click "},{type:"text",click_event:{action:"open_url",url:"https://example.com"},color:"aqua",text:"here",underlined:1b},{type:"text",text:" for "},{type:"text",bold:1b,text:"info"}]"""
+	linkSerialized[0].asString() assertsIs """[{type:text,text:"Click "},{type:text,click_event:{action:open_url,url:"https://example.com"},color:aqua,text:here,underlined:1b},{type:text,text:" for "},{type:text,bold:1b,text:info}]"""
 
 	val codeSerialized = markdownToTextComponents("Run `help` now")
-	codeSerialized[0].asString() assertsIs """[{type:"text",text:"Run "},{type:"text",color:"gray",text:"help"},{type:"text",text:" now"}]"""
+	codeSerialized[0].asString() assertsIs """[{type:text,text:"Run "},{type:text,color:gray,text:help},{type:text,text:" now"}]"""
 
 	val hrSerialized = markdownToTextComponents("---")
-	hrSerialized[0].asString() assertsIs """{type:"text",color:"gray",strikethrough:1b,text:"────────────────────"}"""
+	hrSerialized[0].asString() assertsIs """{type:text,color:gray,strikethrough:1b,text:"────────────────────"}"""
 
 	val quoteSerialized = markdownToTextComponents("> hello")
-	quoteSerialized[0].asString() assertsIs """[{type:"text",text:""},{type:"text",color:"gray",text:"│ "},{type:"text",text:"hello"}]"""
+	quoteSerialized[0].asString() assertsIs """[{type:text,text:""},{type:text,color:gray,text:"│ "},{type:text,text:hello}]"""
 
 	val ulSerialized = markdownToTextComponents("- item")
-	ulSerialized[0].asString() assertsIs """["• ","item"]"""
+	ulSerialized[0].asString() assertsIs """["• ",item]"""
 
 	val olSerialized = markdownToTextComponents("1. first")
-	olSerialized[0].asString() assertsIs """["1. ","first"]"""
+	olSerialized[0].asString() assertsIs """["1. ",first]"""
 
 }
 

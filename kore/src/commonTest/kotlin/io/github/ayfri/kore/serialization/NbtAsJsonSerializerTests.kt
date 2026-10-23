@@ -8,12 +8,12 @@ import io.kotest.core.spec.style.FunSpec
 class NbtAsJsonSerializerTests : FunSpec({
 	test("json arrays of one type keep their tag type") {
 		json.decodeFromString(NbtAsJsonSerializer, "[1, 2]").toSnbt() assertsIs "[1,2]"
-		json.decodeFromString(NbtAsJsonSerializer, """["a", "b"]""").toSnbt() assertsIs """["a","b"]"""
+		json.decodeFromString(NbtAsJsonSerializer, """["a", "b"]""").toSnbt() assertsIs "[a,b]"
 		json.decodeFromString(NbtAsJsonSerializer, """[{"a": 1}, {"a": 2}]""").toSnbt() assertsIs "[{a:1},{a:2}]"
 	}
 
 	test("mixed json arrays fall back to strings") {
-		json.decodeFromString(NbtAsJsonSerializer, """[1, "a"]""").toSnbt() assertsIs """["1","a"]"""
+		json.decodeFromString(NbtAsJsonSerializer, """[1, "a"]""").toSnbt() assertsIs """["1",a]"""
 	}
 
 	test("json primitives map to the smallest fitting tag") {

@@ -39,12 +39,12 @@ class ConversationTests : FunSpec({
 
 			generatedFunctionsText() assertsIs """
 				# conversation_greet_2
-				tellraw @s {type:"translatable",translate:"chat.type.text",with:[{type:"text",text:"Bob"},{type:"text",text:"Bye!"}]}
+				tellraw @s {type:translatable,translate:"chat.type.text",with:[{type:text,text:Bob},{type:text,text:"Bye!"}]}
 				scoreboard players reset @s conv_tests.conversation.greet
 				scoreboard players reset @s conv_tests.conversation.greet.wait
 
 				# conversation_greet_1
-				tellraw @s {type:"translatable",translate:"chat.type.text",with:[{type:"text",text:"Bob"},{type:"text",text:"Hello!"}]}
+				tellraw @s {type:translatable,translate:"chat.type.text",with:[{type:text,text:Bob},{type:text,text:"Hello!"}]}
 				scoreboard players set @s conv_tests.conversation.greet 2
 				scoreboard players set @s conv_tests.conversation.greet.wait 40
 				advancement revoke @s only conv_tests:conversation/greet
@@ -99,8 +99,8 @@ class ConversationTests : FunSpec({
 			}
 
 			generatedFunctions.first().lines.take(2) shouldBe listOf(
-				"""tellraw @s "Plain"""",
-				"""tellraw @s {type:"translatable",translate:"chat.type.text",with:[{type:"text",color:"gold",text:"Bob"},{type:"text",color:"red",text:"Danger"}]}""",
+				"""tellraw @s Plain""",
+				"""tellraw @s {type:translatable,translate:"chat.type.text",with:[{type:text,color:gold,text:Bob},{type:text,color:red,text:Danger}]}""",
 			)
 		}
 	}
@@ -165,7 +165,7 @@ class ConversationTests : FunSpec({
 				scoreboard objectives add conv_tests.conversation.wf dummy
 
 				# conversation_plain_1
-				tellraw @s "Hi"
+				tellraw @s Hi
 				scoreboard players reset @s conv_tests.conversation.plain
 
 				# conversation_plain_load
@@ -196,7 +196,7 @@ class ConversationTests : FunSpec({
 			generatedFunctionsText() assertsIs """
 				# conversation_mine_2
 				execute unless score @s mined matches 3.. run return run advancement revoke @s only conv_tests:conversation/mine
-				tellraw @s "Done"
+				tellraw @s Done
 				scoreboard players reset @s conv_tests.conversation.mine
 				scoreboard players reset @s conv_tests.conversation.mine.wait
 
@@ -240,18 +240,18 @@ class ConversationTests : FunSpec({
 
 			generatedFunctionsText() assertsIs """
 				# conversation_ask_2
-				tellraw @s "Bye"
+				tellraw @s Bye
 				scoreboard players reset @s conv_tests.conversation.ask
 				scoreboard players reset @s conv_tests.conversation.ask.wait
 				scoreboard players reset @s conv_tests.conversation.ask.choice
 
 				# conversation_ask_4
-				tellraw @s "Go"
+				tellraw @s Go
 				function conv_tests:generated_scopes/conversation_ask_2
 
 				# conversation_ask_3
 				scoreboard players reset @s conv_tests.conversation.ask.choice
-				tellraw @s "Ok"
+				tellraw @s Ok
 				scoreboard players set @s conv_tests.conversation.ask 4
 				scoreboard players set @s conv_tests.conversation.ask.wait 20
 				advancement revoke @s only conv_tests:conversation/ask
@@ -266,7 +266,7 @@ class ConversationTests : FunSpec({
 				dialog show @s conv_tests:conversation_ask_choice_2
 
 				# conversation_ask_1
-				tellraw @s "Offer"
+				tellraw @s Offer
 				scoreboard players set @s conv_tests.conversation.ask 2
 				scoreboard players enable @s conv_tests.conversation.ask.choice
 				scoreboard players set @s conv_tests.conversation.ask.choice 0
@@ -344,8 +344,8 @@ class ConversationTests : FunSpec({
 			generatedFunctions.first { it.name == "conversation_ask_show_2" }.lines assertsIs listOf(
 				"scoreboard players enable @s conv_tests.conversation.ask.choice",
 				"scoreboard players set @s conv_tests.conversation.ask.choice 0",
-				"""tellraw @s {type:"translatable",translate:"chat.type.text",with:[{type:"text",color:"gold",text:"Mira"},{type:"text",text:"Will you help?"}]}""",
-				"""tellraw @s [{type:"text",text:""},{type:"text",click_event:{action:"run_command",command:"trigger conv_tests.conversation.ask.choice set 1"},extra:[{type:"text",color:"green",text:"["},{type:"text",color:"green",text:"Accept"},{type:"text",color:"green",text:"]"}],hover_event:{action:"show_text",value:"Take the pickaxe"},text:""},{type:"text",text:"  "},{type:"text",click_event:{action:"run_command",command:"trigger conv_tests.conversation.ask.choice set 2"},extra:[{type:"text",color:"red",text:"["},{type:"text",color:"red",text:"Decline"},{type:"text",color:"red",text:"]"}],text:""}]""",
+				"""tellraw @s {type:translatable,translate:"chat.type.text",with:[{type:text,color:gold,text:Mira},{type:text,text:"Will you help?"}]}""",
+				"""tellraw @s [{type:text,text:""},{type:text,click_event:{action:run_command,command:"trigger conv_tests.conversation.ask.choice set 1"},extra:[{type:text,color:green,text:"["},{type:text,color:green,text:Accept},{type:text,color:green,text:"]"}],hover_event:{action:show_text,value:"Take the pickaxe"},text:""},{type:text,text:"  "},{type:text,click_event:{action:run_command,command:"trigger conv_tests.conversation.ask.choice set 2"},extra:[{type:text,color:red,text:"["},{type:text,color:red,text:Decline},{type:text,color:red,text:"]"}],text:""}]""",
 			)
 			dialogs.shouldBeEmpty()
 		}
@@ -367,8 +367,8 @@ class ConversationTests : FunSpec({
 			}
 
 			generatedFunctions.first { it.name == "conversation_ask_show_2" }.lines.drop(2) assertsIs listOf(
-				"""tellraw @s {type:"text",click_event:{action:"run_command",command:"trigger conv_tests.conversation.ask.choice set 1"},extra:["> ","A"],text:""}""",
-				"""tellraw @s {type:"text",click_event:{action:"run_command",command:"trigger conv_tests.conversation.ask.choice set 2"},extra:["> ","B"],text:""}""",
+				"""tellraw @s {type:text,click_event:{action:run_command,command:"trigger conv_tests.conversation.ask.choice set 1"},extra:["> ",A],text:""}""",
+				"""tellraw @s {type:text,click_event:{action:run_command,command:"trigger conv_tests.conversation.ask.choice set 2"},extra:["> ",B],text:""}""",
 			)
 		}
 	}

@@ -129,13 +129,13 @@ fun entityCommandsTests() = dataPack("entity_commands_tests") {
 
 	function("test_show_title") {
 		player.showTitle("Welcome")
-		lines[0] assertsIs """title @e[limit=1,name=TestPlayer,type=minecraft:player] title "Welcome""""
+		lines[0] assertsIs """title @e[limit=1,name=TestPlayer,type=minecraft:player] title Welcome"""
 		lines.size assertsIs 1
 	}
 
 	function("test_show_title_with_subtitle") {
 		player.showTitle("Welcome", "to the game")
-		lines[0] assertsIs """title @e[limit=1,name=TestPlayer,type=minecraft:player] title "Welcome""""
+		lines[0] assertsIs """title @e[limit=1,name=TestPlayer,type=minecraft:player] title Welcome"""
 		lines[1] assertsIs """title @e[limit=1,name=TestPlayer,type=minecraft:player] subtitle "to the game""""
 		lines.size assertsIs 2
 	}

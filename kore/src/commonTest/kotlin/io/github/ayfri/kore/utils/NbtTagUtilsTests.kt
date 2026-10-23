@@ -8,12 +8,13 @@ import io.github.ayfri.kore.functions.function
 import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import net.benwoodworth.knbt.NbtString
 
 class NbtTagUtilsTests : FunSpec({
 	test("snbt strings round-trip through toNbt") {
 		val compound = """{Count:3b,tag:{x:1,name:"hello"}}""".toNbt()
 
-		compound.toSnbt() shouldBe """{Count:3b,tag:{x:1,name:"hello"}}"""
+		compound.toSnbt() shouldBe """{Count:3b,tag:{x:1,name:hello}}"""
 		compound shouldBe nbt {
 			this["Count"] = 3.toByte()
 			this["tag"] = nbt {
@@ -32,7 +33,7 @@ class NbtTagUtilsTests : FunSpec({
 	test("nbtListOf builds typed lists") {
 		nbtListOf(1, 2, 3).toSnbt() shouldBe "[1,2,3]"
 		nbtListOf(0.5, 1.5).toSnbt() shouldBe "[0.5d,1.5d]"
-		nbtListOf("a", "b").toSnbt() shouldBe """["a","b"]"""
+		nbtListOf("a", "b").toSnbt() shouldBe "[a,b]"
 		nbtListOf(nbt { this["x"] = 1 }).toSnbt() shouldBe "[{x:1}]"
 	}
 
@@ -46,6 +47,44 @@ class NbtTagUtilsTests : FunSpec({
 		}
 
 		compound.toSnbt() shouldBe """{path:"C:\\temp",quote:"say \"hi\" it's",lines:"a\nb","it's \"key\"":1,'say "key"':2}"""
+	}
+
+	test("string values are bare only when the game reads them back as the same string") {
+		mapOf(
+			"aqua" to "aqua",
+			"Aqua" to "Aqua",
+			"_x" to "_x",
+			"snake_case-1" to "snake_case-1",
+			"trueish" to "trueish",
+			"5abc" to "\"5abc\"",
+			"-x" to "\"-x\"",
+			"+x" to "\"+x\"",
+			".x" to "\".x\"",
+			"minecraft:stone" to "\"minecraft:stone\"",
+			"@s" to "\"@s\"",
+			"hello world" to "\"hello world\"",
+			"a.b" to "\"a.b\"",
+			"é" to "\"é\"",
+			"" to "\"\"",
+			"true" to "\"true\"",
+			"TRUE" to "\"TRUE\"",
+			"False" to "\"False\"",
+		).forEach { (value, snbt) ->
+			NbtString(value).toSnbt() shouldBe snbt
+			nbt { this["k"] = value }.toSnbt().toNbt() shouldBe nbt { this["k"] = value }
+		}
+	}
+
+	test("keys stay bare when they only hold letters, digits, underscores and dashes") {
+		val compound = nbt {
+			this["true"] = "x"
+			this["1"] = "x"
+			this["a:b"] = "x"
+			this[""] = "x"
+		}
+
+		compound.toSnbt() shouldBe """{true:x,1:x,"a:b":x,"":x}"""
+		compound.toSnbt().toNbt() shouldBe compound
 	}
 
 	test("invalid snbt is rejected") {

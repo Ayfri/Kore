@@ -38,7 +38,7 @@ fun itemComponentsTests() {
 	val b = Items.AIR {
 		copyFrom(a)
 	}
-	b.asString() assertsIs "minecraft:air[item_name=\"a\"]"
+	b.asString() assertsIs "minecraft:air[item_name=a]"
 
 	val stoneSword = Items.STONE_SWORD
 	val stone = Items.STONE
@@ -54,7 +54,7 @@ fun itemComponentsTests() {
 	val attackAnimationTest = stoneSword {
 		attackAnimation(SwingAnimationType.STAB, duration = 10)
 	}
-	attackAnimationTest.asString() assertsIs """minecraft:stone_sword[attack_animation={duration:10,type:"stab"}]"""
+	attackAnimationTest.asString() assertsIs """minecraft:stone_sword[attack_animation={duration:10,type:stab}]"""
 
 	val attackAnimationEmptyTest = stoneSword {
 		attackAnimation()
@@ -64,7 +64,7 @@ fun itemComponentsTests() {
 	val attackAnimationNoneTest = stoneSword {
 		attackAnimation(SwingAnimationType.NONE, duration = 0)
 	}
-	attackAnimationNoneTest.asString() assertsIs """minecraft:stone_sword[attack_animation={duration:0,type:"none"}]"""
+	attackAnimationNoneTest.asString() assertsIs """minecraft:stone_sword[attack_animation={duration:0,type:none}]"""
 
 	val attackRangeTest = stoneSword {
 		attackRange(hitboxMargin = 0.5f, maxReach = 3.0f, minReach = 1.0f, mobFactor = 0.8f)
@@ -81,7 +81,7 @@ fun itemComponentsTests() {
 			)
 		}
 	}
-	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers=[{type:"minecraft:scale",id:"minecraft:big",amount:1.0d,operation:"add_value"}]]"""
+	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers=[{type:"minecraft:scale",id:"minecraft:big",amount:1.0d,operation:add_value}]]"""
 
 	attributeModifiersTest.components!!.attributeModifiers {
 		modifier(
@@ -94,18 +94,18 @@ fun itemComponentsTests() {
 			displayOverride("test")
 		}
 	}
-	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers=[{type:"minecraft:attack_damage",id:"my_namespace:big",amount:1.0d,operation:"add_value",display:{type:"override",value:"test"}}]]"""
+	attributeModifiersTest.asString() assertsIs """minecraft:stone_sword[attribute_modifiers=[{type:"minecraft:attack_damage",id:"my_namespace:big",amount:1.0d,operation:add_value,display:{type:override,value:test}}]]"""
 	val bannerPatternsTest = Items.WHITE_BANNER {
 		bannerPatterns {
 			pattern(BannerPatterns.CIRCLE, Color.AQUA)
 		}
 	}
-	bannerPatternsTest.asString() assertsIs """minecraft:white_banner[banner_patterns=[{pattern:"minecraft:circle",color:"aqua"}]]"""
+	bannerPatternsTest.asString() assertsIs """minecraft:white_banner[banner_patterns=[{pattern:"minecraft:circle",color:aqua}]]"""
 
 	val baseColorTest = stone {
 		baseColor(Color.AQUA)
 	}
-	baseColorTest.asString() assertsIs """minecraft:stone[base_color="aqua"]"""
+	baseColorTest.asString() assertsIs """minecraft:stone[base_color=aqua]"""
 
 	val beesTest = Items.BEE_NEST {
 		bees {
@@ -117,14 +117,14 @@ fun itemComponentsTests() {
 			}
 		}
 	}
-	beesTest.asString() assertsIs """minecraft:bee_nest[bees=[{entity_data:{id:"minecraft:bee",test:"test"},ticks_in_hive:10,min_ticks_in_hive:20}]]"""
+	beesTest.asString() assertsIs """minecraft:bee_nest[bees=[{entity_data:{id:"minecraft:bee",test:test},ticks_in_hive:10,min_ticks_in_hive:20}]]"""
 
 	val blockEntityDataTest = Items.BEE_NEST {
 		blockEntityData(Blocks.BEE_NEST) {
 			this["test"] = "test"
 		}
 	}
-	blockEntityDataTest.asString() assertsIs """minecraft:bee_nest[block_entity_data={id:"minecraft:bee_nest",test:"test"}]"""
+	blockEntityDataTest.asString() assertsIs """minecraft:bee_nest[block_entity_data={id:"minecraft:bee_nest",test:test}]"""
 
 	val blocksAttacksTest = Items.DIAMOND_SWORD {
 		blocksAttacks {
@@ -147,7 +147,7 @@ fun itemComponentsTests() {
 			this["test"] = "test"
 		}
 	}
-	blockStateTest.asString() assertsIs """minecraft:stone[block_state={test:"test"}]"""
+	blockStateTest.asString() assertsIs """minecraft:stone[block_state={test:test}]"""
 
 	val blockTransformerTest = Items.COPPER_AXE {
 		blockTransformer(BlockTransformerArgument("strip_logs", "mypack"))
@@ -174,7 +174,7 @@ fun itemComponentsTests() {
 			this["test"] = "test"
 		}
 	}
-	bucketEntityDataTest.asString() assertsIs """minecraft:water_bucket[bucket_entity_data={test:"test"}]"""
+	bucketEntityDataTest.asString() assertsIs """minecraft:water_bucket[bucket_entity_data={test:test}]"""
 
 	val bundleContentsTest = bundle {
 		bundleContents(Items.DIAMOND, Items.DIRT)
@@ -197,7 +197,7 @@ fun itemComponentsTests() {
 		predicate(Blocks.DIAMOND_BLOCK, state = mapOf("test" to "test"))
 		predicate(Blocks.STONE, Blocks.ICE)
 	}
-	canBreakTest.asString() assertsIs """minecraft:stone_sword[can_break=[{blocks:"minecraft:diamond_block",state:{test:"test"}},{blocks:["minecraft:stone","minecraft:ice"]}]]"""
+	canBreakTest.asString() assertsIs """minecraft:stone_sword[can_break=[{blocks:"minecraft:diamond_block",state:{test:test}},{blocks:["minecraft:stone","minecraft:ice"]}]]"""
 
 	val canPlaceOnTest = stone {
 		canPlaceOn(Blocks.DIAMOND_BLOCK)
@@ -208,7 +208,7 @@ fun itemComponentsTests() {
 		predicate(Blocks.DIAMOND_BLOCK, state = mapOf("test" to "test"))
 		predicate(Blocks.STONE, Blocks.ICE)
 	}
-	canPlaceOnTest.asString() assertsIs """minecraft:stone[can_place_on=[{blocks:"minecraft:diamond_block",state:{test:"test"}},{blocks:["minecraft:stone","minecraft:ice"]}]]"""
+	canPlaceOnTest.asString() assertsIs """minecraft:stone[can_place_on=[{blocks:"minecraft:diamond_block",state:{test:test}},{blocks:["minecraft:stone","minecraft:ice"]}]]"""
 
 	val chargedProjectilesTest = crossbow {
 		chargedProjectile(Items.ARROW)
@@ -240,7 +240,7 @@ fun itemComponentsTests() {
 			}
 		}
 	}
-	consumableTest.asString() assertsIs """minecraft:potion[consumable={consume_seconds:1.5f,animation:"drink",sound:"minecraft:item.bottle.empty",has_consume_particles:1b,on_consume_effects:{"minecraft:apply_effects":{effects:[{id:"minecraft:poison",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b}],probability:1.0f},"minecraft:teleport_randomly":{diameter:2.5f},"minecraft:play_sound":{sound:"minecraft:entity.cow.step"}}}]"""
+	consumableTest.asString() assertsIs """minecraft:potion[consumable={consume_seconds:1.5f,animation:drink,sound:"minecraft:item.bottle.empty",has_consume_particles:1b,on_consume_effects:{"minecraft:apply_effects":{effects:[{id:"minecraft:poison",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b}],probability:1.0f},"minecraft:teleport_randomly":{diameter:2.5f},"minecraft:play_sound":{sound:"minecraft:entity.cow.step"}}}]"""
 
 	val teleportRandomlyTest = Items.POTION {
 		consumable(consumeSeconds = 1.5f, animation = ConsumeAnimation.DRINK, sound = SoundEvents.Item.Bottle.EMPTY) {
@@ -249,7 +249,7 @@ fun itemComponentsTests() {
 			}
 		}
 	}
-	teleportRandomlyTest.asString() assertsIs """minecraft:potion[consumable={consume_seconds:1.5f,animation:"drink",sound:"minecraft:item.bottle.empty",has_consume_particles:1b,on_consume_effects:{"minecraft:teleport_randomly":{diameter:8.0f,directional_particles:0b}}}]"""
+	teleportRandomlyTest.asString() assertsIs """minecraft:potion[consumable={consume_seconds:1.5f,animation:drink,sound:"minecraft:item.bottle.empty",has_consume_particles:1b,on_consume_effects:{"minecraft:teleport_randomly":{diameter:8.0f,directional_particles:0b}}}]"""
 
 	val containerTest = stone {
 		container {
@@ -332,7 +332,7 @@ fun itemComponentsTests() {
 			this["test"] = "test"
 		}
 	}
-	customDataTest.asString() assertsIs """minecraft:stone_sword[custom_data={test:"test"}]"""
+	customDataTest.asString() assertsIs """minecraft:stone_sword[custom_data={test:test}]"""
 
 	val customModelDataTest = stoneSword {
 		customModelData(
@@ -342,21 +342,21 @@ fun itemComponentsTests() {
 			strings = listOf("test1", "test2")
 		)
 	}
-	customModelDataTest.asString() assertsIs """minecraft:stone_sword[custom_model_data={colors:[16733525,5592575],flags:[1b,0b],floats:[1.0f,2.0f],strings:["test1","test2"]}]"""
+	customModelDataTest.asString() assertsIs """minecraft:stone_sword[custom_model_data={colors:[16733525,5592575],flags:[1b,0b],floats:[1.0f,2.0f],strings:[test1,test2]}]"""
 
 	val customNameTest = stoneSword {
 		customName(textComponent("test", Color.AQUA))
 	}
-	customNameTest.asString() assertsIs "minecraft:stone_sword[custom_name={text:\"test\",color:\"aqua\"}]"
+	customNameTest.asString() assertsIs "minecraft:stone_sword[custom_name={text:test,color:aqua}]"
 
 	customNameTest.components!!.customName(textComponent("test"))
-	customNameTest.asString() assertsIs "minecraft:stone_sword[custom_name=\"test\"]"
+	customNameTest.asString() assertsIs "minecraft:stone_sword[custom_name=test]"
 
 	customNameTest.components!!.customName("""Hello "world" C:\temp""")
 	customNameTest.asString() assertsIs """minecraft:stone_sword[custom_name="Hello \"world\" C:\\temp"]"""
 
 	customNameTest.components!!.customName(textComponent("Legendary ", Color.GOLD) + text("Sword"))
-	customNameTest.asString() assertsIs """minecraft:stone_sword[custom_name=[{type:"text",text:""},{type:"text",color:"gold",text:"Legendary "},{type:"text",text:"Sword"}]]"""
+	customNameTest.asString() assertsIs """minecraft:stone_sword[custom_name=[{type:text,text:""},{type:text,color:gold,text:"Legendary "},{type:text,text:Sword}]]"""
 
 	val damageTest = stoneSword {
 		damage(5)
@@ -390,12 +390,12 @@ fun itemComponentsTests() {
 			this[Blocks.DIAMOND_BLOCK] = "test"
 		}
 	}
-	debugStickStateTest.asString() assertsIs """minecraft:stone[debug_stick_state={"minecraft:diamond_block":"test"}]"""
+	debugStickStateTest.asString() assertsIs """minecraft:stone[debug_stick_state={"minecraft:diamond_block":test}]"""
 
 	val dyeTest = stone {
 		dye(DyeColors.WHITE)
 	}
-	dyeTest.asString() assertsIs """minecraft:stone[dye="white"]"""
+	dyeTest.asString() assertsIs """minecraft:stone[dye=white]"""
 
 	val dyedColorTest = leatherHelmet {
 		dyedColor(Color.AQUA)
@@ -427,7 +427,7 @@ fun itemComponentsTests() {
 			this["test"] = "test"
 		}
 	}
-	entityDataTest.asString() assertsIs """minecraft:stone_sword[entity_data={test:"test"}]"""
+	entityDataTest.asString() assertsIs """minecraft:stone_sword[entity_data={test:test}]"""
 
 	val equippableTest = stoneSword {
 		equippable(EquipmentSlot.HEAD, "model") {
@@ -439,7 +439,7 @@ fun itemComponentsTests() {
 			shearingSound = SoundEvents.Item.Dye.USE
 		}
 	}
-	equippableTest.asString() assertsIs """minecraft:stone_sword[equippable={slot:"head",asset_id:"minecraft:model",allowed_entities:"minecraft:player",damage_on_hurt:1b,dispensable:1b,equip_on_interact:1b,equip_sound:"minecraft:item.armor.equip_iron",shearing_sound:"minecraft:item.dye.use"}]"""
+	equippableTest.asString() assertsIs """minecraft:stone_sword[equippable={slot:head,asset_id:"minecraft:model",allowed_entities:"minecraft:player",damage_on_hurt:1b,dispensable:1b,equip_on_interact:1b,equip_sound:"minecraft:item.armor.equip_iron",shearing_sound:"minecraft:item.dye.use"}]"""
 
 	val fireworksTest = Items.FIREWORK_ROCKET {
 		fireworks(flightDuration = 1) {
@@ -458,7 +458,7 @@ fun itemComponentsTests() {
 			}
 		}
 	}
-	fireworksTest.asString() assertsIs """minecraft:firework_rocket[fireworks={explosions:[{shape:"burst",colors:[5636095],fade_colors:[0,16777215],has_trail:1b,has_twinkle:1b},{shape:"creeper",colors:[0],fade_colors:[16777215],has_trail:0b,has_twinkle:0b}],flight_duration:1}]"""
+	fireworksTest.asString() assertsIs """minecraft:firework_rocket[fireworks={explosions:[{shape:burst,colors:[5636095],fade_colors:[0,16777215],has_trail:1b,has_twinkle:1b},{shape:creeper,colors:[0],fade_colors:[16777215],has_trail:0b,has_twinkle:0b}],flight_duration:1}]"""
 
 	val fireworkExplosionTest = Items.FIREWORK_STAR {
 		fireworkExplosion(FireworkExplosionShape.BURST) {
@@ -468,7 +468,7 @@ fun itemComponentsTests() {
 			hasTwinkle = true
 		}
 	}
-	fireworkExplosionTest.asString() assertsIs """minecraft:firework_star[firework_explosion={shape:"burst",colors:[5636095],fade_colors:[0,16777215],has_trail:1b,has_twinkle:1b}]"""
+	fireworkExplosionTest.asString() assertsIs """minecraft:firework_star[firework_explosion={shape:burst,colors:[5636095],fade_colors:[0,16777215],has_trail:1b,has_twinkle:1b}]"""
 
 	val foodTest = Items.COOKED_BEEF {
 		food(
@@ -497,7 +497,7 @@ fun itemComponentsTests() {
 	val interactAnimationTest = stoneSword {
 		interactAnimation { type = SwingAnimationType.WHACK }
 	}
-	interactAnimationTest.asString() assertsIs """minecraft:stone_sword[interact_animation={type:"whack"}]"""
+	interactAnimationTest.asString() assertsIs """minecraft:stone_sword[interact_animation={type:whack}]"""
 
 	val kineticWeaponTest = stoneSword {
 		kineticWeapon {
@@ -517,9 +517,9 @@ fun itemComponentsTests() {
 	val itemNameTest = stoneSword {
 		itemName(textComponent("test"))
 	}
-	itemNameTest.asString() assertsIs "minecraft:stone_sword[item_name=\"test\"]"
+	itemNameTest.asString() assertsIs "minecraft:stone_sword[item_name=test]"
 	itemNameTest.components!!.itemName("test", Color.AQUA)
-	itemNameTest.asString() assertsIs "minecraft:stone_sword[item_name={text:\"test\",color:\"aqua\"}]"
+	itemNameTest.asString() assertsIs "minecraft:stone_sword[item_name={text:test,color:aqua}]"
 
 	val jukeboxPlayableTest = Items.JUKEBOX {
 		jukeboxPlayable(JukeboxSongs.OTHERSIDE)
@@ -558,9 +558,9 @@ fun itemComponentsTests() {
 	val loreTest = stoneSword {
 		lore("test")
 	}
-	loreTest.asString() assertsIs "minecraft:stone_sword[lore=[\"test\"]]"
+	loreTest.asString() assertsIs "minecraft:stone_sword[lore=[test]]"
 	loreTest.components!!.lore(textComponent("test", Color.AQUA) + text("test2", Color.BLACK) + text("a"))
-	loreTest.asString() assertsIs "minecraft:stone_sword[lore=[{type:\"text\",color:\"aqua\",text:\"test\"},{type:\"text\",color:\"black\",text:\"test2\"},{type:\"text\",text:\"a\"}]]"
+	loreTest.asString() assertsIs "minecraft:stone_sword[lore=[{type:text,color:aqua,text:test},{type:text,color:black,text:test2},{type:text,text:a}]]"
 
 	val mapDecorationsTest = stone {
 		mapDecorations {
@@ -650,7 +650,7 @@ fun itemComponentsTests() {
 			customName = "test"
 		}
 	}
-	potionContentsTest.asString() assertsIs """minecraft:potion[potion_contents={potion:"minecraft:awkward",custom_color:5636095,custom_effects:[{id:"minecraft:poison",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b}],custom_name:"test"}]"""
+	potionContentsTest.asString() assertsIs """minecraft:potion[potion_contents={potion:"minecraft:awkward",custom_color:5636095,custom_effects:[{id:"minecraft:poison",duration:100,amplifier:1b,ambient:1b,show_particles:1b,show_icon:1b}],custom_name:test}]"""
 
 	potionContentsTest.components!!.potionContents(Potions.AWKWARD)
 	potionContentsTest.asString() assertsIs """minecraft:potion[potion_contents="minecraft:awkward"]"""
@@ -663,25 +663,25 @@ fun itemComponentsTests() {
 	val profileTest = Items.PLAYER_HEAD {
 		playerProfile("Notch")
 	}
-	profileTest.asString() assertsIs """minecraft:player_head[profile={name:"Notch"}]"""
+	profileTest.asString() assertsIs """minecraft:player_head[profile={name:Notch}]"""
 
 	profileTest.components!!.playerProfile("Notch", id = uuid("8667ba71-b85a-4004-af54-457a9734eed7"))
-	profileTest.asString() assertsIs """minecraft:player_head[profile={id:[I;-2040022415,-1202044924,-1353431686,-1758138665],name:"Notch"}]"""
+	profileTest.asString() assertsIs """minecraft:player_head[profile={id:[I;-2040022415,-1202044924,-1353431686,-1758138665],name:Notch}]"""
 
 	profileTest.components!!.playerProfile("Notch") {
 		property("test", "test")
 		property("test", byteArrayOf('K'.code.toByte(), 'o'.code.toByte(), 'r'.code.toByte(), 'e'.code.toByte()))
 	}
-	profileTest.asString() assertsIs """minecraft:player_head[profile={name:"Notch",properties:[{name:"test",value:"test"},{name:"test",value:"Kore"}]}]"""
+	profileTest.asString() assertsIs """minecraft:player_head[profile={name:Notch,properties:[{name:test,value:test},{name:test,value:Kore}]}]"""
 
 	profileTest.components!!.playerProfile("Notch") {
 		model = MannequinModel.SLIM
 		texture = Textures.Entity.Player.Slim.ALEX
 	}
-	profileTest.asString() assertsIs """minecraft:player_head[profile={model:"slim",name:"Notch",texture:"minecraft:entity/player/slim/alex"}]"""
+	profileTest.asString() assertsIs """minecraft:player_head[profile={model:slim,name:Notch,texture:"minecraft:entity/player/slim/alex"}]"""
 
 	profileTest.components!!.textureProfile(texture = "tex", model = MannequinModel.SLIM)
-	profileTest.asString() assertsIs """minecraft:player_head[profile={model:"slim",texture:"minecraft:tex"}]"""
+	profileTest.asString() assertsIs """minecraft:player_head[profile={model:slim,texture:"minecraft:tex"}]"""
 
 	profileTest.components!!.textureProfile {
 		texture = PlayerSkinTextureArgument("tex2")
@@ -716,7 +716,7 @@ fun itemComponentsTests() {
 	val rarityTest = stone {
 		rarity(Rarities.EPIC)
 	}
-	rarityTest.asString() assertsIs """minecraft:stone[rarity="epic"]"""
+	rarityTest.asString() assertsIs """minecraft:stone[rarity=epic]"""
 
 	val recipesTest = stone {
 		recipes(Recipes.CRAFTING_TABLE, Recipes.FURNACE)
@@ -744,7 +744,7 @@ fun itemComponentsTests() {
 			hasGlowingText = false
 		}
 	}
-	signTextFrontTest.asString() assertsIs """minecraft:oak_sign[sign_text_front={color:"black",has_glowing_text:0b,messages:["","","",""]}]"""
+	signTextFrontTest.asString() assertsIs """minecraft:oak_sign[sign_text_front={color:black,has_glowing_text:0b,messages:["","","",""]}]"""
 
 	val signTextBackTest = Items.OAK_SIGN {
 		signTextBack(text("Closed", Color.RED), text(), text("Back soon"), text()) {
@@ -752,13 +752,13 @@ fun itemComponentsTests() {
 			hasGlowingText = true
 		}
 	}
-	signTextBackTest.asString() assertsIs """minecraft:oak_sign[sign_text_back={filtered_messages:["***","***","***","***"],has_glowing_text:1b,messages:[{type:"text",color:"red",text:"Closed"},{type:"text",text:""},{type:"text",text:"Back soon"},{type:"text",text:""}]}]"""
+	signTextBackTest.asString() assertsIs """minecraft:oak_sign[sign_text_back={filtered_messages:["***","***","***","***"],has_glowing_text:1b,messages:[{type:text,color:red,text:Closed},{type:text,text:""},{type:text,text:"Back soon"},{type:text,text:""}]}]"""
 
 	val signTextBothSidesTest = Items.OAK_SIGN {
 		signTextFront(text("a"), text("b"), text("c"), text("d"))
 		signTextBack(text("e"), text("f"), text("g"), text("h"))
 	}
-	signTextBothSidesTest.asString() assertsIs """minecraft:oak_sign[sign_text_front={messages:["a","b","c","d"]},sign_text_back={messages:["e","f","g","h"]}]"""
+	signTextBothSidesTest.asString() assertsIs """minecraft:oak_sign[sign_text_front={messages:[a,b,c,d]},sign_text_back={messages:[e,f,g,h]}]"""
 
 	shouldThrow<IllegalArgumentException> {
 		Items.OAK_SIGN { signTextFront(text("a"), text("b")) }
@@ -847,7 +847,7 @@ fun itemComponentsTests() {
 			page("test2", "test3")
 		}
 	}
-	writableBookTest.asString() assertsIs """minecraft:writable_book[writable_book_content={pages:[{raw:"test"},{raw:"test2",filtered:"test3"}]}]"""
+	writableBookTest.asString() assertsIs """minecraft:writable_book[writable_book_content={pages:[{raw:test},{raw:test2,filtered:test3}]}]"""
 
 	val writtenBookTest = Items.WRITTEN_BOOK {
 		writtenBookContent(
@@ -859,13 +859,13 @@ fun itemComponentsTests() {
 			page(textComponent("test", Color.AQUA))
 		}
 	}
-	writtenBookTest.asString() assertsIs """minecraft:written_book[written_book_content={pages:[{text:"test",color:"aqua"}],title:"test",author:"test",generation:1,resolved:1b}]"""
+	writtenBookTest.asString() assertsIs """minecraft:written_book[written_book_content={pages:[{text:test,color:aqua}],title:test,author:test,generation:1,resolved:1b}]"""
 
 	writtenBookTest.components!!.writtenBookContent(WritablePage("test", "filtered"), "test") {
 		page(textComponent("first"))
 		page(textComponent("second"), textComponent("filtered"))
 	}
-	writtenBookTest.asString() assertsIs """minecraft:written_book[written_book_content={pages:[{raw:"first"},{raw:"second",filtered:"filtered"}],title:{raw:"test",filtered:"filtered"},author:"test",generation:0,resolved:0b}]"""
+	writtenBookTest.asString() assertsIs """minecraft:written_book[written_book_content={pages:[{raw:first},{raw:second,filtered:filtered}],title:{raw:test,filtered:filtered},author:test,generation:0,resolved:0b}]"""
 
 	val villagerFoodTest = Items.BREAD {
 		villagerFood(1)

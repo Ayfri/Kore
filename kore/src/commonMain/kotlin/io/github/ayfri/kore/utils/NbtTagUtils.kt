@@ -59,6 +59,9 @@ operator fun NbtCompoundBuilder.set(name: String, value: LongArray) = put(name, 
 /**
  * SNBT form of this tag, like knbt's `toString()` but escaping backslashes and line breaks in strings too, which knbt
  * writes raw so the game reads `a\b` as an escape: `NbtString("a\\b").toSnbt()` is `"a\\b"`.
+ *
+ * A string value is written bare when it starts with a letter or `_` and only holds `[A-Za-z0-9_-]`, and is not
+ * `true` or `false` in any case: `{color:aqua}`. Any other value stays quoted (`"minecraft:stone"`, `"@s"`, `"5"`, `"true"`).
  */
 fun NbtTag.toSnbt(): String = buildString { appendSnbt(this@toSnbt) }
 
@@ -91,7 +94,7 @@ private fun StringBuilder.appendSnbt(tag: NbtTag): StringBuilder = when (tag) {
 		append('{')
 		tag.entries.forEachIndexed { index, (key, value) ->
 			if (index > 0) append(',')
-			appendSnbtString(key, forceQuote = false).append(':').appendSnbt(value)
+			appendSnbtString(key, isKey = true).append(':').appendSnbt(value)
 		}
 		append('}')
 	}
@@ -105,16 +108,26 @@ private fun StringBuilder.appendSnbt(tag: NbtTag): StringBuilder = when (tag) {
 		append(']')
 	}
 
-	is NbtString -> appendSnbtString(tag.value, forceQuote = true)
+	is NbtString -> appendSnbtString(tag.value, isKey = false)
 	else -> append(tag.toString())
 }
 
-/** Same quoting choices as knbt (bare safe keys, single quotes around a key holding only `"`), with full escaping. */
-private fun StringBuilder.appendSnbtString(value: String, forceQuote: Boolean): StringBuilder {
-	val isSafe = value.isNotEmpty() && value.all { it == '-' || it == '_' || it in 'a'..'z' || it in 'A'..'Z' || it in '0'..'9' }
-	if (!forceQuote && isSafe) return append(value)
+private fun Char.isSnbtBare() = this == '-' || this == '_' || this in 'a'..'z' || this in 'A'..'Z' || this in '0'..'9'
 
-	val quote = if (!forceQuote && '"' in value && '\'' !in value) '\'' else '"'
+/** A bare token starting with a digit, `+`, `-` or `.` reads as a number, and `true`/`false` (any case) as a byte. */
+private fun String.isBareSnbtValue() =
+	isNotEmpty() && (this[0] == '_' || this[0] in 'a'..'z' || this[0] in 'A'..'Z') && all(Char::isSnbtBare) &&
+		!equals("true", ignoreCase = true) && !equals("false", ignoreCase = true)
+
+/**
+ * Writes a key bare when it only holds `[A-Za-z0-9_-]` and a value bare when [isBareSnbtValue], else quoted with full
+ * escaping (single quotes around a key holding only `"`).
+ */
+private fun StringBuilder.appendSnbtString(value: String, isKey: Boolean): StringBuilder {
+	val isBare = if (isKey) value.isNotEmpty() && value.all(Char::isSnbtBare) else value.isBareSnbtValue()
+	if (isBare) return append(value)
+
+	val quote = if (isKey && '"' in value && '\'' !in value) '\'' else '"'
 	append(quote)
 	value.forEach {
 		when (it) {

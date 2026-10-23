@@ -58,7 +58,7 @@ class StateDelegateTests : FunSpec({
 			scoreboard objectives add combo dummy
 			scoreboard players set @e[limit=1] combo 1
 			scoreboard players add @e[limit=1] combo 4
-			data modify storage helpers:state session.status set value "charged"
+			data modify storage helpers:state session.status set value charged
 			data modify storage helpers:state session.has_shield set value true
 		""".trimIndent()
 	}

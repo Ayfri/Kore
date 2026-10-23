@@ -246,7 +246,7 @@ class InteractionTests : FunSpec({
 			}
 
 			functions.single().lines.single() shouldMatch Regex(
-				"""summon minecraft:interaction 0 64 0 \{Tags:\["custom","interaction_tests.interaction.lever"\],height:0.5f,width:0.5f,UUID:\[I;.*?\]\}"""
+				"""summon minecraft:interaction 0 64 0 \{Tags:\[custom,"interaction_tests.interaction.lever"\],height:0.5f,width:0.5f,UUID:\[I;.*?\]\}"""
 			)
 		}
 	}

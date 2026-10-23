@@ -143,13 +143,13 @@ fun Function.displayNbtTests() {
 		glowColorOverride = RGB(255, 0, 0)
 	}
 
-	summon(textDisplay.entityType, vec3(), textDisplay.toNbt()) assertsIs """summon minecraft:text_display ~ ~ ~ {billboard:"center",brightness:{block:15,sky:10},glow_color_override:16711680,background:-2130771968,text:"hi"}"""
+	summon(textDisplay.entityType, vec3(), textDisplay.toNbt()) assertsIs """summon minecraft:text_display ~ ~ ~ {billboard:center,brightness:{block:15,sky:10},glow_color_override:16711680,background:-2130771968,text:hi}"""
 
 	val richTextDisplay = textDisplay {
 		text = textComponent("Legendary ", Color.GOLD) + textComponent("Sword")
 	}
 
-	summon(richTextDisplay.entityType, vec3(), richTextDisplay.toNbt()) assertsIs """summon minecraft:text_display ~ ~ ~ {text:[{type:"text",text:""},{type:"text",color:"gold",text:"Legendary "},{type:"text",text:"Sword"}]}"""
+	summon(richTextDisplay.entityType, vec3(), richTextDisplay.toNbt()) assertsIs """summon minecraft:text_display ~ ~ ~ {text:[{type:text,text:""},{type:text,color:gold,text:"Legendary "},{type:text,text:Sword}]}"""
 
 	val sizedDisplay = blockDisplay {
 		blockState(Blocks.STONE)
@@ -167,7 +167,7 @@ fun Function.displayNbtTests() {
 		tags = listOf("hologram")
 	}
 
-	summon(taggedDisplay.entityType, vec3(), taggedDisplay.toNbt()) assertsIs """summon minecraft:block_display ~ ~ ~ {Glowing:1b,Tags:["hologram"],block_state:"minecraft:stone"}"""
+	summon(taggedDisplay.entityType, vec3(), taggedDisplay.toNbt()) assertsIs """summon minecraft:block_display ~ ~ ~ {Glowing:1b,Tags:[hologram],block_state:"minecraft:stone"}"""
 
 	val ridden = textDisplay {
 		text("Boss")

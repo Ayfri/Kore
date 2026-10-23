@@ -53,7 +53,7 @@ fun Function.particleTests() {
 
 	particle(simpleParticle(Particles.FLAME), vec3()) assertsIs "particle minecraft:flame ~ ~ ~"
 
-	particle(blockParticle(Blocks.STONE_SLAB(states = mapOf("half" to "top")))) assertsIs "particle minecraft:block{block_state:{id:\"minecraft:stone_slab\",properties:{half:\"top\"}}}"
+	particle(blockParticle(Blocks.STONE_SLAB(states = mapOf("half" to "top")))) assertsIs "particle minecraft:block{block_state:{id:\"minecraft:stone_slab\",properties:{half:top}}}"
 	particle(blockParticle(Blocks.STONE, Particles.BLOCK_CRUMBLE)) assertsIs "particle minecraft:block_crumble{block_state:\"minecraft:stone\"}"
 	particle(blockParticle(Blocks.STONE, Particles.BLOCK_MARKER)) assertsIs "particle minecraft:block_marker{block_state:\"minecraft:stone\"}"
 	particle(blockParticle(Blocks.SAND, Particles.DUST_PILLAR)) assertsIs "particle minecraft:dust_pillar{block_state:\"minecraft:sand\"}"
@@ -98,7 +98,7 @@ fun Function.particleTests() {
 		0.0,
 		1,
 		ParticleMode.FORCE
-	) assertsIs "particle minecraft:vibration{arrival_in_ticks:10,destination:{pos:[1,2,3],type:\"block\"}} ~ ~ ~ 0 0 0 0 1 force"
+	) assertsIs "particle minecraft:vibration{arrival_in_ticks:10,destination:{pos:[1,2,3],type:block}} ~ ~ ~ 0 0 0 0 1 force"
 }
 
 class ParticleCommandTests : FunSpec({

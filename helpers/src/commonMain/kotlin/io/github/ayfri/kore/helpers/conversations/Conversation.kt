@@ -94,7 +94,7 @@ class Conversation internal constructor(val dataPack: DataPack, val name: String
 	 *
 	 * ```kotlin
 	 * speaker = textComponent("Bob")
-	 * line("Hi")  // tellraw @s {type:"translatable",translate:"chat.type.text",with:[{type:"text",text:"Bob"},{type:"text",text:"Hi"}]}
+	 * line("Hi")  // tellraw @s {type:translatable,translate:"chat.type.text",with:[{type:text,text:Bob},{type:text,text:Hi}]}
 	 * ```
 	 */
 	var speaker: ChatComponents? = null

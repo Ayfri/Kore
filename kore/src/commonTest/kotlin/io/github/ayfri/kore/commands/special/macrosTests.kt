@@ -16,7 +16,7 @@ fun Function.teleportToSpawn(player: String) {
 	function(
 		"teleport_to_spawn",
 		arguments = nbt { this["player"] = player }
-	) assertsIs "function unit_tests:teleport_to_spawn {player:\"$player\"}"
+	) assertsIs "function unit_tests:teleport_to_spawn {player:$player}"
 }
 
 fun DataPack.testMacros() {

@@ -43,8 +43,8 @@ fun DataPack.lanternLoadTests() {
 
 	functionNamed(name, "load", "resolve").toString() assertsIs """
 		execute if score bs.math.major load.status matches 3 if score bs.math.minor load.status matches 1.. run function lantern_tests:load/init
-		execute unless score bs.math.major load.status matches 3 run tellraw @a {type:"text",color:"red",text:"[lantern_tests] Missing dependency bs.math 3.1."}
-		execute if score bs.math.major load.status matches 3 unless score bs.math.minor load.status matches 1.. run tellraw @a {type:"text",color:"red",text:"[lantern_tests] Missing dependency bs.math 3.1."}
+		execute unless score bs.math.major load.status matches 3 run tellraw @a {type:text,color:red,text:"[lantern_tests] Missing dependency bs.math 3.1."}
+		execute if score bs.math.major load.status matches 3 unless score bs.math.minor load.status matches 1.. run tellraw @a {type:text,color:red,text:"[lantern_tests] Missing dependency bs.math 3.1."}
 	""".trimIndent()
 
 	functionTagNamed("minecraft", "load") assertsIs """

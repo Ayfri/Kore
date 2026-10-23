@@ -24,7 +24,7 @@ fun Function.teamsTests() {
 			color(Color.DARK_PURPLE) assertsIs "team modify test color dark_purple"
 			colorReset() assertsIs "team modify test color reset"
 			deathMessageVisibility(Visibility.NEVER) assertsIs "team modify test deathMessageVisibility never"
-			displayName("Test") assertsIs "team modify test displayName \"Test\""
+			displayName("Test") assertsIs "team modify test displayName Test"
 			friendlyFire(true) assertsIs "team modify test friendlyFire true"
 			nametagVisibility(Visibility.NEVER) assertsIs "team modify test nametagVisibility never"
 			prefix("Test") assertsIs "team modify test prefix \"Test\""

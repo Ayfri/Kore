@@ -19,7 +19,7 @@ import io.kotest.matchers.shouldBe
 
 fun Function.computeTests() {
 	val bonus = NumberProviderArgument("bonus", "my_pack")
-	val kills = "{type:\"minecraft:score\",target:{type:\"minecraft:context\",target:\"target_entity\"},score:\"kills\"}"
+	val kills = "{type:\"minecraft:score\",target:{type:\"minecraft:context\",target:target_entity},score:kills}"
 	val five = "{type:\"minecraft:constant\",value:5}"
 
 	compute(bonus) assertsIs "compute default my_pack:bonus"

@@ -338,7 +338,7 @@ fun Entity.scoreboardEntity(objectiveName: String) = ScoreboardEntity(objectiveN
  * Usage:
  * ```kotlin
  * var customTag by player.storage("my_namespace:data", "customTag", default = "hello")
- * customTag = "world" // emits: /data modify storage my_namespace:data customTag set value "world"
+ * customTag = "world" // emits: /data modify storage my_namespace:data customTag set value world
  * ```
  *
  * @param storageId The storage resource location in format `"namespace:name"`.

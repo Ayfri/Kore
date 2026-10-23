@@ -86,7 +86,7 @@ fun selectorTests() = dataPack("selector_tests") {
 		nbt = nbt {
 			this["foo"] = "bar"
 		}
-	} assertsIs "@e[nbt={foo:\"bar\"}]"
+	} assertsIs "@e[nbt={foo:bar}]"
 
 	allEntities {
 		nbt = !nbt {
@@ -95,7 +95,7 @@ fun selectorTests() = dataPack("selector_tests") {
 		nbt = !nbt {
 			this["baz"] = "qux"
 		}
-	} assertsIs "@e[nbt=!{foo:\"bar\"},nbt=!{baz:\"qux\"}]"
+	} assertsIs "@e[nbt=!{foo:bar},nbt=!{baz:qux}]"
 
 	allEntities {
 		predicate = predicate("foo") {
@@ -195,8 +195,8 @@ fun selectorDeserializationTests() = listOf(
 	"@e[level=2..]",
 	"@e[limit=1]",
 	"@e[name=!foo,name=!bar]",
-	"@e[nbt={foo:\"bar\"}]",
-	"@e[nbt=!{foo:\"a,b\"},nbt=!{baz:\"qux\"}]",
+	"@e[nbt={foo:bar}]",
+	"@e[nbt=!{foo:\"a,b\"},nbt=!{baz:qux}]",
 	"@e[predicate=!selector_tests:foo,predicate=!selector_tests:bar]",
 	"@e[scores={foo=1,bar=1..,baz=..0}]",
 	"@e[sort=random]",

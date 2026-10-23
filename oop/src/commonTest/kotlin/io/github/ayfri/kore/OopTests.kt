@@ -58,7 +58,7 @@ fun oopTests() = dataPack("oop") {
 					bold = true
 				})
 			}
-		} assertsIs """execute at @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] run summon minecraft:item 0.0 0.0 0.0 {CustomName:{text:"MY ITEM",bold:1b,color:"red"},CustomNameVisible:1b,Item:{id:"minecraft:diamond_sword"}}"""
+		} assertsIs """execute at @e[gamemode=survival,limit=1,name=Ayfri,team=red,type=minecraft:player] run summon minecraft:item 0.0 0.0 0.0 {CustomName:{text:"MY ITEM",bold:1b,color:red},CustomNameVisible:1b,Item:{id:"minecraft:diamond_sword"}}"""
 		lines.size assertsIs 1
 	}
 
@@ -77,7 +77,7 @@ fun oopTests() = dataPack("oop") {
 		item.summon {
 			showcase = true
 			tags = listOf("display")
-		} assertsIs """summon minecraft:item 0.0 0.0 0.0 {CustomName:{text:"Shop",color:"gold"},CustomNameVisible:1b,Invulnerable:1b,NoGravity:1b,Tags:["display"],Age:-32768s,PickupDelay:32767s,Item:{id:"minecraft:diamond_sword",components:{custom_name:{text:"Shop",color:"gold"}}}}"""
+		} assertsIs """summon minecraft:item 0.0 0.0 0.0 {CustomName:{text:Shop,color:gold},CustomNameVisible:1b,Invulnerable:1b,NoGravity:1b,Tags:[display],Age:-32768s,PickupDelay:32767s,Item:{id:"minecraft:diamond_sword",components:{custom_name:{text:Shop,color:gold}}}}"""
 		lines.size assertsIs 1
 	}
 
@@ -166,7 +166,7 @@ fun oopTests() = dataPack("oop") {
 		scoreboard("other.test") {
 			create() assertsIs "scoreboard objectives add other.test dummy"
 			setDisplaySlot(DisplaySlots.sidebar) assertsIs "scoreboard objectives setdisplay sidebar other.test"
-			setDisplayName("Test") assertsIs """scoreboard objectives modify other.test displayname "Test""""
+			setDisplayName("Test") assertsIs """scoreboard objectives modify other.test displayname Test"""
 		}
 		lines.size assertsIs 3
 	}

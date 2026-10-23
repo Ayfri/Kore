@@ -108,7 +108,7 @@ fun itemPredicatesTests() {
 		}
 	}
 
-	customPartialDataComponent.toString() assertsIs """minecraft:stone[my_data~{value:"test"},tool~{default_mining_speed:10}]"""
+	customPartialDataComponent.toString() assertsIs """minecraft:stone[my_data~{value:test},tool~{default_mining_speed:10}]"""
 
 	// Test existence check with isPresent (outputs *[component])
 	val existenceTest = itemPredicate {
