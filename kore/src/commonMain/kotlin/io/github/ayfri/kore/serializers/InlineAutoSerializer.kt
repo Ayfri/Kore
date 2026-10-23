@@ -8,15 +8,6 @@ import kotlinx.serialization.encoding.Encoder
 /**
  * A serializer that serializes a single-property wrapper class as its property value directly.
  *
- * @param T The target class type.
- * @param P The type of the wrapped property.
- * @param propertySerializer The serializer for the wrapped property.
- * @param property Getter for the wrapped property.
- * @param factory Constructor reference building [T] from the property value.
- * @param serialName Optional distinct serial name for the descriptor. Needed when several subtypes of the same sealed
- *   hierarchy wrap the same property type (e.g. two `List<X>` matchers), so a [SealedDispatcher] can tell them apart
- *   when decoding - otherwise they collide on the property serializer's name.
- *
  * Example:
  * ```kotlin
  * @Serializable(with = MyDataClass.Companion.MyDataClassSerializer::class)
@@ -27,6 +18,15 @@ import kotlinx.serialization.encoding.Encoder
  *     }
  * }
  * ```
+ *
+ * @param T The target class type.
+ * @param P The type of the wrapped property.
+ * @param propertySerializer The serializer for the wrapped property.
+ * @param property Getter for the wrapped property.
+ * @param factory Constructor reference building [T] from the property value.
+ * @param serialName Optional distinct serial name for the descriptor. Needed when several subtypes of the same sealed
+ *   hierarchy wrap the same property type (e.g. two `List<X>` matchers), so a [SealedDispatcher] can tell them apart
+ *   when decoding - otherwise they collide on the property serializer's name.
  */
 open class InlineAutoSerializer<T, P>(
 	private val propertySerializer: KSerializer<P>,

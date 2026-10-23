@@ -33,13 +33,14 @@ fun Function.swing(targets: EntityArgument, hand: SwingHand) =
 
 /**
  * Makes [targets] swing their [hand] with the given [animation], for [duration] (at least 1 tick, 6 ticks when omitted).
- * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/swing)
  *
  * ```
  * swing(self(), SwingHand.MAINHAND, SwingAnimationType.STAB, 10.ticks)  // swing @s mainhand stab 10
  * swing(self(), SwingHand.OFFHAND, SwingAnimationType.WHACK)            // swing @s offhand whack
  * swing(self(), SwingHand.MAINHAND, SwingAnimationType.NONE)            // swing @s mainhand none
  * ```
+ *
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/swing)
  */
 fun Function.swing(targets: EntityArgument, hand: SwingHand, animation: SwingAnimationType, duration: TimeNumber? = null) =
 	addLine(command("swing", targets, hand, animation, duration?.let(::time)))

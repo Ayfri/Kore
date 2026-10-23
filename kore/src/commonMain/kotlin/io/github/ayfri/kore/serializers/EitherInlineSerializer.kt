@@ -15,16 +15,6 @@ import net.benwoodworth.knbt.nbtCompound
  * A serializer that inlines one of the specified properties if it's non-null.
  * If none of the specified properties are present (or if [inline] is false), it serializes as an object.
  *
- * @param T The target class type.
- * @param delegate The plugin-generated structural serializer for [T] (use `@KeepGeneratedSerializer` + `generatedSerializer()`).
- * @param propertyNamesToInline The serial names of the properties to check for inlining.
- * @param inline Whether to attempt to inline the first non-null property from [propertyNamesToInline].
- * @param decodeOnly Serial names tried on decode after [propertyNamesToInline], but never inlined on encode. Lets a
- * property be read from its bare value (e.g. a list) while it is still written inside the object.
- * @param objectFallback Whether to decode the value as the full object when every inline attempt fails. When false, the last
- * inline failure is rethrown instead, so a bare value that is invalid for its property is reported rather than read as an object
- * that merely shares a property name with it, silently dropping the other keys.
- *
  * Example:
  * ```kotlin
  * @KeepGeneratedSerializer
@@ -35,6 +25,16 @@ import net.benwoodworth.knbt.nbtCompound
  *     }
  * }
  * ```
+ *
+ * @param T The target class type.
+ * @param delegate The plugin-generated structural serializer for [T] (use `@KeepGeneratedSerializer` + `generatedSerializer()`).
+ * @param propertyNamesToInline The serial names of the properties to check for inlining.
+ * @param inline Whether to attempt to inline the first non-null property from [propertyNamesToInline].
+ * @param decodeOnly Serial names tried on decode after [propertyNamesToInline], but never inlined on encode. Lets a
+ * property be read from its bare value (e.g. a list) while it is still written inside the object.
+ * @param objectFallback Whether to decode the value as the full object when every inline attempt fails. When false, the last
+ * inline failure is rethrown instead, so a bare value that is invalid for its property is reported rather than read as an object
+ * that merely shares a property name with it, silently dropping the other keys.
  */
 open class EitherInlineSerializer<T : Any>(
 	private val delegate: KSerializer<T>,

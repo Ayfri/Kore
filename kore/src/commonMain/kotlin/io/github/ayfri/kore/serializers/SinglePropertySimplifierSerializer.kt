@@ -14,10 +14,6 @@ import net.benwoodworth.knbt.nbtCompound
 /**
  * A serializer that serializes to only one property's value if all other properties are null.
  *
- * @param T The target class type.
- * @param delegate The plugin-generated structural serializer for [T] (use `@KeepGeneratedSerializer` + `generatedSerializer()`).
- * @param propertyName The serial name of the property to simplify to.
- *
  * Example:
  * ```kotlin
  * @KeepGeneratedSerializer
@@ -40,6 +36,10 @@ import net.benwoodworth.knbt.nbtCompound
  *    "myOtherProperty": 0
  * }
  * ```
+ *
+ * @param T The target class type.
+ * @param delegate The plugin-generated structural serializer for [T] (use `@KeepGeneratedSerializer` + `generatedSerializer()`).
+ * @param propertyName The serial name of the property to simplify to.
  */
 open class SinglePropertySimplifierSerializer<T : Any>(
 	private val delegate: KSerializer<T>,
