@@ -68,7 +68,7 @@ val showcases = listOf(
 			dataPack("arena") {
 				lootTable("boss_chest") {
 					pool {
-						rolls = constant(3f)
+						rolls = constant(3)
 						entries {
 							item(Items.DIAMOND) { weight = 1 }
 							item(Items.GOLDEN_APPLE) { weight = 4 }
@@ -86,7 +86,7 @@ val showcases = listOf(
 					{
 						"pools": [
 							{
-								"rolls": 3.0,
+								"rolls": 3,
 								"entries": [
 									{
 										"type": "minecraft:item",

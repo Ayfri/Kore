@@ -50,10 +50,10 @@ fun DataPack.advancementTests() {
 			triggerCondition = ConsumeItem(item = itemStackPredicate(Items.ENCHANTED_GOLDEN_APPLE))
 		) {
 			randomChance(chance = 0.5f)
-			timeCheck(WorldClocks.OVERWORLD, 10f..20f)
+			timeCheck(WorldClocks.OVERWORLD, 10..20)
 
 			anyOf {
-				timeCheck(WorldClocks.OVERWORLD, 10f..20f)
+				timeCheck(WorldClocks.OVERWORLD, 10..20)
 			}
 		}
 
@@ -97,8 +97,8 @@ fun DataPack.advancementTests() {
 									"type": "minecraft:time_check",
 									"clock": "minecraft:overworld",
 									"value": {
-										"min": 10.0,
-										"max": 20.0
+										"max": 20,
+										"min": 10
 									}
 								},
 								{
@@ -107,8 +107,8 @@ fun DataPack.advancementTests() {
 										"type": "minecraft:time_check",
 										"clock": "minecraft:overworld",
 										"value": {
-											"min": 10.0,
-											"max": 20.0
+											"max": 20,
+											"min": 10
 										}
 									}
 								}
@@ -481,7 +481,7 @@ private fun DataPack.allTriggersTests() {
 
 				condition {
 					randomChance(0.5f)
-					timeCheck(WorldClocks.OVERWORLD, 10f..20f)
+					timeCheck(WorldClocks.OVERWORLD, 10..20)
 				}
 			}
 		}
@@ -503,8 +503,8 @@ private fun DataPack.allTriggersTests() {
 									"type": "minecraft:time_check",
 									"clock": "minecraft:overworld",
 									"value": {
-										"min": 10.0,
-										"max": 20.0
+										"max": 20,
+										"min": 10
 									}
 								}
 							]
@@ -529,7 +529,7 @@ private fun DataPack.allTriggersTests() {
 			) {
 				condition {
 					randomChance(0.5f)
-					timeCheck(WorldClocks.OVERWORLD, 10f..20f)
+					timeCheck(WorldClocks.OVERWORLD, 10..20)
 				}
 
 				ingredient {
@@ -558,8 +558,8 @@ private fun DataPack.allTriggersTests() {
 									"type": "minecraft:time_check",
 									"clock": "minecraft:overworld",
 									"value": {
-										"min": 10.0,
-										"max": 20.0
+										"max": 20,
+										"min": 10
 									}
 								}
 							]

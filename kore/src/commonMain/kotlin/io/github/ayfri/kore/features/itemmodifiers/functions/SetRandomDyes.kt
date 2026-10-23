@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
-import io.github.ayfri.kore.features.predicates.providers.NumberProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.constant
 import kotlinx.serialization.Serializable
 
@@ -15,15 +15,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SetRandomDyes(
 	override var condition: PredicateCondition? = null,
-	var numberOfDyes: NumberProvider,
+	var numberOfDyes: ContextIntProvider,
 ) : ItemFunction()
 
 /** Add a `set_random_dyes` step. */
-fun ItemModifier.setRandomDyes(numberOfDyes: NumberProvider, block: SetRandomDyes.() -> Unit = {}) {
+fun ItemModifier.setRandomDyes(numberOfDyes: ContextIntProvider, block: SetRandomDyes.() -> Unit = {}) {
 	modifiers += SetRandomDyes(numberOfDyes = numberOfDyes).apply(block)
 }
 
-/** Float convenience overload for `set_random_dyes`. */
-fun ItemModifier.setRandomDyes(numberOfDyes: Float, block: SetRandomDyes.() -> Unit = {}) {
+/** Int convenience overload for `set_random_dyes`. */
+fun ItemModifier.setRandomDyes(numberOfDyes: Int, block: SetRandomDyes.() -> Unit = {}) {
 	modifiers += SetRandomDyes(numberOfDyes = constant(numberOfDyes)).apply(block)
 }

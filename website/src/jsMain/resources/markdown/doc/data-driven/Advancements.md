@@ -5,7 +5,7 @@ nav-title: Advancements
 description: Create custom Minecraft advancements with Kore's Kotlin DSL. Covers all triggers, criteria, rewards (functions, loot, recipes), display settings, and frames. Replace hand-written JSON with type-safe Kotlin.
 keywords: minecraft advancements, datapack advancements, advancement triggers, using_item trigger, inventory_changed, minecraft achievement, kore advancements, custom advancements, advancement criteria, advancement rewards
 date-created: 2024-01-08
-date-modified: 2026-10-22
+date-modified: 2026-10-23
 routeOverride: /docs/data-driven/advancements
 ---
 
@@ -241,7 +241,7 @@ advancement("conditional_criteria") {
 			// Two conditions, written as an all_of
 			condition {
 				randomChance(0.5f)  // 50% chance
-				timeCheck(WorldClocks.OVERWORLD, 6000f..18000f)  // Daytime only
+				timeCheck(WorldClocks.OVERWORLD, 6000..18000)  // Daytime only
 			}
 		}
 

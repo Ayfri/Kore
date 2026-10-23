@@ -31,7 +31,7 @@ fun Function.lootTests() {
 	loot(self()) {
 		fish(vec3(), Items.FISHING_ROD) {
 			pool {
-				rolls(1f)
+				rolls(1)
 				entries { item(Items.COD) }
 			}
 		}
@@ -40,7 +40,7 @@ fun Function.lootTests() {
 	loot(self()) {
 		fish(vec3(), Hand.OFF_HAND) {
 			pool {
-				rolls(1f)
+				rolls(1)
 				entries { item(Items.COD) }
 			}
 		}
@@ -136,7 +136,7 @@ fun Function.lootTests() {
 		source {
 			loot {
 				pool {
-					rolls(1f)
+					rolls(1)
 
 					entries {
 						item(Items.ANVIL)

@@ -27,7 +27,7 @@ fun DataPack.tradeSetTests() {
 	tradeSet("empty")
 	tradeSets.last() assertsIs """
 		{
-			"amount": 1.0,
+			"amount": 1,
 			"trades": []
 		}
 	""".trimIndent()
@@ -37,20 +37,20 @@ fun DataPack.tradeSetTests() {
 	}
 	tradeSets.last() assertsIs """
 		{
-			"amount": 1.0,
+			"amount": 1,
 			"trades": "tradeSet:emerald_for_wheat"
 		}
 	""".trimIndent()
 
 	tradeSet("farmer_trades") {
 		trades(wheatTrade, Tags.VillagerTrade.Armorer.LEVEL_1, VillagerTrades.Fletcher.`1`.EMERALD_ARROW)
-		amount(2f)
+		amount(2)
 		allowDuplicates = false
 	}
 	tradeSets.last() assertsIs """
 		{
 			"allow_duplicates": false,
-			"amount": 2.0,
+			"amount": 2,
 			"trades": [
 				"tradeSet:emerald_for_wheat",
 				"#minecraft:armorer/level_1",
@@ -62,15 +62,15 @@ fun DataPack.tradeSetTests() {
 	tradeSet("appended_trades") {
 		trades(listOf(wheatTrade))
 		trade(VillagerTrades.Fletcher.`1`.EMERALD_ARROW)
-		amount(1f, 3f)
+		amount(1, 3)
 		randomSequence("trade_set/appended_trades", "tradeSet")
 	}
 	tradeSets.last() assertsIs """
 		{
 			"amount": {
 				"type": "minecraft:uniform",
-				"min": 1.0,
-				"max": 3.0
+				"max": 3,
+				"min": 1
 			},
 			"random_sequence": "tradeSet:trade_set/appended_trades",
 			"trades": [
@@ -82,7 +82,7 @@ fun DataPack.tradeSetTests() {
 
 	val subFolder = tradeSet("farmer/level_1") {
 		trades(Tags.VillagerTrade.Farmer.LEVEL_1)
-		amount = uniform(2f, 4f)
+		amount = uniform(2, 4)
 	}
 	subFolder assertsIs "tradeSet:farmer/level_1"
 	tradeSets.last().fileName assertsIs "farmer/level_1"

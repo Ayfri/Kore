@@ -33,6 +33,10 @@ fun Double.toPlainString(): String {
 val Double.toStringWithDecimal
 	get() = toPlainString().let { if ('.' !in it) "$it.0" else it }
 
+/** Like [Double.toStringWithDecimal] for a float, through its own text so `0.1f` is `0.1` rather than the double `0.10000000149011612`. */
+val Float.toStringWithDecimal
+	get() = toString().toDouble().toStringWithDecimal
+
 fun Double.toStringTruncatedIfRound() = when {
 	this % 1 == 0.0 -> toLong().toString()
 	else -> toPlainString()

@@ -24,6 +24,8 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 		gen("ChatTypes", "chat_type"),
 		gen("ChickenSoundVariants", "chicken_sound_variant"),
 		gen("ChickenVariants", "chicken_variant"),
+		gen("ContextFloatProviders", "context_float_provider"),
+		gen("ContextIntProviders", "context_int_provider"),
 		gen("CowSoundVariants", "cow_sound_variant"),
 		gen("CowVariants", "cow_variant"),
 		gen("DamageTypes", "damage_type"),
@@ -41,7 +43,6 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 		gen("Models", "models") {
 			argumentClassName = "Model M"
 		},
-		gen("NumberProviders", "number_provider"),
 		gen("PaintingVariants", "painting_variant"),
 		gen("PigSoundVariants", "pig_sound_variant"),
 		gen("PigVariants", "pig_variant"),
@@ -125,6 +126,7 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 		gen("BiomePresets", "worldgen/multi_noise_biome_source_parameter_list") {
 			argumentClassName = "MultiNoiseBiomeSourceParameterList"
 		},
+		gen("BlockStateProviders", "worldgen/block_state_provider"),
 		gen("Carvers", "worldgen/carver"),
 		gen("DensityFunctions", "worldgen/density_function"),
 		gen("Features", "worldgen/feature"),

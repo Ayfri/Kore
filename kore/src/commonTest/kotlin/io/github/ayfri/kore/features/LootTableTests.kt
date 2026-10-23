@@ -26,8 +26,8 @@ import io.github.ayfri.kore.generated.LootTables
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.arguments.tagged.ItemModifierTagArgument
 import io.github.ayfri.kore.generated.arguments.tagged.LootTableTagArgument
+import io.github.ayfri.kore.generated.arguments.types.ContextIntProviderArgument
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
-import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
 import io.kotest.core.spec.style.FunSpec
@@ -41,7 +41,7 @@ fun DataPack.lootTableTests() {
 		}
 
 		pool {
-			rolls = constant(2f)
+			rolls = constant(2)
 			bonusRolls = constant(1f)
 			condition {
 				weatherCheck(true)
@@ -68,7 +68,7 @@ fun DataPack.lootTableTests() {
 					}
 
 					modifier {
-						setCount(1f) {
+						setCount(1) {
 							condition {
 								randomChance(0.5f)
 							}
@@ -84,7 +84,7 @@ fun DataPack.lootTableTests() {
 			}
 
 			modifier {
-				setCount(1f)
+				setCount(1)
 			}
 		}
 	}
@@ -138,7 +138,7 @@ fun DataPack.lootTableTests() {
 									"type": "minecraft:random_chance",
 									"chance": 0.5
 								},
-								"count": 1.0
+								"count": 1
 							},
 							"value": "minecraft:gameplay/piglin_bartering"
 						},
@@ -155,9 +155,9 @@ fun DataPack.lootTableTests() {
 					],
 					"modifier": {
 						"type": "minecraft:set_count",
-						"count": 1.0
+						"count": 1
 					},
-					"rolls": 2.0
+					"rolls": 2
 				}
 			]
 		}
@@ -169,7 +169,7 @@ fun DataPack.lootTableTests() {
 
 	lootTable("all_slot_sources_test") {
 		pool {
-			rolls = constant(1f)
+			rolls = constant(1)
 
 			entries {
 				slots {
@@ -275,7 +275,7 @@ fun DataPack.lootTableTests() {
 							]
 						}
 					],
-					"rolls": 1.0
+					"rolls": 1
 				}
 			]
 		}
@@ -292,7 +292,7 @@ fun DataPack.lootTableTests() {
 
 	lootTable("round_trip_modifiers") {
 		modifier {
-			setCount(1f) {
+			setCount(1) {
 				condition {
 					randomChance(0.5f)
 					weatherCheck(true)
@@ -304,7 +304,7 @@ fun DataPack.lootTableTests() {
 		pool {
 			entries {
 				item(Items.DIAMOND) {
-					modifier { setCount(2f) }
+					modifier { setCount(2) }
 				}
 			}
 		}
@@ -325,7 +325,7 @@ fun DataPack.lootTableTests() {
 						weatherCheck(true)
 					}
 
-					modifier { setCount(2f) }
+					modifier { setCount(2) }
 
 					children {
 						item(Items.DIAMOND)
@@ -338,7 +338,7 @@ fun DataPack.lootTableTests() {
 
 	lootTable("predicate_ids") {
 		pool {
-			rolls = constant(1f)
+			rolls = constant(1)
 			condition(PredicateArgument("is_night", "my_pack"))
 
 			entries {
@@ -361,7 +361,7 @@ fun DataPack.lootTableTests() {
 							"condition": "my_pack:lucky"
 						}
 					],
-					"rolls": 1.0
+					"rolls": 1
 				}
 			]
 		}
@@ -370,7 +370,7 @@ fun DataPack.lootTableTests() {
 
 	lootTable("modifier_ids") {
 		pool {
-			rolls = constant(1f)
+			rolls = constant(1)
 			modifier { reference(ItemModifierTagArgument("buffs", "my_pack")) }
 
 			entries {
@@ -381,7 +381,7 @@ fun DataPack.lootTableTests() {
 				item(Items.GOLD_INGOT) {
 					modifier {
 						reference(ItemModifierArgument("shiny", "my_pack"))
-						setCount(2f)
+						setCount(2)
 					}
 				}
 			}
@@ -405,13 +405,13 @@ fun DataPack.lootTableTests() {
 								"my_pack:shiny",
 								{
 									"type": "minecraft:set_count",
-									"count": 2.0
+									"count": 2
 								}
 							]
 						}
 					],
 					"modifier": "#my_pack:buffs",
-					"rolls": 1.0
+					"rolls": 1
 				}
 			]
 		}
@@ -508,7 +508,7 @@ class LootTableTests : FunSpec({
 									]
 								}
 							],
-							"rolls": 1.0
+							"rolls": 1
 						}
 					],
 					"type": "chest"
@@ -541,7 +541,7 @@ class LootTableTests : FunSpec({
 									"value": "#my_pack:trial_loot"
 								}
 							],
-							"rolls": 1.0
+							"rolls": 1
 						}
 					]
 				}
@@ -587,7 +587,7 @@ class LootTableTests : FunSpec({
 									"items": "#minecraft:arrows"
 								}
 							],
-							"rolls": 1.0
+							"rolls": 1
 						}
 					]
 				}
@@ -596,13 +596,13 @@ class LootTableTests : FunSpec({
 		}
 	}
 
-	test("pool rolls accept a number provider ID") {
+	test("pool rolls accept a context int provider ID") {
 		dataPack("lootTable") {
 			pretty()
 
 			lootTable("rolls_reference") {
 				pool {
-					rolls = reference(NumberProviderArgument("rolls", "my_pack"))
+					rolls = reference(ContextIntProviderArgument("rolls", "my_pack"))
 				}
 			}
 
@@ -620,6 +620,32 @@ class LootTableTests : FunSpec({
 		}
 	}
 
+	test("rolls are an int provider and bonus rolls a float provider") {
+		dataPack("lootTable") {
+			pretty()
+
+			lootTable("rolls_builders") {
+				pool {
+					rolls(2)
+					bonusRolls(1f)
+				}
+			}
+
+			lootTables.last() assertsIs """
+				{
+					"pools": [
+						{
+							"bonus_rolls": 1.0,
+							"entries": [],
+							"rolls": 2
+						}
+					]
+				}
+			""".trimIndent()
+			roundTrip(lootTables.last())
+		}
+	}
+
 	test("item entry modifier stays on the entry") {
 		dataPack("lootTable") {
 			pretty()
@@ -628,7 +654,7 @@ class LootTableTests : FunSpec({
 				pool {
 					entries {
 						item(Items.DIAMOND) {
-							modifier { setCount(2f) }
+							modifier { setCount(2) }
 						}
 					}
 				}
@@ -644,11 +670,11 @@ class LootTableTests : FunSpec({
 									"name": "minecraft:diamond",
 									"modifier": {
 										"type": "minecraft:set_count",
-										"count": 2.0
+										"count": 2
 									}
 								}
 							],
-							"rolls": 1.0
+							"rolls": 1
 						}
 					]
 				}
@@ -661,14 +687,14 @@ class LootTableTests : FunSpec({
 			pretty()
 
 			lootTable("table_modifier") {
-				modifier { setCount(2f) }
+				modifier { setCount(2) }
 			}
 
 			lootTables.last() assertsIs """
 				{
 					"modifier": {
 						"type": "minecraft:set_count",
-						"count": 2.0
+						"count": 2
 					}
 				}
 			""".trimIndent()
@@ -701,7 +727,7 @@ class LootTableTests : FunSpec({
 								"raining": true
 							},
 							"entries": [],
-							"rolls": 1.0
+							"rolls": 1
 						},
 						{
 							"condition": {
@@ -718,7 +744,7 @@ class LootTableTests : FunSpec({
 								]
 							},
 							"entries": [],
-							"rolls": 1.0
+							"rolls": 1
 						}
 					]
 				}
@@ -733,7 +759,7 @@ class LootTableTests : FunSpec({
 			lootTable("pool_modifier_list") {
 				pool {
 					modifier {
-						setCount(2f)
+						setCount(2)
 						explosionDecay()
 					}
 				}
@@ -747,13 +773,13 @@ class LootTableTests : FunSpec({
 							"modifier": [
 								{
 									"type": "minecraft:set_count",
-									"count": 2.0
+									"count": 2
 								},
 								{
 									"type": "minecraft:explosion_decay"
 								}
 							],
-							"rolls": 1.0
+							"rolls": 1
 						}
 					]
 				}
@@ -774,7 +800,7 @@ class LootTableTests : FunSpec({
 								weatherCheck(true)
 							}
 
-							modifier { setCount(2f) }
+							modifier { setCount(2) }
 
 							children {
 								item(Items.DIAMOND)
@@ -824,7 +850,7 @@ class LootTableTests : FunSpec({
 									},
 									"modifier": {
 										"type": "minecraft:set_count",
-										"count": 2.0
+										"count": 2
 									}
 								},
 								{
@@ -849,7 +875,7 @@ class LootTableTests : FunSpec({
 									}
 								}
 							],
-							"rolls": 1.0
+							"rolls": 1
 						}
 					]
 				}

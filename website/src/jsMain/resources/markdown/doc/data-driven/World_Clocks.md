@@ -5,7 +5,7 @@ nav-title: World Clocks
 description: Create custom world clocks and timelines in Kore datapacks. Define named time counters, time markers, timeCheck predicates, and control the /time command. Integrates with dimension types and environment timelines.
 keywords: minecraft world_clock, timeCheck predicate, custom time system datapack, datapack timeline, time marker minecraft, kore world clock, dimension_type clock, datapack time command, minecraft time counter
 date-created: 2026-06-16
-date-modified: 2026-06-16
+date-modified: 2026-10-23
 routeOverride: /docs/data-driven/world-clocks
 ---
 
@@ -219,12 +219,13 @@ function("advance_season") {
 
 ## `timeCheck` Predicate Condition
 
-The `timeCheck` condition passes when the time of a world clock falls within a specified range.
-The `clock` parameter is mandatory and selects which clock is queried.
+The `timeCheck` condition passes when the time of a world clock falls within a specified range of ticks.
+The `clock` parameter is mandatory and selects which clock is queried. The range is an `IntRange`, a single tick value, or
+an `intRange(...)` whose bounds are [int providers](/docs/data-driven/loot-tables#context-providers).
 
 ```kotlin
 predicate("is_daytime") {
-	timeCheck(WorldClocks.OVERWORLD, 0f..12000f)
+	timeCheck(WorldClocks.OVERWORLD, 0..12000)
 }
 ```
 
@@ -232,7 +233,7 @@ Pass a `period` to apply a modulo first - useful for checking time within a repe
 
 ```kotlin
 predicate("is_second_quarter") {
-	timeCheck(WorldClocks.OVERWORLD, min = 6000f, max = 12000f, period = 24000)
+	timeCheck(WorldClocks.OVERWORLD, 6000..12000, period = 24000)
 }
 ```
 
@@ -240,7 +241,7 @@ Custom clocks work the same way:
 
 ```kotlin
 predicate("is_summer") {
-	timeCheck(seasonClock, min = 24000f, max = 48000f)
+	timeCheck(seasonClock, 24000..48000)
 }
 ```
 
@@ -312,7 +313,7 @@ dataPack("my_mod") {
 
 	// 4. Predicate: is it currently summer?
 	predicate("is_summer") {
-		timeCheck(season, min = 24000f, max = 48000f)
+		timeCheck(season, 24000..48000)
 	}
 
 	// 5. Command: skip to winter

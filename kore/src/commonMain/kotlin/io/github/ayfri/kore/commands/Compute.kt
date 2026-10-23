@@ -2,20 +2,26 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.maths.Vec3
+import io.github.ayfri.kore.arguments.numbers.toStringWithDecimal
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.float
 import io.github.ayfri.kore.arguments.types.literals.literal
-import io.github.ayfri.kore.features.predicates.providers.ConstantNumberProvider
-import io.github.ayfri.kore.features.predicates.providers.NumberProvider
-import io.github.ayfri.kore.features.predicates.providers.NumberProviderReference
+import io.github.ayfri.kore.features.predicates.providers.ConstantContextFloatProvider
+import io.github.ayfri.kore.features.predicates.providers.ConstantContextIntProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextFloatProviderReference
+import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextIntProviderReference
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.functions.Function
-import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
-import io.github.ayfri.kore.utils.encodeToDataPackNbtTag
+import io.github.ayfri.kore.generated.arguments.types.ContextFloatProviderArgument
+import io.github.ayfri.kore.generated.arguments.types.ContextIntProviderArgument
 import io.github.ayfri.kore.utils.encodeToDataPackSnbt
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.toSnbt
 import net.benwoodworth.knbt.put
+import kotlin.experimental.ExperimentalTypeInference
+import kotlin.jvm.JvmName
 
 internal class ComputeTarget private constructor(val arguments: List<Argument>) {
 	companion object {
@@ -25,165 +31,228 @@ internal class ComputeTarget private constructor(val arguments: List<Argument>) 
 	}
 }
 
+private object ComputeScope : NumberProviderScope
+
 /**
- * The `compute` source of `/data modify`: a number provider evaluated with no position (no target), at a block
- * (`pos`) or on a single entity (`entity`), stored as an int or float tag. The provider is an ID, a plain `Float`
- * constant or a lambda building it.
+ * The `compute` source of `/data modify`: a context provider evaluated with no position (no target), at a block (`pos`)
+ * or on a single entity (`entity`), stored as an int tag for a context int provider and as a float tag for a context
+ * float provider. The provider is an ID, a plain `Int` or `Float` constant or a lambda building it. A provider that
+ * fails (a division by zero, an overflow, a value that isn't finite) stores `0`.
  *
  * ```
- * ComputeSource(bonus)                            // compute default my_pack:bonus
- * ComputeSource(vec3(1, 2, 3), bonus)             // compute block 1 2 3 my_pack:bonus
- * ComputeSource(self(), bonus, integer = true)    // compute entity @s my_pack:bonus integer
- * ComputeSource(5f, integer = true)               // compute default {type:"minecraft:constant",value:5} integer
- * ComputeSource(integer = true) { constant(5f) }  // compute default {type:"minecraft:constant",value:5} integer
+ * ComputeSource(bonus)                      // compute default integer my_pack:bonus
+ * ComputeSource(vec3(1, 2, 3), bonus)       // compute block 1 2 3 integer my_pack:bonus
+ * ComputeSource(self(), 2.5f)               // compute entity @s float {type:"minecraft:constant",value:2.5f}
+ * ComputeSource { constant(5) }             // compute default integer {type:"minecraft:constant",value:5}
  * data(storage("foo"))["bar"] = ComputeSource(self(), bonus)
- * // data modify storage minecraft:foo bar set compute entity @s my_pack:bonus
+ * // data modify storage minecraft:foo bar set compute entity @s integer my_pack:bonus
  * ```
- *
- * @property integer Stores an int tag rounded to the nearest integer instead of a float tag.
  */
 class ComputeSource internal constructor(
 	internal val target: ComputeTarget,
-	internal val provider: NumberProvider,
-	val integer: Boolean = false,
+	internal val provider: List<Argument>,
 ) {
-	constructor(provider: NumberProviderArgument, integer: Boolean = false) :
-		this(ComputeTarget.default(), NumberProviderReference(provider), integer)
+	companion object {
+		operator fun invoke(provider: ContextIntProviderArgument) =
+			ComputeSource(ComputeTarget.default(), ContextIntProviderReference(provider).asArguments())
 
-	constructor(pos: Vec3, provider: NumberProviderArgument, integer: Boolean = false) :
-		this(ComputeTarget.block(pos), NumberProviderReference(provider), integer)
+		operator fun invoke(pos: Vec3, provider: ContextIntProviderArgument) =
+			ComputeSource(ComputeTarget.block(pos), ContextIntProviderReference(provider).asArguments())
 
-	constructor(entity: EntityArgument, provider: NumberProviderArgument, integer: Boolean = false) :
-		this(ComputeTarget.entity(entity), NumberProviderReference(provider), integer)
+		operator fun invoke(entity: EntityArgument, provider: ContextIntProviderArgument) =
+			ComputeSource(ComputeTarget.entity(entity), ContextIntProviderReference(provider).asArguments())
 
-	constructor(provider: Float, integer: Boolean = false) :
-		this(ComputeTarget.default(), ConstantNumberProvider(provider), integer)
+		operator fun invoke(provider: ContextFloatProviderArgument) =
+			ComputeSource(ComputeTarget.default(), ContextFloatProviderReference(provider).asArguments())
 
-	constructor(pos: Vec3, provider: Float, integer: Boolean = false) :
-		this(ComputeTarget.block(pos), ConstantNumberProvider(provider), integer)
+		operator fun invoke(pos: Vec3, provider: ContextFloatProviderArgument) =
+			ComputeSource(ComputeTarget.block(pos), ContextFloatProviderReference(provider).asArguments())
 
-	constructor(entity: EntityArgument, provider: Float, integer: Boolean = false) :
-		this(ComputeTarget.entity(entity), ConstantNumberProvider(provider), integer)
+		operator fun invoke(entity: EntityArgument, provider: ContextFloatProviderArgument) =
+			ComputeSource(ComputeTarget.entity(entity), ContextFloatProviderReference(provider).asArguments())
 
-	constructor(integer: Boolean = false, provider: NumberProviderScope.() -> NumberProvider) :
-		this(ComputeTarget.default(), object : NumberProviderScope {}.provider(), integer)
+		operator fun invoke(provider: Int) =
+			ComputeSource(ComputeTarget.default(), ConstantContextIntProvider(provider).asArguments())
 
-	constructor(pos: Vec3, integer: Boolean = false, provider: NumberProviderScope.() -> NumberProvider) :
-		this(ComputeTarget.block(pos), object : NumberProviderScope {}.provider(), integer)
+		operator fun invoke(pos: Vec3, provider: Int) =
+			ComputeSource(ComputeTarget.block(pos), ConstantContextIntProvider(provider).asArguments())
 
-	constructor(entity: EntityArgument, integer: Boolean = false, provider: NumberProviderScope.() -> NumberProvider) :
-		this(ComputeTarget.entity(entity), object : NumberProviderScope {}.provider(), integer)
+		operator fun invoke(entity: EntityArgument, provider: Int) =
+			ComputeSource(ComputeTarget.entity(entity), ConstantContextIntProvider(provider).asArguments())
 
-	internal fun arguments() =
-		listOfNotNull(literal("compute"), *target.arguments.toTypedArray(), provider.asArgument(), literal("integer").takeIf { integer })
+		operator fun invoke(provider: Float) =
+			ComputeSource(ComputeTarget.default(), ConstantContextFloatProvider(provider).asArguments())
+
+		operator fun invoke(pos: Vec3, provider: Float) =
+			ComputeSource(ComputeTarget.block(pos), ConstantContextFloatProvider(provider).asArguments())
+
+		operator fun invoke(entity: EntityArgument, provider: Float) =
+			ComputeSource(ComputeTarget.entity(entity), ConstantContextFloatProvider(provider).asArguments())
+
+		@OptIn(ExperimentalTypeInference::class)
+		@OverloadResolutionByLambdaReturnType
+		@JvmName("invokeInt")
+		operator fun invoke(provider: NumberProviderScope.() -> ContextIntProvider) =
+			ComputeSource(ComputeTarget.default(), ComputeScope.provider().asArguments())
+
+		@OptIn(ExperimentalTypeInference::class)
+		@OverloadResolutionByLambdaReturnType
+		@JvmName("invokeInt")
+		operator fun invoke(pos: Vec3, provider: NumberProviderScope.() -> ContextIntProvider) =
+			ComputeSource(ComputeTarget.block(pos), ComputeScope.provider().asArguments())
+
+		@OptIn(ExperimentalTypeInference::class)
+		@OverloadResolutionByLambdaReturnType
+		@JvmName("invokeInt")
+		operator fun invoke(entity: EntityArgument, provider: NumberProviderScope.() -> ContextIntProvider) =
+			ComputeSource(ComputeTarget.entity(entity), ComputeScope.provider().asArguments())
+
+		@JvmName("invokeFloat")
+		operator fun invoke(provider: NumberProviderScope.() -> ContextFloatProvider) =
+			ComputeSource(ComputeTarget.default(), ComputeScope.provider().asArguments())
+
+		@JvmName("invokeFloat")
+		operator fun invoke(pos: Vec3, provider: NumberProviderScope.() -> ContextFloatProvider) =
+			ComputeSource(ComputeTarget.block(pos), ComputeScope.provider().asArguments())
+
+		@JvmName("invokeFloat")
+		operator fun invoke(entity: EntityArgument, provider: NumberProviderScope.() -> ContextFloatProvider) =
+			ComputeSource(ComputeTarget.entity(entity), ComputeScope.provider().asArguments())
+	}
+
+	internal fun arguments() = listOf(literal("compute"), *target.arguments.toTypedArray(), *provider.toTypedArray())
 }
 
 /** The argument reads a bare number as an ID (`5` is `minecraft:5`), so a top-level constant needs its compound form. */
-private fun NumberProvider.asArgument(): Argument = when (this) {
-	is ConstantNumberProvider -> literal(nbt {
+private fun ContextIntProvider.asArgument(): Argument = when (this) {
+	is ConstantContextIntProvider -> literal(nbt {
 		put("type", "minecraft:constant")
-		put("value", encodeToDataPackNbtTag(this@asArgument))
+		put("value", value)
 	}.toSnbt())
-	is NumberProviderReference -> id
-	else -> literal(encodeToDataPackSnbt(this))
+	is ContextIntProviderReference -> id
+	else -> literal(encodeToDataPackSnbt(ContextIntProvider.serializer(), this))
 }
 
-private fun Function.addCompute(target: ComputeTarget, provider: NumberProvider, suffix: Argument?) =
-	addLine(command("compute", *target.arguments.toTypedArray(), provider.asArgument(), suffix))
+/** The argument reads a bare number as an ID (`5.0` is `minecraft:5.0`), so a top-level constant needs its compound form. */
+private fun ContextFloatProvider.asArgument(): Argument = when (this) {
+	is ConstantContextFloatProvider -> {
+		require(value.isFinite()) { "A 'compute' constant must be finite, got $value." }
+		literal("{type:\"minecraft:constant\",value:${value.toStringWithDecimal}f}")
+	}
+	is ContextFloatProviderReference -> id
+	else -> literal(encodeToDataPackSnbt(ContextFloatProvider.serializer(), this))
+}
+
+private fun ContextIntProvider.asArguments() = listOf(literal("integer"), asArgument())
+
+private fun ContextFloatProvider.asArguments() = listOf(literal("float"), asArgument())
+
+private fun Function.addCompute(target: ComputeTarget, provider: List<Argument>, scale: Float? = null) =
+	addLine(command("compute", *target.arguments.toTypedArray(), *provider.toTypedArray(), float(scale)))
 
 /**
- * Evaluates a number provider and stores the result, multiplied by [scale] and rounded down, as the command result.
- * With no target the provider has no position and no entity, with a [pos] it runs at that block, with an [entity] it runs
- * on that single entity. The provider is an ID, a plain `Float` constant or a lambda building it (`compute { myProvider }`
- * for one you already hold).
+ * Evaluates a context int provider in `integer` mode and stores the result as the command result. With no target the
+ * provider has no position and no entity, with a [pos] it runs at that block, with an [entity] it runs on that single
+ * entity. The provider is an ID, a plain `Int` constant or a lambda building it (`compute { myProvider }` for one you
+ * already hold). The command fails when the provider fails (a division by zero, an overflow).
  *
  * ```
- * compute(bonus)                                   // compute default my_pack:bonus
- * compute(vec3(0, 64, 0), bonus, 2f)               // compute block 0 64 0 my_pack:bonus 2
- * compute(5f, 3f)                                  // compute default {type:"minecraft:constant",value:5} 3
- * compute(self()) { scoreNumber("kills", EntityTarget.THIS) }  // compute entity @s {type:"minecraft:score",...}
+ * compute(bonus)                                 // compute default integer my_pack:bonus
+ * compute(vec3(0, 64, 0), bonus)                 // compute block 0 64 0 integer my_pack:bonus
+ * compute(5)                                     // compute default integer {type:"minecraft:constant",value:5}
+ * compute(self()) { score("kills", EntityTarget.THIS) }  // compute entity @s integer {type:"minecraft:score",...}
+ * ```
+ *
+ * `execute store result score ... run compute ...` stores the result in a score.
+ *
+ * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/compute)
+ */
+fun Function.compute(provider: ContextIntProviderArgument) =
+	addCompute(ComputeTarget.default(), ContextIntProviderReference(provider).asArguments())
+
+/** Evaluates the context int provider [provider] at the block at [pos], see [compute]. */
+fun Function.compute(pos: Vec3, provider: ContextIntProviderArgument) =
+	addCompute(ComputeTarget.block(pos), ContextIntProviderReference(provider).asArguments())
+
+/** Evaluates the context int provider [provider] on the single entity [entity], see [compute]. */
+fun Function.compute(entity: EntityArgument, provider: ContextIntProviderArgument) =
+	addCompute(ComputeTarget.entity(entity), ContextIntProviderReference(provider).asArguments())
+
+/** Evaluates the constant [provider] in `integer` mode, see [compute]. */
+fun Function.compute(provider: Int) =
+	addCompute(ComputeTarget.default(), ConstantContextIntProvider(provider).asArguments())
+
+/** Evaluates the constant [provider] at the block at [pos] in `integer` mode, see [compute]. */
+fun Function.compute(pos: Vec3, provider: Int) =
+	addCompute(ComputeTarget.block(pos), ConstantContextIntProvider(provider).asArguments())
+
+/** Evaluates the constant [provider] on the single entity [entity] in `integer` mode, see [compute]. */
+fun Function.compute(entity: EntityArgument, provider: Int) =
+	addCompute(ComputeTarget.entity(entity), ConstantContextIntProvider(provider).asArguments())
+
+/** Evaluates the context int provider built by [provider], see [compute]. */
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+fun Function.compute(provider: NumberProviderScope.() -> ContextIntProvider) =
+	addCompute(ComputeTarget.default(), ComputeScope.provider().asArguments())
+
+/** Evaluates the context int provider built by [provider] at the block at [pos], see [compute]. */
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+fun Function.compute(pos: Vec3, provider: NumberProviderScope.() -> ContextIntProvider) =
+	addCompute(ComputeTarget.block(pos), ComputeScope.provider().asArguments())
+
+/** Evaluates the context int provider built by [provider] on the single entity [entity], see [compute]. */
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+fun Function.compute(entity: EntityArgument, provider: NumberProviderScope.() -> ContextIntProvider) =
+	addCompute(ComputeTarget.entity(entity), ComputeScope.provider().asArguments())
+
+/**
+ * Evaluates a context float provider in `float` mode and stores the result, multiplied by [scale] and rounded down, as the
+ * command result (`2.5` gives `2`). The targets and providers are the ones of the integer [compute], with a `Float`
+ * constant or a lambda returning a float provider. The command fails when the result isn't finite or the provider fails.
+ *
+ * ```
+ * compute(ContextFloatProviderArgument("speed", "my_pack"), 10f)  // compute default float my_pack:speed 10
+ * compute(vec3(0, 64, 0), ContextFloatProviders.Cooking.SPEED_DEFAULT)  // compute block 0 64 0 float minecraft:cooking/speed_default
+ * compute(5f, 3f)                                                  // compute default float {type:"minecraft:constant",value:5.0f} 3
+ * compute(2f) { sqrt(constant(4f)) }                               // compute default float {type:"minecraft:sqrt",input:4} 2
  * ```
  *
  * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/compute)
  */
-fun Function.compute(provider: NumberProviderArgument, scale: Float? = null) =
-	addCompute(ComputeTarget.default(), NumberProviderReference(provider), float(scale))
+fun Function.compute(provider: ContextFloatProviderArgument, scale: Float? = null) =
+	addCompute(ComputeTarget.default(), ContextFloatProviderReference(provider).asArguments(), scale)
 
-/** Evaluates the number provider [provider] at the block at [pos], see [compute]. */
-fun Function.compute(pos: Vec3, provider: NumberProviderArgument, scale: Float? = null) =
-	addCompute(ComputeTarget.block(pos), NumberProviderReference(provider), float(scale))
+/** Evaluates the context float provider [provider] at the block at [pos], see the float [compute]. */
+fun Function.compute(pos: Vec3, provider: ContextFloatProviderArgument, scale: Float? = null) =
+	addCompute(ComputeTarget.block(pos), ContextFloatProviderReference(provider).asArguments(), scale)
 
-/** Evaluates the number provider [provider] on the single entity [entity], see [compute]. */
-fun Function.compute(entity: EntityArgument, provider: NumberProviderArgument, scale: Float? = null) =
-	addCompute(ComputeTarget.entity(entity), NumberProviderReference(provider), float(scale))
+/** Evaluates the context float provider [provider] on the single entity [entity], see the float [compute]. */
+fun Function.compute(entity: EntityArgument, provider: ContextFloatProviderArgument, scale: Float? = null) =
+	addCompute(ComputeTarget.entity(entity), ContextFloatProviderReference(provider).asArguments(), scale)
 
-/** Evaluates the constant [provider], see [compute]. */
+/** Evaluates the constant [provider] in `float` mode, see the float [compute]. */
 fun Function.compute(provider: Float, scale: Float? = null) =
-	addCompute(ComputeTarget.default(), ConstantNumberProvider(provider), float(scale))
+	addCompute(ComputeTarget.default(), ConstantContextFloatProvider(provider).asArguments(), scale)
 
-/** Evaluates the constant [provider] at the block at [pos], see [compute]. */
+/** Evaluates the constant [provider] at the block at [pos] in `float` mode, see the float [compute]. */
 fun Function.compute(pos: Vec3, provider: Float, scale: Float? = null) =
-	addCompute(ComputeTarget.block(pos), ConstantNumberProvider(provider), float(scale))
+	addCompute(ComputeTarget.block(pos), ConstantContextFloatProvider(provider).asArguments(), scale)
 
-/** Evaluates the constant [provider] on the single entity [entity], see [compute]. */
+/** Evaluates the constant [provider] on the single entity [entity] in `float` mode, see the float [compute]. */
 fun Function.compute(entity: EntityArgument, provider: Float, scale: Float? = null) =
-	addCompute(ComputeTarget.entity(entity), ConstantNumberProvider(provider), float(scale))
+	addCompute(ComputeTarget.entity(entity), ConstantContextFloatProvider(provider).asArguments(), scale)
 
-/** Evaluates the number provider built by [provider], see [compute]. */
-fun Function.compute(scale: Float? = null, provider: NumberProviderScope.() -> NumberProvider) =
-	addCompute(ComputeTarget.default(), object : NumberProviderScope {}.provider(), float(scale))
+/** Evaluates the context float provider built by [provider], see the float [compute]. */
+fun Function.compute(scale: Float? = null, provider: NumberProviderScope.() -> ContextFloatProvider) =
+	addCompute(ComputeTarget.default(), ComputeScope.provider().asArguments(), scale)
 
-/** Evaluates the number provider built by [provider] at the block at [pos], see [compute]. */
-fun Function.compute(pos: Vec3, scale: Float? = null, provider: NumberProviderScope.() -> NumberProvider) =
-	addCompute(ComputeTarget.block(pos), object : NumberProviderScope {}.provider(), float(scale))
+/** Evaluates the context float provider built by [provider] at the block at [pos], see the float [compute]. */
+fun Function.compute(pos: Vec3, scale: Float? = null, provider: NumberProviderScope.() -> ContextFloatProvider) =
+	addCompute(ComputeTarget.block(pos), ComputeScope.provider().asArguments(), scale)
 
-/** Evaluates the number provider built by [provider] on the single entity [entity], see [compute]. */
-fun Function.compute(entity: EntityArgument, scale: Float? = null, provider: NumberProviderScope.() -> NumberProvider) =
-	addCompute(ComputeTarget.entity(entity), object : NumberProviderScope {}.provider(), float(scale))
-
-/**
- * Evaluates a number provider in integer mode, which rounds the result to the nearest integer (`2.5` gives `3`) where the
- * float mode of [compute] rounds it down, and takes no scale. The targets and providers are the ones of [compute].
- *
- * ```
- * computeInteger(bonus)           // compute default my_pack:bonus integer
- * computeInteger(self(), bonus)   // compute entity @s my_pack:bonus integer
- * computeInteger(5f)              // compute default {type:"minecraft:constant",value:5} integer
- * ```
- *
- * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/compute)
- */
-fun Function.computeInteger(provider: NumberProviderArgument) =
-	addCompute(ComputeTarget.default(), NumberProviderReference(provider), literal("integer"))
-
-/** Evaluates the number provider [provider] at the block at [pos] in integer mode, see [computeInteger]. */
-fun Function.computeInteger(pos: Vec3, provider: NumberProviderArgument) =
-	addCompute(ComputeTarget.block(pos), NumberProviderReference(provider), literal("integer"))
-
-/** Evaluates the number provider [provider] on the single entity [entity] in integer mode, see [computeInteger]. */
-fun Function.computeInteger(entity: EntityArgument, provider: NumberProviderArgument) =
-	addCompute(ComputeTarget.entity(entity), NumberProviderReference(provider), literal("integer"))
-
-/** Evaluates the constant [provider] in integer mode, see [computeInteger]. */
-fun Function.computeInteger(provider: Float) =
-	addCompute(ComputeTarget.default(), ConstantNumberProvider(provider), literal("integer"))
-
-/** Evaluates the constant [provider] at the block at [pos] in integer mode, see [computeInteger]. */
-fun Function.computeInteger(pos: Vec3, provider: Float) =
-	addCompute(ComputeTarget.block(pos), ConstantNumberProvider(provider), literal("integer"))
-
-/** Evaluates the constant [provider] on the single entity [entity] in integer mode, see [computeInteger]. */
-fun Function.computeInteger(entity: EntityArgument, provider: Float) =
-	addCompute(ComputeTarget.entity(entity), ConstantNumberProvider(provider), literal("integer"))
-
-/** Evaluates the number provider built by [provider] in integer mode, see [computeInteger]. */
-fun Function.computeInteger(provider: NumberProviderScope.() -> NumberProvider) =
-	addCompute(ComputeTarget.default(), object : NumberProviderScope {}.provider(), literal("integer"))
-
-/** Evaluates the number provider built by [provider] at the block at [pos] in integer mode, see [computeInteger]. */
-fun Function.computeInteger(pos: Vec3, provider: NumberProviderScope.() -> NumberProvider) =
-	addCompute(ComputeTarget.block(pos), object : NumberProviderScope {}.provider(), literal("integer"))
-
-/** Evaluates the number provider built by [provider] on the single entity [entity] in integer mode, see [computeInteger]. */
-fun Function.computeInteger(entity: EntityArgument, provider: NumberProviderScope.() -> NumberProvider) =
-	addCompute(ComputeTarget.entity(entity), object : NumberProviderScope {}.provider(), literal("integer"))
+/** Evaluates the context float provider built by [provider] on the single entity [entity], see the float [compute]. */
+fun Function.compute(entity: EntityArgument, scale: Float? = null, provider: NumberProviderScope.() -> ContextFloatProvider) =
+	addCompute(ComputeTarget.entity(entity), ComputeScope.provider().asArguments(), scale)

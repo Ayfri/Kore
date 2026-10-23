@@ -5,7 +5,7 @@ nav-title: Advancements Triggers
 description: A guide for using advancements triggers in Minecraft with Kore.
 keywords: minecraft, datapack, kore, guide, advancements, triggers
 date-created: 2024-08-01
-date-modified: 2026-10-21
+date-modified: 2026-10-23
 routeOverride: /docs/data-driven/advancements/triggers
 ---
 
@@ -1372,7 +1372,7 @@ Triggers every tick (20 times per second).
 ```kotlin
 tick("game_tick") {
 	condition {
-		timeCheck(WorldClocks.OVERWORLD, 0f, 12000f, period = 24000) // daytime only
+		timeCheck(WorldClocks.OVERWORLD, 0..12000, period = 24000) // daytime only
 	}
 }
 ```

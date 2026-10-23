@@ -8,7 +8,8 @@ import io.github.ayfri.kore.features.loottables.entries.LootEntry
 import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.conditions.PredicateReference
-import io.github.ayfri.kore.features.predicates.providers.NumberProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.toCondition
@@ -24,23 +25,23 @@ import kotlinx.serialization.Serializable
 @LootDsl
 @Serializable
 data class LootPool(
-	var bonusRolls: NumberProvider? = null,
+	var bonusRolls: ContextFloatProvider? = null,
 	var condition: PredicateCondition? = null,
 	var entries: List<LootEntry> = emptyList(),
 	var modifier: InlinableItemModifier? = null,
-	var rolls: NumberProvider,
+	var rolls: ContextIntProvider,
 ) : NumberProviderScope
 
 /** Set the number of rolls. */
-fun LootPool.rolls(value: NumberProvider) {
+fun LootPool.rolls(value: ContextIntProvider) {
 	rolls = value
 }
 
 /** Set the number of rolls as a constant. */
-fun LootPool.rolls(value: Float) = rolls(constant(value))
+fun LootPool.rolls(value: Int) = rolls(constant(value))
 
 /** Set the number of bonus rolls. */
-fun LootPool.bonusRolls(value: NumberProvider) {
+fun LootPool.bonusRolls(value: ContextFloatProvider) {
 	bonusRolls = value
 }
 

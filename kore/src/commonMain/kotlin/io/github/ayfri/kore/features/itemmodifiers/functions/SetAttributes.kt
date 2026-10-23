@@ -5,7 +5,7 @@ import io.github.ayfri.kore.commands.AttributeModifierOperation
 import io.github.ayfri.kore.data.item.AttributeModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
-import io.github.ayfri.kore.features.predicates.providers.NumberProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.generated.arguments.types.AttributeArgument
 import kotlinx.serialization.Serializable
@@ -39,7 +39,7 @@ fun ItemModifier.setAttributes(modifier: AttributeModifier, replace: Boolean? = 
 fun SetAttributes.attribute(
 	attribute: AttributeArgument,
 	id: String,
-	amount: NumberProvider = constant(0f),
+	amount: ContextFloatProvider = constant(0f),
 	operation: AttributeModifierOperation = AttributeModifierOperation.ADD_VALUE,
 	slot: List<EquipmentSlot>? = null,
 	block: AttributeModifier.() -> Unit = {},

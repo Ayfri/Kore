@@ -111,7 +111,7 @@ context(dp: DataPack)
 fun World.onDayStart(block: Function.() -> Unit) =
 	dp.registerWorldEvent(
 		OopConstants.dayStartEvent, dimension, intoLoad = false, needsState = true, block,
-		edgeDispatcher(rising = true, dimension) { timeCheck(WorldClocks.OVERWORLD, 0f..11999f) })
+		edgeDispatcher(rising = true, dimension) { timeCheck(WorldClocks.OVERWORLD, 0..11999) })
 
 /**
  * Runs [block] every [period] ticks, backed by a scoreboard counter so it is unaffected by the day/night cycle being frozen.
@@ -164,7 +164,7 @@ context(dp: DataPack)
 fun World.onNightStart(block: Function.() -> Unit) =
 	dp.registerWorldEvent(
 		OopConstants.nightStartEvent, dimension, intoLoad = false, needsState = true, block,
-		edgeDispatcher(rising = true, dimension) { timeCheck(WorldClocks.OVERWORLD, 13000f..23999f) })
+		edgeDispatcher(rising = true, dimension) { timeCheck(WorldClocks.OVERWORLD, 13000..23999) })
 
 /** Runs [block] the tick it turns noon (`daytime` reaches `6000`), scoped to this world's dimension when set. */
 context(dp: DataPack)

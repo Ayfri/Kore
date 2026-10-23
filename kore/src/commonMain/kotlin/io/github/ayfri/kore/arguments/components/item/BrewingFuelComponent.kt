@@ -2,43 +2,48 @@ package io.github.ayfri.kore.arguments.components.item
 
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.arguments.components.data.ResolvableNumber
-import io.github.ayfri.kore.arguments.components.data.resolvableNumber
+import io.github.ayfri.kore.arguments.components.data.ResolvableFloat
+import io.github.ayfri.kore.arguments.components.data.ResolvableInt
+import io.github.ayfri.kore.arguments.components.data.resolvableFloat
+import io.github.ayfri.kore.arguments.components.data.resolvableInt
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
+import io.github.ayfri.kore.generated.arguments.types.ContextFloatProviderArgument
+import io.github.ayfri.kore.generated.arguments.types.ContextIntProviderArgument
 import kotlinx.serialization.Serializable
 
 /**
  * Represents the `minecraft:brewing_fuel` item component, which makes the item usable as fuel in brewing stands.
- * Both fields take a plain number or the ID of a [number provider file][io.github.ayfri.kore.features.numberproviders.NumberProviderFile].
+ * Both fields take a plain number or the ID of a context provider file
+ * ([float][io.github.ayfri.kore.features.contextproviders.ContextFloatProviderFile] for [speedMultiplier],
+ * [int][io.github.ayfri.kore.features.contextproviders.ContextIntProviderFile] for [uses]).
  *
  * Docs: https://kore.ayfri.com/docs/concepts/components
  * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#brewing_fuel
  */
 @Serializable
 data class BrewingFuelComponent(
-	var speedMultiplier: ResolvableNumber,
-	var uses: ResolvableNumber,
+	var speedMultiplier: ResolvableFloat,
+	var uses: ResolvableInt,
 ) : Component()
 
 /**
  * Makes the item a brewing stand fuel brewing [uses] times, at the speed [speedMultiplier] gives.
  *
  * ```
- * brewingFuel(NumberProviders.Brewing.SPEED_DEFAULT, NumberProviders.Brewing.USES_DEFAULT)
+ * brewingFuel(ContextFloatProviders.Brewing.SPEED_DEFAULT, ContextIntProviders.Brewing.USES_DEFAULT)
  * ```
  */
-fun ComponentsScope.brewingFuel(speedMultiplier: NumberProviderArgument, uses: NumberProviderArgument) =
-	brewingFuel(resolvableNumber(speedMultiplier), resolvableNumber(uses))
+fun ComponentsScope.brewingFuel(speedMultiplier: ContextFloatProviderArgument, uses: ContextIntProviderArgument) =
+	brewingFuel(resolvableFloat(speedMultiplier), resolvableInt(uses))
 
 /**
- * Makes the item a brewing stand fuel with numbers or number provider IDs mixed freely.
+ * Makes the item a brewing stand fuel with numbers or context provider IDs mixed freely.
  *
  * ```
- * brewingFuel(resolvableNumber(2f), resolvableNumber(NumberProviders.Brewing.USES_DEFAULT))
+ * brewingFuel(resolvableFloat(2f), resolvableInt(ContextIntProviders.Brewing.USES_DEFAULT))
  * ```
  */
-fun ComponentsScope.brewingFuel(speedMultiplier: ResolvableNumber, uses: ResolvableNumber) =
+fun ComponentsScope.brewingFuel(speedMultiplier: ResolvableFloat, uses: ResolvableInt) =
 	apply { this[ItemComponentTypes.BREWING_FUEL] = BrewingFuelComponent(speedMultiplier, uses) }
 
 /**
@@ -49,4 +54,4 @@ fun ComponentsScope.brewingFuel(speedMultiplier: ResolvableNumber, uses: Resolva
  * ```
  */
 fun ComponentsScope.brewingFuel(speedMultiplier: Float, uses: Int) =
-	brewingFuel(resolvableNumber(speedMultiplier), resolvableNumber(uses))
+	brewingFuel(resolvableFloat(speedMultiplier), resolvableInt(uses))

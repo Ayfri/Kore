@@ -39,7 +39,7 @@ sealed class ItemFunction : NumberProviderScope {
  * wrapped in an `all_of`.
  *
  * ```
- * setCount(1f) { condition { randomChance(0.5f) } }  // "condition": { "type": "minecraft:random_chance", ... }
+ * setCount(1) { condition { randomChance(0.5f) } }  // "condition": { "type": "minecraft:random_chance", ... }
  * ```
  *
  * See Predicates in the docs page: https://kore.ayfri.com/docs/data-driven/item-modifiers
@@ -52,7 +52,7 @@ fun ItemFunction.condition(block: Predicate.() -> Unit) {
  * Define the condition as the predicate [predicate], written as its bare ID.
  *
  * ```
- * setCount(1f) { condition(PredicateArgument("is_night", "my_pack")) }  // "condition": "my_pack:is_night"
+ * setCount(1) { condition(PredicateArgument("is_night", "my_pack")) }  // "condition": "my_pack:is_night"
  * ```
  */
 fun ItemFunction.condition(predicate: PredicateArgument) {

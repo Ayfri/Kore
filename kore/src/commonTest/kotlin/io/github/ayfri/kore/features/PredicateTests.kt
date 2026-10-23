@@ -21,7 +21,8 @@ import io.github.ayfri.kore.features.predicates.providers.*
 import io.github.ayfri.kore.features.predicates.sub.*
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.generated.arguments.tagged.PredicateTagArgument
-import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
+import io.github.ayfri.kore.generated.arguments.types.ContextFloatProviderArgument
+import io.github.ayfri.kore.generated.arguments.types.ContextIntProviderArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.MoonPhaseValue
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.beesStayInHive
@@ -38,7 +39,7 @@ fun DataPack.predicateTests() {
 		allOf {
 			enchantmentActiveCheck(false)
 			randomChance(0.25f)
-			timeCheck(WorldClocks.OVERWORLD, 10f..20f)
+			timeCheck(WorldClocks.OVERWORLD, 10..20)
 			weatherCheck(raining = false, thundering = true)
 		}
 	}
@@ -59,8 +60,8 @@ fun DataPack.predicateTests() {
 					"type": "minecraft:time_check",
 					"clock": "minecraft:overworld",
 					"value": {
-						"min": 10.0,
-						"max": 20.0
+						"max": 20,
+						"min": 10
 					}
 				},
 				{
@@ -437,7 +438,7 @@ fun DataPack.predicateTests() {
 
 	predicate("entity_score") {
 		entityScores(EntityTarget.THIS) {
-			this["kills"] = intRange(1f, 5f)
+			this["kills"] = intRange(1, 5)
 			this["deaths"] = intValue(2)
 		}
 	}
@@ -448,8 +449,8 @@ fun DataPack.predicateTests() {
 			"entity": "this",
 			"scores": {
 				"kills": {
-					"min": 1.0,
-					"max": 5.0
+					"max": 5,
+					"min": 1
 				},
 				"deaths": 2
 			}
@@ -848,7 +849,7 @@ fun DataPack.predicateTests() {
 	""".trimIndent()
 
 	predicate("time_check") {
-		timeCheck(WorldClocks.OVERWORLD, 5f..15f)
+		timeCheck(WorldClocks.OVERWORLD, 5..15)
 	}
 
 	predicates.last() assertsIs """
@@ -856,14 +857,28 @@ fun DataPack.predicateTests() {
 			"type": "minecraft:time_check",
 			"clock": "minecraft:overworld",
 			"value": {
-				"min": 5.0,
-				"max": 15.0
+				"max": 15,
+				"min": 5
 			}
 		}
 	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("time_check_value") {
+		timeCheck(WorldClocks.OVERWORLD, 1000)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:time_check",
+			"clock": "minecraft:overworld",
+			"value": 1000
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
 
 	predicate("time_check_with_period") {
-		timeCheck(WorldClocks.THE_END, 0f..6000f, period = 24000)
+		timeCheck(WorldClocks.THE_END, 0..6000, period = 24000)
 	}
 
 	predicates.last() assertsIs """
@@ -871,82 +886,136 @@ fun DataPack.predicateTests() {
 			"type": "minecraft:time_check",
 			"clock": "minecraft:the_end",
 			"value": {
-				"min": 0.0,
-				"max": 6000.0
+				"max": 6000,
+				"min": 0
 			},
 			"period": 24000
 		}
 	""".trimIndent()
 
-	predicate("value_check") {
-		valueCheck(scoreNumber("kills", target = EntityTarget.THIS), intRange(0f, 10f))
+	predicate("int_value_check") {
+		intValueCheck(score("kills", EntityTarget.THIS), 0..10)
 	}
 
 	predicates.last() assertsIs """
 		{
-			"type": "minecraft:value_check",
+			"type": "minecraft:int_value_check",
+			"test": {
+				"max": 10,
+				"min": 0
+			},
 			"value": {
 				"type": "minecraft:score",
+				"score": "kills",
 				"target": {
 					"type": "minecraft:context",
 					"target": "this"
-				},
-				"score": "kills"
+				}
+			}
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("int_value_check_exact") {
+		intValueCheck(score("kills", EntityTarget.THIS), intValue(3))
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:int_value_check",
+			"test": 3,
+			"value": {
+				"type": "minecraft:score",
+				"score": "kills",
+				"target": {
+					"type": "minecraft:context",
+					"target": "this"
+				}
+			}
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("int_value_check_open_bound") {
+		intValueCheck(score("kills", EntityTarget.THIS), min = constant(1))
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:int_value_check",
+			"test": {
+				"min": 1
 			},
-			"range": {
-				"min": 0.0,
-				"max": 10.0
+			"value": {
+				"type": "minecraft:score",
+				"score": "kills",
+				"target": {
+					"type": "minecraft:context",
+					"target": "this"
+				}
 			}
 		}
 	""".trimIndent()
 
-	predicate("value_check_int_range") {
-		valueCheck(scoreNumber("kills", EntityTarget.THIS), 1..10)
+	predicate("int_value_check_add") {
+		intValueCheck(add(constant(1), constant(2), uniform(3, 5)), 0..10)
 	}
 
 	predicates.last() assertsIs """
 		{
-			"type": "minecraft:value_check",
-			"value": {
-				"type": "minecraft:score",
-				"target": {
-					"type": "minecraft:context",
-					"target": "this"
-				},
-				"score": "kills"
+			"type": "minecraft:int_value_check",
+			"test": {
+				"max": 10,
+				"min": 0
 			},
-			"range": {
-				"min": 1.0,
-				"max": 10.0
-			}
-		}
-	""".trimIndent()
-
-	predicate("value_check_sum") {
-		valueCheck(sum(constant(1f), constant(2f), uniform(3f, 5f)), intRange(0f, 10f))
-	}
-
-	predicates.last() assertsIs """
-		{
-			"type": "minecraft:value_check",
 			"value": {
-				"type": "minecraft:sum",
-				"operands": [
-					1.0,
-					2.0,
+				"type": "minecraft:add",
+				"inputs": [
+					1,
+					2,
 					{
 						"type": "minecraft:uniform",
-						"min": 3.0,
-						"max": 5.0
+						"max": 5,
+						"min": 3
 					}
 				]
-			},
-			"range": {
-				"min": 0.0,
-				"max": 10.0
 			}
 		}
 	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("float_value_check") {
+		floatValueCheck(uniform(0f, 1f), 0f..1f)
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:float_value_check",
+			"test": {
+				"max": 1.0,
+				"min": 0.0
+			},
+			"value": {
+				"type": "minecraft:uniform",
+				"max": 1.0,
+				"min": 0.0
+			}
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("float_value_check_exact") {
+		floatValueCheck(constant(0.5f), floatValue(0.5f))
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:float_value_check",
+			"test": 0.5,
+			"value": 0.5
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
 
 	predicate("weather_check") {
 		weatherCheck(raining = true, thundering = false)
@@ -998,7 +1067,7 @@ fun DataPack.predicateTests() {
 	""".trimIndent()
 	roundTrip(predicates.last())
 
-	val chance = NumberProviderArgument("drop_chance", "my_pack")
+	val chance = ContextFloatProviderArgument("drop_chance", "my_pack")
 
 	predicate("random_chance_reference") {
 		randomChance(reference(chance))
@@ -1012,24 +1081,41 @@ fun DataPack.predicateTests() {
 	""".trimIndent()
 	roundTrip(predicates.last())
 
-	predicate("value_check_reference") {
-		valueCheck(reference(chance), intRange(reference(chance), 10f))
+	val bonus = ContextIntProviderArgument("bonus", "my_pack")
+
+	predicate("int_value_check_reference") {
+		intValueCheck(reference(bonus), intRange(reference(bonus), constant(10)))
 	}
 
 	predicates.last() assertsIs """
 		{
-			"type": "minecraft:value_check",
-			"value": "my_pack:drop_chance",
-			"range": {
-				"min": "my_pack:drop_chance",
-				"max": 10.0
-			}
+			"type": "minecraft:int_value_check",
+			"test": {
+				"max": 10,
+				"min": "my_pack:bonus"
+			},
+			"value": "my_pack:bonus"
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	predicate("float_value_check_reference") {
+		floatValueCheck(reference(chance), min = reference(chance))
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:float_value_check",
+			"test": {
+				"min": "my_pack:drop_chance"
+			},
+			"value": "my_pack:drop_chance"
 		}
 	""".trimIndent()
 	roundTrip(predicates.last())
 
 	predicate("time_check_reference") {
-		timeCheck(WorldClocks.OVERWORLD, reference(chance), 6000f)
+		timeCheck(WorldClocks.OVERWORLD, reference(bonus), constant(6000))
 	}
 
 	predicates.last() assertsIs """
@@ -1037,8 +1123,8 @@ fun DataPack.predicateTests() {
 			"type": "minecraft:time_check",
 			"clock": "minecraft:overworld",
 			"value": {
-				"min": "my_pack:drop_chance",
-				"max": 6000.0
+				"max": 6000,
+				"min": "my_pack:bonus"
 			}
 		}
 	""".trimIndent()
@@ -1046,7 +1132,7 @@ fun DataPack.predicateTests() {
 
 	predicate("entity_scores_reference") {
 		entityScores(EntityTarget.THIS) {
-			this["kills"] = intRange(reference(chance), reference(NumberProviders.Cooking.TIME_COAL))
+			this["kills"] = intRange(reference(bonus), reference(ContextIntProviders.Cooking.TIME_COAL))
 		}
 	}
 
@@ -1056,13 +1142,36 @@ fun DataPack.predicateTests() {
 			"entity": "this",
 			"scores": {
 				"kills": {
-					"min": "my_pack:drop_chance",
-					"max": "minecraft:cooking/time_coal"
+					"max": "minecraft:cooking/time_coal",
+					"min": "my_pack:bonus"
 				}
 			}
 		}
 	""".trimIndent()
 	roundTrip(predicates.last())
+
+	predicate("entity_scores_value") {
+		entityScores(EntityTarget.THIS) {
+			this["kills"] = intValue(reference(bonus))
+		}
+	}
+
+	predicates.last() assertsIs """
+		{
+			"type": "minecraft:entity_scores",
+			"entity": "this",
+			"scores": {
+				"kills": "my_pack:bonus"
+			}
+		}
+	""".trimIndent()
+	roundTrip(predicates.last())
+
+	jsonEncoder.decodeFromString(ContextIntProviderRange.serializer(), """{"min":1,"max":2}""")
+		.bounds.shouldBeInstanceOf<ContextIntProviderBounds>()
+	jsonEncoder.decodeFromString(ContextIntProviderRange.serializer(), """{"type":"minecraft:uniform","min":1,"max":2}""")
+		.value.shouldBeInstanceOf<UniformContextIntProvider>()
+	jsonEncoder.decodeFromString(ContextIntProviderRange.serializer(), "3").value assertsIs ConstantContextIntProvider(3)
 
 	predicate("no_condition") {}
 

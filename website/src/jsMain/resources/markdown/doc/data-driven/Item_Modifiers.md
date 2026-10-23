@@ -55,7 +55,7 @@ Use the `itemModifier` builder function to create item modifiers in Kore:
 dataPack("my_datapack") {
 	val modifier = itemModifier("fortune_bonus") {
 		enchantRandomly(Enchantments.FORTUNE)
-		setCount(uniform(1f, 5f))
+		setCount(uniform(1, 5))
 	}
 }
 ```
@@ -78,7 +78,7 @@ load {
 
 	// Inline modifier, no file needed
 	items.modify(self(), WEAPON.MAINHAND) {
-		setCount(2f)
+		setCount(2)
 	}
 }
 ```
@@ -99,7 +99,7 @@ lootTable("treasure") {
 	pool {
 		// Pool-level modifier
 		modifier {
-			setCount(uniform(1f, 3f))
+			setCount(uniform(1, 3))
 		}
 
 		entries {
@@ -127,16 +127,16 @@ Sets or modifies the stack count:
 ```kotlin
 itemModifier("set_count") {
 	// Exact count
-	setCount(5f)
+	setCount(5)
 
 	// Random range
-	setCount(uniform(1f, 10f))
+	setCount(uniform(1, 10))
 
 	// Add to current count
-	setCount(5f, add = true)
+	setCount(5, add = true)
 
 	// With condition
-	setCount(10f) {
+	setCount(10) {
 		condition {
 			killedByPlayer()
 		}
@@ -161,27 +161,52 @@ itemModifier("damage") {
 }
 ```
 
-The count, damage, level, amplifier and duration fields of item functions are [number providers](/docs/data-driven/loot-tables#number-providers), so each also accepts a number provider ID through `reference(...)`:
+The numeric fields of item functions are [context providers](/docs/data-driven/loot-tables#context-providers): an int provider (`constant(1)`, `uniform(1, 5)`) or a float provider (`constant(1f)`, `uniform(0.5f, 1f)`) depending on the field. Each also accepts the ID of a [context provider file](/docs/data-driven/loot-tables#context-provider-files) through `reference(...)`:
+
+| Function                    | Field                         | Provider |
+|-----------------------------|-------------------------------|----------|
+| `setCount`                  | `count`                       | int      |
+| `limitCount`                | `min`, `max`                  | int      |
+| `enchantWithLevels`         | `levels`                      | int      |
+| `setEnchantments`           | the level of each enchantment | int      |
+| `setOminousBottleAmplifier` | `amplifier`                   | int      |
+| `setRandomDyes`             | `numberOfDyes`                | int      |
+| `setStewEffect`             | `duration` of each effect     | int      |
+| `setCustomModelData`        | `colors`                      | int      |
+| `setCustomModelData`        | `floats`                      | float    |
+| `setDamage`                 | `damage`                      | float    |
+| `setAttributes`             | `amount` of each modifier     | float    |
+| `enchantedCountIncrease`    | `count`                       | float    |
+
+A convenience overload takes a plain `Int` for an int field and a plain `Float` for a float field.
 
 ```kotlin
 itemModifier("count_from_provider") {
-	setCount(reference(NumberProviderArgument("n", "my_pack")))  // "count": "my_pack:n"
+	setCount(reference(ContextIntProviderArgument("n", "my_pack")))  // "count": "my_pack:n"
 }
 ```
 
 #### limitCount
 
-Clamps stack count to a range:
+Clamps stack count to a range. The game only reads the `{ min, max }` object, each bound being an int provider and either one optional:
 
 ```kotlin
 itemModifier("limit") {
-	// Exact limit
-	limitCount(64)
+	// At most 64, no lower bound
+	limitCount(max = constant(64))
 
-	// Range
-	limitCount(intRange(min = constant(1f), max = constant(32f)))
+	// Between 1 and 32
+	limitCount(1..32)
+
+	// Same, with two Int bounds
+	limitCount(1, 32)
+
+	// Bounds from providers
+	limitCount(min = constant(1), max = score("cap", EntityTarget.THIS))
 }
 ```
+
+`limitCount(max = constant(64))` writes `"limit": { "max": 64 }`. A single `Int` isn't accepted, so `limitCount(64)` can't silently mean a lower bound: pass both bounds, or name the provider bound you set.
 
 ### Enchantments
 
@@ -223,16 +248,16 @@ Enchants as if using an enchanting table:
 ```kotlin
 itemModifier("table_enchant") {
 	// Fixed level
-	enchantWithLevels(levels = constant(30f))
+	enchantWithLevels(levels = constant(30))
 
 	// Random level range
-	enchantWithLevels(levels = uniform(20f, 39f))
+	enchantWithLevels(levels = uniform(20, 39))
 
 	// Limit to specific enchantments
-	enchantWithLevels(Enchantments.PROTECTION, levels = constant(30f))
+	enchantWithLevels(Enchantments.PROTECTION, levels = constant(30))
 
 	// Include the additional cost component from trade costs
-	enchantWithLevels(levels = constant(30f)) {
+	enchantWithLevels(levels = constant(30)) {
 		includeAdditionalCostComponent = true
 	}
 }
@@ -245,9 +270,9 @@ Sets specific enchantments and levels:
 ```kotlin
 itemModifier("specific_enchants") {
 	setEnchantments {
-		this[Enchantments.SHARPNESS] = constant(5f)
-		this[Enchantments.UNBREAKING] = constant(3f)
-		this[Enchantments.MENDING] = constant(1f)
+		this[Enchantments.SHARPNESS] = constant(5)
+		this[Enchantments.UNBREAKING] = constant(3)
+		this[Enchantments.MENDING] = constant(1)
 	}
 }
 ```
@@ -381,24 +406,24 @@ itemModifier("custom_model") {
 }
 ```
 
-Each float is a [number provider](/docs/data-driven/loot-tables#number-providers), so `floats(...)` can read it from a score or add
-several sources with `sum`, which also works as float math on scores:
+Each float is a [float provider](/docs/data-driven/loot-tables#context-providers), so `floats(...)` can read it from a score (`fromInt` turns the int score into a float) or add
+several sources with `add`:
 
 ```kotlin
 itemModifier("model_from_score") {
 	setCustomModelData {
-		floats(sum(scoreNumber("charge", "#gun"), constant(0.5f)))
+		floats(add(fromInt(score("charge", "#gun")), constant(0.5f)))
 	}
 }
 ```
 
-Each color is either a fixed `Color`, written as its decimal RGB value, or a number provider computing that value:
+Each color is either a fixed `Color`, written as its decimal RGB value, or an int provider computing that value:
 
 ```kotlin
 itemModifier("model_colors") {
 	setCustomModelData {
 		colors(Color.RED, Color.BLUE)                // "values": [16733525, 5592575]
-		colors(scoreNumber("tint", "#shirt"))        // "values": [{ "type": "minecraft:score", ... }]
+		colors(score("tint", "#shirt"))              // "values": [{ "type": "minecraft:score", ... }]
 	}
 }
 ```
@@ -430,12 +455,12 @@ itemModifier("filled_bundle") {
 		entries {
 			item(Items.DIAMOND) {
 				modifier {
-					setCount(16f)
+					setCount(16)
 				}
 			}
 			item(Items.EMERALD) {
 				modifier {
-					setCount(32f)
+					setCount(32)
 				}
 			}
 		}
@@ -557,11 +582,11 @@ Set the amplifier of an ominous bottle:
 
 ```kotlin
 itemModifier("ominous_bottle") {
-	// Fixed amplifier, written as the number provider 5.0
+	// Fixed amplifier, written as the int provider 5
 	setOminousBottleAmplifier(5)
 
-	// Amplifier drawn from a number provider
-	setOminousBottleAmplifier(uniform(2f, 4f))
+	// Amplifier drawn from an int provider
+	setOminousBottleAmplifier(uniform(2, 4))
 }
 ```
 
@@ -588,15 +613,15 @@ itemModifier("random_potion") {
 
 #### setRandomDyes
 
-Set a random number of dyes on the item using a number provider:
+Set a random number of dyes on the item using an int provider:
 
 ```kotlin
 itemModifier("random_dyes") {
   // Fixed count
-  setRandomDyes(3f)
+  setRandomDyes(3)
 
   // Dynamic count
-  setRandomDyes(uniform(1f, 5f))
+  setRandomDyes(uniform(1, 5))
 }
 ```
 
@@ -607,7 +632,7 @@ Set suspicious stew effects:
 ```kotlin
 itemModifier("stew") {
 	setStewEffect {
-		potionEffect(Effects.NIGHT_VISION, constant(200f))
+		potionEffect(Effects.NIGHT_VISION, constant(200))
 	}
 }
 ```
@@ -819,7 +844,7 @@ Run multiple functions in sequence:
 ```kotlin
 itemModifier("complex") {
 	sequence {
-		setCount(1f)
+		setCount(1)
 		enchantRandomly()
 		setName("Mystery Item")
 	}
@@ -831,7 +856,7 @@ A `sequence` holding a single function writes it as an object, several ones as a
 ```kotlin
 itemModifier("sometimes_mystery") {
 	sequence {
-		setCount(1f)
+		setCount(1)
 		setName("Mystery Item")
 	}.condition { randomChance(0.5f) }
 }
@@ -861,7 +886,7 @@ itemModifier("filter") {
 		}
 
 		onPass {
-			setCount(uniform(1f, 5f))
+			setCount(uniform(1, 5))
 		}
 	}
 }
@@ -873,12 +898,12 @@ Wherever the game expects item functions, it also accepts the ID of an item modi
 
 ```kotlin
 val baseModifier = itemModifier("base") {
-	setCount(1f)
+	setCount(1)
 }
 
 itemModifier("combined") {
 	reference(baseModifier)
-	setCount(2f)  // { "type": "minecraft:sequence", "functions": ["my_pack:base", {"type": "minecraft:set_count", "count": 2.0}] }
+	setCount(2)  // { "type": "minecraft:sequence", "functions": ["my_pack:base", {"type": "minecraft:set_count", "count": 2}] }
 }
 
 itemModifier("shortcut") {
@@ -900,7 +925,7 @@ Every function can have one `condition` that must pass:
 
 ```kotlin
 itemModifier("conditional") {
-	setCount(10f) {
+	setCount(10) {
 		condition {
 			// Several conditions are written as one all_of, so they are AND-ed
 			killedByPlayer()
@@ -933,7 +958,7 @@ The first function is written as:
 			}
 		]
 	},
-	"count": 10.0
+	"count": 10
 }
 ```
 
@@ -947,7 +972,7 @@ See [Predicates](/docs/data-driven/predicates) for all available conditions.
 dataPack("legendary_items") {
 	val legendaryModifier = itemModifier("legendary_weapon") {
 		// High-level enchantments
-		enchantWithLevels(levels = constant(30f)) {
+		enchantWithLevels(levels = constant(30)) {
 			condition {
 				randomChance(0.3f)
 			}
@@ -955,7 +980,7 @@ dataPack("legendary_items") {
 
 		// Guaranteed enchantments
 		setEnchantments {
-			this[Enchantments.UNBREAKING] = constant(3f)
+			this[Enchantments.UNBREAKING] = constant(3)
 		}
 
 		// Custom name with formatting
@@ -989,7 +1014,7 @@ dataPack("legendary_items") {
 	// Use in loot table
 	lootTable("boss_weapon") {
 		pool {
-			rolls = constant(1f)
+			rolls = constant(1)
 
 			entries {
 				item(Items.DIAMOND_SWORD) {
@@ -1020,7 +1045,7 @@ dataPack("legendary_items") {
 				"type": "minecraft:random_chance",
 				"chance": 0.3
 			},
-			"levels": 30.0
+			"levels": 30
 		},
 		{
 			"type": "minecraft:set_enchantments",

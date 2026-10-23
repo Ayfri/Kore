@@ -116,7 +116,7 @@ class EventsTests : FunSpec({
 			kill @s
 		""".trimIndent()
 		files["data/death_tests/loot_table/kore_oop/death_trigger_zombie.json"] assertsIs
-			"""{"pools":[{"entries":[{"type":"minecraft:loot_table","value":"minecraft:entities/zombie"}],"rolls":1.0},{"entries":[{"type":"minecraft:item","name":"minecraft:structure_void","modifier":[{"type":"minecraft:set_custom_data","tag":{"kore_oop_death":true}},{"type":"minecraft:copy_custom_data","source":{"type":"minecraft:context","target":"this"},"ops":[{"op":"replace","source":"Tags","target":"tags"}]}]}],"rolls":1.0}]}"""
+			"""{"pools":[{"entries":[{"type":"minecraft:loot_table","value":"minecraft:entities/zombie"}],"rolls":1},{"entries":[{"type":"minecraft:item","name":"minecraft:structure_void","modifier":[{"type":"minecraft:set_custom_data","tag":{"kore_oop_death":true}},{"type":"minecraft:copy_custom_data","source":{"type":"minecraft:context","target":"this"},"ops":[{"op":"replace","source":"Tags","target":"tags"}]}]}],"rolls":1}]}"""
 	}
 
 	test("death events refuse players and untyped entities") {

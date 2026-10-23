@@ -21,12 +21,13 @@ import io.github.ayfri.kore.features.itemmodifiers.types.Mode
 import io.github.ayfri.kore.features.loottables.entries.item
 import io.github.ayfri.kore.features.predicates.conditions.randomChance
 import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
+import io.github.ayfri.kore.features.predicates.providers.add
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.providers.enchantmentLevel
-import io.github.ayfri.kore.features.predicates.providers.intRange
+import io.github.ayfri.kore.features.predicates.providers.fromFloat
+import io.github.ayfri.kore.features.predicates.providers.fromInt
 import io.github.ayfri.kore.features.predicates.providers.reference
-import io.github.ayfri.kore.features.predicates.providers.scoreNumber
-import io.github.ayfri.kore.features.predicates.providers.sum
+import io.github.ayfri.kore.features.predicates.providers.score
 import io.github.ayfri.kore.features.predicates.providers.uniform
 import io.github.ayfri.kore.features.predicates.sub.predicates
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
@@ -35,8 +36,8 @@ import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.arguments.tagged.ItemModifierTagArgument
 import io.github.ayfri.kore.generated.arguments.types.BlockTransformerArgument
+import io.github.ayfri.kore.generated.arguments.types.ContextIntProviderArgument
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
-import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
 import io.github.ayfri.kore.utils.set
@@ -237,19 +238,19 @@ fun DataPack.itemModifierTests() {
 	""".trimIndent()
 
 	itemModifier("enchant_with_levels") {
-		enchantWithLevels(Enchantments.SHARPNESS, levels = constant(5f))
+		enchantWithLevels(Enchantments.SHARPNESS, levels = constant(5))
 	}
 
 	itemModifiers.last() assertsIs """
 		{
 			"type": "minecraft:enchant_with_levels",
-			"levels": 5.0,
+			"levels": 5,
 			"options": "minecraft:sharpness"
 		}
 	""".trimIndent()
 
 	itemModifier("enchant_with_levels_with_additional_cost") {
-		enchantWithLevels(levels = constant(30f)) {
+		enchantWithLevels(levels = constant(30)) {
 			includeAdditionalCostComponent = false
 		}
 	}
@@ -257,7 +258,7 @@ fun DataPack.itemModifierTests() {
 	itemModifiers.last() assertsIs """
 		{
 			"type": "minecraft:enchant_with_levels",
-			"levels": 30.0,
+			"levels": 30,
 			"include_additional_cost_component": false
 		}
 	""".trimIndent()
@@ -444,10 +445,8 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("limit_count") {
 		limitCount(
-			intRange(
-				min = scoreNumber("my_score", EntityTarget.THIS, 4f),
-				max = enchantmentLevel(5)
-			)
+			min = score("my_score", EntityTarget.THIS, constant(4)),
+			max = fromFloat(enchantmentLevel(5))
 		)
 	}
 
@@ -455,22 +454,55 @@ fun DataPack.itemModifierTests() {
 		{
 			"type": "minecraft:limit_count",
 			"limit": {
+				"max": {
+					"type": "minecraft:from_float",
+					"input": {
+						"type": "minecraft:enchantment_level",
+						"amount": 5
+					}
+				},
 				"min": {
 					"type": "minecraft:score",
+					"fallback": 4,
+					"score": "my_score",
 					"target": {
 						"type": "minecraft:context",
 						"target": "this"
-					},
-					"score": "my_score",
-					"scale": 4.0
-				},
-				"max": {
-					"type": "minecraft:enchantment_level",
-					"amount": 5
+					}
 				}
 			}
 		}
 	""".trimIndent()
+	roundTrip(itemModifiers.last())
+
+	itemModifier("limit_count_range") {
+		limitCount(1..32)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:limit_count",
+			"limit": {
+				"max": 32,
+				"min": 1
+			}
+		}
+	""".trimIndent()
+	roundTrip(itemModifiers.last())
+
+	itemModifier("limit_count_max") {
+		limitCount(max = constant(64))
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:limit_count",
+			"limit": {
+				"max": 64
+			}
+		}
+	""".trimIndent()
+	roundTrip(itemModifiers.last())
 
 	itemModifier("modify_contents") {
 		modifyContents(ContentComponentTypes.BUNDLE_CONTENTS) {
@@ -533,7 +565,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("reference_mixed") {
 		reference(ItemModifierArgument("a", "kore"))
-		setCount(1f)
+		setCount(1)
 	}
 
 	itemModifiers.last() assertsIs """
@@ -543,7 +575,7 @@ fun DataPack.itemModifierTests() {
 				"kore:a",
 				{
 					"type": "minecraft:set_count",
-					"count": 1.0
+					"count": 1
 				}
 			]
 		}
@@ -789,13 +821,13 @@ fun DataPack.itemModifierTests() {
 	""".trimIndent()
 
 	itemModifier("set_count") {
-		setCount(5f, add = true)
+		setCount(5, add = true)
 	}
 
 	itemModifiers.last() assertsIs """
 		{
 			"type": "minecraft:set_count",
-			"count": 5.0,
+			"count": 5,
 			"add": true
 		}
 	""".trimIndent()
@@ -889,7 +921,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("set_custom_model_data_providers") {
 		setCustomModelData {
-			floats(sum(scoreNumber("x", "#a"), constant(0.5f)))
+			floats(add(fromInt(score("x", "#a")), constant(0.5f)))
 		}
 	}
 
@@ -899,15 +931,18 @@ fun DataPack.itemModifierTests() {
 			"floats": {
 				"values": [
 					{
-						"type": "minecraft:sum",
-						"operands": [
+						"type": "minecraft:add",
+						"inputs": [
 							{
-								"type": "minecraft:score",
-								"target": {
-									"type": "minecraft:fixed",
-									"name": "#a"
-								},
-								"score": "x"
+								"type": "minecraft:from_int",
+								"input": {
+									"type": "minecraft:score",
+									"score": "x",
+									"target": {
+										"type": "minecraft:fixed",
+										"name": "#a"
+									}
+								}
 							},
 							0.5
 						]
@@ -920,7 +955,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("set_custom_model_data_color_providers") {
 		setCustomModelData {
-			colors(scoreNumber("tint", "#a"))
+			colors(score("tint", "#a"))
 		}
 	}
 
@@ -931,11 +966,11 @@ fun DataPack.itemModifierTests() {
 				"values": [
 					{
 						"type": "minecraft:score",
+						"score": "tint",
 						"target": {
 							"type": "minecraft:fixed",
 							"name": "#a"
-						},
-						"score": "tint"
+						}
 					}
 				],
 				"mode": "replace_all"
@@ -978,7 +1013,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("set_enchantments") {
 		setEnchantments(add = true) {
-			this[Enchantments.SHARPNESS] = constant(2f)
+			this[Enchantments.SHARPNESS] = constant(2)
 		}
 	}
 
@@ -986,7 +1021,7 @@ fun DataPack.itemModifierTests() {
 		{
 			"type": "minecraft:set_enchantments",
 			"enchantments": {
-				"minecraft:sharpness": 2.0
+				"minecraft:sharpness": 2
 			},
 			"add": true
 		}
@@ -1162,12 +1197,12 @@ fun DataPack.itemModifierTests() {
 	itemModifiers.last() assertsIs """
 		{
 			"type": "minecraft:set_ominous_bottle_amplifier",
-			"amplifier": 5.0
+			"amplifier": 5
 		}
 	""".trimIndent()
 
 	itemModifier("set_ominous_bottle_amplifier_provider") {
-		setOminousBottleAmplifier(uniform(2f, 4f))
+		setOminousBottleAmplifier(uniform(2, 4))
 	}
 
 	itemModifiers.last() assertsIs """
@@ -1175,14 +1210,14 @@ fun DataPack.itemModifierTests() {
 			"type": "minecraft:set_ominous_bottle_amplifier",
 			"amplifier": {
 				"type": "minecraft:uniform",
-				"min": 2.0,
-				"max": 4.0
+				"max": 4,
+				"min": 2
 			}
 		}
 	""".trimIndent()
 
 	itemModifier("set_ominous_bottle_amplifier_reference") {
-		setOminousBottleAmplifier(reference(NumberProviderArgument("amplifier", "my_pack")))
+		setOminousBottleAmplifier(reference(ContextIntProviderArgument("amplifier", "my_pack")))
 	}
 
 	itemModifiers.last() assertsIs """
@@ -1193,7 +1228,7 @@ fun DataPack.itemModifierTests() {
 	""".trimIndent()
 
 	itemModifier("set_count_reference") {
-		setCount(reference(NumberProviderArgument("n", "my_pack")))
+		setCount(reference(ContextIntProviderArgument("n", "my_pack")))
 	}
 
 	itemModifiers.last() assertsIs """
@@ -1215,13 +1250,13 @@ fun DataPack.itemModifierTests() {
 	""".trimIndent()
 
 	itemModifier("set_random_dyes") {
-		setRandomDyes(3f)
+		setRandomDyes(3)
 	}
 
 	itemModifiers.last() assertsIs """
 		{
 			"type": "minecraft:set_random_dyes",
-			"number_of_dyes": 3.0
+			"number_of_dyes": 3
 		}
 	""".trimIndent()
 
@@ -1241,7 +1276,7 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("set_stew_effect") {
 		setStewEffect {
-			potionEffect(Effects.NIGHT_VISION, constant(200f))
+			potionEffect(Effects.NIGHT_VISION, constant(200))
 		}
 	}
 
@@ -1251,7 +1286,7 @@ fun DataPack.itemModifierTests() {
 			"effects": [
 				{
 					"type": "minecraft:night_vision",
-					"duration": 200.0
+					"duration": 200
 				}
 			]
 		}
@@ -1259,8 +1294,8 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("set_stew_effect_mob_effects") {
 		setStewEffect {
-			potionEffect(Effects.NIGHT_VISION, uniform(7f, 10f))
-			potionEffect(Effects.JUMP_BOOST, uniform(4f, 7f))
+			potionEffect(Effects.NIGHT_VISION, uniform(7, 10))
+			potionEffect(Effects.JUMP_BOOST, uniform(4, 7))
 		}
 	}
 
@@ -1272,16 +1307,16 @@ fun DataPack.itemModifierTests() {
 					"type": "minecraft:night_vision",
 					"duration": {
 						"type": "minecraft:uniform",
-						"min": 7.0,
-						"max": 10.0
+						"max": 10,
+						"min": 7
 					}
 				},
 				{
 					"type": "minecraft:jump_boost",
 					"duration": {
 						"type": "minecraft:uniform",
-						"min": 4.0,
-						"max": 7.0
+						"max": 7,
+						"min": 4
 					}
 				}
 			]
@@ -1380,7 +1415,7 @@ fun DataPack.itemModifierTests() {
 	}
 
 	itemModifier("single_condition") {
-		setCount(1f) {
+		setCount(1) {
 			condition {
 				randomChance(0.5f)
 			}
@@ -1394,12 +1429,12 @@ fun DataPack.itemModifierTests() {
 				"type": "minecraft:random_chance",
 				"chance": 0.5
 			},
-			"count": 1.0
+			"count": 1
 		}
 	""".trimIndent()
 
 	itemModifier("condition_predicate_id") {
-		setCount(1f) {
+		setCount(1) {
 			condition(PredicateArgument("is_night", "my_pack"))
 		}
 	}
@@ -1408,7 +1443,7 @@ fun DataPack.itemModifierTests() {
 		{
 			"type": "minecraft:set_count",
 			"condition": "my_pack:is_night",
-			"count": 1.0
+			"count": 1
 		}
 	""".trimIndent()
 	roundTrip(itemModifiers.last())

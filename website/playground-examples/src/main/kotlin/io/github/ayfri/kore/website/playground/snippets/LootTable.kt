@@ -22,12 +22,12 @@ fun playground() = dataPack("treasure") {
 
 	val bonusChest = lootTable("bonus_chest") {
 		pool {
-			rolls = constant(3f)
+			rolls = constant(3)
 
 			entries {
 				item(Items.DIAMOND) {
 					modifier {
-						setCount(2f)
+						setCount(2)
 					}
 				}
 

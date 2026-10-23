@@ -2,41 +2,41 @@ package io.github.ayfri.kore.arguments.components.item
 
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.arguments.components.data.ResolvableNumber
-import io.github.ayfri.kore.arguments.components.data.resolvableNumber
+import io.github.ayfri.kore.arguments.components.data.ResolvableInt
+import io.github.ayfri.kore.arguments.components.data.resolvableInt
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
+import io.github.ayfri.kore.generated.arguments.types.ContextIntProviderArgument
 import kotlinx.serialization.Serializable
 
 /**
  * Represents the `minecraft:compostable` item component, which makes the item usable in a composter and sets how many layers
- * it adds, as a plain number or the ID of a [number provider file][io.github.ayfri.kore.features.numberproviders.NumberProviderFile].
+ * it adds, as a plain number or the ID of a [context int provider file][io.github.ayfri.kore.features.contextproviders.ContextIntProviderFile].
  *
  * Docs: https://kore.ayfri.com/docs/concepts/components
  * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#compostable
  */
 @Serializable
 data class CompostableComponent(
-	var layers: ResolvableNumber,
+	var layers: ResolvableInt,
 ) : Component()
 
 /**
  * Makes the item compostable, adding the number of layers [layers] gives.
  *
  * ```
- * compostable(NumberProviders.Compostable.LOW)
+ * compostable(ContextIntProviders.Compostable.LOW)
  * ```
  */
-fun ComponentsScope.compostable(layers: NumberProviderArgument) = compostable(resolvableNumber(layers))
+fun ComponentsScope.compostable(layers: ContextIntProviderArgument) = compostable(resolvableInt(layers))
 
 /**
- * Makes the item compostable, adding the layers [layers] holds, a number or a number provider ID.
+ * Makes the item compostable, adding the layers [layers] holds, a number or a context int provider ID.
  *
  * ```
- * compostable(resolvableNumber(NumberProviders.Compostable.LOW))
+ * compostable(resolvableInt(ContextIntProviders.Compostable.LOW))
  * ```
  */
-fun ComponentsScope.compostable(layers: ResolvableNumber) =
+fun ComponentsScope.compostable(layers: ResolvableInt) =
 	apply { this[ItemComponentTypes.COMPOSTABLE] = CompostableComponent(layers) }
 
 /**
@@ -46,13 +46,4 @@ fun ComponentsScope.compostable(layers: ResolvableNumber) =
  * compostable(1)  // compostable={layers:1}
  * ```
  */
-fun ComponentsScope.compostable(layers: Int) = compostable(resolvableNumber(layers))
-
-/**
- * Makes the item compostable, adding [layers] layers.
- *
- * ```
- * compostable(0.5f)  // compostable={layers:0.5f}
- * ```
- */
-fun ComponentsScope.compostable(layers: Float) = compostable(resolvableNumber(layers))
+fun ComponentsScope.compostable(layers: Int) = compostable(resolvableInt(layers))

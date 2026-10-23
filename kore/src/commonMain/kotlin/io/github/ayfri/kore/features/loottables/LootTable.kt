@@ -6,7 +6,7 @@ import io.github.ayfri.kore.annotations.LootDsl
 import io.github.ayfri.kore.arguments.types.resources.RandomSequenceArgument
 import io.github.ayfri.kore.features.itemmodifiers.InlinableItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
-import io.github.ayfri.kore.features.predicates.providers.NumberProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.generated.arguments.types.LootTableArgument
@@ -62,6 +62,6 @@ fun LootTable.modifier(block: ItemModifier.() -> Unit) {
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
  */
-fun LootTable.pool(rolls: NumberProvider = constant(1f), block: LootPool.() -> Unit = {}) {
+fun LootTable.pool(rolls: ContextIntProvider = constant(1), block: LootPool.() -> Unit = {}) {
 	pools = (pools ?: emptyList()) + LootPool(rolls = rolls).apply(block)
 }

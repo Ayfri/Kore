@@ -6,7 +6,7 @@ import io.github.ayfri.kore.serializers.NamespacedPolymorphicSerializer
 import kotlinx.serialization.Serializable
 
 /**
- * Selects the score holder a [ScoreNumberProvider] reads, either an entity of the loot context or a fixed name.
+ * Selects the score holder a [ScoreContextIntProvider] reads, either an entity of the loot context or a fixed name.
  *
  * Minecraft Wiki: [Number provider - score](https://minecraft.wiki/w/Number_provider#score)
  */

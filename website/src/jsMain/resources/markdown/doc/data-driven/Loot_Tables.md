@@ -23,7 +23,7 @@ generates.
 Loot tables have several key characteristics:
 
 - **Context-dependent**: Different loot contexts provide different parameters (killer entity, tool, luck level, etc.)
-- **Randomized**: Use number providers for rolls and weighted entries for varied results
+- **Randomized**: Use [context providers](#context-providers) for rolls and weighted entries for varied results
 - **Conditional**: Apply predicates to pools, entries, and functions
 - **Composable**: Reference other loot tables as entries for modularity
 - **Transformable**: Apply item modifier functions to modify generated items
@@ -46,7 +46,7 @@ Use the `lootTable` builder function to create loot tables in Kore:
 dataPack("my_datapack") {
 	lootTable("custom_chest") {
 		pool {
-			rolls = constant(3f)
+			rolls = constant(3)
 
 			entries {
 				item(Items.DIAMOND) {
@@ -152,8 +152,8 @@ Each pool represents an independent set of rolls. A table can have multiple pool
 
 | Property     | Type                     | Description                                                          |
 |--------------|--------------------------|----------------------------------------------------------------------|
-| `rolls`      | `NumberProvider`         | How many times to select from entries                                |
-| `bonusRolls` | `NumberProvider`         | Additional rolls per luck level                                      |
+| `rolls`      | `ContextIntProvider`     | How many times to select from entries                                |
+| `bonusRolls` | `ContextFloatProvider?`  | Additional rolls per luck level                                      |
 | `condition`  | `PredicateCondition?`    | Condition that must pass for the pool to activate, several are AND-ed |
 | `entries`    | `List<LootEntry>`        | Possible entries to select from                                      |
 | `modifier`   | `InlinableItemModifier?` | Item modifier applied to items from this pool                        |
@@ -163,7 +163,7 @@ Each pool represents an independent set of rolls. A table can have multiple pool
 ```kotlin
 lootTable("simple_pool") {
 	pool {
-		rolls = constant(2f)
+		rolls = constant(2)
 		bonusRolls = constant(1f)
 
 		entries {
@@ -178,7 +178,7 @@ lootTable("simple_pool") {
 ```kotlin
 lootTable("weather_dependent") {
 	pool {
-		rolls = constant(1f)
+		rolls = constant(1)
 
 		condition {
 			weatherCheck(raining = true)
@@ -196,7 +196,7 @@ lootTable("weather_dependent") {
 ```kotlin
 lootTable("modified_drops") {
 	pool {
-		rolls = constant(1f)
+		rolls = constant(1)
 
 		entries {
 			item(Items.DIAMOND_PICKAXE)
@@ -204,73 +204,107 @@ lootTable("modified_drops") {
 
 		modifier {
 			setDamage(0.5f)
-			enchantWithLevels(levels = constant(30f))
+			enchantWithLevels(levels = constant(30))
 		}
 	}
 }
 ```
 
-## Number Providers
+## Context Providers
 
-Number providers determine dynamic numeric values for rolls, counts, and other quantities.
+Context providers determine dynamic numeric values for rolls, counts, and other quantities. The game splits them in two families by the number they produce, and each field takes exactly one of them:
 
-The builders are extensions on `NumberProviderScope`, so they only resolve inside the blocks that accept a number provider: loot tables and pools, item modifiers and their functions, predicates, villager trades and trade sets.
+| Family | Kotlin type            | Number          | Constant | Fields                                                                                                                                                           |
+|--------|------------------------|-----------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| int    | `ContextIntProvider`   | 32-bit integer  | `5`      | `rolls`, item function counts, levels and durations, trade `maxUses` and `xp`, trade set `amount`, `intValueCheck`, `timeCheck` and `entityScores` ranges        |
+| float  | `ContextFloatProvider` | 32-bit float    | `5.0`    | `bonusRolls`, `setDamage`, attribute amounts, `randomChance`, trade `reputationDiscount`, `floatValueCheck`                                                      |
 
-| Provider                          | Description                                               | Example                                                                 |
-|-----------------------------------|-----------------------------------------------------------|-------------------------------------------------------------------------|
-| `average(...)`                    | Mean of several providers, or of a tag of providers       | `average(constant(2f), constant(4f))`                                   |
-| `binomial(n, p)`                  | Binomial distribution                                     | `binomial(5f, 0.5f)`                                                    |
-| `conditionalNumber(...)`          | One value when a condition passes, another otherwise      | `conditionalNumber(5f, 2f) { killedByPlayer() }`                        |
-| `constant(value)`                 | Fixed value                                               | `constant(5f)`                                                          |
-| `enchantmentLevel(...)`           | Based on enchantment level (requires enchantment context) | `enchantmentLevel(5)`                                                   |
-| `environmentAttribute(attribute)` | Current value of a numeric env attribute                  | `environmentAttribute(EnvironmentAttributes.Visual.FOG_START_DISTANCE)` |
-| `maximum(...)`                    | Largest of several providers, or of a tag of providers    | `maximum(constant(1f), scoreNumber("kills", EntityTarget.THIS))`        |
-| `minimum(...)`                    | Smallest of several providers, or of a tag of providers   | `minimum(constant(5f), scoreNumber("kills", EntityTarget.THIS))`        |
-| `numberDispatcher(...) { }`       | Value of the first matching case, or a default            | `numberDispatcher(default = 0f) { case(1f) { killedByPlayer() } }`      |
-| `product(...)`                    | Product of several providers, or of a tag of providers    | `product(reference(NumberProviders.Cooking.TIME_COAL), constant(2f))`   |
-| `reference(id)`                   | Number provider file, written as its ID                   | `reference(NumberProviders.Cooking.TIME_COAL)`                          |
-| `scoreNumber(...)`                | Value from a scoreboard objective                         | `scoreNumber("kills", EntityTarget.THIS)`                               |
-| `storageNumber(storage, path)`    | Value from command storage                                | `storageNumber("my_pack:data", "player.health")`                        |
-| `sum(...)`                        | Sum of multiple providers, or of a tag of providers       | `sum(constant(1f), uniform(1f, 3f))`                                    |
-| `uniform(min, max)`               | Random value between min and max                          | `uniform(1f, 5f)`                                                       |
-| `weightedListNumber { }`          | Value of one entry, picked by weight                      | `weightedListNumber { entry(30, 1f); entry(70, 0f) }`                   |
+The builders are extensions on `NumberProviderScope`, so they only resolve inside the blocks that accept a context provider: loot tables and pools, item modifiers and their functions, predicates, villager trades and trade sets. The parameter type picks the family: `constant(5)` and `uniform(1, 5)` build int providers, `constant(5f)` and `uniform(1f, 5f)` float ones. A builder that has the same parameters in both families has one name per family (`intStorage` and `floatStorage`, for instance).
 
-`conditionalNumber`, `numberDispatcher` and `weightedListNumber` nest other providers, and the conditions are the ones of [predicates](/docs/data-driven/predicates). A condition is either passed as a value (`conditionalNumber(SurvivesExplosion, 1f)`), as a predicate ID (`conditionalNumber(fastCooking, 800f, 1600f)`) or declared in a block holding exactly one condition. `onFalse` and `default` are `0` when omitted.
+| Builder                                               | Family       | Description                                               | Example                                                                                  |
+|-------------------------------------------------------|--------------|-----------------------------------------------------------|------------------------------------------------------------------------------------------|
+| `abs(input)`                                          | int, float   | Absolute value                                            | `abs(sub(constant(1), constant(5)))`                                                     |
+| `add(...)`                                            | int, float   | Sum of several providers, or of a tag of providers        | `add(constant(1), uniform(1, 3))`                                                        |
+| `avg(...)`                                            | int, float   | Mean of several providers, or of a tag of providers       | `avg(constant(2), constant(4))`                                                          |
+| `binomial(n, p)`                                      | int          | Binomial distribution, `n` an int and `p` a float provider | `binomial(5, 0.5f)`                                                                     |
+| `ceil(input)`, `floor(input)`, `round(input)`, `truncate(input)` | float | Rounds to a whole number                              | `round(uniform(0.5f, 2.5f))`                                                             |
+| `conditional(...)`                                    | int, float   | One value when a condition passes, another otherwise      | `conditional(5, 2) { killedByPlayer() }`                                                 |
+| `constant(value)`                                     | int, float   | Fixed value                                               | `constant(5)`, `constant(5f)`                                                            |
+| `cos(input)`, `sin(input)`                            | float        | Cosine and sine, in radians                               | `sin(constant(1f))`                                                                      |
+| `div(left, right)`                                    | int, float   | Division, an int one rounds toward zero                   | `div(constant(7), constant(2))`                                                          |
+| `enchantmentLevel(...)`                               | float        | Based on enchantment level (requires enchantment context) | `enchantmentLevel(5)`                                                                    |
+| `intEnvironmentAttribute(attribute)`, `floatEnvironmentAttribute(attribute)` | int, float | Current value of a numeric env attribute | `floatEnvironmentAttribute(EnvironmentAttributes.Visual.FOG_START_DISTANCE)`             |
+| `floorDiv(left, right)`, `floorMod(left, right)`      | int          | Division rounded down, and its remainder                  | `floorMod(score("kills", EntityTarget.THIS), constant(10))`                              |
+| `fromFloat(input)`                                    | int          | Float provider converted to an int, truncated toward zero | `fromFloat(constant(2.7f))`                                                              |
+| `fromInt(input)`                                      | float        | Int provider converted to a float                         | `fromInt(score("kills", EntityTarget.THIS))`                                             |
+| `intNumberDispatcher(...) { }`, `floatNumberDispatcher(...) { }` | int, float | Value of the first matching case, or a default | `intNumberDispatcher(default = 0) { case(1) { killedByPlayer() } }`                      |
+| `intStorage(storage, path)`, `floatStorage(storage, path)` | int, float | Value from command storage, with an optional `fallback` | `intStorage("my_pack:data", "player.health")`                                            |
+| `intWeightedList { }`, `floatWeightedList { }`        | int, float   | Value of one entry, picked by weight                      | `intWeightedList { entry(30, 1); entry(70, 0) }`                                         |
+| `length(...)`                                         | float        | Euclidean length of a vector, or of a tag of providers    | `length(constant(3f), constant(4f))`                                                     |
+| `max(...)`                                            | int, float   | Largest of several providers, or of a tag of providers    | `max(constant(1), score("kills", EntityTarget.THIS))`                                    |
+| `min(...)`                                            | int, float   | Smallest of several providers, or of a tag of providers   | `min(constant(5), score("kills", EntityTarget.THIS))`                                    |
+| `mod(left, right)`                                    | int, float   | Remainder of a division                                   | `mod(constant(7), constant(2))`                                                          |
+| `mul(...)`                                            | int, float   | Product of several providers, or of a tag of providers    | `mul(reference(ContextIntProviders.Cooking.TIME_COAL), constant(2))`                     |
+| `negate(input)`                                       | int, float   | Opposite value                                            | `negate(constant(1))`                                                                    |
+| `pow(base, exponent)`                                 | int, float   | Power                                                     | `pow(constant(2), constant(3))`                                                          |
+| `reference(id)`                                       | int, float   | Context provider file, written as its ID                  | `reference(ContextIntProviders.Cooking.TIME_COAL)`                                       |
+| `score(score, target)`                                | int          | Value from a scoreboard objective, with an optional `fallback` | `score("kills", EntityTarget.THIS)`                                                 |
+| `sqrt(input)`                                         | float        | Square root                                               | `sqrt(constant(4f))`                                                                     |
+| `sub(left, right)`                                    | int, float   | Difference                                                | `sub(constant(5), score("deaths", EntityTarget.THIS))`                                   |
+| `uniform(min, max)`                                   | int, float   | Random value between min and max                          | `uniform(1, 5)`, `uniform(0.5f, 1f)`                                                     |
 
-A constant is the bare number (`5.0`), and every other provider is an object that always carries its `type`: the game rejects `{"min": 1, "max": 2}`, it has to be `{"type": "minecraft:uniform", "min": 1, "max": 2}`.
+Only the int family has `binomial`, `floorDiv`, `floorMod`, `fromFloat` and `score`, only the float family has `ceil`, `cos`, `enchantmentLevel`, `floor`, `fromInt`, `length`, `round`, `sin`, `sqrt` and `truncate`. `score` has no float form because the game only reads an int from a scoreboard: wrap it in `fromInt(...)` to use it in a float field.
 
-### Number provider IDs
+`conditional`, the number dispatchers and the weighted lists nest other providers, and the conditions are the ones of [predicates](/docs/data-driven/predicates). A condition is either passed as a value (`conditional(SurvivesExplosion, 1, 0)`), as a predicate ID (`conditional(fastCooking, 800, 1600)`) or declared in a block holding exactly one condition. `onFalse` and `default` are `0` when omitted. A dispatcher case is written `{ "condition": ..., "value": ... }`.
 
-Wherever a number provider is expected (`rolls`, `min`, `max`, `on_true`, the item modifier counts...), the game also accepts the ID of a [number provider file](#number-provider-files), written as a bare string. `reference(id)` builds it, and `numberProvider(...)` returns the ID to pass:
+A constant is the bare number (`5` for an int provider, `5.0` for a float one), and every other provider is an object that always carries its `type`: the game rejects `{"min": 1, "max": 2}`, it has to be `{"type": "minecraft:uniform", "min": 1, "max": 2}`.
+
+`intEnvironmentAttribute` reads an attribute holding an integer, and no vanilla attribute is representable as one. Wrap the float one in `fromFloat(...)` to read it as an int:
 
 ```kotlin
-val bonus = numberProvider("bonus") { uniform(1f, 3f) }
+fromFloat(floatEnvironmentAttribute(EnvironmentAttributes.Visual.FOG_START_DISTANCE))
+```
+
+### Context provider IDs
+
+Wherever a context provider is expected (`rolls`, `min`, `max`, `on_true`, the item modifier counts...), the game also accepts the ID of a [context provider file](#context-provider-files) of the same family, written as a bare string. `reference(id)` builds it, from a `ContextIntProviderArgument` for an int provider and a `ContextFloatProviderArgument` for a float one, and `contextIntProvider(...)` and `contextFloatProvider(...)` return the ID to pass:
+
+```kotlin
+val bonus = contextIntProvider("bonus") { uniform(1, 3) }
 
 pool {
 	rolls = reference(bonus)  // "rolls": "my_pack:bonus"
-	bonusRolls = uniform(reference(NumberProviders.Cooking.TIME_COAL), constant(5f))
+	bonusRolls = uniform(reference(ContextFloatProviders.Cooking.SPEED_DEFAULT), constant(5f))
 }
 ```
 
-The `operands` of `average`, `maximum`, `minimum`, `product` and `sum` take one provider, a list of at least one provider (IDs and inline values can be mixed), or a tag of number providers: `sum(NumberProviderTagArgument("bonuses", "my_pack"))` writes `"operands": "#my_pack:bonuses"`. A tag is only valid as the whole `operands`, and a provider without operands isn't possible because the game rejects an empty list.
+The `inputs` of `add`, `avg`, `max`, `min` and `mul` (and of `length` for float providers) take one provider or ID, a list mixing IDs and inline providers, or a whole `#tag` of providers of the family: `add(ContextIntProviderTagArgument("bonuses", "my_pack"))` writes `"inputs": "#my_pack:bonuses"`. A tag is only valid as the whole `inputs`, not as one element of a list. The list can't be empty: the game reports an aggregate without any input, and Kore throws.
 
-`minimum` caps a value, here the roll count at 5 whatever the score is:
+`min` caps a value, here the roll count at 5 whatever the score is:
 
 ```kotlin
 pool {
-	rolls = minimum(scoreNumber("kills", EntityTarget.THIS), constant(5f))
+	rolls = min(score("kills", EntityTarget.THIS), constant(5))
 }
 ```
 
 A provider that references itself, directly or through other files, makes the pack fail to load.
 
-Every number provider computes a 32-bit float, and an integer field rounds it. `scoreNumber` and the ranges of `entityScores` therefore stay exact only up to 16,777,216 (2²⁴): past it, neighboring scores read as the same value ([MC-254370](https://bugs.mojang.com/browse/MC-254370)). To compare larger scores exactly, test them with `execute if score`, or store the high and low parts on two objectives and check each one. A `sum` of the parts is a float again and loses the same precision.
+### Evaluation
+
+- Outside commands, a provider that hits an error (a division by zero, an int overflow) or gives Infinity or NaN returns `0`. The [`compute`](/docs/commands/commands#compute-command) command fails instead, and `data modify ... compute` stores `0`.
+- Int `add` and `mul` are computed on 64 bits and fail when the result doesn't fit in 32 bits. `avg` can't overflow.
+- `fromFloat` truncates toward zero (`-2.7` gives `-2`) and fails when the float isn't finite or doesn't fit in an int.
+- `uniform` returns `min` when `min` is at or above `max`.
+- Float providers are 32-bit floats: whole numbers are exact up to 16,777,216 (2²⁴), past it neighboring values read as the same one. Int providers are exact 32-bit integers, so `score` in an int field and the ranges of `entityScores` stay exact on the whole range of a score. `fromInt(score(...))` is a float again and loses the same precision past 2²⁴.
+
+### Examples
 
 ```kotlin
 pool {
-	rolls = conditionalNumber(3f, 1f) { killedByPlayer() }
+	rolls = conditional(3, 1) { killedByPlayer() }
 
-	bonusRolls = numberDispatcher(default = weightedListNumber {
+	bonusRolls = floatNumberDispatcher(default = floatWeightedList {
 		entry(30, 1f)
 		entry(70, 0f)
 	}) {
@@ -283,7 +317,7 @@ This writes `weighted_list` as `{"type": "minecraft:weighted_list", "distributio
 
 ```kotlin
 pool {
-	rolls = uniform(2f, 5f)  // 2-5 rolls randomly
+	rolls = uniform(2, 5)  // 2-5 rolls randomly
 	bonusRolls = constant(1f)  // +1 roll per luck level
 
 	entries {
@@ -292,17 +326,17 @@ pool {
 }
 ```
 
-### Number provider files
+### Context provider files
 
-A number provider can also live in its own file, `data/<namespace>/number_provider/<fileName>.json`, so the game components that take a number provider by ID can point at it. `numberProvider` takes a block returning the provider and gives back the reference to use:
+A context provider can also live in its own file, `data/<namespace>/context_int_provider/<fileName>.json` for an int provider and `data/<namespace>/context_float_provider/<fileName>.json` for a float one, so the game components that take a context provider by ID can point at it. `contextIntProvider` and `contextFloatProvider` take a block returning the provider and give back the reference to use:
 
 ```kotlin
-val layers = numberProvider("my_layers") {
-	numberDispatcher(default = weightedListNumber {
-		entry(30, 1f)
-		entry(70, 0f)
+val layers = contextIntProvider("my_layers") {
+	intNumberDispatcher(default = intWeightedList {
+		entry(30, 1)
+		entry(70, 0)
 	}) {
-		case(1f) {
+		case(1) {
 			matchBlock(Blocks.COMPOSTER) {
 				state("level", "0")
 			}
@@ -323,14 +357,14 @@ val layers = numberProvider("my_layers") {
 					"level": "0"
 				}
 			},
-			"number_provider": 1.0
+			"value": 1
 		}
 	],
 	"default": {
 		"type": "minecraft:weighted_list",
 		"distribution": [
-			{ "data": 1.0, "weight": 30 },
-			{ "data": 0.0, "weight": 70 }
+			{ "data": 1, "weight": 30 },
+			{ "data": 0, "weight": 70 }
 		]
 	}
 }
@@ -339,10 +373,11 @@ val layers = numberProvider("my_layers") {
 A constant is written as a bare number, the way vanilla's `compostable/always_add_one.json` is:
 
 ```kotlin
-numberProvider("always_add_one", 1f) // 1.0
+contextIntProvider("always_add_one", 1)               // 1
+contextFloatProvider("always_one_and_a_half", 1.5f)   // 1.5
 ```
 
-The vanilla files are listed in `NumberProviders`, e.g. `NumberProviders.Compostable.LOW` for `minecraft:compostable/low`. Number providers, including the ones of other number provider files, can reference a file by its ID with `reference(id)`, see [Number provider IDs](#number-provider-ids). A file itself can't be a bare reference because the game reads it as an inline provider, so Kore throws when generating one.
+The vanilla files are listed in `ContextIntProviders` and `ContextFloatProviders`, e.g. `ContextIntProviders.Compostable.LOW` for `minecraft:compostable/low`. Context providers, including the ones of other provider files, can reference a file of their family by its ID with `reference(id)`, see [Context provider IDs](#context-provider-ids). The item components `cooking_fuel`, `brewing_fuel` and `compostable` take a plain number or such an ID, see [Components](/docs/concepts/components#compostable). A file itself can't be a bare reference because the game reads it as an inline provider, so Kore throws when generating one.
 
 ## Entries
 
@@ -364,7 +399,7 @@ entries {
 			randomChance(0.5f)
 		}
 		modifier {
-			setCount(uniform(1f, 3f))
+			setCount(uniform(1, 3))
 		}
 	}
 }
@@ -384,7 +419,7 @@ entries {
 	lootTable(LootTables.Gameplay.PIGLIN_BARTERING) {
 		weight = 1
 		modifier {
-			setCount(2f)
+			setCount(2)
 		}
 	}
 }
@@ -395,7 +430,7 @@ entries {
 	"type": "minecraft:loot_table",
 	"modifier": {
 		"type": "minecraft:set_count",
-		"count": 2.0
+		"count": 2
 	},
 	"value": "minecraft:gameplay/piglin_bartering",
 	"weight": 1
@@ -488,7 +523,7 @@ entries {
 			weatherCheck(raining = true)
 		}
 		modifier {
-			setCount(2f)
+			setCount(2)
 		}
 		children {
 			item(Items.WATER_BUCKET)
@@ -575,7 +610,7 @@ pool {
 A pool or an entry can also point at a predicate file by ID, written as the bare ID string:
 
 ```kotlin
-val isNight = predicate("is_night") { timeCheck(WorldClocks.OVERWORLD, 13000f..23000f) }
+val isNight = predicate("is_night") { timeCheck(WorldClocks.OVERWORLD, 13000..23000) }
 
 pool {
 	condition(isNight)  // "condition": "my_pack:is_night"
@@ -593,7 +628,7 @@ A `modifier` transforms the generated items. It can be set at table, pool, or en
 ```kotlin
 modifier {
 	// Set stack count
-	setCount(uniform(1f, 5f))
+	setCount(uniform(1, 5))
 
 	// Apply enchantments
 	enchantRandomly(Enchantments.FORTUNE)
@@ -605,7 +640,7 @@ modifier {
 	setName("Legendary Sword")
 
 	// Conditional function
-	setCount(10f) {
+	setCount(10) {
 		condition {
 			killedByPlayer()
 		}
@@ -630,7 +665,7 @@ dataPack("treasure_hunt") {
 
 		// Guaranteed drops
 		pool {
-			rolls = constant(1f)
+			rolls = constant(1)
 
 			entries {
 				item(Items.NETHER_STAR)
@@ -639,7 +674,7 @@ dataPack("treasure_hunt") {
 
 		// Rare equipment drops
 		pool {
-			rolls = constant(1f)
+			rolls = constant(1)
 			bonusRolls = constant(0.5f)
 
 			condition {
@@ -650,14 +685,14 @@ dataPack("treasure_hunt") {
 				item(Items.NETHERITE_SWORD) {
 					weight = 1
 					modifier {
-						enchantWithLevels(levels = constant(30f))
+						enchantWithLevels(levels = constant(30))
 						setName("Boss Slayer")
 					}
 				}
 				item(Items.DIAMOND_SWORD) {
 					weight = 5
 					modifier {
-						enchantWithLevels(levels = uniform(15f, 25f))
+						enchantWithLevels(levels = uniform(15, 25))
 					}
 				}
 				empty(weight = 10)
@@ -666,7 +701,7 @@ dataPack("treasure_hunt") {
 
 		// Bonus loot from existing table
 		pool {
-			rolls = uniform(1f, 3f)
+			rolls = uniform(1, 3)
 
 			entries {
 				lootTable(LootTables.Chests.END_CITY_TREASURE)
@@ -680,7 +715,6 @@ dataPack("treasure_hunt") {
 
 ```json
 {
-	"type": "minecraft:entity",
 	"modifier": {
 		"type": "minecraft:enchant_randomly"
 	},
@@ -692,7 +726,7 @@ dataPack("treasure_hunt") {
 					"name": "minecraft:nether_star"
 				}
 			],
-			"rolls": 1.0
+			"rolls": 1
 		},
 		{
 			"bonus_rolls": 0.5,
@@ -703,37 +737,38 @@ dataPack("treasure_hunt") {
 				{
 					"type": "minecraft:item",
 					"name": "minecraft:netherite_sword",
-					"weight": 1,
 					"modifier": [
 						{
 							"type": "minecraft:enchant_with_levels",
-							"levels": 30.0
+							"levels": 30
 						},
 						{
 							"type": "minecraft:set_name",
 							"name": "Boss Slayer"
 						}
-					]
+					],
+					"weight": 1
 				},
 				{
 					"type": "minecraft:item",
 					"name": "minecraft:diamond_sword",
-					"weight": 5,
 					"modifier": {
 						"type": "minecraft:enchant_with_levels",
 						"levels": {
 							"type": "minecraft:uniform",
-							"min": 15.0,
-							"max": 25.0
+							"max": 25,
+							"min": 15
 						}
-					}
+					},
+					"weight": 5
 				},
 				{
 					"type": "minecraft:empty",
+					"quality": 1,
 					"weight": 10
 				}
 			],
-			"rolls": 1.0
+			"rolls": 1
 		},
 		{
 			"entries": [
@@ -744,11 +779,12 @@ dataPack("treasure_hunt") {
 			],
 			"rolls": {
 				"type": "minecraft:uniform",
-				"min": 1.0,
-				"max": 3.0
+				"max": 3,
+				"min": 1
 			}
 		}
-	]
+	],
+	"type": "entity"
 }
 ```
 
@@ -790,12 +826,12 @@ dataPack("better_zombies") {
 		namespace = "minecraft"
 
 		pool {
-			rolls = constant(1f)
+			rolls = constant(1)
 
 			entries {
 				item(Items.ROTTEN_FLESH) {
 					modifier {
-						setCount(uniform(0f, 2f))
+						setCount(uniform(0, 2))
 						enchantedCountIncrease(Enchantments.LOOTING, uniform(0f, 1f))
 					}
 				}
@@ -804,7 +840,7 @@ dataPack("better_zombies") {
 
 		// Add custom drops
 		pool {
-			rolls = constant(1f)
+			rolls = constant(1)
 
 			condition {
 				randomChance(0.1f)

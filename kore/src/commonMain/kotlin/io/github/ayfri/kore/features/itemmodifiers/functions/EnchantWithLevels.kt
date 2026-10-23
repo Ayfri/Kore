@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
-import io.github.ayfri.kore.features.predicates.providers.NumberProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * Enchants the item with the specified enchantment level, optionally constrained to a set or tag.
- * Mirrors `minecraft:enchant_with_levels` and accepts a number provider for the level.
+ * Mirrors `minecraft:enchant_with_levels` and accepts a context int provider for the level.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/item-modifiers
  * See also: https://minecraft.wiki/w/Item_modifier
@@ -18,7 +18,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EnchantWithLevels(
 	override var condition: PredicateCondition? = null,
-	var levels: NumberProvider,
+	var levels: ContextIntProvider,
 	var includeAdditionalCostComponent: Boolean? = null,
 	var options: InlinableList<EnchantmentOrTagArgument>? = null,
 ) : ItemFunction()
@@ -26,7 +26,7 @@ data class EnchantWithLevels(
 /** Add an `enchant_with_levels` step. */
 fun ItemModifier.enchantWithLevels(
 	enchantments: List<EnchantmentOrTagArgument>? = null,
-	levels: NumberProvider = constant(0f),
+	levels: ContextIntProvider = constant(0),
 	block: EnchantWithLevels.() -> Unit = {},
 ) {
 	modifiers += EnchantWithLevels(options = enchantments, levels = levels).apply(block)
@@ -35,7 +35,7 @@ fun ItemModifier.enchantWithLevels(
 /** Vararg convenience overload for `enchant_with_levels`. */
 fun ItemModifier.enchantWithLevels(
 	vararg enchantments: EnchantmentOrTagArgument,
-	levels: NumberProvider = constant(0f),
+	levels: ContextIntProvider = constant(0),
 	block: EnchantWithLevels.() -> Unit = {},
 ) {
 	modifiers += EnchantWithLevels(options = enchantments.toList().ifEmpty { null }, levels = levels).apply(block)

@@ -289,13 +289,13 @@ fun testDataDrivenResources() = newTest("resources") {
 		// Create item modifiers using Kore DSL
 		itemModifier("simple_modifier") {
 			namespace = "mypack"
-			setCount(1f)
+			setCount(1)
 		}
 
 		itemModifier("nested_modifier") {
 			namespace = "mypack"
 			fileName = "deep/nested_modifier"
-			setCount(2f)
+			setCount(2)
 		}
 	}
 

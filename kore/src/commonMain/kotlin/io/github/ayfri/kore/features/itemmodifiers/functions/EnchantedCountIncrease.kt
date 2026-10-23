@@ -2,7 +2,7 @@ package io.github.ayfri.kore.features.itemmodifiers.functions
 
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
-import io.github.ayfri.kore.features.predicates.providers.NumberProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.generated.arguments.types.EnchantmentArgument
 import kotlinx.serialization.Serializable
@@ -18,14 +18,14 @@ import kotlinx.serialization.Serializable
 data class EnchantedCountIncrease(
 	override var condition: PredicateCondition? = null,
 	var enchantment: EnchantmentArgument,
-	var count: NumberProvider,
+	var count: ContextFloatProvider,
 	var limit: Int? = null,
 ) : ItemFunction()
 
 /** Add an `enchanted_count_increase` step. */
 fun ItemModifier.enchantedCountIncrease(
 	enchantment: EnchantmentArgument,
-	count: NumberProvider,
+	count: ContextFloatProvider,
 	limit: Int? = null,
 	block: EnchantedCountIncrease.() -> Unit = {},
 ) {

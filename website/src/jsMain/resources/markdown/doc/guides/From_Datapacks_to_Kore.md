@@ -5,7 +5,7 @@ nav-title: Datapack Veterans
 description: Port an existing hand-written datapack to Kore without a rewrite - vanilla-to-Kotlin mapping, slice-by-slice migration, project structure and common mistakes.
 keywords: datapack migration, migrate datapack to kotlin, mcfunction to kotlin, kore migration guide, datapack architecture, datapack refactor, advanced datapack development
 date-created: 2026-04-22
-date-modified: 2026-10-21
+date-modified: 2026-10-23
 routeOverride: /docs/guides/from-datapacks-to-kore
 position: 4
 ---
@@ -258,7 +258,7 @@ The same `PredicateArgument` works as an `execute` condition, as a nested condit
 fun DataPack.registerCombatRules() {
 	val isActiveFighter = predicate("rules/is_active_fighter") {
 		entityScores(EntityTarget.THIS) {
-			this["lives"] = intRange(1f, 99f)
+			this["lives"] = intRange(1, 99)
 		}
 	}
 
@@ -276,7 +276,7 @@ fun DataPack.registerCombatRules() {
 	predicate("rules/is_wounded_fighter") {
 		reference(isActiveFighter)
 		entityScores(EntityTarget.THIS) {
-			this["health"] = intRange(1f, 5f)
+			this["health"] = intRange(1, 5)
 		}
 	}
 }
@@ -350,7 +350,7 @@ appears in twelve loot tables is written once:
 
 ```kotlin
 fun LootTable.commonJunkPool() = pool {
-	rolls = constant(1f)
+	rolls = constant(1)
 	entries {
 		item(Items.STRING) { weight = 5 }
 		item(Items.BONE) { weight = 3 }

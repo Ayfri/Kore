@@ -2,49 +2,54 @@ package io.github.ayfri.kore.arguments.components.item
 
 import io.github.ayfri.kore.arguments.components.Component
 import io.github.ayfri.kore.arguments.components.ComponentsScope
-import io.github.ayfri.kore.arguments.components.data.ResolvableNumber
-import io.github.ayfri.kore.arguments.components.data.resolvableNumber
+import io.github.ayfri.kore.arguments.components.data.ResolvableFloat
+import io.github.ayfri.kore.arguments.components.data.ResolvableInt
+import io.github.ayfri.kore.arguments.components.data.resolvableFloat
+import io.github.ayfri.kore.arguments.components.data.resolvableInt
+import io.github.ayfri.kore.generated.ContextFloatProviders
 import io.github.ayfri.kore.generated.ItemComponentTypes
-import io.github.ayfri.kore.generated.NumberProviders
-import io.github.ayfri.kore.generated.arguments.types.NumberProviderArgument
+import io.github.ayfri.kore.generated.arguments.types.ContextFloatProviderArgument
+import io.github.ayfri.kore.generated.arguments.types.ContextIntProviderArgument
 import kotlinx.serialization.Serializable
 
 /**
  * Represents the `minecraft:cooking_fuel` item component, which makes the item usable as fuel in furnaces, smokers and blast furnaces.
- * Both fields take a plain number or the ID of a [number provider file][io.github.ayfri.kore.features.numberproviders.NumberProviderFile].
+ * Both fields take a plain number or the ID of a context provider file
+ * ([int][io.github.ayfri.kore.features.contextproviders.ContextIntProviderFile] for [burnTime],
+ * [float][io.github.ayfri.kore.features.contextproviders.ContextFloatProviderFile] for [speedMultiplier]).
  *
  * Docs: https://kore.ayfri.com/docs/concepts/components
  * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#cooking_fuel
  */
 @Serializable
 data class CookingFuelComponent(
-	var burnTime: ResolvableNumber,
-	var speedMultiplier: ResolvableNumber,
+	var burnTime: ResolvableInt,
+	var speedMultiplier: ResolvableFloat,
 ) : Component()
 
 /**
  * Makes the item a furnace fuel burning for the ticks [burnTime] gives, at the cooking speed [speedMultiplier] gives (vanilla default speed).
  *
  * ```
- * cookingFuel(NumberProviders.Cooking.TIME_COAL)
- * cookingFuel(NumberProviders.Cooking.TIME_COAL, NumberProviderArgument("fast", "my_pack"))
+ * cookingFuel(ContextIntProviders.Cooking.TIME_COAL)
+ * cookingFuel(ContextIntProviders.Cooking.TIME_COAL, ContextFloatProviderArgument("fast", "my_pack"))
  * ```
  */
 fun ComponentsScope.cookingFuel(
-	burnTime: NumberProviderArgument,
-	speedMultiplier: NumberProviderArgument = NumberProviders.Cooking.SPEED_DEFAULT,
-) = cookingFuel(resolvableNumber(burnTime), resolvableNumber(speedMultiplier))
+	burnTime: ContextIntProviderArgument,
+	speedMultiplier: ContextFloatProviderArgument = ContextFloatProviders.Cooking.SPEED_DEFAULT,
+) = cookingFuel(resolvableInt(burnTime), resolvableFloat(speedMultiplier))
 
 /**
- * Makes the item a furnace fuel with numbers or number provider IDs mixed freely.
+ * Makes the item a furnace fuel with numbers or context provider IDs mixed freely.
  *
  * ```
- * cookingFuel(resolvableNumber(NumberProviders.Cooking.TIME_COAL), resolvableNumber(2))
+ * cookingFuel(resolvableInt(ContextIntProviders.Cooking.TIME_COAL), resolvableFloat(2f))
  * ```
  */
 fun ComponentsScope.cookingFuel(
-	burnTime: ResolvableNumber,
-	speedMultiplier: ResolvableNumber = resolvableNumber(NumberProviders.Cooking.SPEED_DEFAULT),
+	burnTime: ResolvableInt,
+	speedMultiplier: ResolvableFloat = resolvableFloat(ContextFloatProviders.Cooking.SPEED_DEFAULT),
 ) = apply { this[ItemComponentTypes.COOKING_FUEL] = CookingFuelComponent(burnTime, speedMultiplier) }
 
 /**
@@ -56,6 +61,6 @@ fun ComponentsScope.cookingFuel(
  * ```
  */
 fun ComponentsScope.cookingFuel(burnTime: Int, speedMultiplier: Float? = null) = cookingFuel(
-	resolvableNumber(burnTime),
-	speedMultiplier?.let { resolvableNumber(it) } ?: resolvableNumber(NumberProviders.Cooking.SPEED_DEFAULT),
+	resolvableInt(burnTime),
+	speedMultiplier?.let { resolvableFloat(it) } ?: resolvableFloat(ContextFloatProviders.Cooking.SPEED_DEFAULT),
 )

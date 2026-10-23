@@ -144,20 +144,20 @@ The rules, their options (`sound`, `loot`, `itemDamagePerUse`, ...) and their de
 
 ### Compostable
 
-`compostable` makes an item usable in a composter. It takes the number of layers added as a plain number (`Int` or `Float`) or as the ID
-of a [number provider file](/docs/data-driven/loot-tables#number-provider-files), either a vanilla one from `NumberProviders.Compostable`
-or one of your own.
+`compostable` makes an item usable in a composter. It takes the number of layers added as an `Int` or as the ID of a
+[context int provider file](/docs/data-driven/loot-tables#context-provider-files), either a vanilla one from `ContextIntProviders.Compostable`
+or one of your own. An inline provider object isn't possible because the game only reads a number or an ID there.
 
 ```kotlin
 val seeds = Items.WHEAT_SEEDS {
-	compostable(NumberProviders.Compostable.LOW)
+	compostable(ContextIntProviders.Compostable.LOW)
 }
 
 val pumpkin = Items.PUMPKIN {
-	compostable(1)
+	compostable(1)  // compostable={layers:1}
 }
 
-val layers = numberProvider("my_layers", 1f)
+val layers = contextIntProvider("my_layers", 1)
 val sapling = Items.OAK_SAPLING {
 	compostable(layers)
 }
@@ -166,37 +166,38 @@ val sapling = Items.OAK_SAPLING {
 ### Cooking and brewing fuel
 
 `cookingFuel` makes an item burn in furnaces, smokers and blast furnaces, `brewingFuel` makes it power a brewing stand. Their fields
-are plain numbers or IDs of [number provider files](/docs/data-driven/loot-tables#number-provider-files), either vanilla ones from
-`NumberProviders.Cooking` / `NumberProviders.Brewing` or your own. `cookingFuel` takes the burn time in ticks and a cooking speed
-(vanilla `NumberProviders.Cooking.SPEED_DEFAULT` when omitted), `brewingFuel` takes both a speed and the number of brews, which
-have no default. An `Int` prints without decimals and a `Float` with them, and `resolvableNumber(...)` wraps either form or an ID,
-to mix numbers and IDs in one component. There is no `#brewing_fuel` item tag: an item is a brewing fuel through this component.
+are a plain number or the ID of a context provider file, never an inline provider object: the whole-number fields (`burnTime`, `uses`) take an `Int` or a
+[context int provider](/docs/data-driven/loot-tables#context-provider-files) ID from `ContextIntProviders.Cooking` / `ContextIntProviders.Brewing`
+or your own, the speeds take a `Float` or a context float provider ID from `ContextFloatProviders.Cooking` / `ContextFloatProviders.Brewing`
+or your own. `cookingFuel` takes the burn time in ticks and a cooking speed (vanilla `ContextFloatProviders.Cooking.SPEED_DEFAULT` when omitted),
+`brewingFuel` takes both a speed and the number of brews, which have no default. `resolvableInt(...)` and `resolvableFloat(...)` wrap
+either form, to mix numbers and IDs in one component. There is no `#brewing_fuel` item tag: an item is a brewing fuel through this component.
 
 ```kotlin
 val stick = Items.STICK {
-	cookingFuel(NumberProviders.Cooking.TIME_COAL)
+	cookingFuel(ContextIntProviders.Cooking.TIME_COAL)
 }
 
-val burnTime = numberProvider("long_burn", 6400f)
-val speed = numberProvider("fast_burn", 2f)
+val burnTime = contextIntProvider("long_burn", 6400)
+val speed = contextFloatProvider("fast_burn", 2f)
 val charcoal = Items.CHARCOAL {
 	cookingFuel(burnTime, speed)
 }
 
 val coal = Items.COAL {
-	cookingFuel(burnTime = 200, speedMultiplier = 1.5f)
+	cookingFuel(burnTime = 200, speedMultiplier = 1.5f)  // cooking_fuel={burn_time:200,speed_multiplier:1.5f}
 }
 
 val mixed = Items.BLAZE_ROD {
-	cookingFuel(resolvableNumber(NumberProviders.Cooking.TIME_COAL), resolvableNumber(2))
+	cookingFuel(resolvableInt(ContextIntProviders.Cooking.TIME_COAL), resolvableFloat(2f))
 }
 
 val dust = Items.BLAZE_POWDER {
-	brewingFuel(NumberProviders.Brewing.SPEED_DEFAULT, NumberProviders.Brewing.USES_DEFAULT)
+	brewingFuel(ContextFloatProviders.Brewing.SPEED_DEFAULT, ContextIntProviders.Brewing.USES_DEFAULT)
 }
 
 val crystal = Items.AMETHYST_SHARD {
-	brewingFuel(speedMultiplier = 2f, uses = 20)
+	brewingFuel(speedMultiplier = 2f, uses = 20)  // brewing_fuel={speed_multiplier:2.0f,uses:20}
 }
 ```
 
@@ -384,7 +385,7 @@ Below is an alphabetical list of all item component helpers available in Kore. T
 | `canBreak(..)`                       | Restricts which blocks this item can break in Adventure mode.                                            |
 | `canPlaceOn(..)`                     | Restricts which blocks this item can be placed on in Adventure mode.                                     |
 | `chargedProjectiles(..)`             | Stores projectiles loaded into a crossbow.                                                               |
-| `compostable(..)`                    | Makes the item usable in a composter, adding the layers of a number or a number provider file.           |
+| `compostable(..)`                    | Makes the item usable in a composter, adding the layers of a number or a context int provider file.      |
 | `consumable(..) { .. }`              | Makes the item consumable with configurable eating time, animation, sound, and effects.                  |
 | `container(..)`                      | Stores items inside a container item (e.g., shulker box).                                                |
 | `containerLoot(..)`                  | References a loot table to generate container contents when opened.                                      |

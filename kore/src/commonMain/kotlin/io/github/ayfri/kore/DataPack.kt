@@ -11,6 +11,8 @@ import io.github.ayfri.kore.features.catvariants.CatVariant
 import io.github.ayfri.kore.features.chattypes.ChatType
 import io.github.ayfri.kore.features.chickensoundvariants.ChickenSoundVariant
 import io.github.ayfri.kore.features.chickenvariants.ChickenVariant
+import io.github.ayfri.kore.features.contextproviders.ContextFloatProviderFile
+import io.github.ayfri.kore.features.contextproviders.ContextIntProviderFile
 import io.github.ayfri.kore.features.cowsoundvariants.CowSoundVariant
 import io.github.ayfri.kore.features.cowvariants.CowVariant
 import io.github.ayfri.kore.features.damagetypes.DamageType
@@ -23,7 +25,6 @@ import io.github.ayfri.kore.features.instruments.Instrument
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.jukeboxsongs.JukeboxSong
 import io.github.ayfri.kore.features.loottables.LootTable
-import io.github.ayfri.kore.features.numberproviders.NumberProviderFile
 import io.github.ayfri.kore.features.paintingvariant.PaintingVariant
 import io.github.ayfri.kore.features.pigsoundvariants.PigSoundVariant
 import io.github.ayfri.kore.features.pigvariants.PigVariant
@@ -104,6 +105,8 @@ class DataPack(val name: String) {
 	val chickenSoundVariants = registerGenerator<ChickenSoundVariant>()
 	val chickenVariants = registerGenerator<ChickenVariant>()
 	val configuredFeatures = registerGenerator<ConfiguredFeature>()
+	val contextFloatProviders = registerGenerator<ContextFloatProviderFile>()
+	val contextIntProviders = registerGenerator<ContextIntProviderFile>()
 	val cowSoundVariants = registerGenerator<CowSoundVariant>()
 	val cowVariants = registerGenerator<CowVariant>()
 	val damageTypes = registerGenerator<DamageType>()
@@ -125,7 +128,6 @@ class DataPack(val name: String) {
 	val multiNoiseBiomeSourceParameterLists = registerGenerator<MultiNoiseBiomeSourceParameterList>()
 	val noises = registerGenerator<Noise>()
 	val noiseSettings = registerGenerator<NoiseSettings>()
-	val numberProviders = registerGenerator<NumberProviderFile>()
 	val paintingVariants = registerGenerator<PaintingVariant>()
 	val pigSoundVariants = registerGenerator<PigSoundVariant>()
 	val pigVariants = registerGenerator<PigVariant>()

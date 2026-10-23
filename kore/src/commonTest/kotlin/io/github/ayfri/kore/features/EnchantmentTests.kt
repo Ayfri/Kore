@@ -1751,7 +1751,7 @@ class EnchantmentTests : FunSpec({
 	test("a predicate ID in a predicate position is inlined and any other string is left alone") {
 		dataPack("enchantment") {
 			val raining = predicate("raining") { weatherCheck(raining = true) }
-			val night = predicate("night") { timeCheck(WorldClocks.OVERWORLD, 13000f..23000f) }
+			val night = predicate("night") { timeCheck(WorldClocks.OVERWORLD, 13000..23000) }
 
 			enchantment("rainy") {
 				description("enchantment:raining")
@@ -1770,7 +1770,7 @@ class EnchantmentTests : FunSpec({
 				}
 			}
 
-			enchantments.last().generateJson(this) assertsIs """{"description":"enchantment:raining","supported_items":[],"weight":1,"max_level":1,"min_cost":{"base":0,"per_level_above_first":0},"max_cost":{"base":0,"per_level_above_first":0},"anvil_cost":0,"slots":[],"effects":{"minecraft:armor_effectiveness":[{"effect":{"type":"minecraft:add","value":5},"requirements":{"type":"minecraft:any_of","terms":[{"type":"minecraft:weather_check","raining":true},{"type":"minecraft:time_check","clock":"minecraft:overworld","value":{"min":13000.0,"max":23000.0}}]}},{"effect":{"type":"minecraft:add","value":2},"requirements":{"type":"minecraft:weather_check","raining":true}}]}}"""
+			enchantments.last().generateJson(this) assertsIs """{"description":"enchantment:raining","supported_items":[],"weight":1,"max_level":1,"min_cost":{"base":0,"per_level_above_first":0},"max_cost":{"base":0,"per_level_above_first":0},"anvil_cost":0,"slots":[],"effects":{"minecraft:armor_effectiveness":[{"effect":{"type":"minecraft:add","value":5},"requirements":{"type":"minecraft:any_of","terms":[{"type":"minecraft:weather_check","raining":true},{"type":"minecraft:time_check","clock":"minecraft:overworld","value":{"max":23000,"min":13000}}]}},{"effect":{"type":"minecraft:add","value":2},"requirements":{"type":"minecraft:weather_check","raining":true}}]}}"""
 		}
 	}
 })

@@ -3,8 +3,8 @@ package io.github.ayfri.kore.features.tradesets
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.Generator
 import io.github.ayfri.kore.arguments.types.resources.RandomSequenceArgument
-import io.github.ayfri.kore.features.predicates.providers.ConstantNumberProvider
-import io.github.ayfri.kore.features.predicates.providers.NumberProvider
+import io.github.ayfri.kore.features.predicates.providers.ConstantContextIntProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.providers.uniform
@@ -38,7 +38,7 @@ data class TradeSet(
 	@Transient
 	override var fileName: String = "trade_set",
 	var allowDuplicates: Boolean? = null,
-	var amount: NumberProvider = ConstantNumberProvider(1f),
+	var amount: ContextIntProvider = ConstantContextIntProvider(1),
 	var randomSequence: RandomSequenceArgument? = null,
 	var trades: InlinableList<VillagerTradeOrTagArgument> = emptyList(),
 ) : Generator("trade_set"), NumberProviderScope {
@@ -51,7 +51,7 @@ data class TradeSet(
  * ```kotlin
  * tradeSet("farmer/level_1") {
  *     trades(wheatForEmerald, Tags.VillagerTrade.Farmer.LEVEL_1)
- *     amount(2f)
+ *     amount(2)
  *     allowDuplicates = false
  * }
  * ```
@@ -66,12 +66,12 @@ fun DataPack.tradeSet(fileName: String = "trade_set", init: TradeSet.() -> Unit 
 }
 
 /** Rolls exactly [value] trades out of the set. */
-fun TradeSet.amount(value: Float) {
+fun TradeSet.amount(value: Int) {
 	amount = constant(value)
 }
 
 /** Rolls between [min] and [max] trades out of the set, both included. */
-fun TradeSet.amount(min: Float, max: Float) {
+fun TradeSet.amount(min: Int, max: Int) {
 	amount = uniform(min, max)
 }
 

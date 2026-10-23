@@ -5,7 +5,7 @@ nav-title: Predicates
 description: Create Minecraft predicates with Kore's type-safe Kotlin DSL. Covers entity properties, location, weather, time, enchantments, damage, and NBT checks. Use in execute if/unless, loot tables, and advancements.
 keywords: minecraft predicates, datapack conditions, execute if predicate, entity properties check, location check, weather check, time check, damage predicate, kore predicates, minecraft condition dsl
 date-created: 2024-01-08
-date-modified: 2026-10-21
+date-modified: 2026-10-23
 routeOverride: /docs/data-driven/predicates
 ---
 
@@ -115,26 +115,61 @@ Conditions are categorized by their **loot context requirements**. Some conditio
 | `anyOf`                     | Evaluates its conditions and passes if **any one** of them passes                                                                                                                                                       |
 | `entityProperties`          | Checks properties of an entity                                                                                                                                                                                          |
 | `environmentAttributeCheck` | Passes if the specified environment attribute currently matches the given value                                                                                                                                         |
+| `floatValueCheck`           | Compares a float provider value against a float provider (exact match) or a `{ min, max }` range of float providers                                                                                                    |
+| `intValueCheck`             | Compares an int provider value against an int provider (exact match) or a `{ min, max }` range of int providers                                                                                                         |
 | `inverted`                  | Inverts another predicate condition                                                                                                                                                                                     |
-| `randomChance`              | Passes if a random float between 0.0 and 1.0 is below the given `NumberProvider` value                                                                                                                                  |
+| `randomChance`              | Passes if a random float between 0.0 and 1.0 is below the given float provider                                                                                                                                          |
 | `reference`                 | Invokes another predicate by ID (cannot be cyclic), written as the bare ID string                                                                                                                                       |
-| `timeCheck`                 | Compares a world clock's time against a `NumberProvider` range (mandatory `clock` to select the clock, optional `period` for modulo) - see [World Clocks](/docs/data-driven/world-clocks#timecheck-predicate-condition) |
-| `valueCheck`                | Compares a `NumberProvider` value against another `NumberProvider` or range                                                                                                                                             |
+| `timeCheck`                 | Compares a world clock's time against an int provider or an int provider range (mandatory `clock` to select the clock, optional `period` for modulo) - see [World Clocks](/docs/data-driven/world-clocks#timecheck-predicate-condition) |
 | `weatherCheck`              | Checks the current game weather (raining, thundering)                                                                                                                                                                   |
 
-> `randomChance`, `timeCheck`, and `valueCheck` accept a [
-`NumberProvider`](/docs/data-driven/loot-tables#number-providers) for their numeric arguments, so you can use dynamic
-> values like scoreboard scores, enchantment levels, or environment attributes instead of plain floats.
+> `intValueCheck`, `floatValueCheck`, `timeCheck` and `entityScores` take [int providers](/docs/data-driven/loot-tables#context-providers) for their
+> values and bounds, `randomChance` and `floatValueCheck` take float providers, so you can use dynamic values like
+> scoreboard scores, enchantment levels, or environment attributes instead of plain numbers.
 
-A number provider file can also be used by ID through `reference(...)`, in `randomChance` and in the bounds of
-`valueCheck`, `timeCheck` and `entityScores` ranges:
+### Value Checks
+
+`intValueCheck` and `floatValueCheck` compare the `value` provider with `test`. `test` is either one provider, which
+`value` must equal exactly, or a range whose `min` and `max` are providers and either of which can be left out:
 
 ```kotlin
-val chance = NumberProviderArgument("drop_chance", "my_pack")
+predicate("kills") {
+	intValueCheck(score("kills", EntityTarget.THIS), 0..10)                    // "test": { "max": 10, "min": 0 }
+	intValueCheck(score("kills", EntityTarget.THIS), intValue(3))              // "test": 3
+	intValueCheck(score("kills", EntityTarget.THIS), min = constant(5))        // "test": { "min": 5 }
+	floatValueCheck(enchantmentLevel(1), 0f..1f)                               // "test": { "max": 1.0, "min": 0.0 }
+}
+```
+
+`intRange(min, max)` and `floatRange(min, max)` build the same ranges with a `null` bound leaving that side open, and
+`intValue(...)` and `floatValue(...)` build the exact match.
+
+`entityScores` takes one int range per objective and `timeCheck` one for the clock time. Int providers are exact 32-bit
+integers, so scores and bounds stay exact on their whole range:
+
+```kotlin
+predicate("veteran") {
+	entityScores {
+		this["kills"] = intRange(10, 100)  // { "max": 100, "min": 10 }
+		this["deaths"] = intValue(0)       // 0
+	}
+}
+
+predicate("daytime") {
+	timeCheck(WorldClocks.OVERWORLD, 0..12000, period = 24000)  // "value": { "max": 12000, "min": 0 }, "period": 24000
+}
+```
+
+A context provider file can also be used by ID through `reference(...)`, in `randomChance`, in `value` and in the bounds of
+the `test` ranges of `intValueCheck`, `floatValueCheck`, `timeCheck` and `entityScores`:
+
+```kotlin
+val chance = ContextFloatProviderArgument("drop_chance", "my_pack")
+val minimum = ContextIntProviderArgument("min_kills", "my_pack")
 
 predicate("lucky") {
 	randomChance(reference(chance))
-	valueCheck(scoreNumber("kills", EntityTarget.THIS), intRange(reference(chance), 10f))
+	intValueCheck(score("kills", EntityTarget.THIS), intRange(reference(minimum), constant(10)))
 }
 ```
 
@@ -147,18 +182,18 @@ predicate("lucky") {
       "chance": "my_pack:drop_chance"
     },
     {
-      "type": "minecraft:value_check",
+      "type": "minecraft:int_value_check",
+      "test": {
+        "max": 10,
+        "min": "my_pack:min_kills"
+      },
       "value": {
         "type": "minecraft:score",
+        "score": "kills",
         "target": {
           "type": "minecraft:context",
           "target": "this"
-        },
-        "score": "kills"
-      },
-      "range": {
-        "min": "my_pack:drop_chance",
-        "max": 10.0
+        }
       }
     }
   ]
@@ -205,7 +240,7 @@ have optional context with graceful fallback behavior (noted in the table):
 |----------------------------------|-----------------------------|---------------------------------------------------------------------------------------|
 | `damageSourceProperties`         | Origin + damage source      | Checks properties of the damage source                                                |
 | `enchantmentActiveCheck`         | Enchantment active status   | Checks if an enchantment is active (only usable from `enchanted_location` context)    |
-| `entityScores`                   | Specified entity            | Checks scoreboard scores of an entity against `NumberProvider` ranges                 |
+| `entityScores`                   | Specified entity            | Checks scoreboard scores of an entity against int provider ranges                     |
 | `killedByPlayer`                 | `attacking_player` entity   | Checks if there is an attacking player entity                                         |
 | `locationCheck`                  | Origin                      | Checks the current location against location criteria (supports offsets)              |
 | `matchBlock`                     | Block state                 | Checks the mined block, its block states and its block entity                         |
@@ -751,8 +786,8 @@ predicate("combined_check") {
 ```
 
 `inverted(basePredicate)` writes `"term": "my_pack:base_check"`, and item modifier `condition(basePredicate)`, loot
-pool and entry `condition(basePredicate)`, `conditionalNumber(basePredicate, 800f, 1600f)` and number dispatcher
-`case(basePredicate, 2f)` take the ID the same way.
+pool and entry `condition(basePredicate)`, `conditional(basePredicate, 800, 1600)` and number dispatcher
+`case(basePredicate, 2)` take the ID the same way.
 
 A predicate tag is only accepted as the whole terms of an `allOf` or an `anyOf`:
 

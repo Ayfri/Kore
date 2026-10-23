@@ -1,16 +1,17 @@
 package io.github.ayfri.kore.features.predicates.conditions
 
 import io.github.ayfri.kore.features.predicates.Predicate
-import io.github.ayfri.kore.features.predicates.providers.IntOrNumberProvidersRange
-import io.github.ayfri.kore.features.predicates.providers.NumberProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextIntProviderRange
 import io.github.ayfri.kore.features.predicates.providers.intRange
+import io.github.ayfri.kore.features.predicates.providers.intValue
 import io.github.ayfri.kore.generated.arguments.types.WorldClockArgument
 import kotlinx.serialization.Serializable
 
 /**
  * Passes when the total ticks of [clock], optionally divided modulo [period], fall within [value].
  *
- * The bounds of [value] can be number provider IDs through `reference(...)`.
+ * The bounds of [value] can be context int provider IDs through `reference(...)`.
  *
  * Docs: https://kore.ayfri.com/docs/data-driven/predicates
  * Minecraft Wiki: [Predicate - time_check](https://minecraft.wiki/w/Predicate#time_check)
@@ -18,41 +19,35 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TimeCheck(
 	var clock: WorldClockArgument,
-	var value: IntOrNumberProvidersRange,
+	var value: ContextIntProviderRange,
 	var period: Int? = null,
 ) : PredicateCondition()
 
-/** Adds a [TimeCheck] condition with an [IntOrNumberProvidersRange] [value]. */
-fun Predicate.timeCheck(clock: WorldClockArgument, value: IntOrNumberProvidersRange, period: Int? = null) {
+/** Adds a [TimeCheck] condition with a [ContextIntProviderRange] [value]. */
+fun Predicate.timeCheck(clock: WorldClockArgument, value: ContextIntProviderRange, period: Int? = null) {
 	predicateConditions += TimeCheck(clock, value, period)
 }
 
-/** Adds a [TimeCheck] condition matching the exact tick [value]. */
-fun Predicate.timeCheck(clock: WorldClockArgument, value: Int, period: Int? = null) {
-	predicateConditions += TimeCheck(clock, IntOrNumberProvidersRange(value), period)
-}
+/**
+ * Adds a [TimeCheck] condition matching the exact tick [value].
+ *
+ * ```
+ * timeCheck(WorldClocks.OVERWORLD, 1000)  // "value": 1000
+ * ```
+ */
+fun Predicate.timeCheck(clock: WorldClockArgument, value: Int, period: Int? = null) =
+	timeCheck(clock, intValue(value), period)
 
-/** Adds a [TimeCheck] condition matching a float range [value]. */
-fun Predicate.timeCheck(clock: WorldClockArgument, value: ClosedFloatingPointRange<Float>, period: Int? = null) {
-	predicateConditions += TimeCheck(clock, intRange(value), period)
-}
+/**
+ * Adds a [TimeCheck] condition matching the tick [range], both bounds included.
+ *
+ * ```
+ * timeCheck(WorldClocks.OVERWORLD, 0..12000, period = 24000)  // "value": { "max": 12000, "min": 0 }, "period": 24000
+ * ```
+ */
+fun Predicate.timeCheck(clock: WorldClockArgument, range: IntRange, period: Int? = null) =
+	timeCheck(clock, intRange(range), period)
 
-/** Adds a [TimeCheck] condition with [NumberProvider] min and max bounds. */
-fun Predicate.timeCheck(clock: WorldClockArgument, min: NumberProvider, max: NumberProvider, period: Int? = null) {
-	predicateConditions += TimeCheck(clock, intRange(min, max), period)
-}
-
-/** Adds a [TimeCheck] condition with a float [min] and [NumberProvider] [max]. */
-fun Predicate.timeCheck(clock: WorldClockArgument, min: Float, max: NumberProvider, period: Int? = null) {
-	predicateConditions += TimeCheck(clock, intRange(min, max), period)
-}
-
-/** Adds a [TimeCheck] condition with a [NumberProvider] [min] and float [max]. */
-fun Predicate.timeCheck(clock: WorldClockArgument, min: NumberProvider, max: Float, period: Int? = null) {
-	predicateConditions += TimeCheck(clock, intRange(min, max), period)
-}
-
-/** Adds a [TimeCheck] condition with float [min] and [max] bounds. */
-fun Predicate.timeCheck(clock: WorldClockArgument, min: Float, max: Float, period: Int? = null) {
-	predicateConditions += TimeCheck(clock, intRange(min, max), period)
-}
+/** Adds a [TimeCheck] condition with the [ContextIntProvider] bounds [min] and [max], a `null` bound leaving that side open. */
+fun Predicate.timeCheck(clock: WorldClockArgument, min: ContextIntProvider?, max: ContextIntProvider?, period: Int? = null) =
+	timeCheck(clock, intRange(min, max), period)

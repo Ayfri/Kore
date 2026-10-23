@@ -5,24 +5,25 @@ import io.github.ayfri.kore.arguments.colors.ColorAsDecimalSerializer
 import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.types.ListOperation
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
-import io.github.ayfri.kore.features.predicates.providers.ConstantNumberProvider
-import io.github.ayfri.kore.features.predicates.providers.NumberProvider
+import io.github.ayfri.kore.features.predicates.providers.ConstantContextFloatProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
 /**
- * A `custom_model_data` color, written either as a decimal RGB number ([color]) or as a number provider ([provider]).
+ * A `custom_model_data` color, written either as a decimal RGB number ([color]) or as a context int provider ([provider]).
  * Exactly one of the two is set.
  *
  * @property color The fixed color, written as its decimal RGB value.
- * @property provider The number provider computing the decimal RGB value.
+ * @property provider The context int provider computing the decimal RGB value.
  */
 @KeepGeneratedSerializer
 @Serializable(with = CustomModelDataColor.Companion.CustomModelDataColorSerializer::class)
 data class CustomModelDataColor(
 	@Serializable(ColorAsDecimalSerializer::class) var color: Color? = null,
-	var provider: NumberProvider? = null,
+	var provider: ContextIntProvider? = null,
 ) {
 	companion object {
 		data object CustomModelDataColorSerializer :
@@ -34,8 +35,8 @@ data class CustomModelDataColor(
  * Edits the `custom_model_data` lists on an item. Each list supports independent list operations
  * via [ListOperation] with modes like REPLACE_ALL/APPEND/INSERT.
  *
- * [floats] takes number providers, so a float can come from a score, a storage or a `sum` of several of them.
- * [colors] takes fixed colors or number providers.
+ * [floats] takes context float providers, so a float can come from a storage or an `add` of several of them.
+ * [colors] takes fixed colors or context int providers.
  *
  * Maps to vanilla `minecraft:set_custom_model_data`.
  *
@@ -47,7 +48,7 @@ data class SetCustomModelData(
 	var colors: ListOperation<CustomModelDataColor>? = null,
 	override var condition: PredicateCondition? = null,
 	var flags: ListOperation<Boolean>? = null,
-	var floats: ListOperation<NumberProvider>? = null,
+	var floats: ListOperation<ContextFloatProvider>? = null,
 	var strings: ListOperation<String>? = null,
 ) : ItemFunction()
 
@@ -61,7 +62,7 @@ fun ItemModifier.setCustomModelData(
 ) = SetCustomModelData(
 	colors = colors?.let { ListOperation(it.map(::CustomModelDataColor)) },
 	flags = flags?.let(::ListOperation),
-	floats = floats?.let { ListOperation(it.map(::ConstantNumberProvider)) },
+	floats = floats?.let { ListOperation(it.map(::ConstantContextFloatProvider)) },
 	strings = strings?.let(::ListOperation),
 ).apply(block).also { modifiers += it }
 
@@ -77,24 +78,24 @@ fun ItemModifier.setCustomModelData(
 fun SetCustomModelData.colors(vararg values: Color) = apply { colors = ListOperation(values.map(::CustomModelDataColor)) }
 
 /**
- * Sets the `colors` list from number providers, replacing the whole list. Each provider computes a decimal RGB value.
+ * Sets the `colors` list from context int providers, replacing the whole list. Each provider computes a decimal RGB value.
  *
  * ```
  * setCustomModelData {
- *     colors(scoreNumber("color", "#tint")) // colors: {values: [{type: "minecraft:score", ...}]}
+ *     colors(score("color", "#tint")) // colors: {values: [{type: "minecraft:score", ...}]}
  * }
  * ```
  */
-fun SetCustomModelData.colors(vararg values: NumberProvider) =
+fun SetCustomModelData.colors(vararg values: ContextIntProvider) =
 	apply { colors = ListOperation(values.map { CustomModelDataColor(provider = it) }) }
 
 /**
- * Sets the `floats` list from number providers, replacing the whole list.
+ * Sets the `floats` list from context float providers, replacing the whole list.
  *
  * ```
  * setCustomModelData {
- *     floats(sum(scoreNumber("x", "#a"), scoreNumber("x", "#b", 0.001f))) // floats: {values: [{type: "minecraft:sum", ...}]}
+ *     floats(add(floatStorage("my_pack:data", "a"), floatStorage("my_pack:data", "b"))) // floats: {values: [{type: "minecraft:add", ...}]}
  * }
  * ```
  */
-fun SetCustomModelData.floats(vararg values: NumberProvider) = apply { floats = ListOperation(values.toList()) }
+fun SetCustomModelData.floats(vararg values: ContextFloatProvider) = apply { floats = ListOperation(values.toList()) }

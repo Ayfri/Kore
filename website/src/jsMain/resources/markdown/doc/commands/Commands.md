@@ -655,35 +655,59 @@ spectate @s @s
 
 ### Compute Command
 
-The `compute` command evaluates a [number provider](/docs/data-driven/loot-tables#number-provider-files) and returns the result as the
-command result, so it can feed `execute store`. It needs permission level gamemasters. The first argument decides what the provider can
-read: nothing gives it no position and no entity, a position (`vec3(...)`) a block entity and a block state, and an entity
-(`self()`) a target entity (a single entity, not a selector matching several). The provider is a `NumberProviderArgument` ID, a plain
-`Float` for a constant, or an inline provider built in a lambda (`compute { myProvider }` for one you already hold). The game reads
-a bare number as an ID (`5` is `minecraft:5`), so Kore writes a constant as `{type:"minecraft:constant",value:5}`. The result is multiplied by
-`scale` (`1.0` by default) and rounded toward negative infinity. `computeInteger` is the integer mode: it rounds to the nearest
-integer instead (`2.5` gives `3`) and takes no `scale`.
+The `compute` command evaluates a [context provider](/docs/data-driven/loot-tables#context-providers) and returns the result as the
+command result, so it can feed `execute store`. It needs permission level gamemasters. The game syntax is
+`/compute <default | block <pos> | entity <target>> integer <provider>` and `... float <provider> [<scale>]`.
+
+The first argument decides what the provider can read: nothing gives it no position and no entity, a position (`vec3(...)`) a block
+entity and a block state, and an entity (`self()`) a target entity (a single entity, not a selector matching several).
+
+The provider decides the mode. An `Int`, a context int provider ID or a lambda returning an int provider runs the `integer` mode,
+which takes no scale. A `Float`, a context float provider ID or a lambda returning a float provider runs the `float` mode, which multiplies
+the result by `scale` (`1.0` by default) and rounds it toward negative infinity (`2.5` gives `2`). A lambda is built on the same scope as the
+other providers, so `compute { add(constant(1), constant(2)) }` is an int and `compute { sqrt(constant(4f)) }` a float.
+
+The game reads a bare number as an ID (`5` is `minecraft:5`), so Kore writes a constant in its compound form,
+`{type:"minecraft:constant",value:5}` for an int and `{type:"minecraft:constant",value:5.0f}` for a float.
 
 ```kotlin
 function("compute_examples") {
-	val bonus = NumberProviderArgument("bonus", "my_pack")
+	val bonus = ContextIntProviderArgument("bonus", "my_pack")
 
+	compute(5)
 	compute(bonus)
-	compute(vec3(0, 64, 0), bonus, scale = 2f)
-	compute(self()) { scoreNumber("kills", EntityTarget.TARGET_ENTITY) }
-	compute(5f, 3f)
-	computeInteger(self(), bonus)
+	compute(vec3(0, 64, 0), ContextIntProviders.Cooking.TIME_COAL)
+	compute(5f, 2f)
+	compute(self(), ContextFloatProviders.Cooking.SPEED_DEFAULT, 10f)
+	compute { add(constant(1), constant(2)) }
+	compute(2f) { sqrt(constant(4f)) }
+	compute(self()) { add(reference(bonus), reference(bonus)) }
 }
 ```
 
 Generated output:
 
 ```mcfunction
-compute default my_pack:bonus
-compute block 0 64 0 my_pack:bonus 2
-compute entity @s {type:"minecraft:score",target:{type:"minecraft:context",target:target_entity},score:kills}
-compute default {type:"minecraft:constant",value:5} 3
-compute entity @s my_pack:bonus integer
+compute default integer {type:"minecraft:constant",value:5}
+compute default integer my_pack:bonus
+compute block 0 64 0 integer minecraft:cooking/time_coal
+compute default float {type:"minecraft:constant",value:5.0f} 2
+compute entity @s float minecraft:cooking/speed_default 10
+compute default integer {type:"minecraft:add",inputs:[1,2]}
+compute default float {type:"minecraft:sqrt",input:4} 2
+compute entity @s integer {type:"minecraft:add",inputs:["my_pack:bonus","my_pack:bonus"]}
+```
+
+`compute` fails when a provider gives Infinity, NaN or hits an error (a division by zero, an overflow), where the same provider read by
+a loot table, a predicate or an item modifier gives `0`. `execute store result score <holder> <objective> run compute ...` keeps the result in a score:
+
+```kotlin
+function("compute_to_score") {
+	execute {
+		storeResult { score(self(), "bonus") }
+		run { compute(ContextIntProviders.Cooking.TIME_COAL) }
+	}
+}
 ```
 
 The same providers are also a source of [`data modify`](#data-modify).
@@ -948,18 +972,19 @@ data modify entity @s foo prepend string entity @s name 0 2
 data modify entity @s foo set string entity @s name 0 3
 ```
 
-A number provider can also be the source of every operation, through a `ComputeSource`: it takes the same target (none, a position or an
-entity) and provider as the [`compute`](#compute-command) command, stores an int or a float tag, and has no scale. `integer = true`
-forces the integer mode.
+A context provider can also be the source of every operation, through a `ComputeSource`: it takes the same target (none, a position or an
+entity) and provider as the [`compute`](#compute-command) command, with the same mode choice (an int provider stores an int tag, a float
+provider a float tag), and has no scale. A provider that fails stores `0`, where `/compute` itself fails.
 
 ```kotlin
 function("data_modify_compute") {
-	val bonus = NumberProviderArgument("bonus", "my_pack")
+	val bonus = ContextIntProviderArgument("bonus", "my_pack")
 
 	data(storage("foo")) {
 		modify("bar", ComputeSource(bonus))
-		modify("bar") { append(ComputeSource(vec3(1, 2, 3), bonus, integer = true)) }
-		set("baz", ComputeSource(self()) { scoreNumber("kills", EntityTarget.TARGET_ENTITY) })
+		modify("bar") { append(ComputeSource(vec3(1, 2, 3), bonus)) }
+		set("baz", ComputeSource(self()) { mul(constant(2), constant(3)) })
+		set("qux", ComputeSource(self(), 2.5f))
 	}
 }
 ```
@@ -967,9 +992,10 @@ function("data_modify_compute") {
 Generated output:
 
 ```mcfunction
-data modify storage minecraft:foo bar set compute default my_pack:bonus
-data modify storage minecraft:foo bar append compute block 1 2 3 my_pack:bonus integer
-data modify storage minecraft:foo baz set compute entity @s {type:"minecraft:score",target:{type:"minecraft:context",target:target_entity},score:kills}
+data modify storage minecraft:foo bar set compute default integer my_pack:bonus
+data modify storage minecraft:foo bar append compute block 1 2 3 integer my_pack:bonus
+data modify storage minecraft:foo baz set compute entity @s integer {type:"minecraft:mul",inputs:[2,3]}
+data modify storage minecraft:foo qux set compute entity @s float {type:"minecraft:constant",value:2.5f}
 ```
 
 #### Data Remove
@@ -1195,7 +1221,7 @@ function("loot_examples") {
 		source {
 			loot {
 				pool {
-					rolls(1f)
+					rolls(1)
 					entries {
 						item(Items.ANVIL)
 					}
@@ -1217,7 +1243,7 @@ loot insert ~ ~ ~ kill @s
 loot replace block ~ ~ ~ container.0 loot minecraft:gameplay/cat_morning_gift
 loot replace entity @s armor.head loot minecraft:gameplay/cat_morning_gift
 loot replace entity @s mob.inventory.0 loot minecraft:gameplay/cat_morning_gift
-loot give @s loot {pools:[{entries:[{type:"minecraft:item",name:"minecraft:anvil"}],rolls:1.0f}]}
+loot give @s loot {pools:[{entries:[{type:"minecraft:item",name:"minecraft:anvil"}],rolls:1}]}
 ```
 
 The `target` block chooses where items go (`give`, `insert` into a container, `replaceBlock`, `replaceEntity`) and the
