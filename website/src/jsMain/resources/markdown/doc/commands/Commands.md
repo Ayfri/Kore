@@ -5,7 +5,7 @@ nav-title: Commands
 description: Every Minecraft command in a type-safe Kotlin DSL. From /say, /teleport, and /give to /execute, /data, /scoreboard, and /summon -- all with code examples and generated mcfunction output.
 keywords: minecraft commands, kore commands, kotlin commands dsl, mcfunction generator, execute command, data command, teleport command, summon command, minecraft command builder, type-safe commands
 date-created: 2026-02-03
-date-modified: 2026-10-23
+date-modified: 2026-10-24
 routeOverride: /docs/commands/commands
 ---
 
@@ -682,6 +682,8 @@ function("compute_examples") {
 	compute { add(constant(1), constant(2)) }
 	compute(2f) { sqrt(constant(4f)) }
 	compute(self()) { add(reference(bonus), reference(bonus)) }
+	compute(self()) { (score("kills", EntityTarget.TARGET_ENTITY) + 3 + 4) % 7 }
+	compute(self()) { sqrt(score("kills", EntityTarget.TARGET_ENTITY).toFloat() * 1.5f + 2f) }
 }
 ```
 
@@ -696,7 +698,13 @@ compute entity @s float minecraft:cooking/speed_default 10
 compute default integer {type:"minecraft:add",inputs:[1,2]}
 compute default float {type:"minecraft:sqrt",input:4} 2
 compute entity @s integer {type:"minecraft:add",inputs:["my_pack:bonus","my_pack:bonus"]}
+compute entity @s integer {type:"minecraft:mod",left:{type:"minecraft:add",inputs:[{type:"minecraft:score",score:kills,target:{type:"minecraft:context",target:target_entity}},7]},right:7}
+compute entity @s float {type:"minecraft:sqrt",input:{type:"minecraft:add",inputs:[{type:"minecraft:mul",inputs:[{type:"minecraft:from_int",input:{type:"minecraft:score",score:kills,target:{type:"minecraft:context",target:target_entity}}},1.5d]},2]}}
 ```
+
+`compute entity <selector>` puts that entity in `target_entity` and the executor in `this`, so a provider reads the entity with `EntityTarget.TARGET_ENTITY`.
+
+The Kotlin [operators of context providers](/docs/data-driven/loot-tables#expressions) (`+`, `-`, `*`, `/`, `%`, `toFloat()`, `coerceIn`...) build the provider of a lambda: `score + 3 + 4` is one `add` with the constant `7`, and a `+ 0` or a `* 1` disappears.
 
 `compute` fails when a provider gives Infinity, NaN or hits an error (a division by zero, an overflow), where the same provider read by
 a loot table, a predicate or an item modifier gives `0`. `execute store result score <holder> <objective> run compute ...` keeps the result in a score:

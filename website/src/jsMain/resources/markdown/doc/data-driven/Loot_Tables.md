@@ -5,7 +5,7 @@ nav-title: Loot Tables
 description: Create and customize Minecraft loot tables using Kore's type-safe Kotlin DSL for drops, container contents, fishing, and more.
 keywords: minecraft, datapack, kore, loot tables, pools, entries, item modifiers, drops
 date-created: 2025-08-11
-date-modified: 2026-10-23
+date-modified: 2026-10-24
 routeOverride: /docs/data-driven/loot-tables
 ---
 
@@ -289,6 +289,63 @@ pool {
 ```
 
 A provider that references itself, directly or through other files, makes the pack fail to load.
+
+### Expressions
+
+Kotlin operators build the same providers as the builders, so an expression reads like the maths it computes. The right operand is a provider or a number of the same family (an `Int` for an int provider, a `Float` for a float one):
+
+| Expression                             | Family     | Builds                                                                    |
+|----------------------------------------|------------|---------------------------------------------------------------------------|
+| `a + b`                                | int, float | `add`                                                                     |
+| `a - b`                                | int, float | `sub`                                                                     |
+| `a * b`                                | int, float | `mul`                                                                     |
+| `a / b`                                | int, float | `div`, an int one rounds toward zero                                      |
+| `a % b`                                | int, float | `mod`, with the sign of `a` for an int and of `b` for a float             |
+| `-a`                                   | int, float | `negate`                                                                  |
+| `a floorDiv b`, `a floorMod b`         | int        | `floor_div`, `floor_mod`                                                  |
+| `a pow b`                              | int, float | `pow`                                                                     |
+| `a.toFloat()`, `a.toInt()`             | int, float | `from_int`, `from_float`                                                  |
+| `a.coerceIn(0, 10)`                    | int, float | `max([min([a, 10]), 0])`, with `coerceAtLeast(0)` and `coerceAtMost(10)`  |
+| `min(a, 5)`, `max(a, 5)`               | int, float | `min` and `max` with a constant                                           |
+
+A number can lead an expression inside the blocks that accept providers (`2 + score(...)`, `1.5f * speed`), and nowhere else. The two families don't mix, convert with `toFloat()` or `toInt()`:
+
+```kotlin
+pool {
+	rolls = 2 + score("kills", EntityTarget.THIS)
+}
+```
+
+```json
+"rolls": {
+	"type": "minecraft:add",
+	"inputs": [
+		{ "type": "minecraft:score", "score": "kills", "target": { "type": "minecraft:context", "target": "this" } },
+		2
+	]
+}
+```
+
+The operators keep the tree small, and only on what they build (a builder like `add(...)` stays as written):
+
+- **Int sums and products** become one `add` or `mul`: `score + 1 + 2` is `add([score, 3])`, and `(score + 1) + (deaths + 2)` is `add([score, deaths, 3])`. The constants of the list are merged into one, put last. The game adds all the inputs on 64 bits and checks the result once, so a chain only fails when its final total overflows. A merged constant that doesn't fit an int isn't merged: `score + Int.MAX_VALUE + 1` stays `add([score, 2147483647, 1])`. A `+ 0` and a `* 1` disappear, and two constants fold into one (`constant(2) + constant(3)` is `5`).
+- **Int subtraction and negation** fold two constants when the result fits an int (`constant(5) - constant(3)` is `2`, `-constant(5)` is `-5`). `-constant(Int.MIN_VALUE)` and an overflowing difference stay as providers, since the game fails on them.
+- **Int `/`, `%`, `floorDiv`, `floorMod` and `pow`** are never folded, so `score % 0` still reaches the game.
+- **Float expressions** flatten the left operand only: `(a + b) + c` is one `add`, `a + (b + c)` keeps its nesting, because float sums aren't associative. Constants are never folded, since that could change the rounding. A `+ 0f` and a `* 1f` disappear (dropping `+ 0f` can keep a `-0.0` that the game, whose float `add` starts from `0.0f`, would turn into `0.0`).
+- An `add` or `mul` made of a `#tag` is never merged into a bigger list: the game only accepts a tag as the whole `inputs`.
+
+`<kills>` stands for the `score` provider of `kills`. `toFloat()` moves an expression to float maths, and `toInt()` brings it back:
+
+```kotlin
+compute(self()) { (score("kills", EntityTarget.TARGET_ENTITY) + 3 + 4) % 7 }
+// compute entity @s integer {type:"minecraft:mod",left:{type:"minecraft:add",inputs:[<kills>,7]},right:7}
+
+compute(self()) { sqrt(score("kills", EntityTarget.TARGET_ENTITY).toFloat() * 1.5f + 2f) }
+// compute entity @s float {type:"minecraft:sqrt",input:{type:"minecraft:add",inputs:[{type:"minecraft:mul",inputs:[{type:"minecraft:from_int",input:<kills>},1.5d]},2]}}
+
+score("kills", EntityTarget.THIS).coerceIn(0, 10)
+// {"type": "minecraft:max", "inputs": [{"type": "minecraft:min", "inputs": [<kills>, 10]}, 0]}
+```
 
 ### Evaluation
 

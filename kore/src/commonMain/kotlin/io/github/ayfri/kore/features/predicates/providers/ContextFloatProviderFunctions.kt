@@ -214,6 +214,9 @@ fun NumberProviderScope.max(inputs: List<ContextFloatProvider>) = MaxContextFloa
  */
 fun NumberProviderScope.max(tag: ContextFloatProviderTagArgument) = MaxContextFloatProvider(listOf(ContextFloatProviderReference(tag)))
 
+/** Creates a [MaxContextFloatProvider] returning the largest value between [input] and the constant [other]. */
+fun NumberProviderScope.max(input: ContextFloatProvider, other: Float) = MaxContextFloatProvider(listOf(input, constant(other)))
+
 /**
  * Creates a [MinContextFloatProvider] returning the smallest value among the providers of [inputs].
  *
@@ -234,6 +237,9 @@ fun NumberProviderScope.min(inputs: List<ContextFloatProvider>) = MinContextFloa
  * ```
  */
 fun NumberProviderScope.min(tag: ContextFloatProviderTagArgument) = MinContextFloatProvider(listOf(ContextFloatProviderReference(tag)))
+
+/** Creates a [MinContextFloatProvider] returning the smallest value between [input] and the constant [other]. */
+fun NumberProviderScope.min(input: ContextFloatProvider, other: Float) = MinContextFloatProvider(listOf(input, constant(other)))
 
 /** Creates a [ModContextFloatProvider] returning the remainder of [left] divided by [right], with the sign of [right]. */
 fun NumberProviderScope.mod(left: ContextFloatProvider, right: ContextFloatProvider) = ModContextFloatProvider(left, right)
