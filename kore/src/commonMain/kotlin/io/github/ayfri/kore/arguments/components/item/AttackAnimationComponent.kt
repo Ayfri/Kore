@@ -11,6 +11,9 @@ import kotlinx.serialization.Serializable
  *
  * Docs: https://kore.ayfri.com/docs/concepts/components
  * Minecraft Wiki: https://minecraft.wiki/w/Data_component_format#attack_animation
+ *
+ * @property duration The animation length in ticks, `0` or more.
+ * @property type The animation, [SwingAnimationType.NONE] plays none.
  */
 @Serializable
 data class AttackAnimationComponent(

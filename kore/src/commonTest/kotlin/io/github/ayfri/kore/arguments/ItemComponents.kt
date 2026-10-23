@@ -61,6 +61,11 @@ fun itemComponentsTests() {
 	}
 	attackAnimationEmptyTest.asString() assertsIs """minecraft:stone_sword[attack_animation={}]"""
 
+	val attackAnimationNoneTest = stoneSword {
+		attackAnimation(SwingAnimationType.NONE, duration = 0)
+	}
+	attackAnimationNoneTest.asString() assertsIs """minecraft:stone_sword[attack_animation={duration:0,type:"none"}]"""
+
 	val attackRangeTest = stoneSword {
 		attackRange(hitboxMargin = 0.5f, maxReach = 3.0f, minReach = 1.0f, mobFactor = 0.8f)
 	}

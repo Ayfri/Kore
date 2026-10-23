@@ -38,6 +38,7 @@ fun Function.swing(targets: EntityArgument, hand: SwingHand) =
  * ```
  * swing(self(), SwingHand.MAINHAND, SwingAnimationType.STAB, 10.ticks)  // swing @s mainhand stab 10
  * swing(self(), SwingHand.OFFHAND, SwingAnimationType.WHACK)            // swing @s offhand whack
+ * swing(self(), SwingHand.MAINHAND, SwingAnimationType.NONE)            // swing @s mainhand none
  * ```
  */
 fun Function.swing(targets: EntityArgument, hand: SwingHand, animation: SwingAnimationType, duration: TimeNumber? = null) =

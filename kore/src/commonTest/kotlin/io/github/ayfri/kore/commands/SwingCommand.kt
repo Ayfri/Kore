@@ -19,6 +19,7 @@ fun Function.swingTests() {
 	swing(allEntities(), SwingHand.MAINHAND) assertsIs "swing @e mainhand"
 	swing(self(), SwingHand.MAINHAND, SwingAnimationType.STAB, 10.ticks) assertsIs "swing @s mainhand stab 10"
 	swing(self(), SwingHand.OFFHAND, SwingAnimationType.WHACK) assertsIs "swing @s offhand whack"
+	swing(self(), SwingHand.MAINHAND, SwingAnimationType.NONE) assertsIs "swing @s mainhand none"
 	swing(allEntities(), SwingHand.MAINHAND, SwingAnimationType.WHACK, 2.seconds) assertsIs "swing @e mainhand whack 2s"
 }
 
