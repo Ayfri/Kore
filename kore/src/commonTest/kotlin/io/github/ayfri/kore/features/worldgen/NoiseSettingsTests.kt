@@ -46,7 +46,7 @@ fun DataPack.noiseSettingsTests() {
 			this["level"] = "0"
 		}
 
-		noiseOptions(-64, 384, 1, 2)
+		noiseOptions(-64, 384)
 
 		noiseRouter {
 			chunkSurfaceLevel(4.5)
@@ -334,9 +334,7 @@ fun DataPack.noiseSettingsTests() {
 			},
 			"noise": {
 				"min_y": -64,
-				"height": 384,
-				"size_horizontal": 1,
-				"size_vertical": 2
+				"height": 384
 			},
 			"noise_router": {
 				"chunk_surface_level": 4.5,

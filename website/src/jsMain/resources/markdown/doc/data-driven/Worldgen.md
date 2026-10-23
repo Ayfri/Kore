@@ -5,7 +5,7 @@ nav-title: Worldgen
 description: Build custom Minecraft world generation in Kotlin. Dimensions, biomes, noise, density functions, structures and features, type-safe, no hand-written JSON.
 keywords: minecraft worldgen, datapack worldgen, custom dimension minecraft, custom biome, noise settings minecraft, minecraft noise router, density function, datapack terrain generation, minecraft world preset, custom world generation
 date-created: 2025-08-11
-date-modified: 2026-10-21
+date-modified: 2026-10-23
 routeOverride: /docs/data-driven/worldgen
 ---
 
@@ -137,7 +137,7 @@ fun DataPack.createCustomWorld() {
 	// 3) Noise settings: world bounds, blocks, and the router feeding the density to the game.
 	val terrain = noiseSettings("custom_terrain") {
 		seaLevel = 63
-		noiseOptions(minY = -64, height = 384, sizeHorizontal = 1, sizeVertical = 2)
+		noiseOptions(minY = -64, height = 384)
 		defaultBlock(Blocks.STONE)
 		defaultFluid(Blocks.WATER) { this["level"] = "0" }
 

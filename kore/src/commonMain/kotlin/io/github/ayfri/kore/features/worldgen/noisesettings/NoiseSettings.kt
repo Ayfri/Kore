@@ -38,7 +38,7 @@ data class NoiseSettings(
 	var disableMobGeneration: Boolean = false,
 	var legacyRandomSource: Boolean = false,
 	var materialRule: MaterialRule = Bandlands,
-	var noise: NoiseOptions = NoiseOptions(-64, 384, 1, 2),
+	var noise: NoiseOptions = NoiseOptions(-64, 384),
 	var noiseRouter: NoiseRouter = NoiseRouter(),
 	var seaLevel: Int = 63,
 	var spawnTarget: List<Map<DensityFunctionArgument, DoubleOrDoublePair>> = emptyList(),
@@ -63,13 +63,8 @@ fun DataPack.noiseSettings(fileName: String = "noise_settings", init: NoiseSetti
 /** Configure the noise router subgraph via a builder. */
 fun NoiseSettings.noiseRouter(block: NoiseRouter.() -> Unit = {}) = NoiseRouter().apply(block).also { noiseRouter = it }
 
-/** Set core noise options (vertical range and sampling resolution). */
-fun NoiseSettings.noiseOptions(
-	minY: Int,
-	height: Int,
-	sizeHorizontal: Int,
-	sizeVertical: Int,
-) = NoiseOptions(minY, height, sizeHorizontal, sizeVertical).also { noise = it }
+/** Set core noise options (vertical range). */
+fun NoiseSettings.noiseOptions(minY: Int, height: Int) = NoiseOptions(minY, height).also { noise = it }
 
 /**
  * Appends a [NoiseSettings.spawnTarget] point filled in [init]: the world spawn prefers where every given density

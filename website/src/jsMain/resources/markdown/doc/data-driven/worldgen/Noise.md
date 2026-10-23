@@ -342,7 +342,7 @@ Noise settings are the complete terrain configuration for a dimension. A dimensi
 val terrain = dp.noiseSettings("custom_terrain") {
 	seaLevel = 63
 
-	noiseOptions(minY = -64, height = 384, sizeHorizontal = 1, sizeVertical = 2)
+	noiseOptions(minY = -64, height = 384)
 
 	defaultBlock(Blocks.STONE)
 	defaultFluid(Blocks.WATER) { this["level"] = "0" }
@@ -378,7 +378,7 @@ Defaults below are Kore's, which are not always vanilla's - the Overworld for in
 | `disableMobGeneration` | `Boolean`                                                | `false`            | Skips mob spawning during chunk generation              |
 | `legacyRandomSource`   | `Boolean`                                                | `false`            | Uses the pre-1.18 random source                         |
 | `materialRule`         | `MaterialRule`                                           | `bandlands`        | Rule picking the block of each position, inline or ID   |
-| `noise`                | `NoiseOptions`                                           | `(-64, 384, 1, 2)` | Vertical range and sampling resolution                  |
+| `noise`                | `NoiseOptions`                                           | `(-64, 384)`       | Vertical range of the terrain                           |
 | `noiseRouter`          | `NoiseRouter`                                            | all zeroes         | Density functions wired to generation roles             |
 | `seaLevel`             | `Int`                                                    | `63`               | Y level the default fluid fills up to                   |
 | `spawnTarget`          | `List<Map<DensityFunctionArgument, DoubleOrDoublePair>>` | empty              | Climate points the world spawn prefers                  |
@@ -417,14 +417,13 @@ replaces a range:
 
 ```kotlin
 noiseOptions(
-	minY = -64,         // Lowest generated Y level, -2032 to 2031, multiple of 16
-	height = 384,       // Total height, 0 to 4064, multiple of 16
-	sizeHorizontal = 1, // Horizontal cell size, 1 to 4
-	sizeVertical = 2    // Vertical cell size, 1 to 4
+	minY = -64,   // Lowest generated Y level, -2032 to 2031, multiple of 16
+	height = 384  // Total height, 0 to 4064, multiple of 16
 )
 ```
 
-`minY + height` must stay within the dimension type's own vertical range, and larger `size` values mean coarser, cheaper terrain.
+`minY + height` must stay within the dimension type's own vertical range. The sampling resolution isn't part of the noise options: each
+[`interpolated`](#density-function-types) density function sets its own `cellSizeXz` and `cellSizeY`.
 
 ### Default Blocks
 
