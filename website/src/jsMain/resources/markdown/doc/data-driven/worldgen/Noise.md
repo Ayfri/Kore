@@ -373,6 +373,7 @@ Defaults below are Kore's, which are not always vanilla's - the Overworld for in
 | Property               | Type                                                     | Kore default       | Description                                             |
 |------------------------|----------------------------------------------------------|--------------------|---------------------------------------------------------|
 | `aquifers`             | `Aquifers?`                                              | `null`             | Local water/lava pockets instead of a flat sea          |
+| `debugFunctions`       | `List<DebugFunctionEntry>?`                              | `null`             | Density functions shown in the generation debug entry   |
 | `defaultBlock`         | `BlockState`                                             | `stone`            | Block placed where density is positive                  |
 | `defaultFluid`         | `BlockState`                                             | `water[level=0]`   | Fluid placed below `seaLevel` where density is negative |
 | `disableMobGeneration` | `Boolean`                                                | `false`            | Skips mob spawning during chunk generation              |
@@ -424,6 +425,19 @@ noiseOptions(
 
 `minY + height` must stay within the dimension type's own vertical range. The sampling resolution isn't part of the noise options: each
 [`interpolated`](#density-function-types) density function sets its own `cellSizeXz` and `cellSizeY`.
+
+### Debug Functions
+
+`debugFunction(function, label)` adds a density function the game samples at the player's position and lists under `label` in the
+`chunk_generation_stats` debug entry. `function` is a `DensityFunctionArgument` or a `Double`, and without any `debugFunction` call the
+field isn't written. Vanilla's overworld lists nine, labeled with one letter for final density (`N`), temperature (`T`), vegetation (`V`),
+continents (`C`), erosion (`E`), depth (`D`) and ridges (`W`), plus `PV` for an inline peaks and valleys expression and `PS` for
+`overworld/preliminary_surface_level`:
+
+```kotlin
+debugFunction(DensityFunctions.Overworld.FINAL_DENSITY, "N")
+debugFunction(DensityFunctions.Overworld.CONTINENTS, "C")
+```
 
 ### Default Blocks
 

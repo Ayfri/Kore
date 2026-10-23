@@ -24,6 +24,7 @@ import kotlinx.serialization.Transient
  * JSON format reference: https://minecraft.wiki/w/Noise_settings
  *
  * @property aquifers The local water and lava pockets, see [aquifers]. Without them the terrain is only flooded up to [seaLevel].
+ * @property debugFunctions The density functions shown in the `chunk_generation_stats` debug entry, see [debugFunction]. None when unset.
  * @property spawnTarget The points of climate space the world spawn prefers, each mapping density functions to the value or
  * `[min, max]` range wanted there, see [spawnTargetPoint]. Candidates are scored by how far their climate is outside the
  * closest point (lower is better) plus their distance from `0, 0`, so it is a preference, not a filter.
@@ -33,6 +34,7 @@ data class NoiseSettings(
 	@Transient
 	override var fileName: String = "noise_settings",
 	var aquifers: Aquifers? = null,
+	var debugFunctions: List<DebugFunctionEntry>? = null,
 	var defaultBlock: BlockState = blockState(Blocks.STONE),
 	var defaultFluid: BlockState = blockState(Blocks.WATER, mapOf("level" to "0")),
 	var disableMobGeneration: Boolean = false,

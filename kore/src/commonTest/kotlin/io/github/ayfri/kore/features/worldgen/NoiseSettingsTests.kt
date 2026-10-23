@@ -38,6 +38,9 @@ fun DataPack.noiseSettingsTests() {
 			surfaceLevel(DensityFunctions.Overworld.PRELIMINARY_SURFACE_LEVEL)
 		}
 
+		debugFunction(DensityFunctions.Overworld.CONTINENTS, "C")
+		debugFunction(0.5, "H")
+
 		defaultBlock(Blocks.REDSTONE_LAMP) {
 			this["lit"] = "true"
 		}
@@ -113,6 +116,16 @@ fun DataPack.noiseSettingsTests() {
 				"lava": "minecraft:end/base_3d_noise",
 				"surface_level": "minecraft:overworld/preliminary_surface_level"
 			},
+			"debug_functions": [
+				{
+					"function": "minecraft:overworld/continents",
+					"label": "C"
+				},
+				{
+					"function": 0.5,
+					"label": "H"
+				}
+			],
 			"default_block": {
 				"id": "minecraft:redstone_lamp",
 				"properties": {
