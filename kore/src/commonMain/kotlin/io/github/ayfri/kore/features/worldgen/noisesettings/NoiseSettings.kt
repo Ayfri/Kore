@@ -18,14 +18,12 @@ import kotlinx.serialization.Transient
 /**
  * Data-driven noise settings controlling terrain generation.
  *
- * Defines the vertical range, sea level, default terrain/fluid states, the aquifers and ore
- * veins, the noise router graph, spawn targets and material rules. Referenced by the
- * noise world generator.
+ * Defines the vertical range, sea level, default terrain/fluid states, the aquifers, the noise
+ * router graph, spawn targets and material rules. Referenced by the noise world generator.
  *
  * JSON format reference: https://minecraft.wiki/w/Noise_settings
  *
  * @property aquifers The local water and lava pockets, see [aquifers]. Without them the terrain is only flooded up to [seaLevel].
- * @property oreVeins The large ore veins, see [oreVein].
  * @property spawnTarget The points of climate space the world spawn prefers, each mapping density functions to the value or
  * `[min, max]` range wanted there, see [spawnTargetPoint]. Candidates are scored by how far their climate is outside the
  * closest point (lower is better) plus their distance from `0, 0`, so it is a preference, not a filter.
@@ -42,7 +40,6 @@ data class NoiseSettings(
 	var materialRule: MaterialRule = Bandlands,
 	var noise: NoiseOptions = NoiseOptions(-64, 384, 1, 2),
 	var noiseRouter: NoiseRouter = NoiseRouter(),
-	var oreVeins: List<OreVein>? = null,
 	var seaLevel: Int = 63,
 	var spawnTarget: List<Map<DensityFunctionArgument, DoubleOrDoublePair>> = emptyList(),
 ) : Generator("worldgen/noise_settings") {

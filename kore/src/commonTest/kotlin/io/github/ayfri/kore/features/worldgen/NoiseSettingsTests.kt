@@ -38,18 +38,6 @@ fun DataPack.noiseSettingsTests() {
 			surfaceLevel(DensityFunctions.Overworld.PRELIMINARY_SURFACE_LEVEL)
 		}
 
-		oreVein(Blocks.COPPER_ORE, Blocks.RAW_COPPER_BLOCK, Blocks.GRANITE) {
-			density(DensityFunctions.Overworld.OreVein.COPPER_DENSITY)
-			fillerGap(DensityFunctions.Overworld.OreVein.GAP)
-			richness(DensityFunctions.Overworld.OreVein.RICHNESS)
-		}
-
-		oreVein(Blocks.DEEPSLATE_IRON_ORE, Blocks.RAW_IRON_BLOCK, Blocks.TUFF, rawOreChance = 0.05f) {
-			density(DensityFunctions.Overworld.OreVein.IRON_DENSITY)
-			fillerGap(0.25)
-			richness(0.75)
-		}
-
 		defaultBlock(Blocks.REDSTONE_LAMP) {
 			this["lit"] = "true"
 		}
@@ -100,6 +88,15 @@ fun DataPack.noiseSettingsTests() {
 			condition(water(offset = -1, surfaceDepthMultiplier = 2, addStoneDepth = true)) { block(Blocks.GRASS_BLOCK) }
 			condition(yAbove(absolute(64), surfaceDepthMultiplier = 1, addStoneDepth = true)) { block(Blocks.CALCITE) }
 			condition(yAbove(belowTop(8))) { block(Blocks.PACKED_ICE) }
+			oreVein(Blocks.COPPER_ORE, Blocks.RAW_COPPER_BLOCK, Blocks.GRANITE, DensityFunctions.Overworld.OreVein.COPPER_DENSITY) {
+				fillerGap(DensityFunctions.Overworld.OreVein.GAP)
+				richness(DensityFunctions.Overworld.OreVein.RICHNESS)
+			}
+			oreVein(Blocks.DEEPSLATE_IRON_ORE, Blocks.RAW_IRON_BLOCK, Blocks.TUFF, DensityFunctions.Overworld.OreVein.IRON_DENSITY, rawOreChance = 0.05f) {
+				fillerGap(0.25)
+				richness(0.75)
+			}
+			oreVein(Blocks.COAL_ORE, Blocks.COAL_BLOCK, Blocks.STONE, 0.5)
 			sequence {
 				block(Blocks.DEEPSLATE)
 			}
@@ -295,6 +292,36 @@ fun DataPack.noiseSettingsTests() {
 						}
 					},
 					{
+						"type": "minecraft:ore_vein",
+						"density": "minecraft:overworld/ore_vein/copper_density",
+						"filler_block": "minecraft:granite",
+						"filler_gap": "minecraft:overworld/ore_vein/gap",
+						"ore_block": "minecraft:copper_ore",
+						"raw_ore_block": "minecraft:raw_copper_block",
+						"raw_ore_chance": 0.02,
+						"richness": "minecraft:overworld/ore_vein/richness"
+					},
+					{
+						"type": "minecraft:ore_vein",
+						"density": "minecraft:overworld/ore_vein/iron_density",
+						"filler_block": "minecraft:tuff",
+						"filler_gap": 0.25,
+						"ore_block": "minecraft:deepslate_iron_ore",
+						"raw_ore_block": "minecraft:raw_iron_block",
+						"raw_ore_chance": 0.05,
+						"richness": 0.75
+					},
+					{
+						"type": "minecraft:ore_vein",
+						"density": 0.5,
+						"filler_block": "minecraft:stone",
+						"filler_gap": 0.0,
+						"ore_block": "minecraft:coal_ore",
+						"raw_ore_block": "minecraft:coal_block",
+						"raw_ore_chance": 0.02,
+						"richness": 0.0
+					},
+					{
 						"type": "minecraft:sequence",
 						"sequence": [
 							{
@@ -321,26 +348,6 @@ fun DataPack.noiseSettingsTests() {
 				"temperature": "minecraft:overworld/base_3d_noise",
 				"vegetation": 3.5
 			},
-			"ore_veins": [
-				{
-					"density": "minecraft:overworld/ore_vein/copper_density",
-					"filler_block": "minecraft:granite",
-					"filler_gap": "minecraft:overworld/ore_vein/gap",
-					"ore_block": "minecraft:copper_ore",
-					"raw_ore_block": "minecraft:raw_copper_block",
-					"raw_ore_chance": 0.02,
-					"richness": "minecraft:overworld/ore_vein/richness"
-				},
-				{
-					"density": "minecraft:overworld/ore_vein/iron_density",
-					"filler_block": "minecraft:tuff",
-					"filler_gap": 0.25,
-					"ore_block": "minecraft:deepslate_iron_ore",
-					"raw_ore_block": "minecraft:raw_iron_block",
-					"raw_ore_chance": 0.05,
-					"richness": 0.75
-				}
-			],
 			"sea_level": 42,
 			"spawn_target": [
 				{
