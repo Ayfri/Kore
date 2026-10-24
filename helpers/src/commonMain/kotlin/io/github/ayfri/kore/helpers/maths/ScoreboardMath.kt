@@ -21,9 +21,11 @@ import io.github.ayfri.kore.features.predicates.conditions.intValueCheck
 import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
+import io.github.ayfri.kore.features.predicates.providers.add
 import io.github.ayfri.kore.features.predicates.providers.conditional
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.providers.cos
+import io.github.ayfri.kore.features.predicates.providers.floorDiv
 import io.github.ayfri.kore.features.predicates.providers.fromFloat
 import io.github.ayfri.kore.features.predicates.providers.fromInt
 import io.github.ayfri.kore.features.predicates.providers.max
@@ -59,6 +61,12 @@ private fun NumberProviderScope.integerSquareRoot(input: ContextIntProvider): Co
 	val root = fromFloat(sqrt(fromInt(value)))
 	return sub(root, conditional(1) { intValueCheck(sub(value, mul(root, root)), max = constant(-1)) })
 }
+
+private fun NumberProviderScope.projectileHeight(time: ContextIntProvider, initialVelocity: ContextIntProvider, gravity: ContextIntProvider) =
+	sub(mul(initialVelocity, time), floorDiv(mul(gravity, time, time), constant(2)))
+
+private fun NumberProviderScope.squaredDistance(from: List<ContextIntProvider>, to: List<ContextIntProvider>) =
+	add(from.zip(to) { start, end -> sub(end, start).let { mul(it, it) } })
 
 private fun NumberProviderScope.trigonometry(cosine: Boolean, angle: ContextIntProvider, angleScale: Int): ContextFloatProvider {
 	val radians = mul(fromInt(mod(angle, constant(360 * angleScale))), constant((PI / 180 / angleScale).toFloat()))
@@ -99,6 +107,21 @@ class MathHandle internal constructor(val datapack: DataPack, val objective: Str
 
 	/** Returns the scratch fake player `#name` on [objective]. */
 	fun temp(name: String) = ScoreboardEntity(objective, FakePlayer("#$name"))
+
+	/**
+	 * Returns [inputs] in a form one `compute` reads. A `compute` targets one real entity, so the scores of every other real
+	 * entity are first copied into the scratch fake players `#s<index>`.
+	 */
+	context(fn: Function)
+	internal fun stage(inputs: List<ScoreboardEntity>): List<ScoreboardEntity> {
+		var target: String? = null
+		return inputs.mapIndexed { index, input ->
+			if (input.entity is FakePlayer) return@mapIndexed input
+			val selector = input.entity.asSelector().asString()
+			if (target == null) target = selector
+			if (selector == target) input else temp("s$index").also { it setTo input }
+		}
+	}
 
 	internal fun ensureObjective(name: String) {
 		if (objectives.add(name)) init.scoreboard.objectives.add(name)
@@ -256,8 +279,9 @@ class MathHandle internal constructor(val datapack: DataPack, val objective: Str
 	fun sqrt(input: ScoreboardDelegate, output: ScoreboardDelegate) = sqrt(input.scoreboardEntity(), output.scoreboardEntity())
 
 	/**
-	 * Squared distance between (x1, y1, z1) and (x2, y2, z2), all scores of [entity]. It overflows past `46340` per
-	 * axis, use [ScoreVector.distanceTo] for fixed-point coordinates.
+	 * Squared distance between (x1, y1, z1) and (x2, y2, z2), all scores of [entity], in one `compute`. A result that
+	 * doesn't fit an `Int` (past `46340` per axis) is `0`, use [ScoreVector.distanceTo] for fixed-point coordinates. The
+	 * [entity] must be a single entity (`limitToOne`).
 	 */
 	context(fn: Function)
 	fun distanceSquared(
@@ -265,46 +289,42 @@ class MathHandle internal constructor(val datapack: DataPack, val objective: Str
 		x1: String, y1: String, z1: String,
 		x2: String, y2: String, z2: String,
 		outputScore: String,
-	) {
-		val output = ScoreboardEntity(outputScore, entity)
-		val delta = temp("d")
-		output.set(0)
-		listOf(x1 to x2, y1 to y2, z1 to z2).forEach { (from, to) ->
-			delta setTo ScoreboardEntity(to, entity)
-			delta -= ScoreboardEntity(from, entity)
-			delta *= delta
-			output += delta
-		}
-	}
+	) = distanceSquared(
+		listOf(x1, y1, z1).map { ScoreboardEntity(it, entity) },
+		listOf(x2, y2, z2).map { ScoreboardEntity(it, entity) },
+		ScoreboardEntity(outputScore, entity),
+	)
 
 	context(fn: Function)
 	fun distanceSquared(
 		first: Triple<ScoreboardDelegate, ScoreboardDelegate, ScoreboardDelegate>,
 		second: Triple<ScoreboardDelegate, ScoreboardDelegate, ScoreboardDelegate>,
 		output: ScoreboardDelegate,
-	) {
-		val result = output.scoreboardEntity()
-		val delta = temp("d")
-		result.set(0)
-		listOf(first.first to second.first, first.second to second.second, first.third to second.third).forEach { (from, to) ->
-			delta setTo to.scoreboardEntity()
-			delta -= from.scoreboardEntity()
-			delta *= delta
-			result += delta
-		}
+	) = distanceSquared(
+		first.toList().map { it.scoreboardEntity() },
+		second.toList().map { it.scoreboardEntity() },
+		output.scoreboardEntity(),
+	)
+
+	context(fn: Function)
+	private fun distanceSquared(first: List<ScoreboardEntity>, second: List<ScoreboardEntity>, output: ScoreboardEntity) {
+		val scores = stage(first + second)
+		output.setTo { squaredDistance(scores.take(3).map { score(it) }, scores.drop(3).map { score(it) }) }
 	}
 
-	/** Height of a projectile, `v0 × t - g × t² / 2`, all four values being scores. */
+	/**
+	 * Height of a projectile, `v0 × t - g × t² / 2` with a floored division, all four values being scores, in one
+	 * `compute`. A product or a result that doesn't fit an `Int` is `0`, except a product past 64 bits, which wraps first
+	 * (`g = 4`, `t = -2^31` gives `g × t² = 0`). The entities read must be single entities (`limitToOne`).
+	 *
+	 * ```kotlin
+	 * math.parabola(time, launchSpeed, gravity, height) // t = 10, v0 = 500, g = 10 -> 4500
+	 * ```
+	 */
 	context(fn: Function)
 	fun parabola(time: ScoreboardEntity, initialVelocity: ScoreboardEntity, gravity: ScoreboardEntity, output: ScoreboardEntity) {
-		val drop = temp("p")
-		drop setTo gravity
-		drop *= time
-		drop *= time
-		drop /= constant(2)
-		output setTo initialVelocity
-		output *= time
-		output -= drop
+		val (t, v0, g) = stage(listOf(time, initialVelocity, gravity))
+		output.setTo { projectileHeight(score(t), score(v0), score(g)) }
 	}
 
 	/** [parabola] where [initialVelocity] and [gravity] are fake player names on [objective], like `#v0`. */

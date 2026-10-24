@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Scoreboard Math Engine
 nav-title: Scoreboard Math
-description: Fast fixed-point sine, cosine, atan2 and exact integer square root on Minecraft scoreboards with Kore, one compute command per sine, cosine or square root.
+description: Fast fixed-point sine, cosine, atan2, exact integer square root and squared distance on Minecraft scoreboards with Kore, mostly one compute command per call.
 keywords: minecraft, datapack, kore, helpers, math, scoreboard, trigonometry, sine, cosine, atan2, sqrt, fixed point, compute
 date-created: 2026-03-03
 date-modified: 2026-10-24
@@ -12,8 +12,8 @@ routeOverride: /docs/helpers/scoreboard-math
 # Scoreboard Math Engine
 
 The math module computes trigonometry and roots at runtime on scoreboards. Sine, cosine and square root are **one
-`compute` command** at the call site, `atan2` lives in **one shared generated function** that a call site feeds with a
-copy of its input.
+`compute` command** at the call site, as are `distanceSquared` and `parabola`. `atan2` lives in **one shared generated
+function** that a call site feeds with a copy of its input.
 
 ```kotlin
 val math = registerMath()
@@ -102,8 +102,9 @@ overflows and keeps decimals.
 
 ## Squared distance and parabola
 
-`distanceSquared` computes `(x2 - x1)² + (y2 - y1)² + (z2 - z1)²` from six scores of one entity. It is enough for range
-checks, but it overflows once an axis difference goes past `46340`.
+`distanceSquared` computes `(x2 - x1)² + (y2 - y1)² + (z2 - z1)²` from six scores of one entity, in one `compute`. It
+is enough for range checks, but a result that doesn't fit an `Int` (an axis difference past `46340`) stores `0`. The
+entity must be a single entity (`limitToOne`).
 
 ```kotlin
 function("in_blast_range") {
@@ -111,13 +112,18 @@ function("in_blast_range") {
 }
 ```
 
-`parabola` computes a projectile height `v0 × t - g × t² / 2` from four scores:
+`parabola` computes a projectile height `v0 × t - g × t² / 2` from four scores, in one `compute`. The division floors,
+and a product or a result that doesn't fit an `Int` stores `0`, except a product past 64 bits, which wraps first
+(`g = 4` and `t = -2^31` give `g × t² = 0`). The entities read must be single entities (`limitToOne`).
 
 ```kotlin
 function("arrow_preview") {
-	math.parabola(time, launchSpeed, gravity, height)
+	math.parabola(time, launchSpeed, gravity, height) // t = 10, v0 = 500, g = 10 -> 4500
 }
 ```
+
+A `compute` reads the scores of one real entity at most. When the inputs belong to several real entities, the scores of
+the others are first copied into scratch fake players, one extra command each.
 
 ## Helper entities
 
@@ -133,8 +139,8 @@ Smithed `smithed.entity` and `smithed.strict` tags, so well-behaved packs leave 
 | `sin` / `cos`                | `value × 1000`, error of at most one unit   | 1 command             |
 | `atan2`                      | Degrees × `angleScale`, in `(-180, 180]`    | 3 commands            |
 | `sqrt`                       | Exact `floor(sqrt(x))`                      | 1 command             |
-| `distanceSquared`            | Squared 3D distance                         | 13 commands           |
-| `parabola`                   | `v0 × t - g × t² / 2`                       | 7 commands            |
+| `distanceSquared`            | Squared 3D distance, `0` on overflow        | 1 command             |
+| `parabola`                   | `v0 × t - g × t² / 2`, `0` on overflow      | 1 command             |
 | `sinTo` / `cosTo` / `sqrtTo` | Infix forms for scoreboard delegates        | 1 command             |
 
 ## See also

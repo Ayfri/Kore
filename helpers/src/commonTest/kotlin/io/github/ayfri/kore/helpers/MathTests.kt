@@ -52,24 +52,35 @@ fun mathScalarTests() = dataPack("math_tests") {
 
 	function("legacy_helpers") {
 		val player = player("P")
+		fun read(name: String) = """{type:"minecraft:score",score:$name,target:{type:"minecraft:context",target:target_entity}}"""
+		fun delta(from: String, to: String) = """{type:"minecraft:sub",left:${read(to)},right:${read(from)}}"""
+		fun square(from: String, to: String) = """{type:"minecraft:mul",inputs:[${delta(from, to)},${delta(from, to)}]}"""
+		val selector = "@e[limit=1,name=P,type=minecraft:player]"
+
 		math.distanceSquared(player, "x1", "y1", "z1", "x2", "y2", "z2", "dist")
+		lines.single() assertsIs """execute store result score $selector dist run compute entity $selector integer {type:"minecraft:add",inputs:[${square("x1", "x2")},${square("y1", "y2")},${square("z1", "z2")}]}"""
+	}
+
+	function("parabola") {
 		math.parabola(holder, "t", "#v0", "#g", "height")
-		lines.take(5) assertsIs listOf(
-			"scoreboard players set @e[limit=1,name=P,type=minecraft:player] dist 0",
-			"scoreboard players operation #d kore_math = @e[limit=1,name=P,type=minecraft:player] x2",
-			"scoreboard players operation #d kore_math -= @e[limit=1,name=P,type=minecraft:player] x1",
-			"scoreboard players operation #d kore_math *= #d kore_math",
-			"scoreboard players operation @e[limit=1,name=P,type=minecraft:player] dist += #d kore_math",
+		val t = """{type:"minecraft:score",score:t,target:{type:"minecraft:fixed",name:"#p"}}"""
+		val v0 = """{type:"minecraft:score",score:kore_math,target:{type:"minecraft:fixed",name:"#v0"}}"""
+		val g = """{type:"minecraft:score",score:kore_math,target:{type:"minecraft:fixed",name:"#g"}}"""
+		lines.single() assertsIs """execute store result score #p height run compute default integer {type:"minecraft:sub",left:{type:"minecraft:mul",inputs:[$v0,$t]},right:{type:"minecraft:floor_div",left:{type:"minecraft:mul",inputs:[$g,$t,$t]},right:2}}"""
+	}
+
+	function("parabola_on_two_entities") {
+		val time = ScoreboardEntity("t", player("A"))
+		val velocity = ScoreboardEntity("v0", player("B"))
+		val gravity = ScoreboardEntity("g", FakePlayer("#g"))
+		math.parabola(time, velocity, gravity, score("height"))
+		val t = """{type:"minecraft:score",score:t,target:{type:"minecraft:context",target:target_entity}}"""
+		val v0 = """{type:"minecraft:score",score:kore_math,target:{type:"minecraft:fixed",name:"#s1"}}"""
+		val g = """{type:"minecraft:score",score:g,target:{type:"minecraft:fixed",name:"#g"}}"""
+		lines assertsIs listOf(
+			"scoreboard players operation #s1 kore_math = @e[limit=1,name=B,type=minecraft:player] v0",
+			"""execute store result score #p height run compute entity @e[limit=1,name=A,type=minecraft:player] integer {type:"minecraft:sub",left:{type:"minecraft:mul",inputs:[$v0,$t]},right:{type:"minecraft:floor_div",left:{type:"minecraft:mul",inputs:[$g,$t,$t]},right:2}}""",
 		)
-		lines.takeLast(7).joinToString("\n") assertsIs """
-			scoreboard players operation #p kore_math = #g kore_math
-			scoreboard players operation #p kore_math *= #p t
-			scoreboard players operation #p kore_math *= #p t
-			scoreboard players operation #p kore_math /= #2 kore_math
-			scoreboard players operation #p height = #v0 kore_math
-			scoreboard players operation #p height *= #p t
-			scoreboard players operation #p height -= #p kore_math
-		""".trimIndent()
 	}
 
 	function("delegates") {
