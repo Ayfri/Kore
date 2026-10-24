@@ -11,7 +11,6 @@ import io.github.ayfri.kore.commands.function
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.commands.teleport
 import io.github.ayfri.kore.entities.Entity
-import io.github.ayfri.kore.entities.FakePlayer
 import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
@@ -25,11 +24,9 @@ import io.github.ayfri.kore.features.predicates.providers.fromInt
 import io.github.ayfri.kore.features.predicates.providers.length
 import io.github.ayfri.kore.features.predicates.providers.mul
 import io.github.ayfri.kore.features.predicates.providers.negate
-import io.github.ayfri.kore.features.predicates.providers.score
 import io.github.ayfri.kore.features.predicates.providers.sin
 import io.github.ayfri.kore.features.predicates.providers.sub
 import io.github.ayfri.kore.features.predicates.providers.truncate
-import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Dimensions
 import io.github.ayfri.kore.scoreboard.*
@@ -71,11 +68,6 @@ private fun NumberProviderScope.viewDirection(axis: Int, scale: Int, storage: St
 
 private fun NumberProviderScope.normalizedComponent(value: ContextIntProvider, scale: Int, storage: String) =
 	truncate(div(mul(fromInt(value), constant(scale.toFloat())), floatStorage(storage, "len")))
-
-private fun NumberProviderScope.readScore(component: ScoreboardEntity): ContextIntProvider {
-	val holder = component.entity
-	return if (holder is FakePlayer) score(component.name, holder.holderName) else score(component.name, EntityTarget.TARGET_ENTITY)
-}
 
 private fun NumberProviderScope.vectorLength(components: List<ContextIntProvider>) = length(components.map { fromInt(it) })
 
@@ -260,7 +252,8 @@ class ScoreVector internal constructor(val math: MathHandle, val name: String, v
 
 	/**
 	 * Writes the length, rounded down, into [output] in this vector's [scale], in one `compute` through the `length`
-	 * provider. It sums the squares as floats, so it never overflows, and it is within 1 unit of the exact length.
+	 * provider. It sums the squares as floats, so it never overflows, and it is within 1 unit of the exact length. The
+	 * entity of the vector must be a single entity (`limitToOne`).
 	 *
 	 * ```
 	 * a.length(output) // a = (3000, 4000, 0) -> 5000
@@ -271,7 +264,7 @@ class ScoreVector internal constructor(val math: MathHandle, val name: String, v
 		output.setTo { vectorLength(components.map { score(it) }) }
 	}
 
-	/** Writes the distance between this point and [other] into [output], see [length]. */
+	/** Writes the distance between this point and [other] into [output], see [length] for the precision and the single entity rule. */
 	context(fn: Function)
 	fun distanceTo(other: ScoreVector, output: ScoreboardEntity) {
 		val scores = math.stage(components + other.components)
@@ -280,7 +273,8 @@ class ScoreVector internal constructor(val math: MathHandle, val name: String, v
 
 	/**
 	 * Scales this vector to a length of `1.0` ([scale] units), keeping its direction, with the length computed once into
-	 * the math storage and one `compute` per component, each truncated toward zero. A zero vector stays `0`.
+	 * the math storage and one `compute` per component, each truncated toward zero. A zero vector stays `0`. The entity of
+	 * the vector must be a single entity (`limitToOne`).
 	 *
 	 * ```
 	 * a.normalize() // a = (3000, 0, 4000) -> (600, 0, 800)
@@ -288,10 +282,7 @@ class ScoreVector internal constructor(val math: MathHandle, val name: String, v
 	 */
 	context(fn: Function)
 	fun normalize() {
-		val lengthProvider: NumberProviderScope.() -> ContextFloatProvider = { vectorLength(components.map { readScore(it) }) }
-		fn.data(math.storage) {
-			if (entity is FakePlayer) compute("len", lengthProvider) else compute("len", entity.asSelector(), lengthProvider)
-		}
+		fn.data(math.storage).computeScores("len") { vectorLength(components.map { score(it) }) }
 		components.forEach { component ->
 			component.setTo { normalizedComponent(score(component), scale, math.storage.asString()) }
 		}

@@ -5,6 +5,7 @@ import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.entities.FakePlayer
+import io.github.ayfri.kore.entities.entity
 import io.github.ayfri.kore.entities.player
 import io.github.ayfri.kore.functions.function
 import io.github.ayfri.kore.helpers.maths.*
@@ -246,6 +247,13 @@ fun mathVectorTests() = dataPack("vector_tests") {
 
 	shouldThrow<IllegalArgumentException> {
 		function("bad_cross") { a.cross(b, a) }
+	}
+
+	function("many_entities") {
+		val crowd = math.vector("crowd", entity(limitToOne = false))
+		shouldThrow<IllegalStateException> { crowd.normalize() }
+		shouldThrow<IllegalStateException> { crowd.length(score("length")) }
+		shouldThrow<IllegalStateException> { crowd.dot(a, score("dot")) }
 	}
 }
 
