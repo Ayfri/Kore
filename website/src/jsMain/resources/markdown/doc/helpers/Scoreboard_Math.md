@@ -2,7 +2,7 @@
 root: .components.layouts.MarkdownLayout
 title: Scoreboard Math Engine
 nav-title: Scoreboard Math
-description: Fast fixed-point sine, cosine, atan2 and exact integer square root on Minecraft scoreboards with Kore, one compute command per sine or cosine.
+description: Fast fixed-point sine, cosine, atan2 and exact integer square root on Minecraft scoreboards with Kore, one compute command per sine, cosine or square root.
 keywords: minecraft, datapack, kore, helpers, math, scoreboard, trigonometry, sine, cosine, atan2, sqrt, fixed point, compute
 date-created: 2026-03-03
 date-modified: 2026-10-24
@@ -11,9 +11,9 @@ routeOverride: /docs/helpers/scoreboard-math
 
 # Scoreboard Math Engine
 
-The math module computes trigonometry and roots at runtime on scoreboards. Sine and cosine are **one `compute`
-command** at the call site, the heavier routines live in **one shared generated function** that a call site feeds
-with a copy of its input.
+The math module computes trigonometry and roots at runtime on scoreboards. Sine, cosine and square root are **one
+`compute` command** at the call site, `atan2` lives in **one shared generated function** that a call site feeds with a
+copy of its input.
 
 ```kotlin
 val math = registerMath()
@@ -30,12 +30,12 @@ execute store result score @s offset_z run compute entity @s float {type:"minecr
 ```
 
 > [!FOOTPRINT]
-> - **Objectives:** `kore_math`, with its `#<n>` constants.
+> - **Objectives:** `kore_math`.
 > - **Storage:** none, except for the routines listed in [Helper entities](#helper-entities).
 > - **Entities:** none, except for the routines listed in [Helper entities](#helper-entities).
 > - **Forceloaded chunks:** none, except for those same routines.
 > - **Every tick:** no.
-> - **Load and files:** `kore_math_init` creates the objective and constants, and each shared routine is one function under `generated_scopes/kore_math/`.
+> - **Load and files:** `kore_math_init` creates the objective, and `atan2` is one shared function under `generated_scopes/kore_math/`.
 
 ## Registering the module
 
@@ -87,8 +87,9 @@ function("turret_aim") {
 
 ## Integer square root
 
-`sqrt` returns exactly `floor(sqrt(input))` for every non-negative `Int`, and `0` for negative inputs. It runs a
-piecewise-linear first guess plus three Newton steps, checked against all 2³¹ inputs.
+`sqrt` returns exactly `floor(sqrt(input))` for every non-negative `Int`, and `0` for negative inputs, checked against
+all 2³² inputs. One `compute` takes the game's float square root and subtracts `1` when its square exceeds the input,
+which the float rounding causes from `16785407`.
 
 ```kotlin
 function("shockwave_radius") {
@@ -131,10 +132,10 @@ Smithed `smithed.entity` and `smithed.strict` tags, so well-behaved packs leave 
 |------------------------------|---------------------------------------------|-----------------------|
 | `sin` / `cos`                | `value × 1000`, error of at most one unit   | 1 command             |
 | `atan2`                      | Degrees × `angleScale`, in `(-180, 180]`    | 3 commands            |
-| `sqrt`                       | Exact `floor(sqrt(x))`                      | 2 commands            |
+| `sqrt`                       | Exact `floor(sqrt(x))`                      | 1 command             |
 | `distanceSquared`            | Squared 3D distance                         | 13 commands           |
 | `parabola`                   | `v0 × t - g × t² / 2`                       | 7 commands            |
-| `sinTo` / `cosTo` / `sqrtTo` | Infix forms for scoreboard delegates        | 2 commands            |
+| `sinTo` / `cosTo` / `sqrtTo` | Infix forms for scoreboard delegates        | 1 command             |
 
 ## See also
 

@@ -3,11 +3,9 @@ package io.github.ayfri.kore.helpers.maths
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.DataPackStateKey
 import io.github.ayfri.kore.arguments.enums.DataType
-import io.github.ayfri.kore.arguments.enums.Relation
 import io.github.ayfri.kore.arguments.maths.vec2
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntEnd
-import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntStart
 import io.github.ayfri.kore.arguments.types.literals.literal
 import io.github.ayfri.kore.arguments.types.literals.rotation
 import io.github.ayfri.kore.arguments.types.literals.uuid
@@ -19,16 +17,22 @@ import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.entities.FakePlayer
+import io.github.ayfri.kore.features.predicates.conditions.intValueCheck
 import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
+import io.github.ayfri.kore.features.predicates.providers.conditional
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.providers.cos
+import io.github.ayfri.kore.features.predicates.providers.fromFloat
 import io.github.ayfri.kore.features.predicates.providers.fromInt
+import io.github.ayfri.kore.features.predicates.providers.max
 import io.github.ayfri.kore.features.predicates.providers.mod
 import io.github.ayfri.kore.features.predicates.providers.mul
 import io.github.ayfri.kore.features.predicates.providers.round
 import io.github.ayfri.kore.features.predicates.providers.sin
+import io.github.ayfri.kore.features.predicates.providers.sqrt
+import io.github.ayfri.kore.features.predicates.providers.sub
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.generatedFunction
 import io.github.ayfri.kore.functions.load
@@ -49,6 +53,13 @@ private const val TRIG_MAX_ANGLE_SCALE = (1 shl 24) / 360
 
 private val handles = DataPackStateKey<MutableMap<String, MathHandle>>("helpers.math")
 
+/** `fromFloat(sqrt)` never undershoots an Int's root, it only overshoots by one past `16785407`, which `root² > input` detects. */
+private fun NumberProviderScope.integerSquareRoot(input: ContextIntProvider): ContextIntProvider {
+	val value = max(input, 0)
+	val root = fromFloat(sqrt(fromInt(value)))
+	return sub(root, conditional(1) { intValueCheck(sub(value, mul(root, root)), max = constant(-1)) })
+}
+
 private fun NumberProviderScope.trigonometry(cosine: Boolean, angle: ContextIntProvider, angleScale: Int): ContextFloatProvider {
 	val radians = mul(fromInt(mod(angle, constant(360 * angleScale))), constant((PI / 180 / angleScale).toFloat()))
 	return round(mul(if (cosine) cos(radians) else sin(radians), constant(MATH_SCALE.toFloat())))
@@ -57,7 +68,7 @@ private fun NumberProviderScope.trigonometry(cosine: Boolean, angle: ContextIntP
 /**
  * Runtime math engine of a datapack, returned by [registerMath].
  *
- * `sin` and `cos` are one `execute store result score ... run compute ...` at the call site. `sqrt` and `atan2` live in
+ * `sin`, `cos` and `sqrt` are one `execute store result score ... run compute ...` at the call site. `atan2` lives in
  * one shared generated function under `kore_math/`, called after copying the input. Constants and helper entities are
  * emitted into the `kore_math_init` load function only when an operation needs them.
  *
@@ -225,7 +236,8 @@ class MathHandle internal constructor(val datapack: DataPack, val objective: Str
 
 	/**
 	 * Exact integer square root, `floor(sqrt(input))`, for every non-negative `Int` (`0` for negative inputs).
-	 * A piecewise linear first guess plus three Newton steps, verified against all 2³¹ inputs.
+	 * One `compute` takes the game's float square root, then subtracts `1` when its square exceeds the input, which
+	 * happens from `16785407`. Verified against all 2³² inputs. The entity of [input] must be a single entity (`limitToOne`).
 	 *
 	 * ```kotlin
 	 * math.sqrt(input, result) // input = 1000000 -> result = 1000
@@ -233,40 +245,7 @@ class MathHandle internal constructor(val datapack: DataPack, val objective: Str
 	 */
 	context(fn: Function)
 	fun sqrt(input: ScoreboardEntity, output: ScoreboardEntity) {
-		val function = shared("sqrt") {
-			val x = temp("x")
-			val r = temp("r")
-			val steps = listOf(temp("s"), temp("t"), temp("u"))
-			val check = temp("v")
-
-			returnIf(0) { score(x.entity.asScoreHolder(), objective, rangeOrIntEnd(0)) }
-			execute {
-				(steps + check).forEach { storeResult { score(it.entity.asScoreHolder(), objective) } }
-				run { r setTo x }
-			}
-			for ((range, divisor, offset) in listOf(Triple(rangeOrIntEnd(1_515_359), 559, 15), Triple(rangeOrIntStart(1_515_360), 32_768, 2456))) {
-				execute {
-					ifCondition { score(x.entity.asScoreHolder(), objective, range) }
-					run { r /= constant(divisor) }
-				}
-				execute {
-					ifCondition { score(x.entity.asScoreHolder(), objective, range) }
-					run { r += offset }
-				}
-			}
-			steps.forEach {
-				it /= r
-				r += it
-				r /= constant(2)
-			}
-			check /= r
-			execute {
-				ifCondition { score(r.entity.asScoreHolder(), objective, check.entity.asScoreHolder(), objective, Relation.GREATER_THAN) }
-				run { r -= 1 }
-			}
-			returnRun { scoreboard.players.get(r.entity.asScoreHolder(), objective) }
-		}
-		call(function, output, "x" to input)
+		output.setTo { integerSquareRoot(score(input)) }
 	}
 
 	context(fn: Function)

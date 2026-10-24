@@ -35,30 +35,11 @@ fun mathScalarTests() = dataPack("math_tests") {
 	}
 
 	function("roots") {
+		val root = """{type:"minecraft:from_float",input:{type:"minecraft:sqrt",input:{type:"minecraft:from_int",input:{type:"minecraft:max",inputs:[{type:"minecraft:score",score:in,target:{type:"minecraft:fixed",name:"#p"}},0]}}}}"""
 		math.sqrt(score("in"), score("root"))
+		lines.single() assertsIs """execute store result score #p root run compute default integer {type:"minecraft:sub",left:$root,right:{type:"minecraft:conditional",condition:{type:"minecraft:int_value_check",test:{max:-1},value:{type:"minecraft:sub",left:{type:"minecraft:max",inputs:[{type:"minecraft:score",score:in,target:{type:"minecraft:fixed",name:"#p"}},0]},right:{type:"minecraft:mul",inputs:[$root,$root]}}},on_true:1}}"""
 		math.atan2(score("y"), score("x"), score("angle"))
 	}
-
-	generated("sqrt") assertsIs """
-		execute if score #x kore_math matches ..0 run return 0
-		execute store result score #s kore_math store result score #t kore_math store result score #u kore_math store result score #v kore_math run scoreboard players operation #r kore_math = #x kore_math
-		execute if score #x kore_math matches ..1515359 run scoreboard players operation #r kore_math /= #559 kore_math
-		execute if score #x kore_math matches ..1515359 run scoreboard players add #r kore_math 15
-		execute if score #x kore_math matches 1515360.. run scoreboard players operation #r kore_math /= #32768 kore_math
-		execute if score #x kore_math matches 1515360.. run scoreboard players add #r kore_math 2456
-		scoreboard players operation #s kore_math /= #r kore_math
-		scoreboard players operation #r kore_math += #s kore_math
-		scoreboard players operation #r kore_math /= #2 kore_math
-		scoreboard players operation #t kore_math /= #r kore_math
-		scoreboard players operation #r kore_math += #t kore_math
-		scoreboard players operation #r kore_math /= #2 kore_math
-		scoreboard players operation #u kore_math /= #r kore_math
-		scoreboard players operation #r kore_math += #u kore_math
-		scoreboard players operation #r kore_math /= #2 kore_math
-		scoreboard players operation #v kore_math /= #r kore_math
-		execute if score #r kore_math > #v kore_math run scoreboard players remove #r kore_math 1
-		return run scoreboard players get #r kore_math
-	""".trimIndent()
 
 	generated("atan2_1") assertsIs """
 		execute store result entity 4b4f5245-0000-0000-0000-000000000001 Pos[0] double 0.001 run scoreboard players get #y kore_math
@@ -100,7 +81,6 @@ fun mathScalarTests() = dataPack("math_tests") {
 
 	generated(HelpersConstants.mathInitFunction).lines().run {
 		first() assertsIs "scoreboard objectives add kore_math dummy"
-		count { it == "scoreboard players set #559 kore_math 559" } assertsIs 1
 		contains("forceload add -30000000 1664") assertsIs true
 		contains("execute unless entity 4b4f5245-0000-0000-0000-000000000001 run summon minecraft:marker -30000000.0 0.0 1664.0 {Tags:[\"kore.math\",\"smithed.entity\",\"smithed.strict\"],UUID:[I;1263489605,0,0,1]}") assertsIs true
 	}
