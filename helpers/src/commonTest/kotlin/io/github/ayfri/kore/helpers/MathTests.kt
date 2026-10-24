@@ -24,37 +24,15 @@ fun mathScalarTests() = dataPack("math_tests") {
 		math.sin(score("angle"), score("sin"))
 		math.cos(score("angle"), score("cos"), angleScale = 100)
 		toString() assertsIs """
-			scoreboard players operation #x kore_math = #p angle
-			execute store result score #p sin run function math_tests:generated_scopes/kore_math/sin_1
-			scoreboard players operation #x kore_math = #p angle
-			execute store result score #p cos run function math_tests:generated_scopes/kore_math/cos_100
+			execute store result score #p sin run compute default float {type:"minecraft:round",input:{type:"minecraft:mul",inputs:[{type:"minecraft:sin",input:{type:"minecraft:mul",inputs:[{type:"minecraft:from_int",input:{type:"minecraft:mod",left:{type:"minecraft:score",score:angle,target:{type:"minecraft:fixed",name:"#p"}},right:360}},0.017453292d]}},1000]}}
+			execute store result score #p cos run compute default float {type:"minecraft:round",input:{type:"minecraft:mul",inputs:[{type:"minecraft:cos",input:{type:"minecraft:mul",inputs:[{type:"minecraft:from_int",input:{type:"minecraft:mod",left:{type:"minecraft:score",score:angle,target:{type:"minecraft:fixed",name:"#p"}},right:36000}},1.7453292E-4d]}},1000]}}
 		""".trimIndent()
 	}
 
-	generated("sin_1") assertsIs """
-		scoreboard players add #x kore_math 90
-		scoreboard players operation #x kore_math %= #360 kore_math
-		scoreboard players remove #x kore_math 180
-		execute if score #x kore_math matches ..-1 run scoreboard players operation #x kore_math *= #-1 kore_math
-		scoreboard players remove #x kore_math 90
-		execute store result score #q kore_math run scoreboard players operation #x kore_math *= #-112 kore_math
-		scoreboard players operation #q kore_math *= #x kore_math
-		scoreboard players operation #q kore_math /= #10080 kore_math
-		scoreboard players operation #h kore_math = #q kore_math
-		scoreboard players operation #h kore_math *= #7186 kore_math
-		scoreboard players operation #h kore_math /= #10080 kore_math
-		scoreboard players remove #h kore_math 64211
-		scoreboard players operation #h kore_math *= #q kore_math
-		scoreboard players operation #h kore_math /= #10080 kore_math
-		scoreboard players add #h kore_math 157032
-		scoreboard players operation #h kore_math *= #x kore_math
-		scoreboard players add #h kore_math 504000
-		return run scoreboard players operation #h kore_math /= #1008000 kore_math
-	""".trimIndent()
-	generated("cos_100").lines().take(2) assertsIs listOf(
-		"scoreboard players add #x kore_math 18000",
-		"scoreboard players operation #x kore_math %= #36000 kore_math",
-	)
+	function("trig_on_entity") {
+		math.sin(ScoreboardEntity("angle", player("P")), score("sin"), angleScale = 10)
+		lines.single() assertsIs """execute store result score #p sin run compute entity @e[limit=1,name=P,type=minecraft:player] float {type:"minecraft:round",input:{type:"minecraft:mul",inputs:[{type:"minecraft:sin",input:{type:"minecraft:mul",inputs:[{type:"minecraft:from_int",input:{type:"minecraft:mod",left:{type:"minecraft:score",score:angle,target:{type:"minecraft:context",target:target_entity}},right:3600}},0.0017453292d]}},1000]}}"""
+	}
 
 	function("roots") {
 		math.sqrt(score("in"), score("root"))
@@ -117,19 +95,22 @@ fun mathScalarTests() = dataPack("math_tests") {
 		val angle = holder.scoreboard("launch_angle")
 		val sine = holder.scoreboard("sin_angle")
 		with(math) { angle sinTo sine }
-		lines.last() assertsIs "execute store result score #p sin_angle run function math_tests:generated_scopes/kore_math/sin_1"
+		lines.last() assertsIs """execute store result score #p sin_angle run compute default float {type:"minecraft:round",input:{type:"minecraft:mul",inputs:[{type:"minecraft:sin",input:{type:"minecraft:mul",inputs:[{type:"minecraft:from_int",input:{type:"minecraft:mod",left:{type:"minecraft:score",score:launch_angle,target:{type:"minecraft:fixed",name:"#p"}},right:360}},0.017453292d]}},1000]}}"""
 	}
 
 	generated(HelpersConstants.mathInitFunction).lines().run {
 		first() assertsIs "scoreboard objectives add kore_math dummy"
-		count { it == "scoreboard players set #360 kore_math 360" } assertsIs 1
+		count { it == "scoreboard players set #559 kore_math 559" } assertsIs 1
 		contains("forceload add -30000000 1664") assertsIs true
 		contains("execute unless entity 4b4f5245-0000-0000-0000-000000000001 run summon minecraft:marker -30000000.0 0.0 1664.0 {Tags:[\"kore.math\",\"smithed.entity\",\"smithed.strict\"],UUID:[I;1263489605,0,0,1]}") assertsIs true
 	}
 
 	registerMath() assertsIs math
 	shouldThrow<IllegalArgumentException> {
-		function("too_fine") { math.sin(score("angle"), score("sin"), angleScale = 1000) }
+		function("too_fine") { math.sin(score("angle"), score("sin"), angleScale = 46_604) }
+	}
+	shouldThrow<IllegalArgumentException> {
+		function("no_scale") { math.cos(score("angle"), score("cos"), angleScale = 0) }
 	}
 }
 

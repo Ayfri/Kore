@@ -2,17 +2,18 @@
 root: .components.layouts.MarkdownLayout
 title: Scoreboard Math Engine
 nav-title: Scoreboard Math
-description: Fast fixed-point sine, cosine, atan2 and exact integer square root on Minecraft scoreboards with Kore, shared functions and two commands per call.
-keywords: minecraft, datapack, kore, helpers, math, scoreboard, trigonometry, sine, cosine, atan2, sqrt, fixed point
+description: Fast fixed-point sine, cosine, atan2 and exact integer square root on Minecraft scoreboards with Kore, one compute command per sine or cosine.
+keywords: minecraft, datapack, kore, helpers, math, scoreboard, trigonometry, sine, cosine, atan2, sqrt, fixed point, compute
 date-created: 2026-03-03
-date-modified: 2026-10-07
+date-modified: 2026-10-24
 routeOverride: /docs/helpers/scoreboard-math
 ---
 
 # Scoreboard Math Engine
 
-The math module computes trigonometry and roots at runtime on scoreboards. Every heavy routine lives in **one shared
-generated function**, so each call site costs two commands: copy the input, then store the function's return value.
+The math module computes trigonometry and roots at runtime on scoreboards. Sine and cosine are **one `compute`
+command** at the call site, the heavier routines live in **one shared generated function** that a call site feeds
+with a copy of its input.
 
 ```kotlin
 val math = registerMath()
@@ -24,8 +25,8 @@ function("orbit") {
 ```
 
 ```mcfunction
-scoreboard players operation #x kore_math = @s angle
-execute store result score @s offset_x run function my_pack:generated_scopes/kore_math/cos_1
+execute store result score @s offset_x run compute entity @s float {type:"minecraft:round",input:{type:"minecraft:mul",inputs:[{type:"minecraft:cos",input:{type:"minecraft:mul",inputs:[{type:"minecraft:from_int",input:{type:"minecraft:mod",left:{type:"minecraft:score",score:angle,target:{type:"minecraft:context",target:target_entity}},right:360}},0.017453292d]}},1000]}}
+execute store result score @s offset_z run compute entity @s float {type:"minecraft:round",input:{type:"minecraft:mul",inputs:[{type:"minecraft:sin",input:{type:"minecraft:mul",inputs:[{type:"minecraft:from_int",input:{type:"minecraft:mod",left:{type:"minecraft:score",score:angle,target:{type:"minecraft:context",target:target_entity}},right:360}},0.017453292d]}},1000]}}
 ```
 
 > [!FOOTPRINT]
@@ -34,7 +35,7 @@ execute store result score @s offset_x run function my_pack:generated_scopes/kor
 > - **Entities:** none, except for the routines listed in [Helper entities](#helper-entities).
 > - **Forceloaded chunks:** none, except for those same routines.
 > - **Every tick:** no.
-> - **Load and files:** `kore_math_init` creates the objective and constants, and each routine is one shared function under `generated_scopes/kore_math/`.
+> - **Load and files:** `kore_math_init` creates the objective and constants, and each shared routine is one function under `generated_scopes/kore_math/`.
 
 ## Registering the module
 
@@ -55,7 +56,7 @@ Scoreboards only hold integers, so results are scaled by **1000**, `MATH_SCALE`:
 ## Sine and cosine
 
 The input is an angle in degrees, any value including negative ones. The result is `sin × 1000`, off by at most one
-unit, from a degree-5 polynomial evaluated purely on scoreboards: no entity and no lookup table.
+unit. One `compute` command reads the game's own 65536-entry sine table: no helper entity and no shared function.
 
 ```kotlin
 function("swing_sword") {
@@ -63,9 +64,9 @@ function("swing_sword") {
 }
 ```
 
-Pass `angleScale` when the angle carries decimals, `100` means hundredths of a degree. Kore generates one function per
-scale with its constants precomputed. Scales above `238` are rejected because the fixed-point product would overflow an
-`Int`.
+Pass `angleScale` when the angle carries decimals, `100` means hundredths of a degree. The scale goes up to `46603`,
+past it `360 × angleScale` isn't exact as a float. The sine table steps every 0.0055 degrees, so a finer angle doesn't
+change the result.
 
 ```kotlin
 function("smooth_orbit") {
@@ -128,7 +129,7 @@ Smithed `smithed.entity` and `smithed.strict` tags, so well-behaved packs leave 
 
 | Function                     | Output                                      | Cost at the call site |
 |------------------------------|---------------------------------------------|-----------------------|
-| `sin` / `cos`                | `value × 1000`, error of at most one unit   | 2 commands            |
+| `sin` / `cos`                | `value × 1000`, error of at most one unit   | 1 command             |
 | `atan2`                      | Degrees × `angleScale`, in `(-180, 180]`    | 3 commands            |
 | `sqrt`                       | Exact `floor(sqrt(x))`                      | 2 commands            |
 | `distanceSquared`            | Squared 3D distance                         | 13 commands           |

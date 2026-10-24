@@ -16,10 +16,19 @@ import io.github.ayfri.kore.arguments.types.resources.storage
 import io.github.ayfri.kore.commands.*
 import io.github.ayfri.kore.commands.execute.Anchor
 import io.github.ayfri.kore.commands.execute.execute
-import io.github.ayfri.kore.commands.scoreboard.Operation
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.entities.Entity
 import io.github.ayfri.kore.entities.FakePlayer
+import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
+import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
+import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.features.predicates.providers.cos
+import io.github.ayfri.kore.features.predicates.providers.fromInt
+import io.github.ayfri.kore.features.predicates.providers.mod
+import io.github.ayfri.kore.features.predicates.providers.mul
+import io.github.ayfri.kore.features.predicates.providers.round
+import io.github.ayfri.kore.features.predicates.providers.sin
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.generatedFunction
 import io.github.ayfri.kore.functions.load
@@ -31,29 +40,26 @@ import io.github.ayfri.kore.scoreboard.*
 import io.github.ayfri.kore.utils.nbtListOf
 import io.github.ayfri.kore.utils.set
 import kotlin.math.PI
-import kotlin.math.pow
-import kotlin.math.roundToInt
 
 /** Fixed-point scale of trigonometric results and the default [ScoreVector] scale: `1000` means `1.0`. */
 const val MATH_SCALE = 1000
 
-/** Odd degree-5 minimax fit of `sin` on `[-π/2, π/2]`, max error `6.8e-5`, so results are within 1 unit of `sin × 1000`. */
-private val SIN_COEFFICIENTS = doubleArrayOf(0.99969693, -0.16567333, 0.00751446)
-private const val TRIG_FIXED_POINT = 100_000
-private const val TRIG_QUARTER_RANGE = 10_000
-
-/** Past this, `h × z` (up to `TRIG_FIXED_POINT × range`) overflows an Int. */
-private const val TRIG_MAX_RANGE = Int.MAX_VALUE / TRIG_FIXED_POINT
+/** Past this, `360 × angleScale` isn't exact as a float (`2^24 / 360`), and the angle loses precision. */
+private const val TRIG_MAX_ANGLE_SCALE = (1 shl 24) / 360
 
 private val handles = DataPackStateKey<MutableMap<String, MathHandle>>("helpers.math")
+
+private fun NumberProviderScope.trigonometry(cosine: Boolean, angle: ContextIntProvider, angleScale: Int): ContextFloatProvider {
+	val radians = mul(fromInt(mod(angle, constant(360 * angleScale))), constant((PI / 180 / angleScale).toFloat()))
+	return round(mul(if (cosine) cos(radians) else sin(radians), constant(MATH_SCALE.toFloat())))
+}
 
 /**
  * Runtime math engine of a datapack, returned by [registerMath].
  *
- * Every non-trivial operation (`sin`, `cos`, `sqrt`, `atan2`) lives in one shared generated function under
- * `kore_math/`, so a call site only costs two commands: copy the input, then
- * `execute store result score ... run function ...`. Constants and helper entities are emitted into the
- * `kore_math_init` load function only when an operation needs them.
+ * `sin` and `cos` are one `execute store result score ... run compute ...` at the call site. `sqrt` and `atan2` live in
+ * one shared generated function under `kore_math/`, called after copying the input. Constants and helper entities are
+ * emitted into the `kore_math_init` load function only when an operation needs them.
  *
  * Temporaries are fake players (`#x`, `#q`...) on [objective], so they never need their own objective.
  */
@@ -130,62 +136,24 @@ class MathHandle internal constructor(val datapack: DataPack, val objective: Str
 		}
 	}
 
-	/** `score += value` for any sign, `scoreboard players add` only accepts positive values. */
-	context(fn: Function)
-	private fun ScoreboardEntity.addSigned(value: Int) = if (value < 0) this -= -value else this += value
-
-	private fun trigFunction(cosine: Boolean, angleScale: Int) = shared("${if (cosine) "cos" else "sin"}_$angleScale") {
-		val turn = 360 * angleScale
-		val quarter = turn / 4
-		val factor = (TRIG_QUARTER_RANGE + quarter - 1) / quarter
-		val range = quarter * factor
-		require(range <= TRIG_MAX_RANGE) { "angleScale $angleScale is too fine for Int fixed-point, use at most ${TRIG_MAX_RANGE / 90}." }
-		val divisor = range * (TRIG_FIXED_POINT / MATH_SCALE)
-		val (a1, a3, a5) = SIN_COEFFICIENTS.mapIndexed { index, coefficient ->
-			(coefficient * (PI / 2).pow(2 * index + 1) * TRIG_FIXED_POINT).roundToInt()
-		}
-		val x = temp("x")
-		val q = temp("q")
-		val h = temp("h")
-
-		// Folds the angle to w in [-quarter, quarter] with sin(angle) = -sin(w), the negation lives in -factor.
-		x += if (cosine) turn / 2 else turn / 2 - quarter
-		x %= constant(turn)
-		x -= turn / 2
-		execute {
-			ifCondition { score(x.entity.asScoreHolder(), objective, rangeOrIntEnd(-1)) }
-			run { x *= constant(-1) }
-		}
-		x -= quarter
-		execute {
-			storeResult { score(q.entity.asScoreHolder(), objective) }
-			run { x *= constant(-factor) }
-		}
-		q *= x
-		q /= constant(range)
-		h setTo q
-		h *= constant(a5)
-		h /= constant(range)
-		h.addSigned(a3)
-		h *= q
-		h /= constant(range)
-		h.addSigned(a1)
-		h *= x
-		h += divisor / 2
-		returnRun { scoreboard.players.operation(h.entity.asScoreHolder(), objective, Operation.DIVIDE, constant(divisor).entity.asScoreHolder(), objective) }
-	}
+	private fun checkAngleScale(angleScale: Int) =
+		require(angleScale in 1..TRIG_MAX_ANGLE_SCALE) { "angleScale $angleScale must be in 1..$TRIG_MAX_ANGLE_SCALE." }
 
 	/**
 	 * Cosine of [input] degrees, scaled by [angleScale] (`100` means the input is in hundredths of a degree).
-	 * The result is `cos × 1000`, within 1 unit of the exact value, for any input including negative ones.
+	 * One `compute` reads the sine table of the game: the result is `cos × 1000`, within 1 unit of the exact value, for any
+	 * input including negative ones. [angleScale] goes up to `46603`, past it the angle isn't exact as a float. The entity of
+	 * [input] must be a single entity (`limitToOne`).
 	 *
 	 * ```kotlin
 	 * math.cos(angle, result) // angle = 60 -> result = 500
 	 * ```
 	 */
 	context(fn: Function)
-	fun cos(input: ScoreboardEntity, output: ScoreboardEntity, angleScale: Int = 1) =
-		call(trigFunction(true, angleScale), output, "x" to input)
+	fun cos(input: ScoreboardEntity, output: ScoreboardEntity, angleScale: Int = 1) {
+		checkAngleScale(angleScale)
+		output.setTo { trigonometry(true, score(input), angleScale) }
+	}
 
 	context(fn: Function)
 	fun cos(entity: Entity, inputScore: String, outputScore: String, angleScale: Int = 1) =
@@ -196,15 +164,18 @@ class MathHandle internal constructor(val datapack: DataPack, val objective: Str
 		cos(input.scoreboardEntity(), output.scoreboardEntity(), angleScale)
 
 	/**
-	 * Sine of [input] degrees, scaled by [angleScale]. The result is `sin × 1000`, within 1 unit of the exact value.
+	 * Sine of [input] degrees, scaled by [angleScale]. The result is `sin × 1000`, within 1 unit of the exact value, and the
+	 * entity of [input] must be a single entity (`limitToOne`), see [cos].
 	 *
 	 * ```kotlin
 	 * math.sin(angle, result) // angle = -90 -> result = -1000
 	 * ```
 	 */
 	context(fn: Function)
-	fun sin(input: ScoreboardEntity, output: ScoreboardEntity, angleScale: Int = 1) =
-		call(trigFunction(false, angleScale), output, "x" to input)
+	fun sin(input: ScoreboardEntity, output: ScoreboardEntity, angleScale: Int = 1) {
+		checkAngleScale(angleScale)
+		output.setTo { trigonometry(false, score(input), angleScale) }
+	}
 
 	context(fn: Function)
 	fun sin(entity: Entity, inputScore: String, outputScore: String, angleScale: Int = 1) =

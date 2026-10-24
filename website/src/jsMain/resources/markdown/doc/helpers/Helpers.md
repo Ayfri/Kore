@@ -85,8 +85,8 @@ That makes helpers a good fit for packs that start simple and progressively adop
   cancelation helpers.
 - **[Score Vectors](/docs/helpers/score-vectors)** - Runtime 3D vectors for look directions, dashes, knockback,
   exact lengths, teleports, and motion.
-- **[Scoreboard Math](/docs/helpers/scoreboard-math)** - Shared fixed-point sine, cosine, atan2, and exact integer
-  square root, two commands per call.
+- **[Scoreboard Math](/docs/helpers/scoreboard-math)** - Fixed-point sine, cosine, atan2, and exact integer
+  square root.
 - **[Sidebars](/docs/helpers/sidebars)** - Show up to 15 custom lines on the sidebar, with right-aligned values, live
   scores, and conditional lines.
 - **[State Delegates](/docs/helpers/state-delegates)** - Map scoreboard objectives or NBT storage paths to Kotlin
