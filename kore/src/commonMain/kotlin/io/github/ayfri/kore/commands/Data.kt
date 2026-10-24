@@ -2,18 +2,31 @@ package io.github.ayfri.kore.commands
 
 import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.chatcomponents.textComponent
+import io.github.ayfri.kore.arguments.maths.Vec3
 import io.github.ayfri.kore.arguments.types.DataArgument
+import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.bool
 import io.github.ayfri.kore.arguments.types.literals.float
 import io.github.ayfri.kore.arguments.types.literals.int
 import io.github.ayfri.kore.arguments.types.literals.literal
+import io.github.ayfri.kore.features.predicates.providers.ConstantContextFloatProvider
+import io.github.ayfri.kore.features.predicates.providers.ConstantContextIntProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextFloatProviderReference
+import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
+import io.github.ayfri.kore.features.predicates.providers.ContextIntProviderReference
+import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.functions.Function
+import io.github.ayfri.kore.generated.arguments.types.ContextFloatProviderArgument
+import io.github.ayfri.kore.generated.arguments.types.ContextIntProviderArgument
 import io.github.ayfri.kore.utils.encodeToSnbt
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.toSnbt
 import kotlinx.serialization.Serializable
 import net.benwoodworth.knbt.NbtCompoundBuilder
 import net.benwoodworth.knbt.NbtTag
+import kotlin.experimental.ExperimentalTypeInference
+import kotlin.jvm.JvmName
 
 /**
  * Helpers that build the low-level `/data` subcommands used throughout Kore.
@@ -48,6 +61,114 @@ object DataModifyOperation {
 	fun append(value: Boolean) = listOf(literal("append"), literal("value"), bool(value))
 	inline fun <reified T : Any> append(value: @Serializable T) =
 		listOf(literal("append"), literal("value"), literal(encodeToSnbt(value)))
+
+	/**
+	 * Reads the context int provider [provider] with no position and no entity, as a source of an operation.
+	 *
+	 * ```
+	 * data(storage("foo")) {
+	 *     modify("bar") { set(compute(bonus)) }
+	 *     // data modify storage minecraft:foo bar set compute default integer my_pack:bonus
+	 * }
+	 * ```
+	 *
+	 * An int provider stores an int tag, a float provider a float tag (never scaled). A provider that fails stores `0`
+	 * (`0.0f` in float mode), where the `compute` command fails.
+	 */
+	fun compute(provider: ContextIntProviderArgument) =
+		ComputeSource(ComputeTarget.default(), ContextIntProviderReference(provider).asArguments())
+
+	/** Reads the context int provider [provider] at the block at [pos], see [compute]. */
+	fun compute(pos: Vec3, provider: ContextIntProviderArgument) =
+		ComputeSource(ComputeTarget.block(pos), ContextIntProviderReference(provider).asArguments())
+
+	/** Reads the context int provider [provider] on the single entity [entity], see [compute]. */
+	fun compute(entity: EntityArgument, provider: ContextIntProviderArgument) =
+		ComputeSource(ComputeTarget.entity(entity), ContextIntProviderReference(provider).asArguments())
+
+	/** Reads the context float provider [provider] with no position and no entity, see [compute]. */
+	fun compute(provider: ContextFloatProviderArgument) =
+		ComputeSource(ComputeTarget.default(), ContextFloatProviderReference(provider).asArguments())
+
+	/** Reads the context float provider [provider] at the block at [pos], see [compute]. */
+	fun compute(pos: Vec3, provider: ContextFloatProviderArgument) =
+		ComputeSource(ComputeTarget.block(pos), ContextFloatProviderReference(provider).asArguments())
+
+	/** Reads the context float provider [provider] on the single entity [entity], see [compute]. */
+	fun compute(entity: EntityArgument, provider: ContextFloatProviderArgument) =
+		ComputeSource(ComputeTarget.entity(entity), ContextFloatProviderReference(provider).asArguments())
+
+	/**
+	 * Reads the constant [provider] with no position and no entity in `integer` mode, see [compute].
+	 *
+	 * ```
+	 * modify("bar") { append(compute(5)) }
+	 * // data modify storage minecraft:foo bar append compute default integer {type:"minecraft:constant",value:5}
+	 * ```
+	 */
+	fun compute(provider: Int) = ComputeSource(ComputeTarget.default(), ConstantContextIntProvider(provider).asArguments())
+
+	/** Reads the constant [provider] at the block at [pos] in `integer` mode, see [compute]. */
+	fun compute(pos: Vec3, provider: Int) =
+		ComputeSource(ComputeTarget.block(pos), ConstantContextIntProvider(provider).asArguments())
+
+	/** Reads the constant [provider] on the single entity [entity] in `integer` mode, see [compute]. */
+	fun compute(entity: EntityArgument, provider: Int) =
+		ComputeSource(ComputeTarget.entity(entity), ConstantContextIntProvider(provider).asArguments())
+
+	/** Reads the constant [provider] with no position and no entity in `float` mode, see [compute]. */
+	fun compute(provider: Float) =
+		ComputeSource(ComputeTarget.default(), ConstantContextFloatProvider(provider).asArguments())
+
+	/** Reads the constant [provider] at the block at [pos] in `float` mode, see [compute]. */
+	fun compute(pos: Vec3, provider: Float) =
+		ComputeSource(ComputeTarget.block(pos), ConstantContextFloatProvider(provider).asArguments())
+
+	/** Reads the constant [provider] on the single entity [entity] in `float` mode, see [compute]. */
+	fun compute(entity: EntityArgument, provider: Float) =
+		ComputeSource(ComputeTarget.entity(entity), ConstantContextFloatProvider(provider).asArguments())
+
+	/**
+	 * Reads the context int provider built by [provider], see [compute].
+	 *
+	 * ```
+	 * modify("bar") { append(compute(self()) { score("kills", EntityTarget.TARGET_ENTITY) + 1 }) }
+	 * ```
+	 */
+	@OptIn(ExperimentalTypeInference::class)
+	@OverloadResolutionByLambdaReturnType
+	@JvmName("computeInt")
+	fun compute(provider: NumberProviderScope.() -> ContextIntProvider) =
+		ComputeSource(ComputeTarget.default(), ComputeScope.provider().asArguments())
+
+	/** Reads the context int provider built by [provider] at the block at [pos], see [compute]. */
+	@OptIn(ExperimentalTypeInference::class)
+	@OverloadResolutionByLambdaReturnType
+	@JvmName("computeInt")
+	fun compute(pos: Vec3, provider: NumberProviderScope.() -> ContextIntProvider) =
+		ComputeSource(ComputeTarget.block(pos), ComputeScope.provider().asArguments())
+
+	/** Reads the context int provider built by [provider] on the single entity [entity], see [compute]. */
+	@OptIn(ExperimentalTypeInference::class)
+	@OverloadResolutionByLambdaReturnType
+	@JvmName("computeInt")
+	fun compute(entity: EntityArgument, provider: NumberProviderScope.() -> ContextIntProvider) =
+		ComputeSource(ComputeTarget.entity(entity), ComputeScope.provider().asArguments())
+
+	/** Reads the context float provider built by [provider], see [compute]. */
+	@JvmName("computeFloat")
+	fun compute(provider: NumberProviderScope.() -> ContextFloatProvider) =
+		ComputeSource(ComputeTarget.default(), ComputeScope.provider().asArguments())
+
+	/** Reads the context float provider built by [provider] at the block at [pos], see [compute]. */
+	@JvmName("computeFloat")
+	fun compute(pos: Vec3, provider: NumberProviderScope.() -> ContextFloatProvider) =
+		ComputeSource(ComputeTarget.block(pos), ComputeScope.provider().asArguments())
+
+	/** Reads the context float provider built by [provider] on the single entity [entity], see [compute]. */
+	@JvmName("computeFloat")
+	fun compute(entity: EntityArgument, provider: NumberProviderScope.() -> ContextFloatProvider) =
+		ComputeSource(ComputeTarget.entity(entity), ComputeScope.provider().asArguments())
 
 	fun insert(index: Int, compute: ComputeSource) = listOf(literal("insert"), int(index)) + compute.arguments()
 
@@ -199,8 +320,6 @@ class Data(val fn: Function, val target: DataArgument) {
 
 	/** Copies the value from [from]/[fromPath] into [path]. */
 	fun modify(path: String, from: DataArgument, fromPath: String) = modify(path) { set(from, fromPath) }
-	/** Writes the result of [compute] into [path]. */
-	fun modify(path: String, compute: ComputeSource) = modify(path) { set(compute) }
 	/** Writes [value] into [path]. */
 	fun modify(path: String, value: NbtTag) = modify(path) { set(value) }
 	/** Writes [value] into [path]. */
@@ -214,11 +333,119 @@ class Data(val fn: Function, val target: DataArgument) {
 	/** Writes [value] into [path]. */
 	inline fun <reified T : Any> modify(path: String, value: @Serializable T) = modify(path) { set(value) }
 
+	/**
+	 * Writes the result of the context int provider [provider], read with no position and no entity, into [path].
+	 *
+	 * ```
+	 * data(storage("foo")).compute("bar", bonus)
+	 * // data modify storage minecraft:foo bar set compute default integer my_pack:bonus
+	 * ```
+	 *
+	 * An int provider stores an int tag, a float provider a float tag (never scaled). A provider that fails stores `0`
+	 * (`0.0f` in float mode), where the `compute` command fails. In a `modify { }` block, `compute(...)` is the source of
+	 * `append`, `insert`, `merge`, `prepend` and `set`.
+	 *
+	 * @see [Minecraft wiki](https://minecraft.wiki/w/Commands/data)
+	 */
+	fun compute(path: String, provider: ContextIntProviderArgument) = modify(path) { set(compute(provider)) }
+
+	/** Writes the result of the context int provider [provider], read at the block at [pos], into [path], see [compute]. */
+	fun compute(path: String, pos: Vec3, provider: ContextIntProviderArgument) =
+		modify(path) { set(compute(pos, provider)) }
+
+	/** Writes the result of the context int provider [provider], read on the single entity [entity], into [path], see [compute]. */
+	fun compute(path: String, entity: EntityArgument, provider: ContextIntProviderArgument) =
+		modify(path) { set(compute(entity, provider)) }
+
+	/** Writes the result of the context float provider [provider], read with no position and no entity, into [path], see [compute]. */
+	fun compute(path: String, provider: ContextFloatProviderArgument) = modify(path) { set(compute(provider)) }
+
+	/** Writes the result of the context float provider [provider], read at the block at [pos], into [path], see [compute]. */
+	fun compute(path: String, pos: Vec3, provider: ContextFloatProviderArgument) =
+		modify(path) { set(compute(pos, provider)) }
+
+	/** Writes the result of the context float provider [provider], read on the single entity [entity], into [path], see [compute]. */
+	fun compute(path: String, entity: EntityArgument, provider: ContextFloatProviderArgument) =
+		modify(path) { set(compute(entity, provider)) }
+
+	/**
+	 * Writes the constant [provider] into [path], read with no position and no entity in `integer` mode, see [compute].
+	 *
+	 * ```
+	 * data(storage("foo")).compute("bar", 5)
+	 * // data modify storage minecraft:foo bar set compute default integer {type:"minecraft:constant",value:5}
+	 * ```
+	 */
+	fun compute(path: String, provider: Int) = modify(path) { set(compute(provider)) }
+
+	/** Writes the constant [provider] into [path], read at the block at [pos] in `integer` mode, see [compute]. */
+	fun compute(path: String, pos: Vec3, provider: Int) = modify(path) { set(compute(pos, provider)) }
+
+	/** Writes the constant [provider] into [path], read on the single entity [entity] in `integer` mode, see [compute]. */
+	fun compute(path: String, entity: EntityArgument, provider: Int) = modify(path) { set(compute(entity, provider)) }
+
+	/**
+	 * Writes the constant [provider] into [path], read with no position and no entity in `float` mode, see [compute].
+	 *
+	 * ```
+	 * data(storage("foo")).compute("bar", 2.5f)
+	 * // data modify storage minecraft:foo bar set compute default float {type:"minecraft:constant",value:2.5f}
+	 * ```
+	 */
+	fun compute(path: String, provider: Float) = modify(path) { set(compute(provider)) }
+
+	/** Writes the constant [provider] into [path], read at the block at [pos] in `float` mode, see [compute]. */
+	fun compute(path: String, pos: Vec3, provider: Float) = modify(path) { set(compute(pos, provider)) }
+
+	/** Writes the constant [provider] into [path], read on the single entity [entity] in `float` mode, see [compute]. */
+	fun compute(path: String, entity: EntityArgument, provider: Float) = modify(path) { set(compute(entity, provider)) }
+
+	/**
+	 * Writes the result of the context int provider built by [provider] into [path], see [compute].
+	 *
+	 * ```
+	 * data(storage("foo")).compute("bar", self()) { score("kills", EntityTarget.TARGET_ENTITY) + 1 }
+	 * // data modify storage minecraft:foo bar set compute entity @s integer {type:"minecraft:add",inputs:[{type:"minecraft:score",...},1]}
+	 * ```
+	 */
+	@OptIn(ExperimentalTypeInference::class)
+	@OverloadResolutionByLambdaReturnType
+	@JvmName("computeInt")
+	fun compute(path: String, provider: NumberProviderScope.() -> ContextIntProvider) =
+		modify(path) { set(compute(provider)) }
+
+	/** Writes the result of the context int provider built by [provider], read at the block at [pos], into [path], see [compute]. */
+	@OptIn(ExperimentalTypeInference::class)
+	@OverloadResolutionByLambdaReturnType
+	@JvmName("computeInt")
+	fun compute(path: String, pos: Vec3, provider: NumberProviderScope.() -> ContextIntProvider) =
+		modify(path) { set(compute(pos, provider)) }
+
+	/** Writes the result of the context int provider built by [provider], read on the single entity [entity], into [path], see [compute]. */
+	@OptIn(ExperimentalTypeInference::class)
+	@OverloadResolutionByLambdaReturnType
+	@JvmName("computeInt")
+	fun compute(path: String, entity: EntityArgument, provider: NumberProviderScope.() -> ContextIntProvider) =
+		modify(path) { set(compute(entity, provider)) }
+
+	/** Writes the result of the context float provider built by [provider] into [path], see [compute]. */
+	@JvmName("computeFloat")
+	fun compute(path: String, provider: NumberProviderScope.() -> ContextFloatProvider) =
+		modify(path) { set(compute(provider)) }
+
+	/** Writes the result of the context float provider built by [provider], read at the block at [pos], into [path], see [compute]. */
+	@JvmName("computeFloat")
+	fun compute(path: String, pos: Vec3, provider: NumberProviderScope.() -> ContextFloatProvider) =
+		modify(path) { set(compute(pos, provider)) }
+
+	/** Writes the result of the context float provider built by [provider], read on the single entity [entity], into [path], see [compute]. */
+	@JvmName("computeFloat")
+	fun compute(path: String, entity: EntityArgument, provider: NumberProviderScope.() -> ContextFloatProvider) =
+		modify(path) { set(compute(entity, provider)) }
+
 	/** Removes the value stored at [path]. */
 	fun remove(path: String) = fn.addLine(command("data", literal("remove"), literal(target.literalName), target, literal(path)))
 
-	/** Writes the result of [compute] into [path]. */
-	operator fun set(path: String, compute: ComputeSource) = modify(path, compute)
 	/** Copies [value] into [path]. */
 	operator fun set(path: String, value: NbtTag) = modify(path) { set(value) }
 	/** Copies [value] into [path]. */

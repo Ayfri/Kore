@@ -718,7 +718,7 @@ function("compute_to_score") {
 }
 ```
 
-The same providers are also a source of [`data modify`](#data-modify).
+The same providers are also a source of [`data modify`](#data-modify): `data(storage("foo")).compute("bar", self()) { score("kills", EntityTarget.TARGET_ENTITY) + 1 }` writes the result into a data path.
 
 ### Swing Command
 
@@ -980,19 +980,24 @@ data modify entity @s foo prepend string entity @s name 0 2
 data modify entity @s foo set string entity @s name 0 3
 ```
 
-A context provider can also be the source of every operation, through a `ComputeSource`: it takes the same target (none, a position or an
-entity) and provider as the [`compute`](#compute-command) command, with the same mode choice (an int provider stores an int tag, a float
-provider a float tag), and has no scale. A provider that fails stores `0`, where `/compute` itself fails.
+A context provider can also be the source of every operation: `compute(path, ...)` on the data builder writes the result of a provider
+into a path, and `compute(...)` in a `modify { }` block is the source of `set`, `append`, `insert`, `merge` and `prepend`. Both take the
+same target (none, a position or an entity) and provider (an ID, an `Int` or `Float` constant, or a lambda) as the [`compute`](#compute-command) command, with the same
+mode choice (an int provider stores an int tag, a float provider a float tag), and have no scale. A provider that fails stores `0` (`0.0f`
+in float mode) where `/compute` itself fails, and a float is stored as it is, never scaled or rounded down.
 
 ```kotlin
 function("data_modify_compute") {
 	val bonus = ContextIntProviderArgument("bonus", "my_pack")
 
 	data(storage("foo")) {
-		modify("bar", ComputeSource(bonus))
-		modify("bar") { append(ComputeSource(vec3(1, 2, 3), bonus)) }
-		set("baz", ComputeSource(self()) { add(reference(bonus), constant(1)) })
-		set("qux", ComputeSource(self(), 2.5f))
+		compute("bar", bonus)
+		compute("baz", self()) { score("kills", EntityTarget.TARGET_ENTITY) + 1 }
+		compute("qux", vec3(1, 2, 3)) { sqrt(constant(4f)) }
+		compute("count", 5)
+		modify("list") { append(compute(self(), bonus)) }
+		modify("list") { insert(0, compute(vec3(1, 2, 3)) { constant(5) }) }
+		modify("list") { append(compute(2.5f)) }
 	}
 }
 ```
@@ -1001,9 +1006,12 @@ Generated output:
 
 ```mcfunction
 data modify storage minecraft:foo bar set compute default integer my_pack:bonus
-data modify storage minecraft:foo bar append compute block 1 2 3 integer my_pack:bonus
-data modify storage minecraft:foo baz set compute entity @s integer {type:"minecraft:add",inputs:["my_pack:bonus",1]}
-data modify storage minecraft:foo qux set compute entity @s float {type:"minecraft:constant",value:2.5f}
+data modify storage minecraft:foo baz set compute entity @s integer {type:"minecraft:add",inputs:[{type:"minecraft:score",score:kills,target:{type:"minecraft:context",target:target_entity}},1]}
+data modify storage minecraft:foo qux set compute block 1 2 3 float {type:"minecraft:sqrt",input:4}
+data modify storage minecraft:foo count set compute default integer {type:"minecraft:constant",value:5}
+data modify storage minecraft:foo list append compute entity @s integer my_pack:bonus
+data modify storage minecraft:foo list insert 0 compute block 1 2 3 integer {type:"minecraft:constant",value:5}
+data modify storage minecraft:foo list append compute default float {type:"minecraft:constant",value:2.5f}
 ```
 
 #### Data Remove
