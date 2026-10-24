@@ -15,6 +15,9 @@ import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.arguments.types.ContextFloatProviderArgument
 import io.github.ayfri.kore.generated.arguments.types.ContextIntProviderArgument
+import io.github.ayfri.kore.optimization.utils.InlineArgument
+import io.github.ayfri.kore.optimization.utils.inlineFloatProviders
+import io.github.ayfri.kore.optimization.utils.inlineIntProviders
 import io.github.ayfri.kore.utils.encodeToDataPackSnbt
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.toSnbt
@@ -58,7 +61,7 @@ private fun ContextIntProvider.asArgument(): Argument = when (this) {
 		put("value", value)
 	}.toSnbt())
 	is ContextIntProviderReference -> id
-	else -> literal(encodeToDataPackSnbt(ContextIntProvider.serializer(), this))
+	else -> InlineArgument(this, encodeToDataPackSnbt(ContextIntProvider.serializer(), this), inlineIntProviders)
 }
 
 /** The argument reads a bare number as an ID (`5.0` is `minecraft:5.0`), so a top-level constant needs its compound form. */
@@ -71,7 +74,7 @@ private fun ContextFloatProvider.asArgument(): Argument = when (this) {
 		}.toSnbt())
 	}
 	is ContextFloatProviderReference -> id
-	else -> literal(encodeToDataPackSnbt(ContextFloatProvider.serializer(), this))
+	else -> InlineArgument(this, encodeToDataPackSnbt(ContextFloatProvider.serializer(), this), inlineFloatProviders)
 }
 
 internal fun ContextIntProvider.asArguments() = listOf(literal("integer"), asArgument())

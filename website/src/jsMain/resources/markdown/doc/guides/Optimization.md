@@ -5,7 +5,7 @@ nav-title: Optimization
 description: Run whole-pack optimization passes before Kore writes your datapack, pruning dead functions, shortening execute chains and sorting selectors, or plug in your own.
 keywords: kore optimization, datapack dead code, prune empty mcfunction, datapack size, minecraft datapack optimization, kore configuration passes
 date-created: 2026-09-05
-date-modified: 2026-10-07
+date-modified: 2026-10-24
 routeOverride: /docs/guides/optimization
 position: 8
 ---
@@ -150,6 +150,44 @@ Reports the commands sitting after an unconditional `return` in the same functio
 top-level `return` ends the function for sure, so a `return` behind an `execute` chain or on a macro line is ignored.
 Nothing is removed: dead code after a `return` is almost always a mistake in the surrounding logic rather than
 something to silently drop.
+
+## Opt-in passes
+
+These passes ship with Kore but aren't in the default list: add them with `this += ...`. They trade a change in the
+shape of the pack for what the game may save, so they stay off until you want them. In game, a context provider read from a
+file measured 0 to 25 % cheaper than the same inline text on big trees and equal on small ones, and no measurement exists for predicates.
+
+### `hoist-context-providers`
+
+Moves the inline [context providers](/docs/data-driven/loot-tables#context-providers) repeated across the pack into
+`context_int_provider` and `context_float_provider` files, and points the lines at them:
+
+```kotlin
+configuration {
+	optimization {
+		this += HoistContextProvidersPass()
+	}
+}
+
+function("a") { compute(self()) { score("kills", EntityTarget.TARGET_ENTITY) + 1 } }
+function("b") { data(storage("foo")).compute("bar", self()) { score("kills", EntityTarget.TARGET_ENTITY) + 1 } }
+```
+
+```
+compute entity @s integer my_pack:generated_scopes/provider_28a268a6
+data modify storage minecraft:foo bar set compute entity @s integer my_pack:generated_scopes/provider_28a268a6
+```
+
+The provider is written once, in `data/my_pack/context_int_provider/generated_scopes/provider_28a268a6.json`. A
+provider is hoisted when it is the whole provider argument of a `compute` command or of a `data modify ... compute`
+source, written inline in at least `minUses` function lines (`HoistContextProvidersPass(minUses = 3)`, `2` by default).
+Constants and references stay as they are, an int and a float provider never share a file, and the scale of a float
+`compute` stays on the line. Providers nested in a resource (a loot table, an item modifier) and lines starting with
+`$` (macros) are left alone.
+
+The file name is `<generated functions folder>/provider_<hash>`, the hash being computed from the provider text, so the
+same pack gives the same names on every build, on the JVM and on JS. When two providers have the same hash, the second
+one stays inline rather than sharing the file.
 
 ## Writing your own pass
 

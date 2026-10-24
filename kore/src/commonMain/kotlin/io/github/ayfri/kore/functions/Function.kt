@@ -15,6 +15,7 @@ import io.github.ayfri.kore.commands.command
 import io.github.ayfri.kore.commands.function
 import io.github.ayfri.kore.commands.tellraw
 import io.github.ayfri.kore.features.tags.functionTag
+import io.github.ayfri.kore.optimization.utils.InlineArgument
 import io.github.ayfri.kore.utils.ifNotEmpty
 
 /**
@@ -75,6 +76,7 @@ open class Function(
 	 */
 	open fun addLine(command: Command): Command {
 		commands += command
+		command.arguments.forEach { if (it is InlineArgument<*>) it.record(datapack) }
 		lines += handleMacro(command.toString().replace("\r", "\\r").replace("\n", "\\n"))
 
 		if (nextLineHasMacro) command.hasMacro = true

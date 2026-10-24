@@ -16,7 +16,7 @@ internal object Selectors {
 		while (true) {
 			val match = header.find(text, index) ?: break
 			val open = match.range.last
-			val close = matchingBracket(text, open) ?: break
+			val close = closingBracket(text, open)?.takeIf { text[it] == ']' } ?: break
 			val rewritten = splitArguments(text.substring(open + 1, close))?.let(transform)
 
 			result.append(text, index, open + 1)
@@ -60,8 +60,8 @@ internal object Selectors {
 		return if (arguments.any(String::isBlank)) null else arguments
 	}
 
-	/** Index of the `]` closing the bracket opened at [open], or `null` when the selector is unbalanced. */
-	private fun matchingBracket(text: String, open: Int): Int? {
+	/** Index of the bracket or brace closing the one opened at [open], skipping quoted strings, or `null` when [text] is unbalanced. */
+	fun closingBracket(text: String, open: Int): Int? {
 		var depth = 0
 		var quote: Char? = null
 		var escaped = false
@@ -76,7 +76,7 @@ internal object Selectors {
 				char == '[' || char == '{' -> depth++
 				char == ']' || char == '}' -> {
 					depth--
-					if (depth == 0) return if (char == ']') index else null
+					if (depth == 0) return index
 				}
 			}
 		}
