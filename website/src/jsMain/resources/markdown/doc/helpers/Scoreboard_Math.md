@@ -127,9 +127,9 @@ the others are first copied into scratch fake players, one extra command each.
 
 ## Helper entities
 
-`atan2` and the vector helpers use two entities that `kore_math_init` summons in a forceloaded chunk at
-`-30000000 1664`: a `marker` and a `text_display`. Both have fixed UUIDs (`4b4f5245-0-0-0-1` and `-2`) and carry the
-Smithed `smithed.entity` and `smithed.strict` tags, so well-behaved packs leave them alone. Change
+`atan2` and the vector helpers that read positions or directions use a `marker` that `kore_math_init` summons in a
+forceloaded chunk at `-30000000 1664`. It has the fixed UUID `4b4f5245-0-0-0-1` and carries the Smithed
+`smithed.entity` and `smithed.strict` tags, so well-behaved packs leave it alone. Change
 `HelpersConstants.mathEntitiesX` / `mathEntitiesZ` before registering to use another chunk.
 
 ## Function reference

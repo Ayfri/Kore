@@ -91,9 +91,6 @@ class MathHandle internal constructor(val datapack: DataPack, val objective: Str
 	} as Function
 	private val objectives = mutableSetOf(objective)
 
-	/** `text_display` whose `transformation` decomposition computes a vector length in one command. */
-	internal val display = uuid(HelpersConstants.mathDisplayUuid)
-
 	/** Marker teleported around `0 0 0` to turn rotations into directions and back. */
 	internal val marker = uuid(HelpersConstants.mathMarkerUuid)
 	internal val storage = storage(HelpersConstants.mathStorage, datapack.name)
@@ -127,26 +124,22 @@ class MathHandle internal constructor(val datapack: DataPack, val objective: Str
 		if (objectives.add(name)) init.scoreboard.objectives.add(name)
 	}
 
-	/** Forceloads a far chunk and summons the [marker] and [display] once, both tagged `smithed.entity` so other packs skip them. */
+	/** Forceloads a far chunk and summons the [marker] once, tagged `smithed.entity` so other packs skip it. */
 	internal fun ensureEntities() {
 		if (entitiesReady) return
 		entitiesReady = true
 
 		init.apply {
 			forceLoad { add(vec2(HelpersConstants.mathEntitiesX, HelpersConstants.mathEntitiesZ)) }
-			listOf(marker to EntityTypes.MARKER, display to EntityTypes.TEXT_DISPLAY).forEach { (id, type) ->
-				execute {
-					unlessCondition { entity(id) }
-					run {
-						summon(type, home) {
-							this["Tags"] = nbtListOf("kore.math", "smithed.entity", "smithed.strict")
-							this["UUID"] = id.toIntArray()
-							if (type == EntityTypes.TEXT_DISPLAY) this["view_range"] = 0f
-						}
+			execute {
+				unlessCondition { entity(marker) }
+				run {
+					summon(EntityTypes.MARKER, home) {
+						this["Tags"] = nbtListOf("kore.math", "smithed.entity", "smithed.strict")
+						this["UUID"] = marker.toIntArray()
 					}
 				}
 			}
-			data(storage) { modify("matrix", nbtListOf(*FloatArray(16) { if (it == 15) 1f else 0f })) }
 		}
 	}
 

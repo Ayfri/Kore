@@ -9,17 +9,25 @@ import io.github.ayfri.kore.commands.data
 import io.github.ayfri.kore.commands.execute.Anchor
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.function
-import io.github.ayfri.kore.commands.scoreboard.Operation
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.commands.teleport
 import io.github.ayfri.kore.entities.Entity
+import io.github.ayfri.kore.entities.FakePlayer
+import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.add
 import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.features.predicates.providers.div
+import io.github.ayfri.kore.features.predicates.providers.floatStorage
 import io.github.ayfri.kore.features.predicates.providers.floorDiv
+import io.github.ayfri.kore.features.predicates.providers.fromInt
+import io.github.ayfri.kore.features.predicates.providers.length
 import io.github.ayfri.kore.features.predicates.providers.mul
+import io.github.ayfri.kore.features.predicates.providers.score
 import io.github.ayfri.kore.features.predicates.providers.sub
+import io.github.ayfri.kore.features.predicates.providers.truncate
+import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Dimensions
 import io.github.ayfri.kore.scoreboard.*
@@ -44,6 +52,19 @@ private fun NumberProviderScope.crossComponent(
 	right: Int,
 	scale: Int,
 ) = floorDiv(sub(mul(first[left], second[right]), mul(first[right], second[left])), constant(scale))
+
+private fun NumberProviderScope.normalizedComponent(value: ContextIntProvider, scale: Int, storage: String) =
+	truncate(div(mul(fromInt(value), constant(scale.toFloat())), floatStorage(storage, "len")))
+
+private fun NumberProviderScope.readScore(component: ScoreboardEntity): ContextIntProvider {
+	val holder = component.entity
+	return if (holder is FakePlayer) score(component.name, holder.holderName) else score(component.name, EntityTarget.TARGET_ENTITY)
+}
+
+private fun NumberProviderScope.vectorLength(components: List<ContextIntProvider>) = length(components.map { fromInt(it) })
+
+private fun NumberProviderScope.vectorLength(from: List<ContextIntProvider>, to: List<ContextIntProvider>) =
+	length(from.zip(to) { start, end -> fromInt(sub(start, end)) })
 
 private fun NumberProviderScope.dotProduct(first: List<ContextIntProvider>, second: List<ContextIntProvider>, scale: Int) =
 	floorDiv(add(first.zip(second) { a, b -> mul(a, b) }), constant(scale))
@@ -202,55 +223,42 @@ class ScoreVector internal constructor(val math: MathHandle, val name: String, v
 	fun lengthSquared(output: ScoreboardEntity) = dot(this, output)
 
 	/**
-	 * Writes the length into [output] in this vector's [scale], exact to the float and overflow-free. The components go
-	 * into the first column of a `text_display` transformation matrix, whose decomposed `scale[0]` is the length.
+	 * Writes the length, rounded down, into [output] in this vector's [scale], in one `compute` through the `length`
+	 * provider. It sums the squares as floats, so it never overflows, and it is within 1 unit of the exact length.
+	 *
+	 * ```
+	 * a.length(output) // a = (3000, 4000, 0) -> 5000
+	 * ```
 	 */
 	context(fn: Function)
 	fun length(output: ScoreboardEntity) {
-		math.ensureEntities()
-		components.forEachIndexed { index, component ->
-			fn.execute {
-				storeResult { storage(math.storage, "matrix[${index * 4}]", DataType.FLOAT, 1.0) }
-				run { scoreboard.players.get(component.entity.asScoreHolder(), component.name) }
-			}
-		}
-		storeDisplayLength(output)
+		output.setTo { vectorLength(components.map { score(it) }) }
 	}
 
 	/** Writes the distance between this point and [other] into [output], see [length]. */
 	context(fn: Function)
 	fun distanceTo(other: ScoreVector, output: ScoreboardEntity) {
-		math.ensureEntities()
-		val delta = math.temp("d")
-		components.zip(other.components).forEachIndexed { index, (component, source) ->
-			delta setTo component
-			fn.execute {
-				storeResult { storage(math.storage, "matrix[${index * 4}]", DataType.FLOAT, 1.0) }
-				run { delta.operation(Operation.REMOVE, source) }
-			}
-		}
-		storeDisplayLength(output)
+		val scores = math.stage(components + other.components)
+		output.setTo { vectorLength(scores.take(3).map { score(it) }, scores.drop(3).map { score(it) }) }
 	}
 
+	/**
+	 * Scales this vector to a length of `1.0` ([scale] units), keeping its direction, with the length computed once into
+	 * the math storage and one `compute` per component, each truncated toward zero. A zero vector stays `0`.
+	 *
+	 * ```
+	 * a.normalize() // a = (3000, 0, 4000) -> (600, 0, 800)
+	 * ```
+	 */
 	context(fn: Function)
-	private fun storeDisplayLength(output: ScoreboardEntity) {
-		fn.data(math.display) { modify("transformation", math.storage, "matrix") }
-		fn.execute {
-			storeResult { score(output.entity.asScoreHolder(), output.name) }
-			run { data(math.display) { get("transformation.scale[0]") } }
+	fun normalize() {
+		val lengthProvider: NumberProviderScope.() -> ContextFloatProvider = { vectorLength(components.map { readScore(it) }) }
+		fn.data(math.storage) {
+			if (entity is FakePlayer) compute("len", lengthProvider) else compute("len", entity.asSelector(), lengthProvider)
 		}
-	}
-
-	/** Scales this vector to a length of `1.0` ([scale] units), keeping its direction. A zero vector stays undefined. */
-	context(fn: Function)
-	fun normalize() = withMarkerAtVector {
-		execute {
-			inDimension(Dimensions.OVERWORLD)
-			positioned(vec3(0, 0, 0))
-			facingEntity(math.marker, Anchor.FEET)
-			run { teleport(math.marker, vec3(0, 0, 1).local) }
+		components.forEach { component ->
+			component.setTo { normalizedComponent(score(component), scale, math.storage.asString()) }
 		}
-		readInto(math.marker, "Pos")
 	}
 
 	/** Rotates [target] to look along this vector, `tp`-based so it also works on players. */

@@ -4,7 +4,6 @@ object HelpersConstants {
 	var blockIdName = "kore_block_id"
 	const val conversationAdvancementFolder = "conversation"
 	const val interactionAdvancementFolder = "interaction"
-	var mathDisplayUuid = "4b4f5245-0000-0000-0000-000000000002"
 	var mathEntitiesX = -30_000_000
 	var mathEntitiesZ = 1664
 	var mathFunctionsDirectory = "kore_math"

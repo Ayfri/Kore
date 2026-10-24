@@ -160,28 +160,31 @@ fun mathVectorTests() = dataPack("vector_tests") {
 	}
 
 	function("length") {
+		fun read(vector: String, axis: String) = """{type:"minecraft:score",score:${vector}_$axis,target:{type:"minecraft:fixed",name:"#p"}}"""
+		val axes = listOf("x", "y", "z")
+		val length = """{type:"minecraft:length",inputs:[${axes.joinToString(",") { """{type:"minecraft:from_int",input:${read("a", it)}}""" }}]}"""
+
 		a.length(score("length"))
-		toString() assertsIs """
-			execute store result storage vector_tests:kore_math matrix[0] float 1 run scoreboard players get #p a_x
-			execute store result storage vector_tests:kore_math matrix[4] float 1 run scoreboard players get #p a_y
-			execute store result storage vector_tests:kore_math matrix[8] float 1 run scoreboard players get #p a_z
-			data modify entity 4b4f5245-0000-0000-0000-000000000002 transformation set from storage vector_tests:kore_math matrix
-			execute store result score #p length run data get entity 4b4f5245-0000-0000-0000-000000000002 transformation.scale[0]
-		""".trimIndent()
+		lines.last() assertsIs "execute store result score #p length run compute default float $length"
+
+		a.distanceTo(b, score("distance"))
+		lines.last() assertsIs """execute store result score #p distance run compute default float {type:"minecraft:length",inputs:[${axes.joinToString(",") { """{type:"minecraft:from_int",input:{type:"minecraft:sub",left:${read("a", it)},right:${read("b", it)}}}""" }}]}"""
 	}
 
 	function("normalize") {
+		fun read(axis: String) = """{type:"minecraft:score",score:a_$axis,target:{type:"minecraft:fixed",name:"#p"}}"""
+		val length = """{type:"minecraft:length",inputs:[${"xyz".map { """{type:"minecraft:from_int",input:${read("$it")}}""" }.joinToString(",")}]}"""
+
 		a.normalize()
-		toString() assertsIs """
-			execute store result entity 4b4f5245-0000-0000-0000-000000000001 Pos[0] double 0.001 run scoreboard players get #p a_x
-			execute store result entity 4b4f5245-0000-0000-0000-000000000001 Pos[1] double 0.001 run scoreboard players get #p a_y
-			execute store result entity 4b4f5245-0000-0000-0000-000000000001 Pos[2] double 0.001 run scoreboard players get #p a_z
-			execute in minecraft:overworld positioned 0.0 0.0 0.0 facing entity 4b4f5245-0000-0000-0000-000000000001 feet run teleport 4b4f5245-0000-0000-0000-000000000001 ^ ^ ^1
-			execute store result score #p a_x run data get entity 4b4f5245-0000-0000-0000-000000000001 Pos[0] 1000
-			execute store result score #p a_y run data get entity 4b4f5245-0000-0000-0000-000000000001 Pos[1] 1000
-			execute store result score #p a_z run data get entity 4b4f5245-0000-0000-0000-000000000001 Pos[2] 1000
-			execute in minecraft:overworld run teleport 4b4f5245-0000-0000-0000-000000000001 -30000000.0 0.0 1664.0
-		""".trimIndent()
+		lines assertsIs listOf(
+			"data modify storage vector_tests:kore_math len set compute default float $length",
+			*"xyz".map { axis ->
+				"""execute store result score #p a_$axis run compute default float {type:"minecraft:truncate",input:{type:"minecraft:div",left:{type:"minecraft:mul",inputs:[{type:"minecraft:from_int",input:${read("$axis")}},1000]},right:{type:"minecraft:storage",path:len,storage:"vector_tests:kore_math"}}}"""
+			}.toTypedArray(),
+		)
+
+		math.vector("player_vector", player("P")).normalize()
+		lines[4] assertsIs """data modify storage vector_tests:kore_math len set compute entity @e[limit=1,name=P,type=minecraft:player] float {type:"minecraft:length",inputs:[${"xyz".map { """{type:"minecraft:from_int",input:{type:"minecraft:score",score:player_vector_$it,target:{type:"minecraft:context",target:target_entity}}}""" }.joinToString(",")}]}"""
 	}
 
 	function("read_position_and_motion") {

@@ -32,8 +32,8 @@ three objectives in the math load function. Operations between two vectors expec
 
 > [!FOOTPRINT]
 > - **Objectives:** `<name>_x`, `<name>_y` and `<name>_z` per vector, plus `kore_math`.
-> - **Storage:** `<pack>:kore_math`, holding the rotation matrix.
-> - **Entities:** one `minecraft:marker` and one `minecraft:text_display`, UUIDs `4b4f5245-0000-0000-0000-000000000001` and `...02`, tagged `kore.math`, `smithed.entity` and `smithed.strict`, summoned once at -30000000 0 1664 by the operations that read positions or directions.
+> - **Storage:** `<pack>:kore_math`, holding the `len` of `normalize`, the motion read by `setToMotion` and the `teleport` macro arguments.
+> - **Entities:** one `minecraft:marker`, UUID `4b4f5245-0000-0000-0000-000000000001`, tagged `kore.math`, `smithed.entity` and `smithed.strict`, summoned once at -30000000 0 1664 by the operations that read positions or directions.
 > - **Forceloaded chunks:** the one holding those entities, x -30000000 z 1664.
 > - **Every tick:** no.
 > - **Load and files:** `kore_math_init` creates the objectives, entities, storage and the `#<n>` constants.
@@ -95,9 +95,9 @@ function("leash_range") {
 }
 ```
 
-`length(output)` and `distanceTo(other, output)` write the length in the vector's scale, exact to the float and without
-overflow. The components go into the first column of a `text_display` transformation matrix, and the game's own
-decomposition returns the length as `scale[0]`.
+`length(output)` and `distanceTo(other, output)` write the length, rounded down, in the vector's scale. One `compute`
+runs the game's `length` provider, which sums the squares as floats, so it never overflows and stays within 1 unit of
+the exact length. A component difference that doesn't fit an `Int` in `distanceTo` writes `0`.
 
 `lengthSquared(output)` is one `compute` and is enough for comparisons, but it writes `0` past about `46` blocks at
 scale `1000`.
@@ -112,9 +112,9 @@ function("homing_missile") {
 }
 ```
 
-`normalize()` rescales the vector to a length of `1000`. It moves the math marker to the vector's coordinates and
-teleports it one block along `facing`, so it is exact to the float. A zero vector has no direction and gives an
-undefined result.
+`normalize()` rescales the vector to a length of `1000`, each component truncated toward zero. One `compute` stores the
+length in the math storage, then one `compute` per component divides by it. A zero vector has no direction and stays
+`0`.
 
 ## Writing vectors back
 
