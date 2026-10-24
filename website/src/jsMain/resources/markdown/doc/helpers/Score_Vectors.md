@@ -5,7 +5,7 @@ nav-title: Score Vectors
 description: Runtime 3D vectors on Minecraft scoreboards with Kore - look directions, dot and cross products, exact length, normalize, teleports and motion.
 keywords: minecraft, datapack, kore, helpers, vector, position, motion, velocity, normalize, dash, knockback, teleport, look direction
 date-created: 2026-09-23
-date-modified: 2026-10-07
+date-modified: 2026-10-24
 routeOverride: /docs/helpers/score-vectors
 ---
 
@@ -78,8 +78,14 @@ function("backstab_check") {
 }
 ```
 
-`dot(other, output)` writes the fixed-point dot product. `cross(other, output)` writes `this × other` into a third
-vector, which must differ from both operands.
+`dot(other, output)` writes the fixed-point dot product in one `compute`. `cross(other, output)` writes `this × other`
+into a third vector with one `compute` per component, the output must differ from both operands. A product or a sum
+that doesn't fit an `Int` (past about `46` blocks per component at scale `1000`) writes `0`.
+
+A `compute` reads the scores of one real entity at most. When the two vectors belong to different real entities, the
+scores of the second are first copied into scratch fake players, one extra command each. Every vector read by `dot`,
+`cross`, `length`, `distanceTo`, `lengthSquared` and `normalize` must belong to a single entity (`limitToOne`), or building
+the datapack throws.
 
 ## Length and distance
 
@@ -93,7 +99,7 @@ function("leash_range") {
 overflow. The components go into the first column of a `text_display` transformation matrix, and the game's own
 decomposition returns the length as `scale[0]`.
 
-`lengthSquared(output)` stays on scoreboards and is enough for comparisons, but it overflows past about `46` blocks at
+`lengthSquared(output)` is one `compute` and is enough for comparisons, but it writes `0` past about `46` blocks at
 scale `1000`.
 
 ## Normalizing

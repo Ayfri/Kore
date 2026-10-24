@@ -114,7 +114,6 @@ fun mathVectorTests() = dataPack("vector_tests") {
 		a.set(0.5, 1.0, -2.0)
 		a += b
 		a *= 3
-		a.dot(b, score("dot"))
 		toString() assertsIs """
 			scoreboard players set #p a_x 500
 			scoreboard players set #p a_y 1000
@@ -125,16 +124,39 @@ fun mathVectorTests() = dataPack("vector_tests") {
 			scoreboard players operation #p a_x *= #3 kore_math
 			scoreboard players operation #p a_y *= #3 kore_math
 			scoreboard players operation #p a_z *= #3 kore_math
-			scoreboard players operation #p dot = #p a_x
-			scoreboard players operation #p dot *= #p b_x
-			scoreboard players operation #t kore_math = #p a_y
-			scoreboard players operation #t kore_math *= #p b_y
-			scoreboard players operation #p dot += #t kore_math
-			scoreboard players operation #t kore_math = #p a_z
-			scoreboard players operation #t kore_math *= #p b_z
-			scoreboard players operation #p dot += #t kore_math
-			scoreboard players operation #p dot /= #1000 kore_math
 		""".trimIndent()
+	}
+
+	function("products") {
+		fun read(vector: String, axis: String) = """{type:"minecraft:score",score:${vector}_$axis,target:{type:"minecraft:fixed",name:"#p"}}"""
+		fun product(first: String, second: String, axis: String) = """{type:"minecraft:mul",inputs:[${read(first, axis)},${read(second, axis)}]}"""
+		fun cross(first: String, second: String, left: String, right: String) =
+			"""{type:"minecraft:floor_div",left:{type:"minecraft:sub",left:{type:"minecraft:mul",inputs:[${read(first, left)},${read(second, right)}]},right:{type:"minecraft:mul",inputs:[${read(first, right)},${read(second, left)}]}},right:1000}"""
+
+		a.dot(b, score("dot"))
+		lines.last() assertsIs """execute store result score #p dot run compute default integer {type:"minecraft:floor_div",left:{type:"minecraft:add",inputs:[${product("a", "b", "x")},${product("a", "b", "y")},${product("a", "b", "z")}]},right:1000}"""
+
+		a.lengthSquared(score("length_squared"))
+		lines.last() assertsIs """execute store result score #p length_squared run compute default integer {type:"minecraft:floor_div",left:{type:"minecraft:add",inputs:[${product("a", "a", "x")},${product("a", "a", "y")},${product("a", "a", "z")}]},right:1000}"""
+
+		a.cross(b, math.vector("c", holder))
+		lines.takeLast(3) assertsIs listOf(
+			"""execute store result score #p c_x run compute default integer ${cross("a", "b", "y", "z")}""",
+			"""execute store result score #p c_y run compute default integer ${cross("a", "b", "z", "x")}""",
+			"""execute store result score #p c_z run compute default integer ${cross("a", "b", "x", "y")}""",
+		)
+	}
+
+	function("products_on_two_entities") {
+		val first = math.vector("first", player("P"))
+		val second = math.vector("second", player("Q"))
+		first.dot(second, score("dot"))
+		lines.take(3) assertsIs listOf(
+			"scoreboard players operation #s3 kore_math = @e[limit=1,name=Q,type=minecraft:player] second_x",
+			"scoreboard players operation #s4 kore_math = @e[limit=1,name=Q,type=minecraft:player] second_y",
+			"scoreboard players operation #s5 kore_math = @e[limit=1,name=Q,type=minecraft:player] second_z",
+		)
+		lines.last().startsWith("execute store result score #p dot run compute entity @e[limit=1,name=P,type=minecraft:player] integer {type:\"minecraft:floor_div\"") assertsIs true
 	}
 
 	function("length") {

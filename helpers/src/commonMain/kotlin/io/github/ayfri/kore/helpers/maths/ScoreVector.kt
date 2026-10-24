@@ -13,6 +13,13 @@ import io.github.ayfri.kore.commands.scoreboard.Operation
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.commands.teleport
 import io.github.ayfri.kore.entities.Entity
+import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
+import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
+import io.github.ayfri.kore.features.predicates.providers.add
+import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.features.predicates.providers.floorDiv
+import io.github.ayfri.kore.features.predicates.providers.mul
+import io.github.ayfri.kore.features.predicates.providers.sub
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Dimensions
 import io.github.ayfri.kore.scoreboard.*
@@ -29,6 +36,17 @@ enum class TeleportMode(internal val prefix: String) {
 	/** Offset from the entity, `tp @s ~x ~y ~z`. */
 	RELATIVE("~"),
 }
+
+private fun NumberProviderScope.crossComponent(
+	first: List<ContextIntProvider>,
+	second: List<ContextIntProvider>,
+	left: Int,
+	right: Int,
+	scale: Int,
+) = floorDiv(sub(mul(first[left], second[right]), mul(first[right], second[left])), constant(scale))
+
+private fun NumberProviderScope.dotProduct(first: List<ContextIntProvider>, second: List<ContextIntProvider>, scale: Int) =
+	floorDiv(add(first.zip(second) { a, b -> mul(a, b) }), constant(scale))
 
 /**
  * A runtime 3D vector stored in three scores of [entity] (objectives `<name>_x`, `<name>_y`, `<name>_z`) in fixed
@@ -151,37 +169,35 @@ class ScoreVector internal constructor(val math: MathHandle, val name: String, v
 	context(fn: Function)
 	operator fun divAssign(divisor: Int) = components.forEach { it /= math.constant(divisor) }
 
-	/** Writes the fixed-point dot product of this vector and [other] into [output]. */
+	/**
+	 * Writes the fixed-point dot product of this vector and [other] into [output], in one `compute`. A product or a sum
+	 * that doesn't fit an `Int` (past about `46` blocks per component at scale `1000`) writes `0`. The entity of each
+	 * vector must be a single entity (`limitToOne`).
+	 *
+	 * ```
+	 * a.dot(b, output) // a = (1000, 0, 0), b = (500, 700, 0) -> 500
+	 * ```
+	 */
 	context(fn: Function)
 	fun dot(other: ScoreVector, output: ScoreboardEntity) {
-		val product = math.temp("t")
-		output setTo x
-		output *= other.x
-		listOf(y to other.y, z to other.z).forEach { (component, source) ->
-			product setTo component
-			product *= source
-			output += product
-		}
-		output /= math.constant(scale)
+		val scores = math.stage(components + other.components)
+		output.setTo { dotProduct(scores.take(3).map { score(it) }, scores.drop(3).map { score(it) }, scale) }
 	}
 
-	/** Writes the cross product `this × other` into [output], which must be a third vector. */
+	/**
+	 * Writes the cross product `this × other` into [output], which must be a third vector, with one `compute` per
+	 * component. A product that doesn't fit an `Int` writes `0`, and the entities must be single entities, see [dot].
+	 */
 	context(fn: Function)
 	fun cross(other: ScoreVector, output: ScoreVector) {
 		require(output !== this && output !== other) { "The cross product output must differ from both operands." }
-		val product = math.temp("t")
-		listOf(Triple(output.x, y to z, other.z to other.y), Triple(output.y, z to x, other.x to other.z), Triple(output.z, x to y, other.y to other.x))
-			.forEach { (target, left, right) ->
-				target setTo left.first
-				target *= right.first
-				product setTo left.second
-				product *= right.second
-				target -= product
-				target /= math.constant(scale)
-			}
+		val scores = math.stage(components + other.components)
+		listOf(output.x to (1 to 2), output.y to (2 to 0), output.z to (0 to 1)).forEach { (target, indices) ->
+			target.setTo { crossComponent(scores.take(3).map { score(it) }, scores.drop(3).map { score(it) }, indices.first, indices.second, scale) }
+		}
 	}
 
-	/** Writes the squared length into [output], in this vector's [scale]. Overflows past `46.34` blocks at scale `1000`. */
+	/** Writes the squared length into [output], in this vector's [scale], like [dot] of this vector with itself, entity rule included. */
 	context(fn: Function)
 	fun lengthSquared(output: ScoreboardEntity) = dot(this, output)
 
