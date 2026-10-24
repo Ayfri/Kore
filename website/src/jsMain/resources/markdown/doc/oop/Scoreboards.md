@@ -3,9 +3,9 @@ root: .components.layouts.MarkdownLayout
 title: Scoreboards
 nav-title: Scoreboards
 description: Object-oriented scoreboard management with the Kore OOP module - objectives, display slots, per-entity score operations, and score arithmetic operators.
-keywords: minecraft, datapack, kore, oop, scoreboard, objective, score, display slot, fake player, operators, constants
+keywords: minecraft, datapack, kore, oop, scoreboard, objective, score, display slot, fake player, operators, constants, expressions, compute, random float
 date-created: 2026-03-03
-date-modified: 2026-10-07
+date-modified: 2026-10-24
 routeOverride: /docs/oop/scoreboards
 ---
 
@@ -159,6 +159,68 @@ holders that must not carry that prefix, such as the `§0`..`§f` holders behind
 
 A fake player has no entity behind it, so `asSelector()` throws instead of emitting `@e[name=#wave]`, which matches an
 entity custom name and would silently target nothing. Only score APIs, which go through `asScoreHolder()`, accept one.
+
+### Expressions
+
+`setTo { }` computes a score from other scores in one [`compute`](/docs/commands/commands#compute-command), where the
+`scoreboard players operation` route needs a temporary holder per step. Inside the lambda, `score(entry)` reads a
+`ScoreboardEntity` and the [provider operators](/docs/data-driven/loot-tables#expressions) build the tree:
+
+```kotlin
+function("combo") {
+	val kills = player.getScoreEntity("kills")
+	val bonus = fakePlayer("bonus").getScoreEntity("game")
+	val points = fakePlayer("points").getScoreEntity("game")
+
+	points setTo { score(kills) + score(bonus) * 2 }
+}
+```
+
+```mcfunction
+execute store result score #points game run compute entity @e[...] integer {type:"minecraft:add",inputs:[{type:"minecraft:score",score:kills,target:{type:"minecraft:context",target:target_entity}},{type:"minecraft:mul",inputs:[{type:"minecraft:score",score:game,target:{type:"minecraft:fixed",name:"#bonus"}},2]}]}
+```
+
+A fake player is read by name. A real entity is read as the `compute entity` target, so an expression reads one real
+entity at most, in as many objectives as it needs, next to any number of fake players. Reading two different real
+entities isn't possible because `compute` has one target: copy one score into a fake player first. A selector that can
+match several entities throws for the same reason. With only fake players, the command is `compute default`.
+`data(storage).computeScores("path") { ... }` builds the same expression into a `data modify` target, with the same rules.
+
+A lambda returning a float provider runs in `float` mode, and the optional `scale` multiplies the result before it is
+rounded down into the score (`2.5` with a scale of `100` gives `250`). That makes random floats a one-liner:
+
+```kotlin
+function("roll") {
+	val chance = fakePlayer("chance").getScoreEntity("game")
+	chance.setTo(1000f) { uniform(0.5f, 2f) }  // a score between 500 and 1999
+}
+```
+
+```mcfunction
+execute store result score #chance game run compute default float {type:"minecraft:uniform",max:2,min:0.5d} 1000
+```
+
+A `Float` factor on `*=` and `/=` is one `compute` too, where an `Int` factor keeps the `scoreboard players operation`
+route above:
+
+```kotlin
+function("bonus") {
+	val gold = fakePlayer("gold").getScoreEntity("game")
+	gold *= 1.5f
+	gold /= 2.5f
+}
+```
+
+```mcfunction
+execute store result score #gold game run compute default float {type:"minecraft:mul",inputs:[{type:"minecraft:from_int",input:{type:"minecraft:score",score:game,target:{type:"minecraft:fixed",name:"#gold"}}},1.5d]}
+execute store result score #gold game run compute default float {type:"minecraft:div",left:{type:"minecraft:from_int",input:{type:"minecraft:score",score:game,target:{type:"minecraft:fixed",name:"#gold"}}},right:2.5d}
+```
+
+| Behavior                  | Result                                                                                       |
+|---------------------------|----------------------------------------------------------------------------------------------|
+| Float results             | Rounded down, so `-3 * 1.5` gives `-5`, and saturated at the int range                       |
+| A failing expression      | Stores `0`: a division by zero (`/= 0f`), an overflow or a result that isn't finite          |
+| Float precision           | `from_int` and the float providers are exact up to 2^24 only, use the `Int` form beyond that |
 
 ### Copying between scores, NBT, and counts
 
