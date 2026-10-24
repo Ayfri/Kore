@@ -1,6 +1,7 @@
 package io.github.ayfri.kore.helpers
 
 object HelpersConstants {
+	var blockIdName = "kore_block_id"
 	const val conversationAdvancementFolder = "conversation"
 	const val interactionAdvancementFolder = "interaction"
 	var mathDisplayUuid = "4b4f5245-0000-0000-0000-000000000002"
@@ -15,6 +16,7 @@ object HelpersConstants {
 	var raycastObjective = "kore_raycast"
 	var raycastTag = "kore_raycasting"
 
+	fun blockIdTagName(bit: Int) = "$blockIdName/bit_$bit"
 	fun conversationAdvanceFunctionName(name: String) = "conversation_${name}_advance"
 	fun conversationAdvancementName(name: String) = "$conversationAdvancementFolder/$name"
 	fun conversationChoiceDialogName(name: String, id: Int) = "conversation_${name}_choice_$id"

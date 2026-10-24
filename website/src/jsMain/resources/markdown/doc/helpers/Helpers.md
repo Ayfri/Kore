@@ -3,9 +3,9 @@ root: .components.layouts.MarkdownLayout
 title: Helpers Utilities
 nav-title: Helpers Utilities
 description: Overview of helper-focused utilities in Kore - renderers, displays, interactions, inventories, mannequins, math, NBT paths, raycasts, scheduling, and state.
-keywords: minecraft, datapack, kore, helpers, ansi, markdown, minimessage, raycast, math, vector, area, state, nbt, vfx, particles, text, display, interaction, inventory, mannequin, scheduler, menu, dialog, sidebar
+keywords: minecraft, datapack, kore, helpers, block id, ansi, markdown, minimessage, raycast, math, vector, area, state, nbt, vfx, particles, text, display, interaction, inventory, mannequin, scheduler, menu, dialog, sidebar
 date-created: 2026-03-31
-date-modified: 2026-10-22
+date-modified: 2026-10-24
 routeOverride: /docs/helpers/utilities
 position: 0
 ---
@@ -59,6 +59,8 @@ That makes helpers a good fit for packs that start simple and progressively adop
   when your source text already contains terminal-style formatting.
 - **[Area](/docs/helpers/area)** - Work with axis-aligned 3D regions for containment checks, intersections, unions,
   and coordinate transforms.
+- **[Block IDs](/docs/helpers/block-ids)** - Read the block at any position as an integer score with one
+  `compute block` command and a generated context int provider.
 - **[Conversations](/docs/helpers/conversations)** - Script per-player NPC dialogue with timed lines, click pauses, and
   dialog or chat choices.
 - **[Display Entities](/docs/helpers/display-entities)** - Configure block, item, and text display entities with shared
