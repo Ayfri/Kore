@@ -157,6 +157,8 @@ These passes ship with Kore but aren't in the default list: add them with `this 
 shape of the pack for what the game may save, so they stay off until you want them. In game, a context provider read from a
 file measured 0 to 25 % cheaper than the same inline text on big trees and equal on small ones, and no measurement exists for predicates.
 
+There are two of them, `hoist-context-providers` and `hoist-inline-predicates`.
+
 ### `hoist-context-providers`
 
 Moves the inline [context providers](/docs/data-driven/loot-tables#context-providers) repeated across the pack into
@@ -188,6 +190,32 @@ Constants and references stay as they are, an int and a float provider never sha
 The file name is `<generated functions folder>/provider_<hash>`, the hash being computed from the provider text, so the
 same pack gives the same names on every build, on the JVM and on JS. When two providers have the same hash, the second
 one stays inline rather than sharing the file.
+
+### `hoist-inline-predicates`
+
+The same move for the inline predicates of `execute` conditions, into `predicate` files:
+
+```kotlin
+configuration {
+	optimization {
+		this += HoistInlinePredicatesPass()
+	}
+}
+
+function("a") { execute { ifCondition { predicate { randomChance(0.5f) } }; run { say("hi") } } }
+function("b") { execute { unlessCondition { predicate { randomChance(0.5f) } }; run { say("bye") } } }
+```
+
+```
+execute if predicate my_pack:generated_scopes/predicate_3c2b6659 run say hi
+execute unless predicate my_pack:generated_scopes/predicate_3c2b6659 run say bye
+```
+
+The predicate is written once, in `data/my_pack/predicate/generated_scopes/predicate_3c2b6659.json`, whatever the
+`if` or `unless` it follows. `minUses` (`2` by default) counts how many times the same inline predicate is written in
+the function lines of the pack, and one line holding two different predicates hoists each of them. A reference to a
+predicate stays as it is. Predicates nested in a resource (a loot table, an advancement, an item modifier) and lines
+starting with `$` (macros) are left alone. Names follow the rule of `hoist-context-providers`.
 
 ## Writing your own pass
 

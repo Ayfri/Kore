@@ -3,11 +3,13 @@ package io.github.ayfri.kore.optimization.utils
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.DataPackStateKey
 import io.github.ayfri.kore.arguments.Argument
+import io.github.ayfri.kore.features.predicates.Predicate
 import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 
 internal val inlineFloatProviders = DataPackStateKey<MutableMap<String, ContextFloatProvider>>("kore.inlineFloatProviders")
 internal val inlineIntProviders = DataPackStateKey<MutableMap<String, ContextIntProvider>>("kore.inlineIntProviders")
+internal val inlinePredicates = DataPackStateKey<MutableMap<String, Predicate>>("kore.inlinePredicates")
 
 /**
  * An SNBT argument written from [value], which the pack keeps under its [snbt] text in the map stored at [key] once a

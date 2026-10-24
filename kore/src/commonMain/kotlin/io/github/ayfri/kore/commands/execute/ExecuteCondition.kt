@@ -17,6 +17,8 @@ import io.github.ayfri.kore.generated.arguments.types.DimensionArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.generated.arguments.types.StopwatchArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
+import io.github.ayfri.kore.optimization.utils.InlineArgument
+import io.github.ayfri.kore.optimization.utils.inlinePredicates
 import io.github.ayfri.kore.serializers.LowercaseSerializer
 import io.github.ayfri.kore.utils.encodeToDataPackSnbt
 import kotlinx.serialization.Serializable
@@ -106,14 +108,10 @@ class ExecuteCondition(private val ex: Execute, isUnless: Boolean) : Scores<Exec
 	/** References a predicate. */
 	fun predicate(predicate: String) = addArguments(listOf(literal("predicate"), literal(predicate)))
 	/** Generates an inline predicate in the execute command. */
-	fun predicate(block: Predicate.() -> Unit) = addArguments(
-		listOf(
-			literal("predicate"),
-			literal(
-				encodeToDataPackSnbt(Predicate().apply(block))
-			),
-		)
-	)
+	fun predicate(block: Predicate.() -> Unit) {
+		val predicate = Predicate().apply(block)
+		addArguments(listOf(literal("predicate"), InlineArgument(predicate, encodeToDataPackSnbt(predicate), inlinePredicates)))
+	}
 
 	/** Returns a handle on the score of [target] on [objective], to compare with the infix operators (`greaterThan`, `matches`...). */
 	fun score(target: ScoreHolderArgument, objective: String) = ExecuteScore(target, objective)
