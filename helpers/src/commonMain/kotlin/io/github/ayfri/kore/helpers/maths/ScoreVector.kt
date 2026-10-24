@@ -1,12 +1,11 @@
 package io.github.ayfri.kore.helpers.maths
 
 import io.github.ayfri.kore.arguments.enums.DataType
-import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.types.EntityArgument
 import io.github.ayfri.kore.arguments.types.literals.rotation
 import io.github.ayfri.kore.arguments.types.literals.self
+import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.commands.data
-import io.github.ayfri.kore.commands.execute.Anchor
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.function
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
@@ -18,19 +17,23 @@ import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.add
 import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.features.predicates.providers.cos
 import io.github.ayfri.kore.features.predicates.providers.div
 import io.github.ayfri.kore.features.predicates.providers.floatStorage
 import io.github.ayfri.kore.features.predicates.providers.floorDiv
 import io.github.ayfri.kore.features.predicates.providers.fromInt
 import io.github.ayfri.kore.features.predicates.providers.length
 import io.github.ayfri.kore.features.predicates.providers.mul
+import io.github.ayfri.kore.features.predicates.providers.negate
 import io.github.ayfri.kore.features.predicates.providers.score
+import io.github.ayfri.kore.features.predicates.providers.sin
 import io.github.ayfri.kore.features.predicates.providers.sub
 import io.github.ayfri.kore.features.predicates.providers.truncate
 import io.github.ayfri.kore.features.predicates.types.EntityTarget
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.generated.Dimensions
 import io.github.ayfri.kore.scoreboard.*
+import kotlin.math.PI
 import kotlin.math.roundToInt
 
 /** How [ScoreVector.teleport] interprets the vector. */
@@ -52,6 +55,19 @@ private fun NumberProviderScope.crossComponent(
 	right: Int,
 	scale: Int,
 ) = floorDiv(sub(mul(first[left], second[right]), mul(first[right], second[left])), constant(scale))
+
+/** The view vector of the game, `(-sin(yaw) cos(pitch), -sin(pitch), cos(yaw) cos(pitch))`, from the degrees in `<storage>:rotation`. */
+private fun NumberProviderScope.viewDirection(axis: Int, scale: Int, storage: String): ContextFloatProvider {
+	val toRadians = constant((PI / 180).toFloat())
+	val yaw = mul(floatStorage(storage, "rotation[0]"), toRadians)
+	val pitch = mul(floatStorage(storage, "rotation[1]"), toRadians)
+	val direction = when (axis) {
+		0 -> mul(negate(sin(yaw)), cos(pitch))
+		1 -> negate(sin(pitch))
+		else -> mul(cos(yaw), cos(pitch))
+	}
+	return truncate(mul(direction, constant(scale.toFloat())))
+}
 
 private fun NumberProviderScope.normalizedComponent(value: ContextIntProvider, scale: Int, storage: String) =
 	truncate(div(mul(fromInt(value), constant(scale.toFloat())), floatStorage(storage, "len")))
@@ -112,13 +128,24 @@ class ScoreVector internal constructor(val math: MathHandle, val name: String, v
 		}
 	}
 
-	/** Runs [block] with the math marker moved to this vector's coordinates, then parks it again. */
+	/**
+	 * Stores the components as doubles in the math storage at `<path>.x/y/z`, then runs the macro [function] as and at [target] with them,
+	 * except for a zero vector when [skipZero] is set.
+	 */
 	context(fn: Function)
-	private fun withMarkerAtVector(block: Function.() -> Unit) {
-		math.ensureEntities()
-		writeInto(math.marker, "Pos")
-		fn.block()
-		math.parkMarker()
+	private fun runMacroAs(target: EntityArgument, path: String, macro: FunctionArgument, skipZero: Boolean = false) {
+		listOf("x", "y", "z").zip(components).forEach { (key, component) ->
+			fn.execute {
+				storeResult { storage(math.storage, "$path.$key", DataType.DOUBLE, inverseScale) }
+				run { scoreboard.players.get(component.entity.asScoreHolder(), component.name) }
+			}
+		}
+		fn.execute {
+			if (skipZero) unlessCondition { data(math.storage, "$path{x:0.0d,y:0.0d,z:0.0d}") }
+			asTarget(target)
+			at(self())
+			run { function(macro, math.storage, path) }
+		}
 	}
 
 	/** Sets the components from plain numbers, `set(0.5, 1.0, 0.0)` stores `500 1000 0`. */
@@ -155,18 +182,27 @@ class ScoreVector internal constructor(val math: MathHandle, val name: String, v
 		math.parkMarker()
 	}
 
-	/** Sets this vector to the unit direction [source] looks at, the same direction as `^ ^ ^1`. */
+	/**
+	 * Sets this vector to the unit direction [source] looks at, the same direction as `^ ^ ^1`, truncated toward zero.
+	 * The math marker copies the rotation of [source] without moving, since reading a player's NBT serializes the whole
+	 * player, then one `compute` per component applies the game's own sine table to it.
+	 *
+	 * ```
+	 * dash.setToLookDirection(self()) // looking south (yaw 0, pitch 0) -> (0, 0, 1000)
+	 * ```
+	 */
 	context(fn: Function)
 	fun setToLookDirection(source: EntityArgument) {
 		math.ensureEntities()
 		fn.execute {
 			inDimension(Dimensions.OVERWORLD)
-			positioned(vec3(0, 0, 0))
 			rotatedAs(source)
-			run { teleport(math.marker, vec3(0, 0, 1).local) }
+			run { teleport(math.marker, math.home, rotation()) }
 		}
-		readInto(math.marker, "Pos")
-		math.parkMarker()
+		fn.data(math.storage) { modify("rotation", math.marker, "Rotation") }
+		components.forEachIndexed { axis, component ->
+			component.setTo { viewDirection(axis, scale, math.storage.asString()) }
+		}
 	}
 
 	context(fn: Function)
@@ -261,18 +297,10 @@ class ScoreVector internal constructor(val math: MathHandle, val name: String, v
 		}
 	}
 
-	/** Rotates [target] to look along this vector, `tp`-based so it also works on players. */
+	/** Rotates [target] to look along this vector, through a macro `rotate`, so it also works on players. A zero vector keeps the rotation, where the game would snap it to yaw -90. */
 	context(fn: Function)
-	fun lookAlong(target: EntityArgument) = withMarkerAtVector {
-		execute {
-			asTarget(target)
-			at(self())
-			positioned(vec3(0, 0, 0))
-			facingEntity(math.marker, Anchor.FEET)
-			positionedAs(self())
-			run { teleport(self(), vec3(), rotation()) }
-		}
-	}
+	fun lookAlong(target: EntityArgument) =
+		runMacroAs(target, "look", math.shared("look_along") { addLine($$"$rotate @s facing ~$(x) ~$(y) ~$(z)") }, skipZero = true)
 
 	/** Writes this vector as the `Motion` of [target], in blocks per tick. Players ignore `Motion` changes. */
 	context(fn: Function)
@@ -284,20 +312,9 @@ class ScoreVector internal constructor(val math: MathHandle, val name: String, v
 	 */
 	context(fn: Function)
 	fun teleport(target: EntityArgument, mode: TeleportMode = TeleportMode.ABSOLUTE) {
-		val teleportFunction = math.shared("teleport_${mode.name.lowercase()}") {
+		runMacroAs(target, "teleport", math.shared("teleport_${mode.name.lowercase()}") {
 			addLine($$"$tp @s $${mode.prefix}$(x) $${mode.prefix}$(y) $${mode.prefix}$(z)")
-		}
-		listOf("x", "y", "z").zip(components).forEach { (key, component) ->
-			fn.execute {
-				storeResult { storage(math.storage, "teleport.$key", DataType.DOUBLE, inverseScale) }
-				run { scoreboard.players.get(component.entity.asScoreHolder(), component.name) }
-			}
-		}
-		fn.execute {
-			asTarget(target)
-			at(self())
-			run { function(teleportFunction, math.storage, "teleport") }
-		}
+		})
 	}
 }
 

@@ -77,7 +77,8 @@ function("smooth_orbit") {
 ## atan2
 
 `atan2(y, x, output)` returns the angle of the point `(x, y)` in degrees, in `(-180, 180]`. Both inputs only need to
-share a scale. It uses the math marker's `facing` rotation, so it is exact to the float.
+share a scale. A macro `rotate` makes the math marker face the point from its own position, so the marker never leaves
+its forceloaded chunk and the angle is exact to the float. The point `(0, 0)` has no angle.
 
 ```kotlin
 function("turret_aim") {
@@ -127,7 +128,7 @@ the others are first copied into scratch fake players, one extra command each.
 
 ## Helper entities
 
-`atan2` and the vector helpers that read positions or directions use a `marker` that `kore_math_init` summons in a
+`atan2` and the vector helpers that read positions or look directions use a `marker` that `kore_math_init` summons in a
 forceloaded chunk at `-30000000 1664`. It has the fixed UUID `4b4f5245-0-0-0-1` and carries the Smithed
 `smithed.entity` and `smithed.strict` tags, so well-behaved packs leave it alone. Change
 `HelpersConstants.mathEntitiesX` / `mathEntitiesZ` before registering to use another chunk.

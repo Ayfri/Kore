@@ -32,7 +32,7 @@ three objectives in the math load function. Operations between two vectors expec
 
 > [!FOOTPRINT]
 > - **Objectives:** `<name>_x`, `<name>_y` and `<name>_z` per vector, plus `kore_math`.
-> - **Storage:** `<pack>:kore_math`, holding the `len` of `normalize`, the motion read by `setToMotion` and the `teleport` macro arguments.
+> - **Storage:** `<pack>:kore_math`, holding the `len` of `normalize`, the `rotation` of `setToLookDirection`, the motion read by `setToMotion` and the `teleport` and `look` macro arguments.
 > - **Entities:** one `minecraft:marker`, UUID `4b4f5245-0000-0000-0000-000000000001`, tagged `kore.math`, `smithed.entity` and `smithed.strict`, summoned once at -30000000 0 1664 by the operations that read positions or directions.
 > - **Forceloaded chunks:** the one holding those entities, x -30000000 z 1664.
 > - **Every tick:** no.
@@ -50,7 +50,9 @@ function("track_arrow") {
 - `setToPosition(entity)` reads the position off the math marker teleported onto the entity, never touching its NBT,
   since reading any field of a player's NBT serializes the whole player. `setToMotion(entity)` copies `Motion` to
   storage once and reads the three components from there.
-- `setToLookDirection(entity)` gives the unit vector the entity looks along, the direction of `^ ^ ^1`.
+- `setToLookDirection(entity)` gives the unit vector the entity looks along, the direction of `^ ^ ^1`, truncated
+  toward zero. The math marker copies the entity's rotation, then one `compute` per component applies the game's sine
+  table to it, so no player NBT is read.
 - `set(x, y, z)` takes plain numbers, `set(0.0, 0.5, 0.0)` stores `0 500 0`.
 - `setTo(other)` copies another vector.
 
@@ -130,7 +132,8 @@ function("launch_pad") {
 	- `TeleportMode.ABSOLUTE` treats the vector as world coordinates,
 	- `TeleportMode.RELATIVE` offsets from the entity (`~x ~y ~z`),
 	- `TeleportMode.LOCAL` offsets along the entity's view (`^x ^y ^z`, x is left, z is forward).
-- `lookAlong(entity)` turns the entity to face along the vector, through `tp` so it also works on players.
+- `lookAlong(entity)` turns the entity to face along the vector, through a macro `rotate` so it also works on players.
+  A zero vector keeps the rotation.
 
 ## Native physics attributes
 

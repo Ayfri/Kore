@@ -12,6 +12,7 @@ import io.github.ayfri.kore.helpers.state.scoreboard
 import io.github.ayfri.kore.scoreboard.ScoreboardEntity
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 
 private val holder = FakePlayer("#p")
 private fun score(name: String) = ScoreboardEntity(name, holder)
@@ -41,14 +42,15 @@ fun mathScalarTests() = dataPack("math_tests") {
 		math.atan2(score("y"), score("x"), score("angle"))
 	}
 
-	generated("atan2_1") assertsIs """
-		execute store result entity 4b4f5245-0000-0000-0000-000000000001 Pos[0] double 0.001 run scoreboard players get #y kore_math
-		execute store result entity 4b4f5245-0000-0000-0000-000000000001 Pos[2] double 0.001 run scoreboard players get #x kore_math
-		execute in minecraft:overworld positioned 0.0 0.0 0.0 facing entity 4b4f5245-0000-0000-0000-000000000001 feet run teleport 4b4f5245-0000-0000-0000-000000000001 -30000000.0 0.0 1664.0 ~ ~
+	generated("atan2_1") shouldBe """
+		execute store result storage math_tests:kore_math atan2.y double 0.001 run scoreboard players get #y kore_math
+		execute store result storage math_tests:kore_math atan2.x double 0.001 run scoreboard players get #x kore_math
+		execute as 4b4f5245-0000-0000-0000-000000000001 at @s run function math_tests:generated_scopes/kore_math/atan2_facing with storage math_tests:kore_math atan2
 		execute store result score #r kore_math run data get entity 4b4f5245-0000-0000-0000-000000000001 Rotation[0] -1
 		execute if score #r kore_math matches ..-180 run scoreboard players add #r kore_math 360
 		return run scoreboard players get #r kore_math
 	""".trimIndent()
+	generated("atan2_facing") shouldBe $$"$rotate @s facing ~$(y) ~ ~$(x)"
 
 	function("legacy_helpers") {
 		val player = player("P")
@@ -205,19 +207,42 @@ fun mathVectorTests() = dataPack("vector_tests") {
 
 	function("look_direction") {
 		a.setToLookDirection(self())
-		lines.first() assertsIs "execute in minecraft:overworld positioned 0.0 0.0 0.0 rotated as @s run teleport 4b4f5245-0000-0000-0000-000000000001 ^ ^ ^1"
+		val yaw = """{type:"minecraft:mul",inputs:[{type:"minecraft:storage",path:"rotation[0]",storage:"vector_tests:kore_math"},0.017453292d]}"""
+		val pitch = """{type:"minecraft:mul",inputs:[{type:"minecraft:storage",path:"rotation[1]",storage:"vector_tests:kore_math"},0.017453292d]}"""
+		val sinYaw = """{type:"minecraft:negate",input:{type:"minecraft:sin",input:$yaw}}"""
+		val cosPitch = """{type:"minecraft:cos",input:$pitch}"""
+		fun component(axis: String, direction: String) =
+			"""execute store result score #p a_$axis run compute default float {type:"minecraft:truncate",input:{type:"minecraft:mul",inputs:[$direction,1000]}}"""
+		lines shouldBe listOf(
+			"execute in minecraft:overworld rotated as @s run teleport 4b4f5245-0000-0000-0000-000000000001 -30000000.0 0.0 1664.0 ~ ~",
+			"data modify storage vector_tests:kore_math rotation set from entity 4b4f5245-0000-0000-0000-000000000001 Rotation",
+			component("x", """{type:"minecraft:mul",inputs:[$sinYaw,$cosPitch]}"""),
+			component("y", """{type:"minecraft:negate",input:{type:"minecraft:sin",input:$pitch}}"""),
+			component("z", """{type:"minecraft:mul",inputs:[{type:"minecraft:cos",input:$yaw},$cosPitch]}"""),
+		)
 	}
 
 	function("move") {
 		a.teleport(self(), TeleportMode.RELATIVE)
 		a.applyAsMotion(self())
 		a.lookAlong(self())
-		lines[3] assertsIs "execute as @s at @s run function vector_tests:generated_scopes/kore_math/teleport_relative with storage vector_tests:kore_math teleport"
-		lines[4] assertsIs "execute store result entity @s Motion[0] double 0.001 run scoreboard players get #p a_x"
-		lines[10] assertsIs "execute as @s at @s positioned 0.0 0.0 0.0 facing entity 4b4f5245-0000-0000-0000-000000000001 feet positioned as @s run teleport @s ~ ~ ~ ~ ~"
+		lines shouldBe listOf(
+			"execute store result storage vector_tests:kore_math teleport.x double 0.001 run scoreboard players get #p a_x",
+			"execute store result storage vector_tests:kore_math teleport.y double 0.001 run scoreboard players get #p a_y",
+			"execute store result storage vector_tests:kore_math teleport.z double 0.001 run scoreboard players get #p a_z",
+			"execute as @s at @s run function vector_tests:generated_scopes/kore_math/teleport_relative with storage vector_tests:kore_math teleport",
+			"execute store result entity @s Motion[0] double 0.001 run scoreboard players get #p a_x",
+			"execute store result entity @s Motion[1] double 0.001 run scoreboard players get #p a_y",
+			"execute store result entity @s Motion[2] double 0.001 run scoreboard players get #p a_z",
+			"execute store result storage vector_tests:kore_math look.x double 0.001 run scoreboard players get #p a_x",
+			"execute store result storage vector_tests:kore_math look.y double 0.001 run scoreboard players get #p a_y",
+			"execute store result storage vector_tests:kore_math look.z double 0.001 run scoreboard players get #p a_z",
+			"execute unless data storage vector_tests:kore_math look{x:0.0d,y:0.0d,z:0.0d} as @s at @s run function vector_tests:generated_scopes/kore_math/look_along with storage vector_tests:kore_math look",
+		)
 	}
 
 	generated("teleport_relative") assertsIs $$"$tp @s ~$(x) ~$(y) ~$(z)"
+	generated("look_along") shouldBe $$"$rotate @s facing ~$(x) ~$(y) ~$(z)"
 
 	shouldThrow<IllegalArgumentException> {
 		function("bad_cross") { a.cross(b, a) }

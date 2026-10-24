@@ -7,12 +7,11 @@ import io.github.ayfri.kore.arguments.maths.vec2
 import io.github.ayfri.kore.arguments.maths.vec3
 import io.github.ayfri.kore.arguments.numbers.ranges.rangeOrIntEnd
 import io.github.ayfri.kore.arguments.types.literals.literal
-import io.github.ayfri.kore.arguments.types.literals.rotation
+import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.literals.uuid
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.arguments.types.resources.storage
 import io.github.ayfri.kore.commands.*
-import io.github.ayfri.kore.commands.execute.Anchor
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.entities.Entity
@@ -91,7 +90,7 @@ class MathHandle internal constructor(val datapack: DataPack, val objective: Str
 	} as Function
 	private val objectives = mutableSetOf(objective)
 
-	/** Marker teleported around `0 0 0` to turn rotations into directions and back. */
+	/** Marker parked at [home]: it copies rotations, faces points for `atan2` and visits an entity to read its position. */
 	internal val marker = uuid(HelpersConstants.mathMarkerUuid)
 	internal val storage = storage(HelpersConstants.mathStorage, datapack.name)
 	internal val home = vec3(HelpersConstants.mathEntitiesX.toDouble(), 0.0, HelpersConstants.mathEntitiesZ.toDouble())
@@ -214,7 +213,8 @@ class MathHandle internal constructor(val datapack: DataPack, val objective: Str
 
 	/**
 	 * Angle of the point ([x], [y]) in degrees scaled by [angleScale], in `(-180, 180]`, like `atan2(y, x)`.
-	 * Both inputs only need to share a scale. Uses the math marker's `facing` rotation, exact to the float.
+	 * Both inputs only need to share a scale. The math marker, which stays in its forceloaded
+	 * chunk, `rotate`s to face the point, exact to the float. The point `(0, 0)` has no angle.
 	 *
 	 * ```kotlin
 	 * math.atan2(y, x, angle) // y = 1000, x = 1000 -> angle = 45
@@ -223,19 +223,19 @@ class MathHandle internal constructor(val datapack: DataPack, val objective: Str
 	context(fn: Function)
 	fun atan2(y: ScoreboardEntity, x: ScoreboardEntity, output: ScoreboardEntity, angleScale: Int = 1) {
 		ensureEntities()
+		val facing = shared("atan2_facing") { addLine($$"$rotate @s facing ~$(y) ~ ~$(x)") }
 		val function = shared("atan2_$angleScale") {
 			val result = temp("r")
-			listOf("Pos[0]" to "y", "Pos[2]" to "x").forEach { (path, name) ->
+			listOf("y", "x").forEach { name ->
 				execute {
-					storeResult { entity(marker, path, DataType.DOUBLE, 0.001) }
+					storeResult { storage(this@MathHandle.storage, "atan2.$name", DataType.DOUBLE, 0.001) }
 					run { scoreboard.players.get(temp(name).entity.asScoreHolder(), objective) }
 				}
 			}
 			execute {
-				inDimension(Dimensions.OVERWORLD)
-				positioned(vec3(0, 0, 0))
-				facingEntity(marker, Anchor.FEET)
-				run { teleport(marker, home, rotation()) }
+				asTarget(marker)
+				at(self())
+				run { function(facing, this@MathHandle.storage, "atan2") }
 			}
 			execute {
 				storeResult { score(result.entity.asScoreHolder(), objective) }
