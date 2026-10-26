@@ -28,7 +28,7 @@ fun ItemModifier.limitCount(limit: ContextIntProviderBounds, block: LimitCount.(
 }
 
 /**
- * Add a `limit_count` step clamping the count to [range].
+ * Add a `limit_count` step clamping the count to [range], the bounds being written as is and nothing being drawn.
  *
  * ```
  * limitCount(1..32)  // "limit": { "max": 32, "min": 1 }

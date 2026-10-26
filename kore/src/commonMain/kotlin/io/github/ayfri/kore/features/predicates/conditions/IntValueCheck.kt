@@ -32,7 +32,8 @@ fun Predicate.intValueCheck(value: ContextIntProvider, test: ContextIntProviderR
 }
 
 /**
- * Adds an [IntValueCheck] condition passing when [value] falls within [range], both bounds included.
+ * Adds an [IntValueCheck] condition passing when [value] falls within [range], both bounds included, the range being
+ * matched and never drawn from.
  *
  * ```
  * intValueCheck(score("kills", EntityTarget.THIS), 0..10)  // "test": { "max": 10, "min": 0 }

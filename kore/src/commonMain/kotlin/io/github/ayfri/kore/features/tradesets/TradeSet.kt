@@ -8,6 +8,7 @@ import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.providers.uniform
+import io.github.ayfri.kore.features.predicates.providers.utils.toUniformProvider
 import io.github.ayfri.kore.generated.arguments.VillagerTradeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.TradeSetArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -84,6 +85,17 @@ fun TradeSet.amount(value: Int) {
 /** Rolls between [min] and [max] trades out of the set, both included. */
 fun TradeSet.amount(min: Int, max: Int) {
 	amount = uniform(min, max)
+}
+
+/**
+ * Rolls a number of trades drawn uniformly from [range], both ends included.
+ *
+ * ```
+ * amount(1..3)  // "amount": {"type": "minecraft:uniform", "max": 3, "min": 1}
+ * ```
+ */
+fun TradeSet.amount(range: IntRange) {
+	amount = range.toUniformProvider()
 }
 
 /** Seeds the rolls from the random sequence [name], making them reproducible. */

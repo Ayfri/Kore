@@ -4,6 +4,7 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.ConstantContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
+import io.github.ayfri.kore.features.predicates.providers.utils.toUniformProvider
 import kotlinx.serialization.Serializable
 
 /**
@@ -40,3 +41,13 @@ fun ItemModifier.setOminousBottleAmplifier(amplifier: ContextIntProvider, block:
  */
 fun ItemModifier.setOminousBottleAmplifier(amplifier: Int, block: SetOminousBottleAmplifier.() -> Unit = {}) =
 	setOminousBottleAmplifier(ConstantContextIntProvider(amplifier), block)
+
+/**
+ * Add a `set_ominous_bottle_amplifier` step drawing the amplifier uniformly from [amplifier], both ends included.
+ *
+ * ```
+ * setOminousBottleAmplifier(2..4) // "amplifier": { "type": "minecraft:uniform", "max": 4, "min": 2 }
+ * ```
+ */
+fun ItemModifier.setOminousBottleAmplifier(amplifier: IntRange, block: SetOminousBottleAmplifier.() -> Unit = {}) =
+	setOminousBottleAmplifier(amplifier.toUniformProvider(), block)

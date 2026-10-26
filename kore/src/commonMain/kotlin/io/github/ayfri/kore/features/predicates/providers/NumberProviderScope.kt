@@ -12,6 +12,10 @@ package io.github.ayfri.kore.features.predicates.providers
  * family: [intStorage] and [floatStorage], [intEnvironmentAttribute] and [floatEnvironmentAttribute], [intWeightedList]
  * and [floatWeightedList], [intNumberDispatcher] and [floatNumberDispatcher].
  *
+ * A range given where one number is expected is a uniform draw (`rolls(1..3)`, `setCount(1..3)` write a `uniform`
+ * provider), while a range given where a range is expected is the bounds it clamps or matches (`limitCount(1..32)`,
+ * `intValueCheck(x, 0..10)`, `timeCheck`) and draws nothing.
+ *
  * Minecraft Wiki: https://minecraft.wiki/w/Number_provider
  */
 interface NumberProviderScope

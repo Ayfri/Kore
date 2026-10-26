@@ -13,6 +13,7 @@ import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.features.predicates.providers.utils.toUniformProvider
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.VillagerTradeArgument
@@ -80,6 +81,18 @@ fun VillagerTrade.additionalWants(id: ItemArgument, count: ContextIntProvider, b
 }
 
 /**
+ * Set an optional second item the villager requests alongside [VillagerTrade.wants], [count] being drawn uniformly from
+ * a range, both ends included.
+ *
+ * ```
+ * additionalWants(Items.PAPER, 1..3)  // "additional_wants": {"count": {"type": "minecraft:uniform", ...}, "id": "minecraft:paper"}
+ * ```
+ */
+fun VillagerTrade.additionalWants(id: ItemArgument, count: IntRange, block: Components.() -> Unit = {}) {
+	additionalWants = tradeCost(id, count.toUniformProvider(), block)
+}
+
+/**
  * Set the item modifier applied to the output item: one function is written as an object, several as a list, and an
  * item modifier ID through `reference(...)`.
  */
@@ -113,6 +126,15 @@ fun VillagerTrade.maxUses(value: ContextIntProvider) {
 fun VillagerTrade.maxUses(value: Int) = maxUses(constant(value))
 
 /**
+ * Set how many times the trade can be used before it locks, drawn uniformly from [range], both ends included.
+ *
+ * ```
+ * maxUses(8..12)  // "max_uses": {"type": "minecraft:uniform", "max": 12, "min": 8}
+ * ```
+ */
+fun VillagerTrade.maxUses(range: IntRange) = maxUses(range.toUniformProvider())
+
+/**
  * Set the price discount a player earns per reputation point, as a float provider.
  *
  * ```
@@ -131,6 +153,15 @@ fun VillagerTrade.reputationDiscount(value: ContextFloatProvider) {
  * ```
  */
 fun VillagerTrade.reputationDiscount(value: Float) = reputationDiscount(constant(value))
+
+/**
+ * Set the price discount a player earns per reputation point, drawn uniformly from [range], the game never returning the end itself.
+ *
+ * ```
+ * reputationDiscount(0.05f..0.1f)  // "reputation_discount": {"type": "minecraft:uniform", "max": 0.1, "min": 0.05}
+ * ```
+ */
+fun VillagerTrade.reputationDiscount(range: ClosedFloatingPointRange<Float>) = reputationDiscount(range.toUniformProvider())
 
 /**
  * Set the item the villager requests as the primary input, [count] being a fixed number.
@@ -155,6 +186,17 @@ fun VillagerTrade.wants(id: ItemArgument, count: ContextIntProvider, block: Comp
 }
 
 /**
+ * Set the item the villager requests as the primary input, [count] being drawn uniformly from a range, both ends included.
+ *
+ * ```
+ * wants(Items.WHEAT, 16..24)  // "wants": {"count": {"type": "minecraft:uniform", "max": 24, "min": 16}, "id": "minecraft:wheat"}
+ * ```
+ */
+fun VillagerTrade.wants(id: ItemArgument, count: IntRange, block: Components.() -> Unit = {}) {
+	wants = tradeCost(id, count.toUniformProvider(), block)
+}
+
+/**
  * Set the experience the villager earns when the trade is used, as an int provider.
  *
  * ```
@@ -173,3 +215,12 @@ fun VillagerTrade.xp(value: ContextIntProvider) {
  * ```
  */
 fun VillagerTrade.xp(value: Int) = xp(constant(value))
+
+/**
+ * Set the experience the villager earns when the trade is used, drawn uniformly from [range], both ends included.
+ *
+ * ```
+ * xp(1..3)  // "xp": {"type": "minecraft:uniform", "max": 3, "min": 1}
+ * ```
+ */
+fun VillagerTrade.xp(range: IntRange) = xp(range.toUniformProvider())

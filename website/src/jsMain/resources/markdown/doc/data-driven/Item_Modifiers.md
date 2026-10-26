@@ -55,7 +55,7 @@ Use the `itemModifier` builder function to create item modifiers in Kore:
 dataPack("my_datapack") {
 	val modifier = itemModifier("fortune_bonus") {
 		enchantRandomly(Enchantments.FORTUNE)
-		setCount(uniform(1, 5))
+		setCount(1..5)
 	}
 }
 ```
@@ -99,7 +99,7 @@ lootTable("treasure") {
 	pool {
 		// Pool-level modifier
 		modifier {
-			setCount(uniform(1, 3))
+			setCount(1..3)
 		}
 
 		entries {
@@ -129,8 +129,8 @@ itemModifier("set_count") {
 	// Exact count
 	setCount(5)
 
-	// Random range
-	setCount(uniform(1, 10))
+	// Random range, both ends included
+	setCount(1..10)
 
 	// Add to current count
 	setCount(5, add = true)
@@ -153,8 +153,8 @@ itemModifier("damage") {
 	// Set to 80% durability
 	setDamage(0.8f)
 
-	// Random damage
-	setDamage(uniform(0.5f, 1.0f))
+	// Random damage, the end itself never being returned
+	setDamage(0.5f..1.0f)
 
 	// Add to current damage
 	setDamage(-0.1f, add = true)  // Repair 10%
@@ -206,7 +206,7 @@ itemModifier("limit") {
 }
 ```
 
-`limitCount(max = constant(64))` writes `"limit": { "max": 64 }`. A single `Int` isn't accepted, so `limitCount(64)` can't silently mean a lower bound: pass both bounds, or name the provider bound you set.
+`limitCount(1..32)` clamps the count between the two bounds and draws nothing, unlike `setCount(1..32)`, which draws a uniform count. `limitCount(max = constant(64))` writes `"limit": { "max": 64 }`. A single `Int` isn't accepted, so `limitCount(64)` can't silently mean a lower bound: pass both bounds, or name the provider bound you set.
 
 ### Enchantments
 
@@ -251,7 +251,7 @@ itemModifier("table_enchant") {
 	enchantWithLevels(levels = 30)
 
 	// Random level range
-	enchantWithLevels(levels = uniform(20, 39))
+	enchantWithLevels(levels = 20..39)
 
 	// Limit to specific enchantments
 	enchantWithLevels(Enchantments.PROTECTION, levels = 30)
@@ -277,7 +277,7 @@ itemModifier("specific_enchants") {
 }
 ```
 
-A level is a plain number or an int provider, `this[Enchantments.SHARPNESS] = uniform(1, 3)` for instance.
+A level is a plain number, a range drawn uniformly (`this[Enchantments.SHARPNESS] = 1..3`) or an int provider (`this[Enchantments.SHARPNESS] = uniform(1, 3)`). The plain number and range forms need `import io.github.ayfri.kore.features.itemmodifiers.functions.set`, otherwise the standard library `set` rejects them with a type mismatch.
 
 #### enchantedCountIncrease
 
@@ -624,7 +624,7 @@ itemModifier("random_dyes") {
   setRandomDyes(3)
 
   // Dynamic count
-  setRandomDyes(uniform(1, 5))
+  setRandomDyes(1..5)
 }
 ```
 
@@ -893,7 +893,7 @@ itemModifier("filter") {
 		}
 
 		onPass {
-			setCount(uniform(1, 5))
+			setCount(1..5)
 		}
 	}
 }

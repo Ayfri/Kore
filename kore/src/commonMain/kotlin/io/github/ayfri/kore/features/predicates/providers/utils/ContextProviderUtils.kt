@@ -13,6 +13,8 @@ import io.github.ayfri.kore.features.predicates.providers.MulContextFloatProvide
 import io.github.ayfri.kore.features.predicates.providers.MulContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NegateContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.SubContextIntProvider
+import io.github.ayfri.kore.features.predicates.providers.UniformContextFloatProvider
+import io.github.ayfri.kore.features.predicates.providers.UniformContextIntProvider
 
 private val Any?.isTagReference
 	get() = this is ContextIntProviderReference && id is TaggedResourceLocationArgument ||
@@ -88,4 +90,18 @@ internal fun mulFloats(left: ContextFloatProvider, right: ContextFloatProvider) 
 	right.isConstant(1f) -> left
 	left.isConstant(1f) -> right
 	else -> MulContextFloatProvider(left.mulOperands + right)
+}
+
+/** A range with equal ends is the constant, so `2..2` is written `2`. */
+internal fun IntRange.toUniformProvider(): ContextIntProvider {
+	require(!isEmpty()) { "Cannot draw from the empty range $this." }
+	return if (first == last) ConstantContextIntProvider(first)
+	else UniformContextIntProvider(ConstantContextIntProvider(last), ConstantContextIntProvider(first))
+}
+
+/** A range with equal ends is the constant, so `1f..1f` is written `1.0`. */
+internal fun ClosedFloatingPointRange<Float>.toUniformProvider(): ContextFloatProvider {
+	require(!isEmpty()) { "Cannot draw from the empty range $this." }
+	return if (start == endInclusive) ConstantContextFloatProvider(start)
+	else UniformContextFloatProvider(ConstantContextFloatProvider(endInclusive), ConstantContextFloatProvider(start))
 }

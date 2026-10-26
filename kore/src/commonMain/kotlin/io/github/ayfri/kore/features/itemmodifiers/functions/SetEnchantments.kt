@@ -4,6 +4,7 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.ConstantContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
+import io.github.ayfri.kore.features.predicates.providers.utils.toUniformProvider
 import io.github.ayfri.kore.generated.arguments.types.EnchantmentArgument
 import kotlinx.serialization.Serializable
 
@@ -34,4 +35,15 @@ fun ItemModifier.setEnchantments(add: Boolean? = null, enchantments: MutableMap<
  */
 operator fun MutableMap<EnchantmentArgument, ContextIntProvider>.set(enchantment: EnchantmentArgument, level: Int) {
 	this[enchantment] = ConstantContextIntProvider(level)
+}
+
+/**
+ * Sets [enchantment] to a level drawn uniformly from [levels], both ends included. Needs `import io.github.ayfri.kore.features.itemmodifiers.functions.set`.
+ *
+ * ```
+ * this[Enchantments.SHARPNESS] = 1..3  // "minecraft:sharpness": {"type": "minecraft:uniform", "max": 3, "min": 1}
+ * ```
+ */
+operator fun MutableMap<EnchantmentArgument, ContextIntProvider>.set(enchantment: EnchantmentArgument, levels: IntRange) {
+	this[enchantment] = levels.toUniformProvider()
 }

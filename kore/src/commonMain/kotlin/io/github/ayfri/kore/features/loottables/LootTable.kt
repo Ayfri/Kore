@@ -9,6 +9,7 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.features.predicates.providers.utils.toUniformProvider
 import io.github.ayfri.kore.generated.arguments.types.LootTableArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -76,3 +77,14 @@ fun LootTable.pool(rolls: ContextIntProvider = constant(1), block: LootPool.() -
  * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
  */
 fun LootTable.pool(rolls: Int, block: LootPool.() -> Unit = {}) = pool(constant(rolls), block)
+
+/**
+ * Add a loot pool rolled a number of times drawn uniformly from [rolls], both ends included.
+ *
+ * ```
+ * pool(1..3) { ... }  // "rolls": {"type": "minecraft:uniform", "max": 3, "min": 1}
+ * ```
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
+ */
+fun LootTable.pool(rolls: IntRange, block: LootPool.() -> Unit = {}) = pool(rolls.toUniformProvider(), block)

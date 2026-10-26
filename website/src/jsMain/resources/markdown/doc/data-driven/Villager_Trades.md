@@ -107,7 +107,7 @@ datapack.villagerTrade("wheat_for_emerald") {
 }
 
 datapack.villagerTrade("variable_price") {
-    wants(Items.WHEAT, uniform(16, 24))  // "count": {"type": "minecraft:uniform", "max": 24, "min": 16}
+    wants(Items.WHEAT, 16..24)  // "count": {"type": "minecraft:uniform", "max": 24, "min": 16}
     additionalWants(Items.PAPER, reference(contextIntProvider("paper_cost", 2)))  // "count": "my_pack:paper_cost"
     gives(Items.EMERALD)
 }
@@ -142,8 +142,8 @@ All fields are optional except `wants` and `gives`, which must be set before the
 | `wants`                        | `TradeCost`                                | Primary item the villager requests. **Required.**                                 |
 | `xp`                           | `ContextIntProvider?`                      | XP points awarded to the villager when the trade completes.                       |
 
-`maxUses` and `xp` take [int providers](/docs/data-driven/loot-tables#context-providers) (`maxUses(12)`, `xp(uniform(1, 5))`),
-`reputationDiscount` a float provider (`reputationDiscount(0.05f)`). Each one also takes the ID of a
+`maxUses` and `xp` take [int providers](/docs/data-driven/loot-tables#context-providers) (`maxUses(12)`, `xp(uniform(1, 5))`), or a range drawn uniformly (`maxUses(8..12)`, `xp(1..5)`),
+`reputationDiscount` a float provider (`reputationDiscount(0.05f)`) or a float range (`reputationDiscount(0.05f..0.1f)`). Each one also takes the ID of a
 [context provider file](/docs/data-driven/loot-tables#context-provider-files) through `reference(...)`:
 
 ```kotlin
@@ -290,6 +290,7 @@ tradeSet("farmer/level_1") {
 |-------------------------------|---------------------------------------------------------------|
 | `amount(value)`               | Rolls exactly `value` trades.                                 |
 | `amount(min, max)`            | Rolls between `min` and `max` trades, both included.          |
+| `amount(range)`               | The same from a range, `amount(1..3)`.                        |
 | `amount(provider)`            | Any int provider (`binomial(4, 0.5f)`), or a `reference(id)` to a provider file. |
 | `randomSequence(name, ns)`    | Seeds the rolls from a named random sequence.                 |
 | `trade(trade)`                | Appends one trade or tag to the pool.                         |

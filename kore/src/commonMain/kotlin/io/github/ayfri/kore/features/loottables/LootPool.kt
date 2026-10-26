@@ -12,6 +12,7 @@ import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.features.predicates.providers.utils.toUniformProvider
 import io.github.ayfri.kore.features.predicates.toCondition
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import kotlinx.serialization.Serializable
@@ -40,6 +41,15 @@ fun LootPool.rolls(value: ContextIntProvider) {
 /** Set the number of rolls as a constant. */
 fun LootPool.rolls(value: Int) = rolls(constant(value))
 
+/**
+ * Set the number of rolls, drawn uniformly from [range], both ends included.
+ *
+ * ```
+ * rolls(1..3)  // "rolls": {"type": "minecraft:uniform", "max": 3, "min": 1}
+ * ```
+ */
+fun LootPool.rolls(range: IntRange) = rolls(range.toUniformProvider())
+
 /** Set the number of bonus rolls. */
 fun LootPool.bonusRolls(value: ContextFloatProvider) {
 	bonusRolls = value
@@ -47,6 +57,15 @@ fun LootPool.bonusRolls(value: ContextFloatProvider) {
 
 /** Set the number of bonus rolls as a constant. */
 fun LootPool.bonusRolls(value: Float) = bonusRolls(constant(value))
+
+/**
+ * Set the number of bonus rolls, drawn uniformly from [range], the game never returning the end itself.
+ *
+ * ```
+ * bonusRolls(0f..1f)  // "bonus_rolls": {"type": "minecraft:uniform", "max": 1.0, "min": 0.0}
+ * ```
+ */
+fun LootPool.bonusRolls(range: ClosedFloatingPointRange<Float>) = bonusRolls(range.toUniformProvider())
 
 /** Set the predicate condition, several conditions being wrapped in an `all_of`. */
 fun LootPool.condition(vararg value: PredicateCondition) {

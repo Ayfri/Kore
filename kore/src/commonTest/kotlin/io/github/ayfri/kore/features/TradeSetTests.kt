@@ -96,6 +96,21 @@ fun DataPack.tradeSetTests() {
 		}
 	""".trimIndent()
 
+	tradeSet("range_amount") {
+		trades(wheatTrade)
+		amount(1..3)
+	}
+	tradeSets.last() assertsIs """
+		{
+			"amount": {
+				"type": "minecraft:uniform",
+				"max": 3,
+				"min": 1
+			},
+			"trades": "tradeSet:emerald_for_wheat"
+		}
+	""".trimIndent()
+
 	val subFolder = tradeSet("farmer/level_1") {
 		trades(Tags.VillagerTrade.Farmer.LEVEL_1)
 		amount = uniform(2, 4)

@@ -4,6 +4,7 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.features.predicates.providers.utils.toUniformProvider
 import io.github.ayfri.kore.generated.arguments.EnchantmentOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -60,6 +61,26 @@ fun ItemModifier.enchantWithLevels(
 	levels: Int,
 	block: EnchantWithLevels.() -> Unit = {},
 ) = enchantWithLevels(*enchantments, levels = constant(levels), block = block)
+
+/**
+ * Add an `enchant_with_levels` step spending a number of levels drawn uniformly from [levels], both ends included.
+ *
+ * ```
+ * enchantWithLevels(levels = 20..39)  // "levels": {"type": "minecraft:uniform", "max": 39, "min": 20}
+ * ```
+ */
+fun ItemModifier.enchantWithLevels(
+	enchantments: List<EnchantmentOrTagArgument>? = null,
+	levels: IntRange,
+	block: EnchantWithLevels.() -> Unit = {},
+) = enchantWithLevels(enchantments, levels.toUniformProvider(), block)
+
+/** Vararg convenience overload for `enchant_with_levels` drawing the levels uniformly from [levels], both ends included. */
+fun ItemModifier.enchantWithLevels(
+	vararg enchantments: EnchantmentOrTagArgument,
+	levels: IntRange,
+	block: EnchantWithLevels.() -> Unit = {},
+) = enchantWithLevels(*enchantments, levels = levels.toUniformProvider(), block = block)
 
 /** Configure the candidate enchantments list. */
 fun EnchantWithLevels.enchantments(block: MutableList<EnchantmentOrTagArgument>.() -> Unit = {}) {

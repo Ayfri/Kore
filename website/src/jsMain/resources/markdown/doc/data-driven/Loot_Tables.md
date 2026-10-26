@@ -225,6 +225,8 @@ The builders are extensions on `NumberProviderScope`, so they only resolve insid
 
 Most fields take a plain number for a fixed value instead of `constant(...)`: `rolls(3)`, `bonusRolls(0.5f)`, `setCount(2)`, `enchantWithLevels(levels = 30)` and `potionEffect(Effects.NIGHT_VISION, 200)` write the bare number. `constant(...)` stays for a fixed value inside an aggregate (`add`, `max`, `min`, `mul`) and for a single bound such as `limitCount(max = constant(64))`. The `fallback` of `score`, `intStorage` and `floatStorage` takes a plain number too, `score("kills", EntityTarget.THIS, 0)` writing `"fallback": 0`.
 
+A range given where one number is expected is a uniform draw with both ends included: `rolls(1..3)`, `pool(1..3) { }`, `setCount(1..3)`, `enchantWithLevels(levels = 20..39)`, `maxUses(8..12)` write `{"type": "minecraft:uniform", "min": 1, "max": 3}`, and a float range such as `bonusRolls(0f..1f)` or `setDamage(0.2f..0.8f)` does the same with floats, the game never returning the end itself. Equal ends write the number (`rolls(2..2)` is `2`) and an empty range such as `3..1` throws an `IllegalArgumentException`. A range given where a range is expected is the bounds it clamps or matches and draws nothing: `limitCount(1..32)`, `intValueCheck(score, 0..10)` and `timeCheck(clock, 0..12000)`.
+
 | Builder                                               | Family       | Description                                               | Example                                                                                  |
 |-------------------------------------------------------|--------------|-----------------------------------------------------------|------------------------------------------------------------------------------------------|
 | `abs(input)`                                          | int, float   | Absolute value                                            | `abs(sub(constant(1), constant(5)))`                                                     |
@@ -378,7 +380,7 @@ This writes `weighted_list` as `{"type": "minecraft:weighted_list", "distributio
 
 ```kotlin
 pool {
-	rolls = uniform(2, 5)  // 2-5 rolls randomly
+	rolls(2..5)  // 2-5 rolls randomly
 	bonusRolls(1f)  // +1 roll per luck level
 
 	entries {
@@ -460,7 +462,7 @@ entries {
 			randomChance(0.5f)
 		}
 		modifier {
-			setCount(uniform(1, 3))
+			setCount(1..3)
 		}
 	}
 }
@@ -689,7 +691,7 @@ A `modifier` transforms the generated items. It can be set at table, pool, or en
 ```kotlin
 modifier {
 	// Set stack count
-	setCount(uniform(1, 5))
+	setCount(1..5)
 
 	// Apply enchantments
 	enchantRandomly(Enchantments.FORTUNE)
@@ -753,7 +755,7 @@ dataPack("treasure_hunt") {
 				item(Items.DIAMOND_SWORD) {
 					weight = 5
 					modifier {
-						enchantWithLevels(levels = uniform(15, 25))
+						enchantWithLevels(levels = 15..25)
 					}
 				}
 				empty(weight = 10)
@@ -762,7 +764,7 @@ dataPack("treasure_hunt") {
 
 		// Bonus loot from existing table
 		pool {
-			rolls = uniform(1, 3)
+			rolls(1..3)
 
 			entries {
 				lootTable(LootTables.Chests.END_CITY_TREASURE)
@@ -892,8 +894,8 @@ dataPack("better_zombies") {
 			entries {
 				item(Items.ROTTEN_FLESH) {
 					modifier {
-						setCount(uniform(0, 2))
-						enchantedCountIncrease(Enchantments.LOOTING, uniform(0f, 1f))
+						setCount(0..2)
+						enchantedCountIncrease(Enchantments.LOOTING, 0f..1f)
 					}
 				}
 			}

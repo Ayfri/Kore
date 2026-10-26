@@ -4,6 +4,7 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
 import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.features.predicates.providers.utils.toUniformProvider
 import kotlinx.serialization.Serializable
 
 /**
@@ -29,3 +30,13 @@ fun ItemModifier.setDamage(damage: ContextFloatProvider, add: Boolean? = null, b
 fun ItemModifier.setDamage(damage: Float, add: Boolean? = null, block: SetDamage.() -> Unit = {}) {
 	modifiers += SetDamage(damage = constant(damage), add = add).apply(block)
 }
+
+/**
+ * Add a `set_damage` step drawing the damage uniformly from [damage], the game never returning the end itself.
+ *
+ * ```
+ * setDamage(0.2f..0.8f)  // "damage": {"type": "minecraft:uniform", "max": 0.8, "min": 0.2}
+ * ```
+ */
+fun ItemModifier.setDamage(damage: ClosedFloatingPointRange<Float>, add: Boolean? = null, block: SetDamage.() -> Unit = {}) =
+	setDamage(damage.toUniformProvider(), add, block)

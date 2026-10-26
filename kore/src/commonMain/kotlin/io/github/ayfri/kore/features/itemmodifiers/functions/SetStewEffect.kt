@@ -4,6 +4,7 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.ConstantContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
+import io.github.ayfri.kore.features.predicates.providers.utils.toUniformProvider
 import io.github.ayfri.kore.generated.arguments.types.MobEffectArgument
 import kotlinx.serialization.Serializable
 
@@ -57,6 +58,16 @@ fun ItemModifier.setStewEffect(
 fun ItemModifier.setStewEffect(type: MobEffectArgument, duration: Int, block: SetStewEffect.() -> Unit = {}) =
 	setStewEffect(type, ConstantContextIntProvider(duration), block)
 
+/**
+ * Add a single-entry `set_stew_effect` step lasting a number of ticks drawn uniformly from [duration], both ends included.
+ *
+ * ```
+ * setStewEffect(Effects.JUMP_BOOST, 100..160)  // "duration": {"type": "minecraft:uniform", "max": 160, "min": 100}
+ * ```
+ */
+fun ItemModifier.setStewEffect(type: MobEffectArgument, duration: IntRange, block: SetStewEffect.() -> Unit = {}) =
+	setStewEffect(type, duration.toUniformProvider(), block)
+
 /** Append one stew effect entry to the builder list. */
 fun MutableList<PotionEffect>.potionEffect(type: MobEffectArgument, duration: ContextIntProvider = ConstantContextIntProvider(0)) {
 	add(PotionEffect(type, duration))
@@ -70,3 +81,12 @@ fun MutableList<PotionEffect>.potionEffect(type: MobEffectArgument, duration: Co
  * ```
  */
 fun MutableList<PotionEffect>.potionEffect(type: MobEffectArgument, duration: Int) = potionEffect(type, ConstantContextIntProvider(duration))
+
+/**
+ * Append one stew effect entry lasting a number of ticks drawn uniformly from [duration], both ends included.
+ *
+ * ```
+ * potionEffect(Effects.NIGHT_VISION, 100..200)  // "duration": {"type": "minecraft:uniform", "max": 200, "min": 100}
+ * ```
+ */
+fun MutableList<PotionEffect>.potionEffect(type: MobEffectArgument, duration: IntRange) = potionEffect(type, duration.toUniformProvider())

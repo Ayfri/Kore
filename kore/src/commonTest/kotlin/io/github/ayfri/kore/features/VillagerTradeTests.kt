@@ -90,6 +90,55 @@ fun DataPack.villagerTradeTests() {
 	""".trimIndent()
 	roundTrip(villagerTrades.last())
 
+	villagerTrade("trade_with_ranges") {
+		wants(Items.WHEAT, 16..24)
+		additionalWants(Items.PAPER, 1..3)
+		gives(Items.EMERALD)
+		maxUses(8..12)
+		reputationDiscount(0.05f..0.1f)
+		xp(1..3)
+	}
+
+	villagerTrades.last() assertsIs """
+		{
+			"additional_wants": {
+				"count": {
+					"type": "minecraft:uniform",
+					"max": 3,
+					"min": 1
+				},
+				"id": "minecraft:paper"
+			},
+			"gives": {
+				"id": "minecraft:emerald"
+			},
+			"max_uses": {
+				"type": "minecraft:uniform",
+				"max": 12,
+				"min": 8
+			},
+			"reputation_discount": {
+				"type": "minecraft:uniform",
+				"max": 0.1,
+				"min": 0.05
+			},
+			"wants": {
+				"count": {
+					"type": "minecraft:uniform",
+					"max": 24,
+					"min": 16
+				},
+				"id": "minecraft:wheat"
+			},
+			"xp": {
+				"type": "minecraft:uniform",
+				"max": 3,
+				"min": 1
+			}
+		}
+	""".trimIndent()
+	roundTrip(villagerTrades.last())
+
 	villagerTrade("trade_with_additional") {
 		wants(Items.WHEAT, count = 10)
 		additionalWants(Items.PAPER, count = 1)

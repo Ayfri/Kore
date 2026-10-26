@@ -30,6 +30,7 @@ import io.github.ayfri.kore.generated.arguments.types.ContextIntProviderArgument
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.lootTableTests() {
@@ -674,6 +675,71 @@ class LootTableTests : FunSpec({
 				}
 			""".trimIndent()
 			roundTrip(lootTables.last())
+		}
+	}
+
+	test("rolls and bonus rolls draw uniformly from a range, equal ends being a constant") {
+		dataPack("lootTable") {
+			pretty()
+
+			lootTable("pool_ranges") {
+				pool(1..3) {
+					bonusRolls(0f..1f)
+				}
+
+				pool {
+					rolls(2..2)
+				}
+
+				pool {
+					rolls(4..6)
+				}
+			}
+
+			lootTables.last() assertsIs """
+				{
+					"pools": [
+						{
+							"bonus_rolls": {
+								"type": "minecraft:uniform",
+								"max": 1.0,
+								"min": 0.0
+							},
+							"entries": [],
+							"rolls": {
+								"type": "minecraft:uniform",
+								"max": 3,
+								"min": 1
+							}
+						},
+						{
+							"entries": [],
+							"rolls": 2
+						},
+						{
+							"entries": [],
+							"rolls": {
+								"type": "minecraft:uniform",
+								"max": 6,
+								"min": 4
+							}
+						}
+					]
+				}
+			""".trimIndent()
+			roundTrip(lootTables.last())
+		}
+	}
+
+	test("an empty range of rolls throws") {
+		dataPack("lootTable") {
+			shouldThrow<IllegalArgumentException> {
+				lootTable("empty_rolls") { pool { rolls(3..1) } }
+			}.message assertsIs "Cannot draw from the empty range 3..1."
+
+			shouldThrow<IllegalArgumentException> {
+				lootTable("empty_bonus_rolls") { pool { bonusRolls(1f..0f) } }
+			}
 		}
 	}
 

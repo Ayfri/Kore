@@ -4,6 +4,7 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
 import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.features.predicates.providers.utils.toUniformProvider
 import io.github.ayfri.kore.generated.arguments.types.EnchantmentArgument
 import kotlinx.serialization.Serializable
 
@@ -41,3 +42,17 @@ fun ItemModifier.enchantedCountIncrease(
 ) {
 	modifiers += EnchantedCountIncrease(enchantment = enchantment, count = constant(count), limit = limit).apply(block)
 }
+
+/**
+ * Add an `enchanted_count_increase` step drawing the increase per level uniformly from [count], the game never returning the end itself.
+ *
+ * ```
+ * enchantedCountIncrease(Enchantments.LOOTING, 0f..1f)  // "count": {"type": "minecraft:uniform", "max": 1.0, "min": 0.0}
+ * ```
+ */
+fun ItemModifier.enchantedCountIncrease(
+	enchantment: EnchantmentArgument,
+	count: ClosedFloatingPointRange<Float>,
+	limit: Int? = null,
+	block: EnchantedCountIncrease.() -> Unit = {},
+) = enchantedCountIncrease(enchantment, count.toUniformProvider(), limit, block)

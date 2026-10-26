@@ -4,6 +4,7 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.constant
+import io.github.ayfri.kore.features.predicates.providers.utils.toUniformProvider
 import kotlinx.serialization.Serializable
 
 /**
@@ -27,3 +28,13 @@ fun ItemModifier.setRandomDyes(numberOfDyes: ContextIntProvider, block: SetRando
 fun ItemModifier.setRandomDyes(numberOfDyes: Int, block: SetRandomDyes.() -> Unit = {}) {
 	modifiers += SetRandomDyes(numberOfDyes = constant(numberOfDyes)).apply(block)
 }
+
+/**
+ * Add a `set_random_dyes` step drawing the number of dyes uniformly from [numberOfDyes], both ends included.
+ *
+ * ```
+ * setRandomDyes(1..5)  // "number_of_dyes": {"type": "minecraft:uniform", "max": 5, "min": 1}
+ * ```
+ */
+fun ItemModifier.setRandomDyes(numberOfDyes: IntRange, block: SetRandomDyes.() -> Unit = {}) =
+	setRandomDyes(numberOfDyes.toUniformProvider(), block)

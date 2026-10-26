@@ -121,7 +121,7 @@ fun intRange(min: Int? = null, max: Int? = null) = ContextIntProviderRange(
 fun intRange(min: ContextIntProvider? = null, max: ContextIntProvider? = null) =
 	ContextIntProviderRange(ContextIntProviderBounds(max, min))
 
-/** Creates a [ContextIntProviderRange] spanning [range], both bounds included. */
+/** Creates a [ContextIntProviderRange] matching [range], both bounds included, the range being matched and never drawn from. */
 fun intRange(range: IntRange) = intRange(range.first, range.last)
 
 /** Creates a [ContextIntProviderRange] matching exactly the provider [value]. */

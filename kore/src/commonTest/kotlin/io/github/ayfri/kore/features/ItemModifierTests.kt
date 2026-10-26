@@ -866,6 +866,163 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 
+	itemModifier("set_count_range") {
+		setCount(1..3, add = true)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_count",
+			"count": {
+				"type": "minecraft:uniform",
+				"max": 3,
+				"min": 1
+			},
+			"add": true
+		}
+	""".trimIndent()
+	roundTrip(itemModifiers.last())
+
+	itemModifier("set_count_equal_ends") {
+		setCount(2..2)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_count",
+			"count": 2
+		}
+	""".trimIndent()
+
+	shouldThrow<IllegalArgumentException> {
+		itemModifier("set_count_empty_range") { setCount(3..1) }
+	}.message assertsIs "Cannot draw from the empty range 3..1."
+
+	itemModifier("set_damage_range") {
+		setDamage(0.2f..0.8f)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_damage",
+			"damage": {
+				"type": "minecraft:uniform",
+				"max": 0.8,
+				"min": 0.2
+			}
+		}
+	""".trimIndent()
+	roundTrip(itemModifiers.last())
+
+	itemModifier("enchant_with_levels_range") {
+		enchantWithLevels(Enchantments.SHARPNESS, levels = 20..39)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:enchant_with_levels",
+			"levels": {
+				"type": "minecraft:uniform",
+				"max": 39,
+				"min": 20
+			},
+			"options": "minecraft:sharpness"
+		}
+	""".trimIndent()
+
+	itemModifier("set_enchantments_range") {
+		setEnchantments {
+			this[Enchantments.SHARPNESS] = 1..3
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_enchantments",
+			"enchantments": {
+				"minecraft:sharpness": {
+					"type": "minecraft:uniform",
+					"max": 3,
+					"min": 1
+				}
+			}
+		}
+	""".trimIndent()
+
+	itemModifier("set_stew_effect_range") {
+		setStewEffect(Effects.JUMP_BOOST, 100..160)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_stew_effect",
+			"effects": [
+				{
+					"type": "minecraft:jump_boost",
+					"duration": {
+						"type": "minecraft:uniform",
+						"max": 160,
+						"min": 100
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	itemModifier("set_stew_effect_list_range") {
+		setStewEffect {
+			potionEffect(Effects.NIGHT_VISION, 100..160)
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_stew_effect",
+			"effects": [
+				{
+					"type": "minecraft:night_vision",
+					"duration": {
+						"type": "minecraft:uniform",
+						"max": 160,
+						"min": 100
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
+	itemModifier("set_random_dyes_range") {
+		setRandomDyes(1..5)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_random_dyes",
+			"number_of_dyes": {
+				"type": "minecraft:uniform",
+				"max": 5,
+				"min": 1
+			}
+		}
+	""".trimIndent()
+
+	itemModifier("enchanted_count_increase_range") {
+		enchantedCountIncrease(Enchantments.LOOTING, 0f..1f, limit = 4)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:enchanted_count_increase",
+			"enchantment": "minecraft:looting",
+			"count": {
+				"type": "minecraft:uniform",
+				"max": 1.0,
+				"min": 0.0
+			},
+			"limit": 4
+		}
+	""".trimIndent()
+
 	itemModifier("set_custom_data") {
 		setCustomData {
 			this["test"] = 1
@@ -1280,6 +1437,21 @@ fun DataPack.itemModifierTests() {
 
 	itemModifier("set_ominous_bottle_amplifier_provider") {
 		setOminousBottleAmplifier(uniform(2, 4))
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_ominous_bottle_amplifier",
+			"amplifier": {
+				"type": "minecraft:uniform",
+				"max": 4,
+				"min": 2
+			}
+		}
+	""".trimIndent()
+
+	itemModifier("set_ominous_bottle_amplifier_range") {
+		setOminousBottleAmplifier(2..4)
 	}
 
 	itemModifiers.last() assertsIs """
