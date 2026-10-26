@@ -13,14 +13,19 @@ import io.github.ayfri.kore.arguments.types.literals.self
 import io.github.ayfri.kore.arguments.types.resources.FunctionArgument
 import io.github.ayfri.kore.arguments.types.resources.ItemArgument
 import io.github.ayfri.kore.arguments.types.resources.StorageArgument
+import io.github.ayfri.kore.arguments.types.resources.storage
 import io.github.ayfri.kore.commands.*
 import io.github.ayfri.kore.commands.execute.Execute
 import io.github.ayfri.kore.commands.execute.execute
 import io.github.ayfri.kore.commands.scoreboard.scoreboard
 import io.github.ayfri.kore.data.item.ItemStack
+import io.github.ayfri.kore.features.predicates.providers.floatStorage
+import io.github.ayfri.kore.features.predicates.providers.length
+import io.github.ayfri.kore.features.predicates.providers.minus
 import io.github.ayfri.kore.functions.Function
 import io.github.ayfri.kore.functions.generatedFunction
 import io.github.ayfri.kore.scoreboard.ScoreboardEntity
+import io.github.ayfri.kore.scoreboard.setTo
 import io.github.ayfri.kore.teams.Team
 import io.github.ayfri.kore.teams.addMembers
 import io.github.ayfri.kore.commands.function as functionCommand
@@ -135,6 +140,38 @@ fun Entity.storeCountIn(target: StorageArgument, path: String, type: DataType = 
 			}
 		}
 	}
+
+/**
+ * Writes the distance between this entity and [other] into [output], multiplied by [scale] and rounded down, in three
+ * commands: both `Pos` lists are copied into [storage], then one `compute` takes the `length` of their difference.
+ * Both entities must be single real entities, and the positions ignore dimensions. The coordinates are read as floats,
+ * so the result drifts far from the origin: about 1 unit at 10,000 blocks and 8 at 100,000 with the default [scale].
+ *
+ * On a player, reading `Pos` serializes the whole player, inventory included: prefer `ScoreVector.distanceTo` of the
+ * `helpers` module there, which reads the position off a marker.
+ *
+ * ```
+ * zombie.distanceTo(villager, fakePlayer("distance").getScoreEntity("game"))
+ * // data modify storage my_pack:entity_distance from set from entity @e[limit=1,type=minecraft:zombie] Pos
+ * // data modify storage my_pack:entity_distance to set from entity @e[limit=1,type=minecraft:villager] Pos
+ * // execute store result score #distance game run compute default float {type:"minecraft:length",inputs:[...]} 1000
+ * ```
+ */
+context(fn: Function)
+fun Entity.distanceTo(
+	other: Entity,
+	output: ScoreboardEntity,
+	scale: Float = 1000f,
+	storage: StorageArgument = storage("entity_distance", fn.datapack.name),
+) {
+	listOf(this, other).forEach {
+		require(it !is FakePlayer && it.limitToOne) { "distanceTo reads the position of one real entity, but '${it.asScoreHolder().asString()}' isn't one." }
+	}
+	fn.data(storage) { modify("from", asSelector(), "Pos") }
+	fn.data(storage) { modify("to", other.asSelector(), "Pos") }
+	val path = storage.asString()
+	output.setTo(scale) { length((0..2).map { floatStorage(path, "from[$it]") - floatStorage(path, "to[$it]") }) }
+}
 
 /** Gives an item stack to this entity. */
 context(fn: Function)

@@ -268,6 +268,38 @@ function("bridge_demo") {
 | `setScore`       | Set a score without building a handle                                                |
 | `storeCountIn`   | Store how many entities match this selector into a score, entity NBT, or storage NBT |
 
+## Distance between two entities
+
+`distanceTo` writes the distance between two entities into a score, multiplied by `scale` (`1000` by default, so
+`2500` means 2.5 blocks) and rounded down. It costs three commands: both `Pos` lists go into a storage, then one
+[`compute`](/docs/commands/commands#compute-command) takes the length of their difference, as floats, so it never
+overflows.
+
+```kotlin
+function("distance_demo") {
+	val zombie = entity(EntityTypes.ZOMBIE)
+	val distance = fakePlayer("distance").getScoreEntity("game")
+
+	zombie.distanceTo(entity(EntityTypes.VILLAGER), distance)
+}
+```
+
+```mcfunction
+data modify storage my_pack:entity_distance from set from entity @e[limit=1,type=minecraft:zombie] Pos
+data modify storage my_pack:entity_distance to set from entity @e[limit=1,type=minecraft:villager] Pos
+execute store result score #distance game run compute default float {type:"minecraft:length",inputs:[{type:"minecraft:sub",left:{type:"minecraft:storage",path:"from[0]",storage:"my_pack:entity_distance"},right:{type:"minecraft:storage",path:"to[0]",storage:"my_pack:entity_distance"}},{type:"minecraft:sub",left:{type:"minecraft:storage",path:"from[1]",storage:"my_pack:entity_distance"},right:{type:"minecraft:storage",path:"to[1]",storage:"my_pack:entity_distance"}},{type:"minecraft:sub",left:{type:"minecraft:storage",path:"from[2]",storage:"my_pack:entity_distance"},right:{type:"minecraft:storage",path:"to[2]",storage:"my_pack:entity_distance"}}]} 1000
+```
+
+`scale = 1f` gives whole blocks, the `compute` line then ending with `1` instead of `1000`.
+
+Both handles must match one real entity (`limitToOne`, not a fake player), and the positions ignore dimensions. The
+coordinates are read as floats, so the result drifts far from the origin: about 1 unit at 10,000 blocks and 8 at
+100,000 with the default scale. The storage defaults to `<pack>:entity_distance`, pass `storage` to use another one.
+
+Reading `Pos` on a player serializes the whole player, inventory included. For players, prefer
+[`ScoreVector.distanceTo`](/docs/helpers/score-vectors#length-and-distance) from the `helpers` module, which reads
+positions off a marker.
+
 ## Entity Effects
 
 Extension functions on `Entity` for giving, clearing, and managing

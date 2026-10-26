@@ -101,6 +101,11 @@ function("leash_range") {
 runs the game's `length` provider, which sums the squares as floats, so it never overflows and stays within 1 unit of
 the exact length. A component difference that doesn't fit an `Int` in `distanceTo` writes `0`.
 
+To measure the distance between two non-player entities without filling vectors first,
+[`Entity.distanceTo`](/docs/oop/entities-and-players#distance-between-two-entities) of the `oop` module reads both `Pos`
+lists straight into one `compute`, about 6x faster than two `setToPosition` plus `distanceTo`. It reads the coordinates
+as floats, so it loses precision far from the origin (about 1 unit at 10,000 blocks), where `setToPosition` stays exact.
+
 `lengthSquared(output)` is one `compute` and is enough for comparisons, but it writes `0` past about `46` blocks at
 scale `1000`.
 

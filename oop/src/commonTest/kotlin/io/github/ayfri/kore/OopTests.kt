@@ -20,10 +20,12 @@ import io.github.ayfri.kore.entities.*
 import io.github.ayfri.kore.entities.summon.motion
 import io.github.ayfri.kore.entities.summon.rotation
 import io.github.ayfri.kore.functions.function
+import io.github.ayfri.kore.generated.EntityTypes
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.items.summon
 import io.github.ayfri.kore.scoreboard.*
 import io.github.ayfri.kore.teams.*
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 
 fun oopTests() = dataPack("oop") {
@@ -254,10 +256,33 @@ fun oopTests() = dataPack("oop") {
 
 		lines.size assertsIs 5
 	}
+
+	function("entity_distance") {
+		val zombie = entity(EntityTypes.ZOMBIE)
+		val distance = fakePlayer("distance").getScoreEntity("game")
+
+		zombie.distanceTo(entity(EntityTypes.VILLAGER), distance)
+		lines.joinToString("\n") assertsIs """
+			data modify storage oop:entity_distance from set from entity @e[limit=1,type=minecraft:zombie] Pos
+			data modify storage oop:entity_distance to set from entity @e[limit=1,type=minecraft:villager] Pos
+			execute store result score #distance game run compute default float {type:"minecraft:length",inputs:[{type:"minecraft:sub",left:{type:"minecraft:storage",path:"from[0]",storage:"oop:entity_distance"},right:{type:"minecraft:storage",path:"to[0]",storage:"oop:entity_distance"}},{type:"minecraft:sub",left:{type:"minecraft:storage",path:"from[1]",storage:"oop:entity_distance"},right:{type:"minecraft:storage",path:"to[1]",storage:"oop:entity_distance"}},{type:"minecraft:sub",left:{type:"minecraft:storage",path:"from[2]",storage:"oop:entity_distance"},right:{type:"minecraft:storage",path:"to[2]",storage:"oop:entity_distance"}}]} 1000
+		""".trimIndent()
+	}
 }
 
 class OopTests : FunSpec({
 	test("oop") {
 		oopTests()
+	}
+
+	test("distanceTo refuses selectors matching several entities and fake players") {
+		dataPack("oop") {
+			function("entity_distance") {
+				val distance = fakePlayer("distance").getScoreEntity("game")
+
+				shouldThrow<IllegalArgumentException> { entity(EntityTypes.ZOMBIE, limitToOne = false).distanceTo(player("Ayfri"), distance) }
+				shouldThrow<IllegalArgumentException> { player("Ayfri").distanceTo(fakePlayer("origin"), distance) }
+			}
+		}
 	}
 })
