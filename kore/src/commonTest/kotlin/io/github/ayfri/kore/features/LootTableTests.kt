@@ -20,6 +20,7 @@ import io.github.ayfri.kore.features.predicates.conditions.weatherCheck
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.providers.reference
 import io.github.ayfri.kore.functions.load
+import io.github.ayfri.kore.generated.ContextKeySets
 import io.github.ayfri.kore.generated.Enchantments
 import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.LootTables
@@ -27,6 +28,7 @@ import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.arguments.tagged.ItemModifierTagArgument
 import io.github.ayfri.kore.generated.arguments.tagged.LootTableTagArgument
 import io.github.ayfri.kore.generated.arguments.types.ContextIntProviderArgument
+import io.github.ayfri.kore.generated.arguments.types.ContextKeySetArgument
 import io.github.ayfri.kore.generated.arguments.types.ItemModifierArgument
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.utils.pretty
@@ -428,35 +430,18 @@ class LootTableTests : FunSpec({
 		}
 	}
 
-	test("archaeology loot context is written with the game's spelling") {
-		dataPack("lootTable") {
-			pretty()
-
-			lootTable("archaeology") {
-				type = LootTableType.ARCHAEOLOGY
-			}
-
-			lootTables.last() assertsIs """
-				{
-					"type": "archaeology"
-				}
-			""".trimIndent()
-		}
-	}
-
-	test("new loot context types are written with the game's names") {
+	test("loot table types are context key set IDs") {
 		dataPack("lootTable") {
 			pretty()
 
 			listOf(
-				LootTableType.CONTAINER_PROCESS to "container_process",
-				LootTableType.ENCHANTED_DAMAGE to "enchanted_damage",
-				LootTableType.ENCHANTED_ENTITY to "enchanted_entity",
-				LootTableType.ENCHANTED_ITEM to "enchanted_item",
-				LootTableType.ENCHANTED_LOCATION to "enchanted_location",
-				LootTableType.HIT_BLOCK to "hit_block",
+				ContextKeySets.ARCHAEOLOGY to "minecraft:archaeology",
+				ContextKeySets.COMMAND_COMPUTE_ENTITY to "minecraft:command_compute_entity",
+				ContextKeySets.CONTAINER_PROCESS to "minecraft:container_process",
+				ContextKeySets.HIT_BLOCK to "minecraft:hit_block",
+				ContextKeySetArgument("custom", "my_mod") to "my_mod:custom",
 			).forEach { (contextType, name) ->
-				lootTable("context_$name") {
+				lootTable("context_${name.substringAfter(':')}") {
 					type = contextType
 				}
 
@@ -475,7 +460,7 @@ class LootTableTests : FunSpec({
 			pretty()
 
 			lootTable("reward") {
-				type = LootTableType.CHEST
+				type = ContextKeySets.CHEST
 
 				pool {
 					entries {
@@ -512,7 +497,7 @@ class LootTableTests : FunSpec({
 							"rolls": 1
 						}
 					],
-					"type": "chest"
+					"type": "minecraft:chest"
 				}
 			""".trimIndent()
 			roundTrip(lootTables.last())

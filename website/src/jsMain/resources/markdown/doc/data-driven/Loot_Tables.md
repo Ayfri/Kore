@@ -74,7 +74,7 @@ A loot table consists of:
 
 | Property         | Type                     | Description                                         |
 |------------------|--------------------------|-----------------------------------------------------|
-| `type`           | `LootTableType`          | Optional context type for validation                |
+| `type`           | `ContextKeySetArgument?` | Optional context type for validation                |
 | `pools`          | `List<LootPool>`         | One or more pools that generate items               |
 | `modifier`       | `InlinableItemModifier?` | Optional item modifier applied to all drops         |
 | `randomSequence` | `RandomSequenceArgument` | Optional deterministic random sequence              |
@@ -85,7 +85,7 @@ The type validates that the loot table uses appropriate context parameters:
 
 ```kotlin
 lootTable("entity_drops") {
-	type = LootTableType.ENTITY
+	type = ContextKeySets.ENTITY
 
 	pool {
 		// Entity context allows accessing killer, damage source, etc.
@@ -93,11 +93,12 @@ lootTable("entity_drops") {
 }
 ```
 
-Available types: `ADVANCEMENT_ENTITY`, `ADVANCEMENT_LOCATION`, `ADVANCEMENT_REWARD`, `ARCHAEOLOGY`, `BARTER`, `BLOCK`,
-`BLOCK_INTERACT`, `BLOCK_USE`, `CHEST`, `COMMAND`, `COMMAND_COMPUTE_DEFAULT`, `COMMAND_COMPUTE_ENTITY`,
-`COMMAND_COMPUTE_POSITION`, `COMMAND_SLOT_SOURCE`, `CONTAINER_PROCESS`, `EMPTY`,
-`ENCHANTED_DAMAGE`, `ENCHANTED_ENTITY`, `ENCHANTED_ITEM`, `ENCHANTED_LOCATION`, `ENTITY`, `ENTITY_INTERACT`,
-`EQUIPMENT`, `FISHING`, `GENERIC`, `GIFT`, `HIT_BLOCK`, `SELECTOR`, `SHEARING`, `VAULT`, `VILLAGER_TRADE`.
+The types are the game's `context_key_set` registry, generated as `ContextKeySets` and written as IDs
+(`"type": "minecraft:entity"`): `ADVANCEMENT_ENTITY`, `ADVANCEMENT_LOCATION`, `ADVANCEMENT_REWARD`, `ARCHAEOLOGY`,
+`BARTER`, `BLOCK`, `BLOCK_INTERACT`, `BLOCK_USE`, `CHEST`, `COMMAND`, `COMMAND_COMPUTE_DEFAULT`, `COMMAND_COMPUTE_ENTITY`,
+`COMMAND_COMPUTE_POSITION`, `COMMAND_SLOT_SOURCE`, `CONTAINER_PROCESS`, `EMPTY`, `ENCHANTED_DAMAGE`, `ENCHANTED_ENTITY`,
+`ENCHANTED_ITEM`, `ENCHANTED_LOCATION`, `ENTITY`, `ENTITY_INTERACT`, `EQUIPMENT`, `FISHING`, `GENERIC`, `GIFT`,
+`HIT_BLOCK`, `SELECTOR`, `SHEARING`, `VAULT`, `VILLAGER_TRADE`.
 
 The types used by [enchantment](/docs/data-driven/enchantments) effects, by container processing and by the
 [`compute`](/docs/commands/commands#compute-command) command provide these parameters:
@@ -719,7 +720,7 @@ A single function is written as an object, several ones as a list. See [Item Mod
 dataPack("treasure_hunt") {
 	// Custom boss drop table
 	lootTable("boss_drops") {
-		type = LootTableType.ENTITY
+		type = ContextKeySets.ENTITY
 
 		// Global enchantment on all drops
 		modifier {
@@ -847,7 +848,7 @@ dataPack("treasure_hunt") {
 			}
 		}
 	],
-	"type": "entity"
+	"type": "minecraft:entity"
 }
 ```
 

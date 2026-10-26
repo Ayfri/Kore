@@ -10,6 +10,7 @@ import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.constant
 import io.github.ayfri.kore.features.predicates.providers.utils.toUniformProvider
+import io.github.ayfri.kore.generated.arguments.types.ContextKeySetArgument
 import io.github.ayfri.kore.generated.arguments.types.LootTableArgument
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -32,7 +33,7 @@ data class LootTable(
 	var modifier: InlinableItemModifier? = null,
 	var pools: List<LootPool>? = null,
 	var randomSequence: RandomSequenceArgument? = null,
-	var type: LootTableType? = null,
+	var type: ContextKeySetArgument? = null,
 ) : Generator("loot_table"), NumberProviderScope {
 	override fun generateJson(dataPack: DataPack) = dataPack.jsonEncoder.encodeToString(this)
 }

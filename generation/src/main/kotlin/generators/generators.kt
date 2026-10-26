@@ -174,6 +174,7 @@ suspend fun launchAllSimpleGenerators(): List<Generator> {
 				)
 			}
 		},
+		gen("ContextKeySets", "context_key_set"),
 		gen("CustomStats", "custom_stat"),
 		gen("Effects", "mob_effect") {
 			argumentClassName = "MobEffect"
