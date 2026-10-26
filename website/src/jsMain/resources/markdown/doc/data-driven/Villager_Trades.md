@@ -5,7 +5,7 @@ nav-title: Villager Trades
 description: Define custom villager trades and trade sets for Minecraft 26.1+ with Kore's type-safe Kotlin DSL. Configure items, prices, demand, and profession-level trade tables without hand-writing JSON.
 keywords: minecraft villager trade, custom villager trades, datapack trade_set, datapack villager_trade, kore villager trades, minecraft merchant trades, custom trades datapack, profession trades, villager trade generator
 date-created: 2026-06-15
-date-modified: 2026-10-23
+date-modified: 2026-10-26
 routeOverride: /docs/data-driven/villager-trades
 ---
 
@@ -52,8 +52,8 @@ items - both accept an `ItemArgument`, an optional `count`, and an optional comp
 datapack.villagerTrade("wheat_for_emerald") {
     wants(Items.WHEAT, count = 20)
     gives(Items.EMERALD)
-    maxUses = constant(12)
-    xp = constant(1)
+    maxUses(12)
+    xp(1)
 }
 ```
 
@@ -70,8 +70,8 @@ datapack.villagerTrade("enchanted_sword") {
             add(Enchantments.SHARPNESS, 5)
         }
     }
-    maxUses = constant(3)
-    xp = constant(30)
+    maxUses(3)
+    xp(30)
 }
 ```
 
@@ -82,8 +82,8 @@ datapack.villagerTrade("book_trade") {
     wants(Items.EMERALD, count = 5)
     additionalWants(Items.BOOK)
     gives(Items.ENCHANTED_BOOK)
-    maxUses = constant(1)
-    xp = constant(15)
+    maxUses(1)
+    xp(15)
 }
 ```
 
@@ -142,8 +142,8 @@ All fields are optional except `wants` and `gives`, which must be set before the
 | `wants`                        | `TradeCost`                                | Primary item the villager requests. **Required.**                                 |
 | `xp`                           | `ContextIntProvider?`                      | XP points awarded to the villager when the trade completes.                       |
 
-`maxUses` and `xp` take [int providers](/docs/data-driven/loot-tables#context-providers) (`constant(12)`, `uniform(1, 5)`),
-`reputationDiscount` a float provider (`constant(0.05f)`). Each one also takes the ID of a
+`maxUses` and `xp` take [int providers](/docs/data-driven/loot-tables#context-providers) (`maxUses(12)`, `xp(uniform(1, 5))`),
+`reputationDiscount` a float provider (`reputationDiscount(0.05f)`). Each one also takes the ID of a
 [context provider file](/docs/data-driven/loot-tables#context-provider-files) through `reference(...)`:
 
 ```kotlin
@@ -153,7 +153,7 @@ villagerTrade("wheat_for_emerald") {
     wants(Items.WHEAT, count = 20)
     gives(Items.EMERALD)
     maxUses = reference(uses)  // "max_uses": "my_pack:trade_uses"
-    reputationDiscount = constant(0.05f)
+    reputationDiscount(0.05f)
 }
 ```
 
@@ -170,8 +170,8 @@ datapack.villagerTrade("random_enchanted_book") {
     givenItemModifier {
         enchantRandomly()
     }
-    maxUses = constant(1)
-    xp = constant(15)
+    maxUses(1)
+    xp(15)
 }
 ```
 
@@ -196,8 +196,8 @@ datapack.villagerTrade("desert_trade") {
     wants(Items.SAND, count = 8)
     gives(Items.GLASS)
     merchantPredicate = LocationCheck(predicate = LocationPredicate(biomes = listOf(Biomes.DESERT)))
-    maxUses = constant(16)
-    xp = constant(2)
+    maxUses(16)
+    xp(2)
 }
 ```
 
@@ -227,13 +227,13 @@ datapack {
     val wheatTrade = villagerTrade("wheat_for_emerald") {
         wants(Items.WHEAT, count = 20)
         gives(Items.EMERALD)
-        xp = constant(1)
+        xp(1)
     }
 
     val potatoTrade = villagerTrade("potato_for_emerald") {
         wants(Items.POTATO, count = 26)
         gives(Items.EMERALD)
-        xp = constant(1)
+        xp(1)
     }
 
     tradeSet("novice_farmer") {
@@ -280,7 +280,7 @@ tradeSet("farmer/level_1") {
 | Field             | Type                                        | Description                                                                    |
 |-------------------|---------------------------------------------|--------------------------------------------------------------------------------|
 | `allowDuplicates` | `Boolean?`                                  | Whether the same trade can be rolled more than once. Defaults to `false`.      |
-| `amount`          | `ContextIntProvider`                        | How many trades are rolled out of the set. Defaults to `constant(1)`.          |
+| `amount`          | `ContextIntProvider`                        | How many trades are rolled out of the set. Defaults to `1`.                    |
 | `randomSequence`  | `RandomSequenceArgument?`                   | Named random sequence the rolls are seeded from, non-deterministic when unset. |
 | `trades`          | `InlinableList<VillagerTradeOrTagArgument>` | Trade references or tags rolled from.                                          |
 
@@ -290,7 +290,7 @@ tradeSet("farmer/level_1") {
 |-------------------------------|---------------------------------------------------------------|
 | `amount(value)`               | Rolls exactly `value` trades.                                 |
 | `amount(min, max)`            | Rolls between `min` and `max` trades, both included.          |
-| `amount = provider`           | Any int provider, or a `reference(id)` to a provider file.    |
+| `amount(provider)`            | Any int provider (`binomial(4, 0.5f)`), or a `reference(id)` to a provider file. |
 | `randomSequence(name, ns)`    | Seeds the rolls from a named random sequence.                 |
 | `trade(trade)`                | Appends one trade or tag to the pool.                         |
 | `trades(vararg / list)`       | Sets the pool, replacing the entries already there.           |
@@ -304,22 +304,22 @@ datapack {
     val hayTrade = villagerTrade("hay_for_emerald") {
         wants(Items.HAY_BLOCK, count = 1)
         gives(Items.EMERALD)
-        maxUses = constant(16)
-        xp = constant(2)
+        maxUses(16)
+        xp(2)
     }
 
     val wheatTrade = villagerTrade("wheat_for_emerald") {
         wants(Items.WHEAT, count = 20)
         gives(Items.EMERALD)
-        maxUses = constant(16)
-        xp = constant(1)
+        maxUses(16)
+        xp(1)
     }
 
     val breadTrade = villagerTrade("emerald_for_bread") {
         wants(Items.EMERALD)
         gives(Items.BREAD, count = 6)
-        maxUses = constant(16)
-        xp = constant(1)
+        maxUses(16)
+        xp(1)
     }
 
     tradeSet("custom_farmer_novice") {

@@ -22,8 +22,8 @@ fun DataPack.villagerTradeTests() {
 	villagerTrade("test_trade") {
 		wants(Items.EMERALD)
 		gives(Items.DIAMOND, count = 1)
-		maxUses = constant(10)
-		xp = constant(5)
+		maxUses(10)
+		xp(5)
 	}
 
 	villagerTrades.last() assertsIs """
@@ -63,6 +63,33 @@ fun DataPack.villagerTradeTests() {
 	""".trimIndent()
 	roundTrip(villagerTrades.last())
 
+	villagerTrade("trade_with_provider_setters") {
+		wants(Items.EMERALD)
+		gives(Items.DIAMOND)
+		maxUses(12)
+		reputationDiscount(0.05f)
+		xp(uniform(1, 3))
+	}
+
+	villagerTrades.last() assertsIs """
+		{
+			"gives": {
+				"id": "minecraft:diamond"
+			},
+			"max_uses": 12,
+			"reputation_discount": 0.05,
+			"wants": {
+				"id": "minecraft:emerald"
+			},
+			"xp": {
+				"type": "minecraft:uniform",
+				"max": 3,
+				"min": 1
+			}
+		}
+	""".trimIndent()
+	roundTrip(villagerTrades.last())
+
 	villagerTrade("trade_with_additional") {
 		wants(Items.WHEAT, count = 10)
 		additionalWants(Items.PAPER, count = 1)
@@ -70,7 +97,7 @@ fun DataPack.villagerTradeTests() {
 		givenItemModifier {
 			limitCount(max = constant(2))
 		}
-		maxUses = constant(3)
+		maxUses(3)
 	}
 
 	villagerTrades.last() assertsIs """

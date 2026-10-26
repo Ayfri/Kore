@@ -93,6 +93,46 @@ fun VillagerTrade.gives(id: ItemArgument, count: Short? = null, block: Component
 }
 
 /**
+ * Set how many times the trade can be used before it locks, as an int provider.
+ *
+ * ```
+ * maxUses(uniform(8, 12))  // "max_uses": {"type": "minecraft:uniform", ...}
+ * ```
+ */
+fun VillagerTrade.maxUses(value: ContextIntProvider) {
+	maxUses = value
+}
+
+/**
+ * Set how many times the trade can be used before it locks.
+ *
+ * ```
+ * maxUses(12)  // "max_uses": 12
+ * ```
+ */
+fun VillagerTrade.maxUses(value: Int) = maxUses(constant(value))
+
+/**
+ * Set the price discount a player earns per reputation point, as a float provider.
+ *
+ * ```
+ * reputationDiscount(uniform(0.05f, 0.1f))  // "reputation_discount": {"type": "minecraft:uniform", ...}
+ * ```
+ */
+fun VillagerTrade.reputationDiscount(value: ContextFloatProvider) {
+	reputationDiscount = value
+}
+
+/**
+ * Set the price discount a player earns per reputation point.
+ *
+ * ```
+ * reputationDiscount(0.05f)  // "reputation_discount": 0.05
+ * ```
+ */
+fun VillagerTrade.reputationDiscount(value: Float) = reputationDiscount(constant(value))
+
+/**
  * Set the item the villager requests as the primary input, [count] being a fixed number.
  *
  * ```
@@ -113,3 +153,23 @@ fun VillagerTrade.wants(id: ItemArgument, count: Int? = null, block: Components.
 fun VillagerTrade.wants(id: ItemArgument, count: ContextIntProvider, block: Components.() -> Unit = {}) {
 	wants = tradeCost(id, count, block)
 }
+
+/**
+ * Set the experience the villager earns when the trade is used, as an int provider.
+ *
+ * ```
+ * xp(uniform(1, 3))  // "xp": {"type": "minecraft:uniform", ...}
+ * ```
+ */
+fun VillagerTrade.xp(value: ContextIntProvider) {
+	xp = value
+}
+
+/**
+ * Set the experience the villager earns when the trade is used.
+ *
+ * ```
+ * xp(5)  // "xp": 5
+ * ```
+ */
+fun VillagerTrade.xp(value: Int) = xp(constant(value))

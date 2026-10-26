@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features
 import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
+import io.github.ayfri.kore.features.predicates.providers.binomial
 import io.github.ayfri.kore.features.predicates.providers.uniform
 import io.github.ayfri.kore.features.tradesets.amount
 import io.github.ayfri.kore.features.tradesets.randomSequence
@@ -77,6 +78,21 @@ fun DataPack.tradeSetTests() {
 				"tradeSet:emerald_for_wheat",
 				"minecraft:fletcher/1/emerald_arrow"
 			]
+		}
+	""".trimIndent()
+
+	tradeSet("binomial_amount") {
+		trades(wheatTrade)
+		amount(binomial(4, 0.5f))
+	}
+	tradeSets.last() assertsIs """
+		{
+			"amount": {
+				"type": "minecraft:binomial",
+				"n": 4,
+				"p": 0.5
+			},
+			"trades": "tradeSet:emerald_for_wheat"
 		}
 	""".trimIndent()
 

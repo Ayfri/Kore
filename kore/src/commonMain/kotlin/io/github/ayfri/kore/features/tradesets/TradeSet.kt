@@ -65,6 +65,17 @@ fun DataPack.tradeSet(fileName: String = "trade_set", init: TradeSet.() -> Unit 
 	return TradeSetArgument(fileName, tradeSet.namespace ?: name)
 }
 
+/**
+ * Rolls a number of trades out of the set given by an int provider.
+ *
+ * ```
+ * amount(binomial(4, 0.5f))  // "amount": {"type": "minecraft:binomial", ...}
+ * ```
+ */
+fun TradeSet.amount(value: ContextIntProvider) {
+	amount = value
+}
+
 /** Rolls exactly [value] trades out of the set. */
 fun TradeSet.amount(value: Int) {
 	amount = constant(value)
