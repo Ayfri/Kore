@@ -47,6 +47,34 @@ fun BlockStateProviderScope.randomizedIntStateProvider(
 ) = RandomizedIntBlockStateProvider(property, values).apply(block)
 
 /**
+ * Creates a `randomized_int` block state provider, overriding the integer [property] of the state given by [source]
+ * with the fixed [values].
+ *
+ * ```kotlin
+ * randomizedIntStateProvider("age", values = 7) { source = simpleStateProvider(Blocks.WHEAT) }
+ * ```
+ */
+fun BlockStateProviderScope.randomizedIntStateProvider(
+	property: String = "",
+	values: Int,
+	block: RandomizedIntBlockStateProvider.() -> Unit = {},
+) = randomizedIntStateProvider(property, ConstantIntProvider(values), block)
+
+/**
+ * Sets [RandomizedIntBlockStateProvider.values] to [value], the values the property is sampled from.
+ *
+ * ```kotlin
+ * randomizedIntStateProvider("age") { values(clamped(0, 7, uniform(0, 9))) }
+ * ```
+ */
+fun RandomizedIntBlockStateProvider.values(value: IntProvider) {
+	values = value
+}
+
+/** Sets [RandomizedIntBlockStateProvider.values] to the constant [value]. */
+fun RandomizedIntBlockStateProvider.values(value: Int) = values(ConstantIntProvider(value))
+
+/**
  * Sets [RandomizedIntBlockStateProvider.values] to a uniform int provider between [min] and [max].
  *
  * ```kotlin

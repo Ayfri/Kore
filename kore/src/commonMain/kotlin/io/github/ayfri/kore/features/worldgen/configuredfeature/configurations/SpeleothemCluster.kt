@@ -91,3 +91,74 @@ data class SpeleothemCluster(
  */
 fun ConfiguredFeatures.speleothemCluster(fileName: String, block: SpeleothemCluster.() -> Unit = {}) =
 	dp.configuredFeature(fileName, SpeleothemCluster().apply(block))
+
+/**
+ * Sets [SpeleothemCluster.density] to [value], the chance of a speleothem growing on a column.
+ *
+ * ```kotlin
+ * density(uniform(0.3f, 0.7f))
+ * ```
+ */
+fun SpeleothemCluster.density(value: FloatProvider) {
+	density = value
+}
+
+/** Sets [SpeleothemCluster.density] to the constant [value]. */
+fun SpeleothemCluster.density(value: Float) = density(ConstantFloatProvider(value))
+
+/**
+ * Sets [SpeleothemCluster.height] to [value], the height of the cluster.
+ *
+ * ```kotlin
+ * height(uniform(3, 6))
+ * ```
+ */
+fun SpeleothemCluster.height(value: IntProvider) {
+	height = value
+}
+
+/** Sets [SpeleothemCluster.height] to the constant [value]. */
+fun SpeleothemCluster.height(value: Int) = height(ConstantIntProvider(value))
+
+/**
+ * Sets [SpeleothemCluster.radius] to [value], the radius of the cluster.
+ *
+ * ```kotlin
+ * radius(uniform(2, 8))
+ * ```
+ */
+fun SpeleothemCluster.radius(value: IntProvider) {
+	radius = value
+}
+
+/** Sets [SpeleothemCluster.radius] to the constant [value]. */
+fun SpeleothemCluster.radius(value: Int) = radius(ConstantIntProvider(value))
+
+/**
+ * Sets [SpeleothemCluster.speleothemBlockLayerThickness] to [value], the thickness of the base block layer.
+ *
+ * ```kotlin
+ * speleothemBlockLayerThickness(uniform(2, 4))
+ * ```
+ */
+fun SpeleothemCluster.speleothemBlockLayerThickness(value: IntProvider) {
+	speleothemBlockLayerThickness = value
+}
+
+/** Sets [SpeleothemCluster.speleothemBlockLayerThickness] to the constant [value]. */
+fun SpeleothemCluster.speleothemBlockLayerThickness(value: Int) =
+	speleothemBlockLayerThickness(ConstantIntProvider(value))
+
+/**
+ * Sets [SpeleothemCluster.wetness] to [value], how likely a speleothem is wet.
+ *
+ * ```kotlin
+ * wetness(clampedNormal(mean = 0.1f, deviation = 0.3f, min = 0.1f, max = 0.9f))
+ * ```
+ */
+fun SpeleothemCluster.wetness(value: FloatProvider) {
+	wetness = value
+}
+
+/** Sets [SpeleothemCluster.wetness] to the constant [value]. */
+fun SpeleothemCluster.wetness(value: Float) = wetness(ConstantFloatProvider(value))

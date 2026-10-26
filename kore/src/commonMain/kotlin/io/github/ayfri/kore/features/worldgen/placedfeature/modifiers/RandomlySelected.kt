@@ -26,8 +26,8 @@ data class RandomlySelected(
  * ```kotlin
  * placedFeature("my_feature", Features.ACACIA) {
  *     randomlySelected {
- *         offset(y = constant(-1))
- *         offset(x = constant(1), y = constant(-1))
+ *         offset(y = -1)
+ *         offset(x = 1, y = -1)
  *     }
  * }
  * ```

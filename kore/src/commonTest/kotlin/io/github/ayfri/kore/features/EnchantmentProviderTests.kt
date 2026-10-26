@@ -27,6 +27,8 @@ fun DataPack.enchantmentProviderTests() {
 		byCostWithDifficulty(villagerTradeName(biome, profession, 2), enchantment, minCost = 0, maxCostSpan = 2)
 		single(villagerTradeName(biome, profession, 3), enchantment)
 		single("raid/pillager_post_wave_3", enchantment, uniform(1, 3))
+		byCost("fixed_cost", enchantment, cost = 20)
+		single("fixed_level", enchantment, 3)
 	}
 
 	enchantmentProviders.first().fileName assertsIs "${builtName}_${1}"
@@ -63,6 +65,22 @@ fun DataPack.enchantmentProviderTests() {
 
 	enchantmentProviders[3].fileName assertsIs "raid/pillager_post_wave_3"
 	enchantmentProviders[3].resourceFolder assertsIs "enchantment_provider"
+
+	enchantmentProviders[4] assertsIs """
+		{
+			"type": "minecraft:by_cost",
+			"enchantments": "minecraft:aqua_affinity",
+			"cost": 20
+		}
+	""".trimIndent()
+
+	enchantmentProviders[5] assertsIs """
+		{
+			"type": "minecraft:single",
+			"enchantment": "minecraft:aqua_affinity",
+			"level": 3
+		}
+	""".trimIndent()
 }
 
 class EnchantmentProviderTests : FunSpec({

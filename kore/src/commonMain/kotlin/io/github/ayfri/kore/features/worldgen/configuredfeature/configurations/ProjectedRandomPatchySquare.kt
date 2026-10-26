@@ -49,7 +49,7 @@ data class ProjectedRandomPatchySquare(
  *     block = simpleStateProvider(Blocks.BASALT)
  *     projectThrough { matchingBlocks(Blocks.AIR) }
  *     maxProjectionHeight = 3
- *     size = constant(3)
+ *     size(3)
  * }
  * ```
  *
@@ -80,3 +80,17 @@ fun ConfiguredFeatures.projectedRandomPatchySquare(
 fun ProjectedRandomPatchySquare.projectThrough(block: BlockPredicatesScope.() -> Unit) {
 	projectThrough = blockPredicate(block)
 }
+
+/**
+ * Sets [ProjectedRandomPatchySquare.size] to [value], half the side of the square.
+ *
+ * ```kotlin
+ * size(uniform(2, 4))
+ * ```
+ */
+fun ProjectedRandomPatchySquare.size(value: IntProvider) {
+	size = value
+}
+
+/** Sets [ProjectedRandomPatchySquare.size] to the constant [value]. */
+fun ProjectedRandomPatchySquare.size(value: Int) = size(ConstantIntProvider(value))

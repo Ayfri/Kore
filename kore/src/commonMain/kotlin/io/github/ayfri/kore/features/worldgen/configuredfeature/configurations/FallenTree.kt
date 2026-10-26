@@ -81,6 +81,20 @@ fun FallenTree.logDecorators(block: MutableList<TreeDecorator>.() -> Unit) {
 }
 
 /**
+ * Sets [FallenTree.logLength] to [value], the length of the fallen log.
+ *
+ * ```kotlin
+ * logLength(uniform(4, 7))
+ * ```
+ */
+fun FallenTree.logLength(value: IntProvider) {
+	logLength = value
+}
+
+/** Sets [FallenTree.logLength] to the constant [value]. */
+fun FallenTree.logLength(value: Int) = logLength(ConstantIntProvider(value))
+
+/**
  * Sets [FallenTree.stumpDecorators] to the decorators appended in [block].
  *
  * ```kotlin

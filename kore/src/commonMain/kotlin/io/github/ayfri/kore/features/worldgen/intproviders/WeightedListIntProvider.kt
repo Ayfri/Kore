@@ -41,4 +41,7 @@ class WeightedListIntProviderBuilder internal constructor() : IntProviderScope {
 	fun entry(weight: Int, data: IntProvider) {
 		entries += WeightedListIntProviderEntry(weight, data)
 	}
+
+	/** Adds an entry always drawing the constant [data] with a relative chance of [weight]. */
+	fun entry(weight: Int, data: Int) = entry(weight, ConstantIntProvider(data))
 }

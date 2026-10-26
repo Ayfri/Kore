@@ -5,7 +5,7 @@ nav-title: Features
 description: Generate trees, ores and vegetation in Minecraft with Kore - configured features, placement modifiers and block state providers.
 keywords: minecraft, datapack, kore, worldgen, configured feature, placed feature, tree, ore, block state provider
 date-created: 2026-02-03
-date-modified: 2026-10-22
+date-modified: 2026-10-26
 routeOverride: /docs/data-driven/worldgen/features
 ---
 
@@ -186,8 +186,8 @@ Reference: [Ore feature](https://minecraft.wiki/w/Ore_(feature))
 blockColumn("cave_vines", direction = Direction.DOWN) {
 	allowedPlacement { replaceable() }
 	layers {
-		layer(constant(3)) { provider = simpleStateProvider(Blocks.CAVE_VINES_PLANT) }
-		layer(constant(1)) { provider = simpleStateProvider(Blocks.CAVE_VINES) }
+		layer(3) { provider = simpleStateProvider(Blocks.CAVE_VINES_PLANT) }
+		layer(1) { provider = simpleStateProvider(Blocks.CAVE_VINES) }
 	}
 }
 ```
@@ -215,8 +215,8 @@ steppedColumnCluster("basalt_cluster") {
 	canReplace { matchingBlocks(Blocks.AIR, Blocks.LAVA) }
 	continueThrough { matchingBlocks(Blocks.BASALT) }
 	cannotPlaceOn(Blocks.LAVA)
-	columnCount = constant(50)
-	clusterReach = constant(5)
+	columnCount(50)
+	clusterReach(5)
 	columnReach = uniform(2, 3)
 	height = uniform(5, 10)
 }
@@ -256,7 +256,7 @@ randomNeighborSpread("glowstone_extra") {
 	block = simpleStateProvider(Blocks.GLOWSTONE)
 	acceptedNeighbors(Blocks.GLOWSTONE)
 	canReplace { matchingBlocks(Blocks.AIR) }
-	attempts = constant(1500)
+	attempts(1500)
 	xzOffset = trapezoid(-7, 7, 0)
 	yOffset = uniform(-11, 0)
 }
@@ -281,7 +281,7 @@ always register a file. A single entry is written bare, as a string or as an obj
 overlay("basalt_pillars") {
 	feature(PlacedFeatures.BASALT_BLOBS)
 	placed(Features.BASALT_PILLAR) {
-		offset(y = constant(-2))
+		offset(y = -2)
 	}
 }
 ```
@@ -315,7 +315,7 @@ projectedRandomPatchySquare("basalt_cap") {
 	block = simpleStateProvider(Blocks.BASALT)
 	projectThrough { matchingBlocks(Blocks.AIR) }
 	maxProjectionHeight = 3
-	size = constant(3)
+	size(3)
 }
 ```
 
@@ -552,7 +552,7 @@ declare that property.
 
 ```kotlin
 randomizedIntStateProvider("age") {
-	values(0, 7) // Shorthand for a uniform int provider.
+	values(0, 7) // Shorthand for a uniform int provider, values(7) is a constant.
 	source = simpleStateProvider(Blocks.WHEAT)
 }
 ```
@@ -662,18 +662,18 @@ final position.
 `count`, `countOnEveryLayer`, `cuboid`, `heightRange`, `randomChance` and `rarityFilter` have no default, the value is required. `count`,
 `countOnEveryLayer` and `cuboid` take int providers or plain `Int`s (`count(10)` is `count(constant(10))`), `heightRange` takes a height
 provider, `randomChance` a `Float` from `0` to `1` and `rarityFilter` a positive `Int`; `cuboid` also takes optional `includeEdges` and
-`includeInterior` booleans, both `true` in the game when left out; see [Providers](/docs/data-driven/worldgen/providers) for the distributions available. `offset` takes one int provider per axis:
-`constant(1)` moves every position the same way, `uniform(-2, 2)` scatters it. `randomlySelected { }` takes a block of at least one modifier, built with
+`includeInterior` booleans, both `true` in the game when left out; see [Providers](/docs/data-driven/worldgen/providers) for the distributions available. `offset` takes either plain `Int`s for its axes or int providers for them, `0` when left out, and a mix of both wraps the plain ones in `constant(...)`:
+`offset(x = 1)` moves every position the same way, `offset(y = uniform(-2, 2))` scatters it, `offset(x = constant(1), y = uniform(-2, 2))` does both. `randomlySelected { }` takes a block of at least one modifier, built with
 the same builders as the placed feature itself, and picks one of them at random for each position:
 
 ```kotlin
 placedFeature("shifted_acacia", Features.ACACIA) {
 	randomlySelected {
-		offset(y = constant(-1))
-		offset(x = constant(-1), y = constant(-1))
-		offset(y = constant(-1), z = constant(1))
-		offset(x = constant(1), y = constant(-1))
-		offset(y = constant(-1), z = constant(-1))
+		offset(y = -1)
+		offset(x = -1, y = -1)
+		offset(y = -1, z = 1)
+		offset(x = 1, y = -1)
+		offset(y = -1, z = -1)
 	}
 }
 ```

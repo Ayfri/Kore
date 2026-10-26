@@ -39,3 +39,19 @@ fun EnchantmentProvidersScope.byCost(
 	cost: IntProvider = ConstantIntProvider(0),
 	block: ByCost.() -> Unit = {},
 ) = register(fileName, ByCost(enchantments.toList(), cost).apply(block))
+
+/**
+ * Registers a `by_cost` provider named [fileName], spending a fixed [cost] enchanting power budget on [enchantments].
+ *
+ * ```kotlin
+ * enchantmentProviders {
+ *     byCost("mob_spawn_equipment", Tags.Enchantment.ON_MOB_SPAWN_EQUIPMENT, cost = 20)
+ * }
+ * ```
+ */
+fun EnchantmentProvidersScope.byCost(
+	fileName: String,
+	vararg enchantments: EnchantmentOrTagArgument,
+	cost: Int,
+	block: ByCost.() -> Unit = {},
+) = byCost(fileName, *enchantments, cost = ConstantIntProvider(cost), block = block)

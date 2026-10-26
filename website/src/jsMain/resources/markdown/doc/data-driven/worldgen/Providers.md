@@ -5,7 +5,7 @@ nav-title: Providers
 description: Vertical anchors, height providers, int providers and float providers - the randomized values shared by every Kore worldgen builder.
 keywords: minecraft, datapack, kore, worldgen, vertical anchor, height provider, int provider, float provider, uniform, trapezoid
 date-created: 2026-08-21
-date-modified: 2026-10-20
+date-modified: 2026-10-26
 routeOverride: /docs/data-driven/worldgen/providers
 ---
 
@@ -108,8 +108,8 @@ count(clamped(4, 12, uniform(0, 20)))
 
 // 70% chance of 1, 30% chance of 3.
 count(weightedList {
-	entry(7, constant(1))
-	entry(3, constant(3))
+	entry(7, 1)
+	entry(3, 3)
 })
 
 // Same pool, written as weight-to-provider pairs.

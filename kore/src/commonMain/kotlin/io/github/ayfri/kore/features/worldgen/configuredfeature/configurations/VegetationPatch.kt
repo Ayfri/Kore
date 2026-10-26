@@ -63,7 +63,7 @@ data class VegetationPatch(
  *     vegetationFeature = PlacedFeatures.PATCH_GRASS_PLAIN,
  * ) {
  *     groundState = simpleStateProvider(Blocks.MOSS_BLOCK)
- *     depth = constant(1)
+ *     depth(1)
  *     verticalRange = 5
  *     extraEdgeColumnChance = 0.3
  *     vegetationChance = 0.8
@@ -86,3 +86,31 @@ fun ConfiguredFeatures.vegetationPatch(
 	fileName,
 	VegetationPatch(surface, replaceable = replaceable, vegetationFeature = vegetationFeature).apply(block),
 )
+
+/**
+ * Sets [VegetationPatch.depth] to [value], the number of ground blocks placed in each column.
+ *
+ * ```kotlin
+ * depth(uniform(1, 2))
+ * ```
+ */
+fun VegetationPatch.depth(value: IntProvider) {
+	depth = value
+}
+
+/** Sets [VegetationPatch.depth] to the constant [value]. */
+fun VegetationPatch.depth(value: Int) = depth(ConstantIntProvider(value))
+
+/**
+ * Sets [VegetationPatch.xzRadius] to [value], the horizontal radius of the patch.
+ *
+ * ```kotlin
+ * xzRadius(uniform(4, 7))
+ * ```
+ */
+fun VegetationPatch.xzRadius(value: IntProvider) {
+	xzRadius = value
+}
+
+/** Sets [VegetationPatch.xzRadius] to the constant [value]. */
+fun VegetationPatch.xzRadius(value: Int) = xzRadius(ConstantIntProvider(value))

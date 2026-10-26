@@ -7,6 +7,7 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovid
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleBlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeature
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.generated.Tags
@@ -199,3 +200,45 @@ fun Geode.crack(block: GeodeCrack.() -> Unit = {}) = crack.apply(block)
  */
 fun ConfiguredFeatures.geode(fileName: String, block: Geode.() -> Unit = {}) =
 	dp.configuredFeature(fileName, Geode().apply(block))
+
+/**
+ * Sets [Geode.distributionPoints] to [value], the number of points the shells are distributed around.
+ *
+ * ```kotlin
+ * distributionPoints(uniform(3, 4))
+ * ```
+ */
+fun Geode.distributionPoints(value: IntProvider) {
+	distributionPoints = value
+}
+
+/** Sets [Geode.distributionPoints] to the constant [value]. */
+fun Geode.distributionPoints(value: Int) = distributionPoints(ConstantIntProvider(value))
+
+/**
+ * Sets [Geode.outerWallDistance] to [value], the offset on each coordinate of the center from the feature start.
+ *
+ * ```kotlin
+ * outerWallDistance(uniform(4, 6))
+ * ```
+ */
+fun Geode.outerWallDistance(value: IntProvider) {
+	outerWallDistance = value
+}
+
+/** Sets [Geode.outerWallDistance] to the constant [value]. */
+fun Geode.outerWallDistance(value: Int) = outerWallDistance(ConstantIntProvider(value))
+
+/**
+ * Sets [Geode.pointOffset] to [value], the offset of the distribution points.
+ *
+ * ```kotlin
+ * pointOffset(uniform(1, 2))
+ * ```
+ */
+fun Geode.pointOffset(value: IntProvider) {
+	pointOffset = value
+}
+
+/** Sets [Geode.pointOffset] to the constant [value]. */
+fun Geode.pointOffset(value: Int) = pointOffset(ConstantIntProvider(value))

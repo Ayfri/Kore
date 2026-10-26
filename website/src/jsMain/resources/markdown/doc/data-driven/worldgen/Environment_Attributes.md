@@ -5,7 +5,7 @@ nav-title: Environment Attributes
 description: Data-driven visual, audio and gameplay rules for Minecraft biomes and dimensions - fog, sky, music, mob behavior - with Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, environment attributes, biome, dimension type, fog, sky color, music, modifiers
 date-created: 2026-02-09
-date-modified: 2026-10-22
+date-modified: 2026-10-26
 routeOverride: /docs/data-driven/worldgen/environment-attributes
 ---
 
@@ -260,8 +260,8 @@ attributes {
 belongs in the attributes of a [biome](/docs/data-driven/worldgen/biomes) or a dimension type, and `creatureWorldGenSpawnProbability`
 sets the chance per chunk of the initial creature spawn at world generation.
 
-`spawner(type, weight, minCount, maxCount)` writes a constant `count` when both are equal and a `uniform` one otherwise. Set `count`
-inside the block for another [int provider](/docs/data-driven/worldgen/providers). A `spawnCost(type, energyBudget, charge)` makes a
+`spawner(type, weight, minCount, maxCount)` writes a constant `count` when both are equal and a `uniform` one otherwise. Call `count`
+inside the block with a plain `Int` or another [int provider](/docs/data-driven/worldgen/providers). A `spawnCost(type, energyBudget, charge)` makes a
 mob spend `charge` from a shared `energyBudget`, so a crowded area stops spawning it.
 
 ```kotlin
@@ -277,7 +277,7 @@ attributes {
 				spawner(EntityTypes.HORSE, weight = 5, minCount = 2, maxCount = 6)
 				spawner(EntityTypes.DONKEY) {
 					weight = 1
-					count = uniform(1, 3)
+					count(uniform(1, 3))
 				}
 			}
 		}

@@ -63,7 +63,7 @@ data class WaterloggedVegetationPatch(
  *     vegetationFeature = PlacedFeatures.PATCH_GRASS_PLAIN,
  * ) {
  *     groundState = simpleStateProvider(Blocks.CLAY)
- *     depth = constant(3)
+ *     depth(3)
  *     verticalRange = 5
  *     extraBottomBlockChance = 0.8
  *     extraEdgeColumnChance = 0.7
@@ -87,3 +87,31 @@ fun ConfiguredFeatures.waterloggedVegetationPatch(
 	fileName,
 	WaterloggedVegetationPatch(surface, replaceable = replaceable, vegetationFeature = vegetationFeature).apply(block),
 )
+
+/**
+ * Sets [WaterloggedVegetationPatch.depth] to [value], the number of ground blocks placed in each column.
+ *
+ * ```kotlin
+ * depth(uniform(1, 2))
+ * ```
+ */
+fun WaterloggedVegetationPatch.depth(value: IntProvider) {
+	depth = value
+}
+
+/** Sets [WaterloggedVegetationPatch.depth] to the constant [value]. */
+fun WaterloggedVegetationPatch.depth(value: Int) = depth(ConstantIntProvider(value))
+
+/**
+ * Sets [WaterloggedVegetationPatch.xzRadius] to [value], the horizontal radius of the patch.
+ *
+ * ```kotlin
+ * xzRadius(uniform(4, 7))
+ * ```
+ */
+fun WaterloggedVegetationPatch.xzRadius(value: IntProvider) {
+	xzRadius = value
+}
+
+/** Sets [WaterloggedVegetationPatch.xzRadius] to the constant [value]. */
+fun WaterloggedVegetationPatch.xzRadius(value: Int) = xzRadius(ConstantIntProvider(value))

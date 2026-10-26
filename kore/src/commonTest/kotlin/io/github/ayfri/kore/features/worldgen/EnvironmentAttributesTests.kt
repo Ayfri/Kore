@@ -16,6 +16,7 @@ import io.github.ayfri.kore.features.worldgen.biome.types.spawnCost
 import io.github.ayfri.kore.features.worldgen.biome.types.spawner
 import io.github.ayfri.kore.features.worldgen.dimensiontype.attributes
 import io.github.ayfri.kore.features.worldgen.dimensiontype.dimensionType
+import io.github.ayfri.kore.features.worldgen.dimensiontype.monsterSpawnLightLevel
 import io.github.ayfri.kore.features.worldgen.environmentattributes.EnvironmentAttributeModifier
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.*
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
@@ -33,7 +34,7 @@ fun DataPack.environmentAttributesTests() {
 		attributes {
 			ambientParticles { particle(simpleParticle(Particles.ASH), 0.01f) }
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -66,7 +67,7 @@ fun DataPack.environmentAttributesTests() {
 		attributes {
 			ambientParticles { particle(dustParticle(Color.RED), 0.1f) }
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -108,7 +109,7 @@ fun DataPack.environmentAttributesTests() {
 				addition(SoundEvents.Ambient.CAVE, 0.01f)
 			}
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -158,7 +159,7 @@ fun DataPack.environmentAttributesTests() {
 				)
 			}
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -197,7 +198,7 @@ fun DataPack.environmentAttributesTests() {
 				errorMessage = textComponent("Cannot sleep here"),
 			)
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -233,7 +234,7 @@ fun DataPack.environmentAttributesTests() {
 				destroyOnUse = true,
 			)
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -263,7 +264,7 @@ fun DataPack.environmentAttributesTests() {
 		attributes {
 			waterEvaporates(true, EnvironmentAttributeModifier.OR)
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -304,7 +305,7 @@ fun DataPack.environmentAttributesTests() {
 			snowGolemMelts(true)
 			waterEvaporates(true)
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -342,7 +343,7 @@ fun DataPack.environmentAttributesTests() {
 		attributes {
 			fogColor(rgb(255, 255, 0), EnvironmentAttributeModifier.ADD)
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -374,7 +375,7 @@ fun DataPack.environmentAttributesTests() {
 			skyLightColor(rgb(255, 255, 255))
 			waterFogColor(rgb(5, 5, 51))
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -403,7 +404,7 @@ fun DataPack.environmentAttributesTests() {
 		attributes {
 			defaultDripstoneParticle(simpleParticle(Particles.DRIPPING_DRIPSTONE_WATER))
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -441,7 +442,7 @@ fun DataPack.environmentAttributesTests() {
 			starBrightness(0.7f)
 			sunAngle(90.0f)
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -477,7 +478,7 @@ fun DataPack.environmentAttributesTests() {
 		attributes {
 			cloudColor(ARGB(255, 128, 64, 32))
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -503,7 +504,7 @@ fun DataPack.environmentAttributesTests() {
 		attributes {
 			fogColor(rgb(255, 170, 0), EnvironmentAttributeModifier.BlendToGray(brightness = 0.5f, factor = 0.8f))
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -541,7 +542,7 @@ fun DataPack.environmentAttributesTests() {
 			waterFogEndDistance(96.0f)
 			waterFogStartDistance(0.0f)
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -572,7 +573,7 @@ fun DataPack.environmentAttributesTests() {
 		attributes {
 			eyeblossomOpen(EyeblossomOpenState.TRUE, EnvironmentAttributeModifier.OVERRIDE)
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -602,7 +603,7 @@ fun DataPack.environmentAttributesTests() {
 			babyVillagerActivity(Activities.PLAY, EnvironmentAttributeModifier.OVERRIDE)
 			villagerActivity(Activities.WORK, EnvironmentAttributeModifier.OVERRIDE)
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -635,7 +636,7 @@ fun DataPack.environmentAttributesTests() {
 		attributes {
 			moonPhase(Textures.Environment.Celestial.Moon.FULL_MOON, EnvironmentAttributeModifier.OVERRIDE)
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -664,7 +665,7 @@ fun DataPack.environmentAttributesTests() {
 		attributes {
 			ambientLightColor(rgb(20, 20, 20))
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -690,7 +691,7 @@ fun DataPack.environmentAttributesTests() {
 		attributes {
 			blockLightTint(rgb(255, 180, 80), EnvironmentAttributeModifier.MULTIPLY)
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -719,7 +720,7 @@ fun DataPack.environmentAttributesTests() {
 		attributes {
 			nightVisionColor(rgb(0, 255, 128))
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -745,7 +746,7 @@ fun DataPack.environmentAttributesTests() {
 		attributes {
 			sunriseSunsetColor(ARGB(128, 255, 128, 0))
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -786,7 +787,7 @@ fun DataPack.environmentAttributesTests() {
 				}
 			}
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -858,7 +859,7 @@ fun DataPack.environmentAttributesTests() {
 				}
 			}
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -903,7 +904,7 @@ fun DataPack.environmentAttributesTests() {
 		attributes {
 			ambientParticles(EnvironmentAttributeModifier.APPEND) { particle(simpleParticle(Particles.WHITE_ASH), 0.1f) }
 		}
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """

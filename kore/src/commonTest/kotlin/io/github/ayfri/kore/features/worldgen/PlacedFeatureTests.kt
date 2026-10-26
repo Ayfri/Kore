@@ -158,7 +158,7 @@ fun DataPack.placedFeatureTests() {
 	""".trimIndent()
 
 	placedFeature("offset_defaults", Features.ACACIA) {
-		offset(y = constant(-1))
+		offset(y = -1)
 	}
 
 	placedFeatures.last() assertsIs """
@@ -170,6 +170,35 @@ fun DataPack.placedFeatureTests() {
 					"x": 0,
 					"y": -1,
 					"z": 0
+				}
+			]
+		}
+	""".trimIndent()
+
+	placedFeature("offset_mixed", Features.ACACIA) {
+		offset(x = constant(1), y = uniform(-2, 2))
+		offset(1, 2, 3)
+	}
+
+	placedFeatures.last() assertsIs """
+		{
+			"feature": "minecraft:acacia",
+			"placement": [
+				{
+					"type": "minecraft:offset",
+					"x": 1,
+					"y": {
+						"type": "minecraft:uniform",
+						"min_inclusive": -2,
+						"max_inclusive": 2
+					},
+					"z": 0
+				},
+				{
+					"type": "minecraft:offset",
+					"x": 1,
+					"y": 2,
+					"z": 3
 				}
 			]
 		}
@@ -261,11 +290,11 @@ fun DataPack.placedFeatureTests() {
 
 	placedFeature("randomly_selected", Features.ACACIA) {
 		randomlySelected {
-			offset(y = constant(-1))
-			offset(x = constant(-1), y = constant(-1))
-			offset(y = constant(-1), z = constant(1))
-			offset(x = constant(1), y = constant(-1))
-			offset(y = constant(-1), z = constant(-1))
+			offset(y = -1)
+			offset(x = -1, y = -1)
+			offset(y = -1, z = 1)
+			offset(x = 1, y = -1)
+			offset(y = -1, z = -1)
 		}
 	}
 

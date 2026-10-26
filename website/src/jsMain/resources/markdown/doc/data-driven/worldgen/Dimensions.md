@@ -5,7 +5,7 @@ nav-title: Dimensions
 description: Create custom Minecraft dimensions and dimension types with Kore - world bounds, lighting rules, terrain generators and biome sources.
 keywords: minecraft, datapack, kore, worldgen, dimension, dimension type, generator, biome source, multi noise, superflat
 date-created: 2026-02-03
-date-modified: 2026-09-23
+date-modified: 2026-10-26
 routeOverride: /docs/data-driven/worldgen/dimensions
 ---
 
@@ -56,9 +56,12 @@ Every property defaults to its vanilla Overworld value, so a dimension type only
 | `logicalHeight`               | `384`                   | How high chorus fruits and portals bring a player, at most `height`.  |
 | `minY`                        | `-64`                   | Lowest buildable Y, a multiple of `16`, from `-2032` to `2031`.       |
 | `monsterSpawnBlockLightLimit` | `0`                     | Block light level at or below which monsters spawn, from `0` to `15`. |
-| `monsterSpawnLightLevel`      | `constant(0)`           | Sky light levels at which monsters spawn, from `0` to `15`.           |
+| `monsterSpawnLightLevel`      | `0`                     | Sky light levels at which monsters spawn, from `0` to `15`.           |
 | `skybox`                      | `OVERWORLD`             | `SkyboxType.NONE`, `OVERWORLD` or `END`.                              |
 | `timelines`                   | none                    | List of [timelines](/docs/data-driven/timelines) or timeline tags.    |
+
+`monsterSpawnLightLevel` takes a plain `Int` or an [int provider](/docs/data-driven/worldgen/providers): `monsterSpawnLightLevel(0)` or
+`monsterSpawnLightLevel(uniform(0, 7))`.
 
 Everything else about how a world feels is an [environment attribute](/docs/data-driven/worldgen/environment-attributes): lava spreading
 fast, water evaporating, piglins zombifying, beds exploding, raids starting.

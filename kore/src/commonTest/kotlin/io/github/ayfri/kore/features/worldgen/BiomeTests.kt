@@ -102,7 +102,10 @@ fun DataPack.biomeTests() {
 			naturalMobSpawns {
 				spawnsByCategory {
 					ambient {
-						spawner(EntityTypes.BAT, weight = 10, minCount = 8, maxCount = 8)
+						spawner(EntityTypes.BAT) {
+							weight = 10
+							count(8)
+						}
 					}
 					axolotls {
 						spawner(EntityTypes.AXOLOTL, weight = 10, minCount = 4, maxCount = 6)

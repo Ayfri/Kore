@@ -56,7 +56,7 @@ data class RandomNeighborSpread(
  *     block = simpleStateProvider(Blocks.GLOWSTONE)
  *     acceptedNeighbors(Blocks.GLOWSTONE)
  *     canReplace { matchingBlocks(Blocks.AIR) }
- *     attempts = constant(1500)
+ *     attempts(1500)
  *     xzOffset = trapezoid(-7, 7, 0)
  *     yOffset = uniform(-11, 0)
  * }
@@ -85,6 +85,20 @@ fun RandomNeighborSpread.acceptedNeighbors(vararg blocks: BlockOrTagArgument) {
 }
 
 /**
+ * Sets [RandomNeighborSpread.attempts] to [value], the number of random positions tried.
+ *
+ * ```kotlin
+ * attempts(uniform(1000, 1500))
+ * ```
+ */
+fun RandomNeighborSpread.attempts(value: IntProvider) {
+	attempts = value
+}
+
+/** Sets [RandomNeighborSpread.attempts] to the constant [value]. */
+fun RandomNeighborSpread.attempts(value: Int) = attempts(ConstantIntProvider(value))
+
+/**
  * Sets [RandomNeighborSpread.canReplace] to the predicate built in [block], the blocks that can be replaced.
  *
  * A lone predicate is used as-is, several of them are wrapped in an `all_of`.
@@ -100,3 +114,31 @@ fun RandomNeighborSpread.acceptedNeighbors(vararg blocks: BlockOrTagArgument) {
 fun RandomNeighborSpread.canReplace(block: BlockPredicatesScope.() -> Unit) {
 	canReplace = blockPredicate(block)
 }
+
+/**
+ * Sets [RandomNeighborSpread.xzOffset] to [value], the horizontal range of the random offset of every attempt.
+ *
+ * ```kotlin
+ * xzOffset(trapezoid(-7, 7, 0))
+ * ```
+ */
+fun RandomNeighborSpread.xzOffset(value: IntProvider) {
+	xzOffset = value
+}
+
+/** Sets [RandomNeighborSpread.xzOffset] to the constant [value]. */
+fun RandomNeighborSpread.xzOffset(value: Int) = xzOffset(ConstantIntProvider(value))
+
+/**
+ * Sets [RandomNeighborSpread.yOffset] to [value], the vertical range of the random offset of every attempt.
+ *
+ * ```kotlin
+ * yOffset(uniform(-11, 0))
+ * ```
+ */
+fun RandomNeighborSpread.yOffset(value: IntProvider) {
+	yOffset = value
+}
+
+/** Sets [RandomNeighborSpread.yOffset] to the constant [value]. */
+fun RandomNeighborSpread.yOffset(value: Int) = yOffset(ConstantIntProvider(value))

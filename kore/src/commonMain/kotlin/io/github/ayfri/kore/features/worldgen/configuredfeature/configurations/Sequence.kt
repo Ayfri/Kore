@@ -52,7 +52,7 @@ fun ConfiguredFeatures.sequence(fileName: String, features: List<PlacedFeatureOr
  * ```kotlin
  * sequence("tree_then_flowers") {
  *     feature(PlacedFeatures.ACACIA)
- *     placed(Features.FLOWER_DEFAULT) { offset(y = constant(1)) }
+ *     placed(Features.FLOWER_DEFAULT) { offset(y = 1) }
  * }
  * ```
  *

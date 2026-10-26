@@ -157,7 +157,7 @@ fun DataPack.intProviderTests() {
 	placedFeature("weighted_list_test", Features.ACACIA) {
 		count(weightedList {
 			entry(3, uniform(1, 5))
-			entry(1, constant(10))
+			entry(1, 10)
 		})
 	}
 

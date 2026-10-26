@@ -64,7 +64,7 @@ fun ConfiguredFeatures.overlay(fileName: String, features: List<PlacedFeatureOrT
  * ```kotlin
  * overlay("basalt_pillars") {
  *     feature(PlacedFeatures.BASALT_BLOBS)
- *     placed(Features.BASALT_PILLAR) { offset(y = constant(-2)) }
+ *     placed(Features.BASALT_PILLAR) { offset(y = -2) }
  * }
  * ```
  *

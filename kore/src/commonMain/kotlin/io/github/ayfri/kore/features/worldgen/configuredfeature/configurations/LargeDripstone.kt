@@ -76,3 +76,73 @@ data class LargeDripstone(
  */
 fun ConfiguredFeatures.largeDripstone(fileName: String, block: LargeDripstone.() -> Unit = {}) =
 	dp.configuredFeature(fileName, LargeDripstone().apply(block))
+
+/**
+ * Sets [LargeDripstone.columnRadius] to [value], the radius of the column.
+ *
+ * ```kotlin
+ * columnRadius(clamped(3, 16, uniform(3, 19)))
+ * ```
+ */
+fun LargeDripstone.columnRadius(value: IntProvider) {
+	columnRadius = value
+}
+
+/** Sets [LargeDripstone.columnRadius] to the constant [value]. */
+fun LargeDripstone.columnRadius(value: Int) = columnRadius(ConstantIntProvider(value))
+
+/**
+ * Sets [LargeDripstone.heightScale] to [value], the factor scaling the height of the dripstone.
+ *
+ * ```kotlin
+ * heightScale(uniform(0.4f, 2f))
+ * ```
+ */
+fun LargeDripstone.heightScale(value: FloatProvider) {
+	heightScale = value
+}
+
+/** Sets [LargeDripstone.heightScale] to the constant [value]. */
+fun LargeDripstone.heightScale(value: Float) = heightScale(ConstantFloatProvider(value))
+
+/**
+ * Sets [LargeDripstone.stalactiteBluntness] to [value], how blunt the stalactite tip is.
+ *
+ * ```kotlin
+ * stalactiteBluntness(uniform(0.3f, 0.9f))
+ * ```
+ */
+fun LargeDripstone.stalactiteBluntness(value: FloatProvider) {
+	stalactiteBluntness = value
+}
+
+/** Sets [LargeDripstone.stalactiteBluntness] to the constant [value]. */
+fun LargeDripstone.stalactiteBluntness(value: Float) = stalactiteBluntness(ConstantFloatProvider(value))
+
+/**
+ * Sets [LargeDripstone.stalagmiteBluntness] to [value], how blunt the stalagmite tip is.
+ *
+ * ```kotlin
+ * stalagmiteBluntness(uniform(0.4f, 1f))
+ * ```
+ */
+fun LargeDripstone.stalagmiteBluntness(value: FloatProvider) {
+	stalagmiteBluntness = value
+}
+
+/** Sets [LargeDripstone.stalagmiteBluntness] to the constant [value]. */
+fun LargeDripstone.stalagmiteBluntness(value: Float) = stalagmiteBluntness(ConstantFloatProvider(value))
+
+/**
+ * Sets [LargeDripstone.windSpeed] to [value], how strongly the wind bends the dripstone.
+ *
+ * ```kotlin
+ * windSpeed(uniform(0f, 0.3f))
+ * ```
+ */
+fun LargeDripstone.windSpeed(value: FloatProvider) {
+	windSpeed = value
+}
+
+/** Sets [LargeDripstone.windSpeed] to the constant [value]. */
+fun LargeDripstone.windSpeed(value: Float) = windSpeed(ConstantFloatProvider(value))

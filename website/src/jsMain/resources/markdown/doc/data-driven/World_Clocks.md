@@ -5,7 +5,7 @@ nav-title: World Clocks
 description: Create custom world clocks and timelines in Kore datapacks. Define named time counters, time markers, timeCheck predicates, and control the /time command. Integrates with dimension types and environment timelines.
 keywords: minecraft world_clock, timeCheck predicate, custom time system datapack, datapack timeline, time marker minecraft, kore world clock, dimension_type clock, datapack time command, minecraft time counter
 date-created: 2026-06-16
-date-modified: 2026-10-23
+date-modified: 2026-10-26
 routeOverride: /docs/data-driven/world-clocks
 ---
 
@@ -264,7 +264,7 @@ dataPack.dimensionType("twilight_dimension") {
 	minY = -64
 	height = 384
 	monsterSpawnBlockLightLimit = 0
-	monsterSpawnLightLevel = constant(0)
+	monsterSpawnLightLevel(0)
 }
 ```
 
@@ -308,7 +308,7 @@ dataPack("my_mod") {
 		minY = -64
 		height = 384
 		monsterSpawnBlockLightLimit = 0
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	// 4. Predicate: is it currently summer?

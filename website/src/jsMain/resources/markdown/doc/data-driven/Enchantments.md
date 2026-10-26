@@ -5,7 +5,7 @@ nav-title: Enchantments
 description: Create custom Minecraft enchantments using Kore's type-safe Kotlin DSL with support for all vanilla effect components and level-based values.
 keywords: minecraft, datapack, kore, enchantments, effects, custom enchantments
 date-created: 2025-03-02
-date-modified: 2026-10-22
+date-modified: 2026-10-26
 routeOverride: /docs/data-driven/enchantments
 ---
 
@@ -621,11 +621,13 @@ holding slashes lands in subfolders. Every vanilla provider is listed as an `Enc
 ```kotlin
 dataPack("custom_enchants") {
 	enchantmentProviders {
-		// One enchantment, at a level rolled from an int provider
+		// One enchantment, at a level rolled from an int provider, or at a fixed level with a plain Int
 		single("pillager_spawn_crossbow", Enchantments.PIERCING, uniform(1, 3))
+		single("fixed_piercing", Enchantments.PIERCING, 2)
 
-		// An enchanting power budget spent on a set of enchantments
+		// An enchanting power budget spent on a set of enchantments, an int provider or a plain Int
 		byCost("mob_spawn_equipment", Tags.Enchantment.ON_MOB_SPAWN_EQUIPMENT, cost = uniform(5, 25))
+		byCost("fixed_budget", Tags.Enchantment.ON_MOB_SPAWN_EQUIPMENT, cost = 20)
 
 		// The same, scaled with the regional difficulty
 		byCostWithDifficulty("raid/pillager_post_wave_3", Enchantments.PIERCING, minCost = 10, maxCostSpan = 15)

@@ -81,7 +81,7 @@ fun PlacedFeaturesScope.feature(id: PlacedFeatureArgument) {
  * [block].
  *
  * ```kotlin
- * placed(Features.BASALT_PILLAR) { offset(y = constant(-2)) }  // {"feature": "minecraft:basalt_pillar", "placement": [...]}
+ * placed(Features.BASALT_PILLAR) { offset(y = -2) }  // {"feature": "minecraft:basalt_pillar", "placement": [...]}
  * ```
  */
 fun PlacedFeaturesScope.placed(feature: FeatureArgument, block: PlacementModifiersScope.() -> Unit = {}) {

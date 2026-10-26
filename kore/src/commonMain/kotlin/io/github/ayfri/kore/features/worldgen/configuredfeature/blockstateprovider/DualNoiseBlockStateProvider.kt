@@ -60,6 +60,20 @@ data class DualNoiseBlockStateProvider(
 fun BlockStateProviderScope.dualNoiseProvider(block: DualNoiseBlockStateProvider.() -> Unit = {}) = DualNoiseBlockStateProvider().apply(block)
 
 /**
+ * Sets [DualNoiseBlockStateProvider.variety] to [value], the amount of states in play at a position.
+ *
+ * ```kotlin
+ * variety(clamped(1, 3, uniform(0, 5)))
+ * ```
+ */
+fun DualNoiseBlockStateProvider.variety(value: IntProvider) {
+	variety = value
+}
+
+/** Sets [DualNoiseBlockStateProvider.variety] to the constant [value]. */
+fun DualNoiseBlockStateProvider.variety(value: Int) = variety(ConstantIntProvider(value))
+
+/**
  * Sets [DualNoiseBlockStateProvider.variety] to a uniform int provider between [min] and [max], the amount of states in play at
  * a position.
  *

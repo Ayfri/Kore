@@ -38,3 +38,19 @@ fun EnchantmentProvidersScope.single(
 	level: IntProvider = ConstantIntProvider(1),
 	block: Single.() -> Unit = {},
 ) = register(fileName, Single(enchantment, level).apply(block))
+
+/**
+ * Registers a `single` provider named [fileName], handing out [enchantment] at the fixed [level].
+ *
+ * ```kotlin
+ * enchantmentProviders {
+ *     single("pillager_spawn_crossbow", Enchantments.PIERCING, 1)
+ * }
+ * ```
+ */
+fun EnchantmentProvidersScope.single(
+	fileName: String,
+	enchantment: EnchantmentOrTagArgument,
+	level: Int,
+	block: Single.() -> Unit = {},
+) = single(fileName, enchantment, ConstantIntProvider(level), block)

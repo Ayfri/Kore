@@ -71,8 +71,8 @@ class LayersScope : IntProviderScope {
  * ```kotlin
  * blockColumn("cave_vines", direction = Direction.DOWN) {
  *     layers {
- *         layer(constant(3)) { provider = simpleStateProvider(Blocks.CAVE_VINES_PLANT) }
- *         layer(constant(1)) { provider = simpleStateProvider(Blocks.CAVE_VINES) }
+ *         layer(3) { provider = simpleStateProvider(Blocks.CAVE_VINES_PLANT) }
+ *         layer(1) { provider = simpleStateProvider(Blocks.CAVE_VINES) }
  *     }
  * }
  * ```
@@ -96,7 +96,7 @@ fun BlockColumn.layers(vararg layers: Layer) = run { this.layers = layers.toList
  *
  * ```kotlin
  * layers {
- *     layer(constant(3)) { provider = simpleStateProvider(Blocks.CAVE_VINES_PLANT) }
+ *     layer(uniform(1, 3)) { provider = simpleStateProvider(Blocks.CAVE_VINES_PLANT) }
  * }
  * ```
  *
@@ -112,6 +112,20 @@ fun LayersScope.layer(height: IntProvider = ConstantIntProvider(0), provider: Bl
 }
 
 /**
+ * Appends a layer of exactly [height] blocks, its block state provider being set in [block].
+ *
+ * ```kotlin
+ * layers {
+ *     layer(3) { provider = simpleStateProvider(Blocks.CAVE_VINES_PLANT) }
+ * }
+ * ```
+ */
+fun LayersScope.layer(height: Int, block: Layer.() -> Unit = {}) = layer(ConstantIntProvider(height), block)
+
+/** Appends a layer of exactly [height] blocks made of [provider]. */
+fun LayersScope.layer(height: Int, provider: BlockStateProvider) = layer(ConstantIntProvider(height), provider)
+
+/**
  * Creates a `block_column` configured feature, stacking [BlockColumn.layers] along [direction].
  *
  * The block predicate builders are scoped to [block], the block state provider ones to each `layer { }`.
@@ -120,7 +134,7 @@ fun LayersScope.layer(height: IntProvider = ConstantIntProvider(0), provider: Bl
  * blockColumn("cave_vines", direction = Direction.DOWN) {
  *     allowedPlacement { replaceable() }
  *     layers {
- *         layer(constant(3)) { provider = simpleStateProvider(Blocks.CAVE_VINES_PLANT) }
+ *         layer(3) { provider = simpleStateProvider(Blocks.CAVE_VINES_PLANT) }
  *     }
  * }
  * ```

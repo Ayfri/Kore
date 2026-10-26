@@ -58,9 +58,9 @@ data class SteppedColumnCluster(
  *     canReplace { matchingBlocks(Blocks.AIR, Blocks.LAVA) }
  *     continueThrough { matchingBlocks(Blocks.BASALT) }
  *     cannotPlaceOn(Blocks.LAVA)
- *     columnCount = constant(50)
+ *     columnCount(50)
  *     columnReach = uniform(2, 3)
- *     clusterReach = constant(5)
+ *     clusterReach(5)
  *     height = uniform(5, 10)
  * }
  * ```
@@ -104,6 +104,48 @@ fun SteppedColumnCluster.cannotPlaceOn(vararg blocks: BlockOrTagArgument) {
 }
 
 /**
+ * Sets [SteppedColumnCluster.clusterReach] to [value], how far from the placement position the columns can start.
+ *
+ * ```kotlin
+ * clusterReach(uniform(3, 5))
+ * ```
+ */
+fun SteppedColumnCluster.clusterReach(value: IntProvider) {
+	clusterReach = value
+}
+
+/** Sets [SteppedColumnCluster.clusterReach] to the constant [value]. */
+fun SteppedColumnCluster.clusterReach(value: Int) = clusterReach(ConstantIntProvider(value))
+
+/**
+ * Sets [SteppedColumnCluster.columnCount] to [value], the number of columns grown.
+ *
+ * ```kotlin
+ * columnCount(uniform(30, 50))
+ * ```
+ */
+fun SteppedColumnCluster.columnCount(value: IntProvider) {
+	columnCount = value
+}
+
+/** Sets [SteppedColumnCluster.columnCount] to the constant [value]. */
+fun SteppedColumnCluster.columnCount(value: Int) = columnCount(ConstantIntProvider(value))
+
+/**
+ * Sets [SteppedColumnCluster.columnReach] to [value], how far a column spreads sideways.
+ *
+ * ```kotlin
+ * columnReach(uniform(2, 3))
+ * ```
+ */
+fun SteppedColumnCluster.columnReach(value: IntProvider) {
+	columnReach = value
+}
+
+/** Sets [SteppedColumnCluster.columnReach] to the constant [value]. */
+fun SteppedColumnCluster.columnReach(value: Int) = columnReach(ConstantIntProvider(value))
+
+/**
  * Sets [SteppedColumnCluster.continueThrough] to the predicate built in [block], the blocks a growing column goes
  * through instead of stopping.
  *
@@ -120,3 +162,17 @@ fun SteppedColumnCluster.cannotPlaceOn(vararg blocks: BlockOrTagArgument) {
 fun SteppedColumnCluster.continueThrough(block: BlockPredicatesScope.() -> Unit) {
 	continueThrough = blockPredicate(block)
 }
+
+/**
+ * Sets [SteppedColumnCluster.height] to [value], the height of each column.
+ *
+ * ```kotlin
+ * height(uniform(5, 10))
+ * ```
+ */
+fun SteppedColumnCluster.height(value: IntProvider) {
+	height = value
+}
+
+/** Sets [SteppedColumnCluster.height] to the constant [value]. */
+fun SteppedColumnCluster.height(value: Int) = height(ConstantIntProvider(value))

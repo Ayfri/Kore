@@ -53,7 +53,7 @@ fun ConfiguredFeatures.simpleRandomSelector(fileName: String, vararg features: P
  * ```kotlin
  * simpleRandomSelector("oak_or_birch") {
  *     feature(PlacedFeatures.OAK_CHECKED)
- *     placed(Features.BIRCH) { offset(y = constant(1)) }
+ *     placed(Features.BIRCH) { offset(y = 1) }
  * }
  * ```
  *

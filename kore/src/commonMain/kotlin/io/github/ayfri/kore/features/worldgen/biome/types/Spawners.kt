@@ -56,6 +56,20 @@ fun Spawners.axolotls(init: MutableList<Spawn>.() -> Unit) {
 	axolotls = buildList(init)
 }
 
+/**
+ * Sets [Spawn.count] to [value], the pack size spawned at once.
+ *
+ * ```kotlin
+ * count(uniform(2, 6))
+ * ```
+ */
+fun Spawn.count(value: IntProvider) {
+	count = value
+}
+
+/** Sets [Spawn.count] to the constant [value]. */
+fun Spawn.count(value: Int) = count(ConstantIntProvider(value))
+
 /** Sets the `creature` spawns, the passive land mobs. */
 fun Spawners.creature(init: MutableList<Spawn>.() -> Unit) {
 	creature = buildList(init)

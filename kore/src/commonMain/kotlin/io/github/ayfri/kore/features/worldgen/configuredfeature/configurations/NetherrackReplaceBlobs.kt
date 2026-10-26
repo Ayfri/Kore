@@ -56,3 +56,19 @@ fun ConfiguredFeatures.netherrackReplaceBlobs(
 	radius: IntProvider = ConstantIntProvider(0),
 	block: NetherrackReplaceBlobs.() -> Unit = {},
 ) = dp.configuredFeature(fileName, NetherrackReplaceBlobs(state, target, radius).apply(block))
+
+/**
+ * Creates a `netherrack_replace_blobs` configured feature replacing [target] with [state] in blobs of the constant
+ * [radius], configured in [block].
+ *
+ * ```kotlin
+ * netherrackReplaceBlobs("basalt_blobs", state = blockState(Blocks.BASALT), target = blockState(Blocks.NETHERRACK), radius = 3)
+ * ```
+ */
+fun ConfiguredFeatures.netherrackReplaceBlobs(
+	fileName: String,
+	state: BlockState = blockStateStone(),
+	target: BlockState = blockStateStone(),
+	radius: Int,
+	block: NetherrackReplaceBlobs.() -> Unit = {},
+) = netherrackReplaceBlobs(fileName, state, target, ConstantIntProvider(radius), block)

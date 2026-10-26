@@ -118,3 +118,17 @@ fun DataPack.dimensionType(
 fun DimensionType.attributes(init: EnvironmentAttributesScope.() -> Unit) {
 	attributes = EnvironmentAttributesScope().apply(init)
 }
+
+/**
+ * Sets [DimensionType.monsterSpawnLightLevel] to [value], the sky light levels at which monsters can spawn.
+ *
+ * ```kotlin
+ * monsterSpawnLightLevel(uniform(0, 7))
+ * ```
+ */
+fun DimensionType.monsterSpawnLightLevel(value: IntProvider) {
+	monsterSpawnLightLevel = value
+}
+
+/** Sets [DimensionType.monsterSpawnLightLevel] to the constant [value]. */
+fun DimensionType.monsterSpawnLightLevel(value: Int) = monsterSpawnLightLevel(ConstantIntProvider(value))

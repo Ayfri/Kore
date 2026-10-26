@@ -73,7 +73,6 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import io.github.ayfri.kore.features.worldgen.floatproviders.clampedNormal
-import io.github.ayfri.kore.features.worldgen.floatproviders.constant as constantFloat
 import io.github.ayfri.kore.features.worldgen.floatproviders.uniform as uniformFloat
 
 fun DataPack.configuredFeatureTests() {
@@ -373,11 +372,11 @@ fun DataPack.configuredFeatureTests() {
 
 	configuredFeaturesBuilder.speleothemCluster("test_speleothem_cluster") {
 		floorToCeilingSearchRange = 30
-		height = constant(12)
-		radius = constant(4)
+		height(12)
+		radius(4)
 		maxStalagmiteStalactiteHeightDiff = 3
 		heightDeviation = 2
-		speleothemBlockLayerThickness = constant(1)
+		speleothemBlockLayerThickness(1)
 		density = uniformFloat(0.3f, 0.7f)
 		wetness = clampedNormal(mean = 0.1f, deviation = 0.3f, min = 0.1f, max = 0.9f)
 		chanceOfSpeleothemAtMaxDistanceFromCenter = 0.1f
@@ -712,14 +711,48 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
+	configuredFeaturesBuilder.blockColumn("test_block_column_fixed_layers", direction = Direction.UP) {
+		layers {
+			layer(3) { provider = simpleStateProvider(Blocks.STONE) }
+			layer(1) { provider = simpleStateProvider(Blocks.DIRT) }
+		}
+	}
+
+	configuredFeatures.last() assertsIs """
+		{
+			"type": "minecraft:block_column",
+			"direction": "up",
+			"allowed_placement": {
+				"type": "minecraft:true"
+			},
+			"prioritize_tip": false,
+			"layers": [
+				{
+					"height": 3,
+					"provider": {
+						"type": "minecraft:simple",
+						"state": "minecraft:stone"
+					}
+				},
+				{
+					"height": 1,
+					"provider": {
+						"type": "minecraft:simple",
+						"state": "minecraft:dirt"
+					}
+				}
+			]
+		}
+	""".trimIndent()
+
 	configuredFeaturesBuilder.largeDripstone("test_large_dripstone") {
 		floorToCeilingSearchRange = 30
-		columnRadius = constant(3)
-		heightScale = constantFloat(2.0f)
+		columnRadius(3)
+		heightScale(2f)
 		maxColumnRadiusToCaveHeightRatio = 0.5f
-		stalactiteBluntness = constantFloat(0.5f)
-		stalagmiteBluntness = constantFloat(0.5f)
-		windSpeed = constantFloat(0.0f)
+		stalactiteBluntness(0.5f)
+		stalagmiteBluntness(0.5f)
+		windSpeed(0f)
 		minRadiusForWind = 3
 		minBluntnessForWind = 0.5f
 		replaceableBlocks = listOf(Blocks.STONE, Blocks.DIRT)
@@ -782,7 +815,7 @@ fun DataPack.configuredFeatureTests() {
 			"test_netherrack_replace_blobs",
 			blockState(Blocks.GRAVEL),
 			blockStateStone(),
-			constant(3)
+			radius = 3
 		)
 	}
 
@@ -1014,7 +1047,7 @@ fun DataPack.configuredFeatureTests() {
 	configuredFeaturesBuilder.overlay("test_overlay_inline") {
 		feature(PlacedFeatures.BASALT_BLOBS)
 		placed(Features.BASALT_PILLAR) {
-			offset(y = constant(-2))
+			offset(y = -2)
 		}
 	}
 
@@ -1055,8 +1088,8 @@ fun DataPack.configuredFeatureTests() {
 	configuredFeaturesBuilder.overlay("test_overlay_randomly_selected") {
 		placed(Features.DESERT_WELL) {
 			randomlySelected {
-				offset(y = constant(-1))
-				offset(x = constant(1), y = constant(-1))
+				offset(y = -1)
+				offset(x = 1, y = -1)
 			}
 		}
 	}
@@ -1093,7 +1126,7 @@ fun DataPack.configuredFeatureTests() {
 		block = simpleStateProvider(Blocks.BASALT)
 		projectThrough { matchingBlocks(Blocks.AIR) }
 		maxProjectionHeight = 3
-		size = constant(3)
+		size(3)
 	}
 
 	configuredFeatures.last() assertsIs """
@@ -1116,7 +1149,7 @@ fun DataPack.configuredFeatureTests() {
 		block = simpleStateProvider(Blocks.GLOWSTONE)
 		acceptedNeighbors(Blocks.GLOWSTONE, Blocks.NETHERRACK)
 		canReplace { matchingBlocks(Blocks.AIR) }
-		attempts = constant(1500)
+		attempts(1500)
 		xzOffset = uniform(-7, 7)
 		yOffset = uniform(-11, 0)
 	}
@@ -1441,7 +1474,7 @@ fun DataPack.configuredFeatureTests() {
 	configuredFeaturesBuilder.sequence("test_sequence_inline") {
 		feature(PlacedFeatures.ACACIA)
 		placed(Features.FLOWER_DEFAULT) {
-			offset(y = constant(1))
+			offset(y = 1)
 		}
 	}
 
@@ -1499,7 +1532,7 @@ fun DataPack.configuredFeatureTests() {
 	configuredFeaturesBuilder.simpleRandomSelector("test_simple_random_selector_inline") {
 		feature(PlacedFeatures.BIRCH_CHECKED)
 		placed(Features.BIRCH) {
-			offset(y = constant(1))
+			offset(y = 1)
 		}
 	}
 
@@ -1604,10 +1637,10 @@ fun DataPack.configuredFeatureTests() {
 		canReplace { matchingBlocks(Blocks.LAVA) }
 		continueThrough { replaceable() }
 		cannotPlaceOn(Blocks.LAVA)
-		columnReach = constant(1)
+		columnReach(1)
 		columnCount = uniform(1, 4)
 		height = uniform(2, 5)
-		clusterReach = constant(3)
+		clusterReach(3)
 	}
 
 	configuredFeatures.last() assertsIs """
@@ -1745,6 +1778,30 @@ fun DataPack.configuredFeatureTests() {
 			]
 		}
 	""".trimIndent()
+
+	configuredFeaturesBuilder.geode("test_geode_plain_setters") {
+		distributionPoints(3)
+		outerWallDistance(5)
+		pointOffset(2)
+	}
+	val plainGeodeJson = configuredFeatures.last().generateJson(this)
+
+	configuredFeaturesBuilder.geode("test_geode_provider_setters") {
+		distributionPoints = constant(3)
+		outerWallDistance = constant(5)
+		pointOffset = constant(2)
+	}
+	configuredFeatures.last().generateJson(this) assertsIs plainGeodeJson
+
+	configuredFeaturesBuilder.fallenTree("test_fallen_tree_plain_log_length") {
+		logLength(5)
+	}
+	val plainFallenTreeJson = configuredFeatures.last().generateJson(this)
+
+	configuredFeaturesBuilder.fallenTree("test_fallen_tree_provider_log_length") {
+		logLength = constant(5)
+	}
+	configuredFeatures.last().generateJson(this) assertsIs plainFallenTreeJson
 
 	configuredFeaturesBuilder.tree("test_tree") {
 		minimumSize = threeLayersFeatureSize {
@@ -2967,10 +3024,10 @@ fun DataPack.configuredFeatureTests() {
 		replaceable = listOf(Tags.Block.DIRT),
 		vegetationFeature = PlacedFeatures.ACACIA
 	) {
-		depth = constant(3)
+		depth(3)
 		verticalRange = 3
 		vegetationChance = 0.5
-		xzRadius = constant(2)
+		xzRadius(2)
 	}
 
 	configuredFeatures.last() assertsIs """
@@ -3013,7 +3070,7 @@ fun DataPack.configuredFeatureTests() {
 		replaceable = listOf(Tags.Block.DIRT),
 		vegetationFeature = PlacedFeatures.ACACIA
 	) {
-		depth = constant(2)
+		depth(2)
 		verticalRange = 8
 		vegetationChance = 0.5
 		xzRadius = uniform(4, 7)

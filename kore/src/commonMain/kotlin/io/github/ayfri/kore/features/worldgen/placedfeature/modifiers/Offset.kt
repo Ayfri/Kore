@@ -44,3 +44,15 @@ fun PlacementModifiersScope.offset(
 ) {
 	placementModifiers += Offset(x, y, z)
 }
+
+/**
+ * Appends an `offset` placement modifier moving the position by the fixed [x], [y] and [z], each `0` when left out.
+ *
+ * ```kotlin
+ * placedFeature("my_feature", Features.ACACIA) {
+ *     offset(y = -1)
+ * }
+ * ```
+ */
+fun PlacementModifiersScope.offset(x: Int = 0, y: Int = 0, z: Int = 0) =
+	offset(ConstantIntProvider(x), ConstantIntProvider(y), ConstantIntProvider(z))

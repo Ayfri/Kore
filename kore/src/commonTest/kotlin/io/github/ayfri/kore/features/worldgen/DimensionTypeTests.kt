@@ -8,6 +8,7 @@ import io.github.ayfri.kore.features.worldgen.dimensiontype.CardinalLight
 import io.github.ayfri.kore.features.worldgen.dimensiontype.SkyboxType
 import io.github.ayfri.kore.features.worldgen.dimensiontype.attributes
 import io.github.ayfri.kore.features.worldgen.dimensiontype.dimensionType
+import io.github.ayfri.kore.features.worldgen.dimensiontype.monsterSpawnLightLevel
 import io.github.ayfri.kore.features.worldgen.environmentattributes.types.cloudHeight
 import io.github.ayfri.kore.features.worldgen.intproviders.*
 import io.github.ayfri.kore.generated.Tags
@@ -51,7 +52,7 @@ fun DataPack.dimensionTypeTests() {
 		""".trimIndent()
 
 	dimensionType("my_dimension2") {
-		monsterSpawnLightLevel = constant(2)
+		monsterSpawnLightLevel(2)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -72,7 +73,7 @@ fun DataPack.dimensionTypeTests() {
 
 	dimensionType("my_dimension3") {
 		monsterSpawnLightLevel = weightedList {
-			entry(1, constant(2))
+			entry(1, 2)
 			entry(1, clampedNormal(0, 10, 5f, 2f))
 		}
 	}
@@ -82,7 +83,7 @@ fun DataPack.dimensionTypeTests() {
 		hasFixedTime = true
 		skybox = SkyboxType.END
 		timelines = listOf(Timelines.DAY, Tags.Timeline.IN_OVERWORLD)
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -110,7 +111,7 @@ fun DataPack.dimensionTypeTests() {
 
 	dimensionType("my_dimension5") {
 		defaultClock = WorldClocks.OVERWORLD
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """
@@ -132,7 +133,7 @@ fun DataPack.dimensionTypeTests() {
 
 	dimensionType("my_dimension6") {
 		hasEnderDragonFight = true
-		monsterSpawnLightLevel = constant(0)
+		monsterSpawnLightLevel(0)
 	}
 
 	dimensionTypes.last() assertsIs """

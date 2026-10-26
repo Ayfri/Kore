@@ -261,6 +261,47 @@ fun DataPack.blockStateProviderTests() {
 	}
 
 	assertProvider(
+		"dual_noise_provider_plain_variety", """
+			{
+				"type": "minecraft:dual_noise",
+				"seed": 2345,
+				"noise": {
+					"amplitude_modifiers": [
+						1.0
+					],
+					"base_octave": -3,
+					"octave_count": 1
+				},
+				"scale": 0.05,
+				"variety": 2,
+				"slow_noise": {
+					"amplitude_modifiers": [
+						1.0,
+						1.0
+					],
+					"base_octave": -10,
+					"octave_count": 2
+				},
+				"slow_scale": 0.005,
+				"states": [
+					"minecraft:crimson_roots",
+					"minecraft:warped_roots"
+				]
+			}
+		""".trimIndent()
+	) {
+		dualNoiseProvider {
+			seed = 2345
+			scale = 0.05
+			slowScale = 0.005
+			noise(-3, 1.0)
+			slowNoise(-10, 1.0, 1.0)
+			variety(2)
+			states(Blocks.CRIMSON_ROOTS, Blocks.WARPED_ROOTS)
+		}
+	}
+
+	assertProvider(
 		"noise_threshold_provider", """
 			{
 				"type": "minecraft:noise_threshold",
@@ -337,6 +378,20 @@ fun DataPack.blockStateProviderTests() {
 			}
 		""".trimIndent()
 	) { randomizedIntStateProvider("berries", uniform(0, 1)) { source = simpleStateProvider(Blocks.CAVE_VINES) } }
+
+	assertProvider(
+		"randomized_int_state_provider_constant_values", """
+			{
+				"type": "minecraft:randomized_int",
+				"property": "age",
+				"values": 3,
+				"source": {
+					"type": "minecraft:simple",
+					"state": "minecraft:wheat"
+				}
+			}
+		""".trimIndent()
+	) { randomizedIntStateProvider("age", values = 3) { source = simpleStateProvider(Blocks.WHEAT) } }
 
 	assertProvider(
 		"rule_based_state_provider", """
