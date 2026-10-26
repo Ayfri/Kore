@@ -14,12 +14,12 @@ import io.github.ayfri.kore.features.worldgen.carver.shape
 import io.github.ayfri.kore.features.worldgen.carver.startVerticalRadiusMultiplier
 import io.github.ayfri.kore.features.worldgen.carver.thickness
 import io.github.ayfri.kore.features.worldgen.carver.verticalRotation
+import io.github.ayfri.kore.features.worldgen.carver.y
 import io.github.ayfri.kore.features.worldgen.carver.yScale
 import io.github.ayfri.kore.features.worldgen.floatproviders.clampedNormal
 import io.github.ayfri.kore.features.worldgen.floatproviders.constant
 import io.github.ayfri.kore.features.worldgen.floatproviders.trapezoid
 import io.github.ayfri.kore.features.worldgen.floatproviders.uniform
-import io.github.ayfri.kore.features.worldgen.heightproviders.constantAboveBottom
 import io.github.ayfri.kore.features.worldgen.heightproviders.uniformHeightProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.constant as intConstant
 import io.github.ayfri.kore.features.worldgen.intproviders.veryBiasedToBottom
@@ -49,7 +49,7 @@ fun DataPack.carverTests() {
 		canyon("my_canyon") {
 			probability = 0.02
 			verticalRotation = clampedNormal(0.0f, 1.0f, -1.0f, 1.0f)
-			y = constantAboveBottom(65)
+			y(aboveBottom(65))
 
 			shape {
 				distanceFactor(0.5f)

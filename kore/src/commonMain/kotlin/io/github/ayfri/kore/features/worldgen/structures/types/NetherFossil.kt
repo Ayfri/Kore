@@ -5,6 +5,7 @@ import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProvider
 import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProviderScope
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
+import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchor
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
 import io.github.ayfri.kore.serializers.InlinableList
 import kotlinx.serialization.Serializable
@@ -49,3 +50,23 @@ fun StructuresScope.netherFossil(
 	fileName: String = "nether_fossil",
 	init: NetherFossil.() -> Unit = {},
 ) = dp.structure(fileName, NetherFossil().apply(init))
+
+/**
+ * Sets [NetherFossil.height] to [value], the height the fossil is placed at.
+ *
+ * ```kotlin
+ * height(uniformHeightProvider(aboveBottom(32), belowTop(2)))
+ * ```
+ */
+fun NetherFossil.height(value: HeightProvider) {
+	height = value
+}
+
+/**
+ * Sets [NetherFossil.height] to the constant [value], written as the bare anchor.
+ *
+ * ```kotlin
+ * height(aboveBottom(32))  // "height": {"above_bottom": 32}
+ * ```
+ */
+fun NetherFossil.height(value: VerticalAnchor) = height(ConstantHeightProvider(value))

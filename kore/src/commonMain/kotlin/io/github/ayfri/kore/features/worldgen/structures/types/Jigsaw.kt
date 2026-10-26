@@ -7,6 +7,7 @@ import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProviderScop
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.*
 import io.github.ayfri.kore.features.worldgen.verticalanchors.Absolute
+import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchor
 import io.github.ayfri.kore.generated.arguments.worldgen.BiomeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.worldgen.types.TemplatePoolArgument
 import io.github.ayfri.kore.serializers.InlinableList
@@ -65,7 +66,7 @@ data class Jigsaw(
  *         biomes(Biomes.PLAINS)
  *         terrainAdaptation = TerrainAdaptation.BEARD_THIN
  *         size = 6
- *         startHeight = constantAbsolute(0)
+ *         startHeight(absolute(0))
  *         projectStartToHeightmap = HeightMap.WORLD_SURFACE_WG
  *         maxDistanceFromCenter(80)
  *     }
@@ -100,6 +101,26 @@ fun StructuresScope.jigsaw(
 fun Jigsaw.poolAliases(init: MutableList<PoolAlias>.() -> Unit = {}) {
 	poolAliases = buildList(init)
 }
+
+/**
+ * Sets [Jigsaw.startHeight] to [value], the height the start piece is placed at.
+ *
+ * ```kotlin
+ * startHeight(uniformHeightProvider(absolute(0), absolute(8)))
+ * ```
+ */
+fun Jigsaw.startHeight(value: HeightProvider) {
+	startHeight = value
+}
+
+/**
+ * Sets [Jigsaw.startHeight] to the constant [value], written as the bare anchor.
+ *
+ * ```kotlin
+ * startHeight(absolute(0))  // "start_height": {"absolute": 0}
+ * ```
+ */
+fun Jigsaw.startHeight(value: VerticalAnchor) = startHeight(ConstantHeightProvider(value))
 
 /** Keeps [padding] blocks free both above and below the structure. */
 fun Jigsaw.dimensionPadding(padding: Int) {

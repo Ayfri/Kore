@@ -122,7 +122,7 @@ All fields except `verticalRotation` belong to `shape`.
 canyon("my_canyon") {
 	probability = 0.02
 	verticalRotation = clampedNormal(0.0f, 1.0f, -1.0f, 1.0f)
-	y = constantAboveBottom(65)
+	y(aboveBottom(65))
 
 	shape {
 		thickness = trapezoid(0.0f, 6.0f, 2.0f)

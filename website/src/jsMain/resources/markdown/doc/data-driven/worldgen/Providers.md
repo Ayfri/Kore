@@ -59,13 +59,15 @@ carver and `startHeight` on a jigsaw structure take.
 | `veryBiasedToBottomHeightProvider(min, max, inner)`                      | Same shape with a sharper falloff.                                        | `placed_feature/spring_lava` `height_range`                               |
 | `weightedListHeightProvider { }`                                         | Picks one of the nested providers, by weight.                             | -                                                                         |
 
-Every builder except `weightedListHeightProvider` also takes plain `Int` bounds, read as absolute Y coordinates.
+Every builder except `weightedListHeightProvider` also takes plain `Int` bounds, read as absolute Y coordinates. The height fields have a setter
+taking a bare anchor, for a constant height: `heightRange(absolute(32))`, `y(aboveBottom(8))`, `startHeight(absolute(0))` and `height(belowTop(4))`
+on a nether fossil, each being the same call on `constantHeightProvider(anchor)`.
 
 ```kotlin
 heightRange(uniformHeightProvider(minInclusive = 0, maxInclusive = 64))
 heightRange(trapezoidHeightProvider(minInclusive = 0, maxInclusive = 64, plateau = 20))
-heightRange(constantAbsolute(32))
-heightRange(constantHeightProvider(belowTop(16)))
+heightRange(absolute(32))
+heightRange(belowTop(16))
 heightRange(veryBiasedToBottomHeightProvider(aboveBottom(8), absolute(16)))
 
 heightRange(weightedListHeightProvider {

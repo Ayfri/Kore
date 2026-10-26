@@ -4,12 +4,12 @@ import io.github.ayfri.kore.DataPack
 import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.biome.types.spawner
-import io.github.ayfri.kore.features.worldgen.heightproviders.constantAbsolute
 import io.github.ayfri.kore.features.worldgen.heightproviders.uniformHeightProvider
 import io.github.ayfri.kore.features.worldgen.structures.*
 import io.github.ayfri.kore.features.worldgen.structures.types.*
 import io.github.ayfri.kore.features.worldgen.structures.types.jigsaw.LiquidSettings
 import io.github.ayfri.kore.features.worldgen.verticalanchors.aboveBottom
+import io.github.ayfri.kore.features.worldgen.verticalanchors.absolute
 import io.github.ayfri.kore.features.worldgen.verticalanchors.belowTop
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.EntityTypes
@@ -129,7 +129,7 @@ fun DataPack.structureTests() {
 	structuresBuilder.jigsaw("my_jigsaw", startPool = TemplatePools.EMPTY) {
 		biomes(Biomes.DESERT, Biomes.BADLANDS)
 		step = GenerationStep.TOP_LAYER_MODIFICATION
-		startHeight = constantAbsolute(10)
+		startHeight(absolute(10))
 		startJigsawName = "minecraft:empty_pool"
 		projectStartToHeightmap = HeightMap.WORLD_SURFACE_WG
 		maxDistanceFromCenter(80)
@@ -294,6 +294,23 @@ fun DataPack.structureTests() {
 				"max_inclusive": {
 					"below_top": 2
 				}
+			}
+		}
+	""".trimIndent()
+
+	structuresBuilder.netherFossil("my_nether_fossil_anchor") {
+		biomes(Biomes.SOUL_SAND_VALLEY)
+		height(aboveBottom(32))
+	}
+
+	structures.last() assertsIs """
+		{
+			"type": "minecraft:nether_fossil",
+			"biomes": "minecraft:soul_sand_valley",
+			"step": "underground_decoration",
+			"spawn_overrides": {},
+			"height": {
+				"above_bottom": 32
 			}
 		}
 	""".trimIndent()

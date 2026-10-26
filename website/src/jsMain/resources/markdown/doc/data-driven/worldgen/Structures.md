@@ -5,7 +5,7 @@ nav-title: Structures
 description: Build Minecraft structures with Kore - configured structures, jigsaw template pools, block processors and structure set placement.
 keywords: minecraft, datapack, kore, worldgen, structure, template pool, processor list, jigsaw, structure set
 date-created: 2026-02-03
-date-modified: 2026-10-22
+date-modified: 2026-10-26
 routeOverride: /docs/data-driven/worldgen/structures
 ---
 
@@ -333,7 +333,7 @@ structures {
 		biomes(Biomes.PLAINS)
 		terrainAdaptation = TerrainAdaptation.BEARD_THIN
 		size = 6
-		startHeight = constantAbsolute(0)
+		startHeight(absolute(0))
 		projectStartToHeightmap = HeightMap.WORLD_SURFACE_WG
 		maxDistanceFromCenter(80)
 	}

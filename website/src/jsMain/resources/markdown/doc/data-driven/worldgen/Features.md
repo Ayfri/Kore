@@ -666,7 +666,7 @@ final position.
 
 `count`, `countOnEveryLayer`, `cuboid`, `heightRange`, `randomChance` and `rarityFilter` have no default, the value is required. `count`,
 `countOnEveryLayer` and `cuboid` take int providers or plain `Int`s (`count(10)` is `count(constant(10))`), `heightRange` takes a height
-provider, `randomChance` a `Float` from `0` to `1` and `rarityFilter` a positive `Int`; `cuboid` also takes optional `includeEdges` and
+provider or a bare vertical anchor (`heightRange(absolute(32))`), `randomChance` a `Float` from `0` to `1` and `rarityFilter` a positive `Int`; `cuboid` also takes optional `includeEdges` and
 `includeInterior` booleans, both `true` in the game when left out; see [Providers](/docs/data-driven/worldgen/providers) for the distributions available. `offset` takes either plain `Int`s for its axes or int providers for them, `0` when left out, and a mix of both wraps the plain ones in `constant(...)`:
 `offset(x = 1)` moves every position the same way, `offset(y = uniform(-2, 2))` scatters it, `offset(x = constant(1), y = uniform(-2, 2))` does both. `randomlySelected { }` takes a block of at least one modifier, built with
 the same builders as the placed feature itself, and picks one of them at random for each position:

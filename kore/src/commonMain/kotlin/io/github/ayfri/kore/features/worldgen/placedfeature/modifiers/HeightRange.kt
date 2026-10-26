@@ -1,6 +1,8 @@
 package io.github.ayfri.kore.features.worldgen.placedfeature.modifiers
 
+import io.github.ayfri.kore.features.worldgen.heightproviders.ConstantHeightProvider
 import io.github.ayfri.kore.features.worldgen.heightproviders.HeightProvider
+import io.github.ayfri.kore.features.worldgen.verticalanchors.VerticalAnchor
 import kotlinx.serialization.Serializable
 
 /**
@@ -31,3 +33,14 @@ data class HeightRange(
 fun PlacementModifiersScope.heightRange(height: HeightProvider) {
 	placementModifiers += HeightRange(height)
 }
+
+/**
+ * Adds a `height_range` placement modifier moving the position to the fixed Y level of [height].
+ *
+ * ```kotlin
+ * placedFeature("my_ore", Features.ORE_DIAMOND) {
+ *     heightRange(absolute(32))
+ * }
+ * ```
+ */
+fun PlacementModifiersScope.heightRange(height: VerticalAnchor) = heightRange(ConstantHeightProvider(height))

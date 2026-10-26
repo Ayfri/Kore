@@ -5,11 +5,11 @@ import io.github.ayfri.kore.assertions.assertsIs
 import io.github.ayfri.kore.dataPack
 import io.github.ayfri.kore.features.worldgen.blockpredicate.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.VerticalDirection
-import io.github.ayfri.kore.features.worldgen.heightproviders.constantAbsolute
 import io.github.ayfri.kore.features.worldgen.intproviders.constant
 import io.github.ayfri.kore.features.worldgen.intproviders.uniform
 import io.github.ayfri.kore.features.worldgen.placedfeature.modifiers.*
 import io.github.ayfri.kore.features.worldgen.placedfeature.placedFeature
+import io.github.ayfri.kore.features.worldgen.verticalanchors.absolute
 import io.github.ayfri.kore.generated.Biomes
 import io.github.ayfri.kore.generated.Features
 import io.github.ayfri.kore.generated.Tags
@@ -207,7 +207,7 @@ fun DataPack.placedFeatureTests() {
 	placedFeature("int_counts", Features.ACACIA) {
 		count(10)
 		countOnEveryLayer(3)
-		heightRange(constantAbsolute(64))
+		heightRange(absolute(64))
 	}
 
 	placedFeatures.last() assertsIs """
