@@ -154,6 +154,16 @@ fun NumberProviderScope.floatStorage(storage: String, path: String, fallback: Co
 	StorageContextFloatProvider(fallback, path, storage)
 
 /**
+ * Creates a [StorageContextFloatProvider] reading the NBT [path] of the command storage [storage], the constant [fallback] when it holds no number.
+ *
+ * ```
+ * floatStorage("my_pack:data", "chance", 0.5f)  // "fallback": 0.5
+ * ```
+ */
+fun NumberProviderScope.floatStorage(storage: String, path: String, fallback: Float) =
+	StorageContextFloatProvider(constant(fallback), path, storage)
+
+/**
  * Creates a [WeightedListContextFloatProvider] drawing one of the [FloatWeightedListBuilder.entry] declared in [block].
  *
  * ```

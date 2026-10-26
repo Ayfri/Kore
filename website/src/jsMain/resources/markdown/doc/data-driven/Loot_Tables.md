@@ -5,7 +5,7 @@ nav-title: Loot Tables
 description: Create and customize Minecraft loot tables using Kore's type-safe Kotlin DSL for drops, container contents, fishing, and more.
 keywords: minecraft, datapack, kore, loot tables, pools, entries, item modifiers, drops
 date-created: 2025-08-11
-date-modified: 2026-10-24
+date-modified: 2026-10-26
 routeOverride: /docs/data-driven/loot-tables
 ---
 
@@ -46,7 +46,7 @@ Use the `lootTable` builder function to create loot tables in Kore:
 dataPack("my_datapack") {
 	lootTable("custom_chest") {
 		pool {
-			rolls = constant(3)
+			rolls(3)
 
 			entries {
 				item(Items.DIAMOND) {
@@ -163,8 +163,8 @@ Each pool represents an independent set of rolls. A table can have multiple pool
 ```kotlin
 lootTable("simple_pool") {
 	pool {
-		rolls = constant(2)
-		bonusRolls = constant(1f)
+		rolls(2)
+		bonusRolls(1f)
 
 		entries {
 			item(Items.EMERALD)
@@ -173,12 +173,14 @@ lootTable("simple_pool") {
 }
 ```
 
+A pool with only a number of rolls takes it as its first argument, `pool(2) { ... }` writing `"rolls": 2`. `pool { }` rolls once.
+
 ### Conditional Pool
 
 ```kotlin
 lootTable("weather_dependent") {
 	pool {
-		rolls = constant(1)
+		rolls(1)
 
 		condition {
 			weatherCheck(raining = true)
@@ -196,7 +198,7 @@ lootTable("weather_dependent") {
 ```kotlin
 lootTable("modified_drops") {
 	pool {
-		rolls = constant(1)
+		rolls(1)
 
 		entries {
 			item(Items.DIAMOND_PICKAXE)
@@ -204,7 +206,7 @@ lootTable("modified_drops") {
 
 		modifier {
 			setDamage(0.5f)
-			enchantWithLevels(levels = constant(30))
+			enchantWithLevels(levels = 30)
 		}
 	}
 }
@@ -220,6 +222,8 @@ Context providers determine dynamic numeric values for rolls, counts, and other 
 | float  | `ContextFloatProvider` | 32-bit float    | `5.0`    | `bonusRolls`, `setDamage`, attribute amounts, `randomChance`, trade `reputationDiscount`, `floatValueCheck`                                                      |
 
 The builders are extensions on `NumberProviderScope`, so they only resolve inside the blocks that accept a context provider: loot tables and pools, item modifiers and their functions, predicates, villager trades and trade sets. The parameter type picks the family: `constant(5)` and `uniform(1, 5)` build int providers, `constant(5f)` and `uniform(1f, 5f)` float ones. A builder that has the same parameters in both families has one name per family (`intStorage` and `floatStorage`, for instance).
+
+Most fields take a plain number for a fixed value instead of `constant(...)`: `rolls(3)`, `bonusRolls(0.5f)`, `setCount(2)`, `enchantWithLevels(levels = 30)` and `potionEffect(Effects.NIGHT_VISION, 200)` write the bare number. `constant(...)` stays for a fixed value inside an aggregate (`add`, `max`, `min`, `mul`) and for a single bound such as `limitCount(max = constant(64))`. The `fallback` of `score`, `intStorage` and `floatStorage` takes a plain number too, `score("kills", EntityTarget.THIS, 0)` writing `"fallback": 0`.
 
 | Builder                                               | Family       | Description                                               | Example                                                                                  |
 |-------------------------------------------------------|--------------|-----------------------------------------------------------|------------------------------------------------------------------------------------------|
@@ -238,7 +242,7 @@ The builders are extensions on `NumberProviderScope`, so they only resolve insid
 | `fromFloat(input)`                                    | int          | Float provider converted to an int, truncated toward zero | `fromFloat(constant(2.7f))`                                                              |
 | `fromInt(input)`                                      | float        | Int provider converted to a float                         | `fromInt(score("kills", EntityTarget.THIS))`                                             |
 | `intNumberDispatcher(...) { }`, `floatNumberDispatcher(...) { }` | int, float | Value of the first matching case, or a default | `intNumberDispatcher(default = 0) { case(1) { killedByPlayer() } }`                      |
-| `intStorage(storage, path)`, `floatStorage(storage, path)` | int, float | Value from command storage, with an optional `fallback` | `intStorage("my_pack:data", "player.health")`                                            |
+| `intStorage(storage, path)`, `floatStorage(storage, path)` | int, float | Value from command storage, with an optional `fallback` | `intStorage("my_pack:data", "player.health", 0)`                                         |
 | `intWeightedList { }`, `floatWeightedList { }`        | int, float   | Value of one entry, picked by weight                      | `intWeightedList { entry(30, 1); entry(70, 0) }`                                         |
 | `length(...)`                                         | float        | Euclidean length of a vector, or of a tag of providers    | `length(constant(3f), constant(4f))`                                                     |
 | `max(...)`                                            | int, float   | Largest of several providers, or of a tag of providers    | `max(constant(1), score("kills", EntityTarget.THIS))`                                    |
@@ -248,7 +252,7 @@ The builders are extensions on `NumberProviderScope`, so they only resolve insid
 | `negate(input)`                                       | int, float   | Opposite value                                            | `negate(constant(1))`                                                                    |
 | `pow(base, exponent)`                                 | int, float   | Power                                                     | `pow(constant(2), constant(3))`                                                          |
 | `reference(id)`                                       | int, float   | Context provider file, written as its ID                  | `reference(ContextIntProviders.Cooking.TIME_COAL)`                                       |
-| `score(score, target)`                                | int          | Value from a scoreboard objective, with an optional `fallback` | `score("kills", EntityTarget.THIS)`                                                 |
+| `score(score, target)`                                | int          | Value from a scoreboard objective, with an optional `fallback` | `score("kills", EntityTarget.THIS, 0)`                                              |
 | `sqrt(input)`                                         | float        | Square root                                               | `sqrt(constant(4f))`                                                                     |
 | `sub(left, right)`                                    | int, float   | Difference                                                | `sub(constant(5), score("deaths", EntityTarget.THIS))`                                   |
 | `uniform(min, max)`                                   | int, float   | Random value between min and max                          | `uniform(1, 5)`, `uniform(0.5f, 1f)`                                                     |
@@ -375,7 +379,7 @@ This writes `weighted_list` as `{"type": "minecraft:weighted_list", "distributio
 ```kotlin
 pool {
 	rolls = uniform(2, 5)  // 2-5 rolls randomly
-	bonusRolls = constant(1f)  // +1 roll per luck level
+	bonusRolls(1f)  // +1 roll per luck level
 
 	entries {
 		item(Items.GOLD_INGOT)
@@ -722,7 +726,7 @@ dataPack("treasure_hunt") {
 
 		// Guaranteed drops
 		pool {
-			rolls = constant(1)
+			rolls(1)
 
 			entries {
 				item(Items.NETHER_STAR)
@@ -731,8 +735,8 @@ dataPack("treasure_hunt") {
 
 		// Rare equipment drops
 		pool {
-			rolls = constant(1)
-			bonusRolls = constant(0.5f)
+			rolls(1)
+			bonusRolls(0.5f)
 
 			condition {
 				killedByPlayer()
@@ -742,7 +746,7 @@ dataPack("treasure_hunt") {
 				item(Items.NETHERITE_SWORD) {
 					weight = 1
 					modifier {
-						enchantWithLevels(levels = constant(30))
+						enchantWithLevels(levels = 30)
 						setName("Boss Slayer")
 					}
 				}
@@ -883,7 +887,7 @@ dataPack("better_zombies") {
 		namespace = "minecraft"
 
 		pool {
-			rolls = constant(1)
+			rolls(1)
 
 			entries {
 				item(Items.ROTTEN_FLESH) {
@@ -897,7 +901,7 @@ dataPack("better_zombies") {
 
 		// Add custom drops
 		pool {
-			rolls = constant(1)
+			rolls(1)
 
 			condition {
 				randomChance(0.1f)

@@ -90,6 +90,7 @@ fun DataPack.contextFloatProviderTests() {
 	check("""{"type":"minecraft:round","input":1.5}""") { round(constant(1.5f)) }
 	check("""{"type":"minecraft:sin","input":0.5}""") { sin(constant(0.5f)) }
 	check("""{"type":"minecraft:sqrt","input":4.0}""") { sqrt(constant(4f)) }
+	check("""{"type":"minecraft:storage","fallback":0.5,"path":"a","storage":"my_pack:data"}""") { floatStorage("my_pack:data", "a", 0.5f) }
 	check("""{"type":"minecraft:storage","path":"player.health","storage":"my_pack:data"}""") { floatStorage("my_pack:data", "player.health") }
 	check("""{"type":"minecraft:storage","fallback":1.5,"path":"a","storage":"my_pack:data"}""") { floatStorage("my_pack:data", "a", constant(1.5f)) }
 	check("""{"type":"minecraft:sub","left":5.0,"right":2.0}""") { sub(constant(5f), constant(2f)) }

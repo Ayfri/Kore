@@ -646,6 +646,37 @@ class LootTableTests : FunSpec({
 		}
 	}
 
+	test("pool takes a plain number of rolls and keeps one roll by default") {
+		dataPack("lootTable") {
+			pretty()
+
+			lootTable("pool_rolls") {
+				pool(2) {
+					bonusRolls(1f)
+				}
+
+				pool {}
+			}
+
+			lootTables.last() assertsIs """
+				{
+					"pools": [
+						{
+							"bonus_rolls": 1.0,
+							"entries": [],
+							"rolls": 2
+						},
+						{
+							"entries": [],
+							"rolls": 1
+						}
+					]
+				}
+			""".trimIndent()
+			roundTrip(lootTables.last())
+		}
+	}
+
 	test("item entry modifier stays on the entry") {
 		dataPack("lootTable") {
 			pretty()

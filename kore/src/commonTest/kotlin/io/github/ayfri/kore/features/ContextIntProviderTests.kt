@@ -98,6 +98,16 @@ fun DataPack.contextIntProviderTests() {
 	check("""{"type":"minecraft:score","fallback":4,"score":"kills","target":{"type":"minecraft:fixed","name":"Steve"}}""") {
 		score("kills", fixedScore("Steve"), constant(4))
 	}
+	check("""{"type":"minecraft:score","fallback":0,"score":"kills","target":{"type":"minecraft:context","target":"this"}}""") {
+		score("kills", EntityTarget.THIS, 0)
+	}
+	check("""{"type":"minecraft:score","fallback":4,"score":"kills","target":{"type":"minecraft:fixed","name":"Steve"}}""") {
+		score("kills", "Steve", 4)
+	}
+	check("""{"type":"minecraft:score","fallback":4,"score":"kills","target":{"type":"minecraft:fixed","name":"Steve"}}""") {
+		score("kills", fixedScore("Steve"), 4)
+	}
+	check("""{"type":"minecraft:storage","fallback":0,"path":"a","storage":"my_pack:data"}""") { intStorage("my_pack:data", "a", 0) }
 	check("""{"type":"minecraft:storage","path":"player.health","storage":"my_pack:data"}""") { intStorage("my_pack:data", "player.health") }
 	check("""{"type":"minecraft:storage","fallback":1,"path":"a","storage":"my_pack:data"}""") { intStorage("my_pack:data", "a", constant(1)) }
 	check("""{"type":"minecraft:sub","left":5,"right":2}""") { sub(constant(5), constant(2)) }

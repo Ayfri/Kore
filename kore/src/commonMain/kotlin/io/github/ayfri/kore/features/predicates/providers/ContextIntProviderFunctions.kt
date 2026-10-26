@@ -174,6 +174,16 @@ fun NumberProviderScope.intStorage(storage: String, path: String, fallback: Cont
 	StorageContextIntProvider(fallback, path, storage)
 
 /**
+ * Creates a [StorageContextIntProvider] reading the NBT [path] of the command storage [storage], the constant [fallback] when it holds no number.
+ *
+ * ```
+ * intStorage("my_pack:data", "kills", 0)  // "fallback": 0
+ * ```
+ */
+fun NumberProviderScope.intStorage(storage: String, path: String, fallback: Int) =
+	StorageContextIntProvider(constant(fallback), path, storage)
+
+/**
  * Creates a [WeightedListContextIntProvider] drawing one of the [IntWeightedListBuilder.entry] declared in [block].
  *
  * ```
@@ -284,6 +294,24 @@ fun NumberProviderScope.score(score: String, name: String, fallback: ContextIntP
 /** Creates a [ScoreContextIntProvider] reading [score] from [target], [fallback] when it has none. */
 fun NumberProviderScope.score(score: String, target: ScoreProvider, fallback: ContextIntProvider? = null) =
 	ScoreContextIntProvider(fallback, score, target)
+
+/**
+ * Creates a [ScoreContextIntProvider] reading [score] from the loot context entity [target], the constant [fallback] when it has none.
+ *
+ * ```
+ * score("kills", EntityTarget.THIS, 0)  // "fallback": 0
+ * ```
+ */
+fun NumberProviderScope.score(score: String, target: EntityTarget, fallback: Int) =
+	ScoreContextIntProvider(constant(fallback), score, contextScore(target))
+
+/** Creates a [ScoreContextIntProvider] reading [score] from the score holder [name], the constant [fallback] when it has none. */
+fun NumberProviderScope.score(score: String, name: String, fallback: Int) =
+	ScoreContextIntProvider(constant(fallback), score, fixedScore(name))
+
+/** Creates a [ScoreContextIntProvider] reading [score] from [target], the constant [fallback] when it has none. */
+fun NumberProviderScope.score(score: String, target: ScoreProvider, fallback: Int) =
+	ScoreContextIntProvider(constant(fallback), score, target)
 
 /** Creates a [SubContextIntProvider] returning [left] minus [right]. */
 fun NumberProviderScope.sub(left: ContextIntProvider, right: ContextIntProvider) = SubContextIntProvider(left, right)

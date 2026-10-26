@@ -65,3 +65,14 @@ fun LootTable.modifier(block: ItemModifier.() -> Unit) {
 fun LootTable.pool(rolls: ContextIntProvider = constant(1), block: LootPool.() -> Unit = {}) {
 	pools = (pools ?: emptyList()) + LootPool(rolls = rolls).apply(block)
 }
+
+/**
+ * Add a loot pool rolled exactly [rolls] times.
+ *
+ * ```
+ * pool(2) { ... }  // "rolls": 2
+ * ```
+ *
+ * Docs: https://kore.ayfri.com/docs/data-driven/loot-tables
+ */
+fun LootTable.pool(rolls: Int, block: LootPool.() -> Unit = {}) = pool(constant(rolls), block)
