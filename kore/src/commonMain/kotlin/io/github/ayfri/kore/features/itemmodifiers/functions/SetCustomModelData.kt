@@ -6,6 +6,7 @@ import io.github.ayfri.kore.features.itemmodifiers.ItemModifier
 import io.github.ayfri.kore.features.itemmodifiers.types.ListOperation
 import io.github.ayfri.kore.features.predicates.conditions.PredicateCondition
 import io.github.ayfri.kore.features.predicates.providers.ConstantContextFloatProvider
+import io.github.ayfri.kore.features.predicates.providers.ConstantContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.ContextFloatProvider
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.serializers.EitherInlineSerializer
@@ -78,6 +79,18 @@ fun ItemModifier.setCustomModelData(
 fun SetCustomModelData.colors(vararg values: Color) = apply { colors = ListOperation(values.map(::CustomModelDataColor)) }
 
 /**
+ * Sets the `colors` list from decimal RGB numbers, replacing the whole list.
+ *
+ * ```
+ * setCustomModelData {
+ *     colors(0xFF5555) // colors: {values: [16733525]}
+ * }
+ * ```
+ */
+fun SetCustomModelData.colors(vararg values: Int) =
+	apply { colors = ListOperation(values.map { CustomModelDataColor(provider = ConstantContextIntProvider(it)) }) }
+
+/**
  * Sets the `colors` list from context int providers, replacing the whole list. Each provider computes a decimal RGB value.
  *
  * ```
@@ -99,3 +112,14 @@ fun SetCustomModelData.colors(vararg values: ContextIntProvider) =
  * ```
  */
 fun SetCustomModelData.floats(vararg values: ContextFloatProvider) = apply { floats = ListOperation(values.toList()) }
+
+/**
+ * Sets the `floats` list from fixed numbers, replacing the whole list. Needs at least one value, a bare `floats()` is ambiguous with the provider overload.
+ *
+ * ```
+ * setCustomModelData {
+ *     floats(0.5f, 1f) // floats: {values: [0.5, 1.0]}
+ * }
+ * ```
+ */
+fun SetCustomModelData.floats(vararg values: Float) = apply { floats = ListOperation(values.map(::ConstantContextFloatProvider)) }

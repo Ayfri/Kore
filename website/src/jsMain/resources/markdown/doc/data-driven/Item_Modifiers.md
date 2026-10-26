@@ -5,7 +5,7 @@ nav-title: Item Modifiers
 description: Transform item stacks using Kore's type-safe DSL for loot functions - set counts, add enchantments, copy data, and more.
 keywords: minecraft, datapack, kore, item modifiers, loot functions, /item modify, components
 date-created: 2025-08-11
-date-modified: 2026-10-23
+date-modified: 2026-10-26
 routeOverride: /docs/data-driven/item-modifiers
 ---
 
@@ -161,7 +161,7 @@ itemModifier("damage") {
 }
 ```
 
-The numeric fields of item functions are [context providers](/docs/data-driven/loot-tables#context-providers): an int provider (`constant(1)`, `uniform(1, 5)`) or a float provider (`constant(1f)`, `uniform(0.5f, 1f)`) depending on the field. Each also accepts the ID of a [context provider file](/docs/data-driven/loot-tables#context-provider-files) through `reference(...)`:
+The numeric fields of item functions are [context providers](/docs/data-driven/loot-tables#context-providers): an int provider (`1`, `uniform(1, 5)`) or a float provider (`1f`, `uniform(0.5f, 1f)`) depending on the field, a fixed value being a plain number. Each also accepts the ID of a [context provider file](/docs/data-driven/loot-tables#context-provider-files) through `reference(...)`:
 
 | Function                    | Field                         | Provider |
 |-----------------------------|-------------------------------|----------|
@@ -248,16 +248,16 @@ Enchants as if using an enchanting table:
 ```kotlin
 itemModifier("table_enchant") {
 	// Fixed level
-	enchantWithLevels(levels = constant(30))
+	enchantWithLevels(levels = 30)
 
 	// Random level range
 	enchantWithLevels(levels = uniform(20, 39))
 
 	// Limit to specific enchantments
-	enchantWithLevels(Enchantments.PROTECTION, levels = constant(30))
+	enchantWithLevels(Enchantments.PROTECTION, levels = 30)
 
 	// Include the additional cost component from trade costs
-	enchantWithLevels(levels = constant(30)) {
+	enchantWithLevels(levels = 30) {
 		includeAdditionalCostComponent = true
 	}
 }
@@ -270,12 +270,14 @@ Sets specific enchantments and levels:
 ```kotlin
 itemModifier("specific_enchants") {
 	setEnchantments {
-		this[Enchantments.SHARPNESS] = constant(5)
-		this[Enchantments.UNBREAKING] = constant(3)
-		this[Enchantments.MENDING] = constant(1)
+		this[Enchantments.SHARPNESS] = 5
+		this[Enchantments.UNBREAKING] = 3
+		this[Enchantments.MENDING] = 1
 	}
 }
 ```
+
+A level is a plain number or an int provider, `this[Enchantments.SHARPNESS] = uniform(1, 3)` for instance.
 
 #### enchantedCountIncrease
 
@@ -406,7 +408,7 @@ itemModifier("custom_model") {
 }
 ```
 
-Each float is a [float provider](/docs/data-driven/loot-tables#context-providers), so `floats(...)` can read it from a score (`fromInt` turns the int score into a float) or add
+Each float is a [float provider](/docs/data-driven/loot-tables#context-providers) or a plain number, so `floats(0.5f, 1f)` writes fixed floats and `floats(...)` can also read one from a score (`fromInt` turns the int score into a float) or add
 several sources with `add`:
 
 ```kotlin
@@ -417,12 +419,13 @@ itemModifier("model_from_score") {
 }
 ```
 
-Each color is either a fixed `Color`, written as its decimal RGB value, or an int provider computing that value:
+Each color is a fixed `Color`, a decimal RGB number, or an int provider computing that value:
 
 ```kotlin
 itemModifier("model_colors") {
 	setCustomModelData {
 		colors(Color.RED, Color.BLUE)                // "values": [16733525, 5592575]
+		colors(0xFF5555)                             // "values": [16733525]
 		colors(score("tint", "#shirt"))              // "values": [{ "type": "minecraft:score", ... }]
 	}
 }
@@ -632,8 +635,12 @@ Set suspicious stew effects:
 ```kotlin
 itemModifier("stew") {
 	setStewEffect {
-		potionEffect(Effects.NIGHT_VISION, constant(200))
+		potionEffect(Effects.NIGHT_VISION, 200)
 	}
+}
+
+itemModifier("single_stew") {
+	setStewEffect(Effects.JUMP_BOOST, 160)  // "duration": 160
 }
 ```
 
@@ -726,14 +733,14 @@ itemModifier("buffed") {
 		attribute(
 			attribute = Attributes.ATTACK_DAMAGE,
 			operation = AttributeModifierOperation.ADD_VALUE,
-			amount = constant(5f),
+			amount = 5f,
 			id = "bonus_damage",
 			slot = listOf(EquipmentSlot.MAINHAND)
 		)
 		attribute(
 			attribute = Attributes.MOVEMENT_SPEED,
 			operation = AttributeModifierOperation.ADD_MULTIPLIED_BASE,
-			amount = constant(0.1f),
+			amount = 0.1f,
 			id = "speed_boost",
 			slot = listOf(EquipmentSlot.FEET)
 		)
@@ -972,7 +979,7 @@ See [Predicates](/docs/data-driven/predicates) for all available conditions.
 dataPack("legendary_items") {
 	val legendaryModifier = itemModifier("legendary_weapon") {
 		// High-level enchantments
-		enchantWithLevels(levels = constant(30)) {
+		enchantWithLevels(levels = 30) {
 			condition {
 				randomChance(0.3f)
 			}
@@ -980,7 +987,7 @@ dataPack("legendary_items") {
 
 		// Guaranteed enchantments
 		setEnchantments {
-			this[Enchantments.UNBREAKING] = constant(3)
+			this[Enchantments.UNBREAKING] = 3
 		}
 
 		// Custom name with formatting
@@ -1001,7 +1008,7 @@ dataPack("legendary_items") {
 			attribute(
 				attribute = Attributes.ATTACK_DAMAGE,
 				operation = AttributeModifierOperation.ADD_VALUE,
-				amount = constant(5f),
+				amount = 5f,
 				id = "legendary_damage",
 				slot = listOf(EquipmentSlot.MAINHAND)
 			)
@@ -1014,7 +1021,7 @@ dataPack("legendary_items") {
 	// Use in loot table
 	lootTable("boss_weapon") {
 		pool {
-			rolls = constant(1)
+			rolls(1)
 
 			entries {
 				item(Items.DIAMOND_SWORD) {

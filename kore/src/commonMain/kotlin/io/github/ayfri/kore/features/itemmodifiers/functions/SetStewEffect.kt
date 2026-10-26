@@ -47,7 +47,26 @@ fun ItemModifier.setStewEffect(
 	).apply(block)
 }
 
+/**
+ * Add a single-entry `set_stew_effect` step lasting exactly [duration] ticks.
+ *
+ * ```
+ * setStewEffect(Effects.JUMP_BOOST, 160)  // "duration": 160
+ * ```
+ */
+fun ItemModifier.setStewEffect(type: MobEffectArgument, duration: Int, block: SetStewEffect.() -> Unit = {}) =
+	setStewEffect(type, ConstantContextIntProvider(duration), block)
+
 /** Append one stew effect entry to the builder list. */
 fun MutableList<PotionEffect>.potionEffect(type: MobEffectArgument, duration: ContextIntProvider = ConstantContextIntProvider(0)) {
 	add(PotionEffect(type, duration))
 }
+
+/**
+ * Append one stew effect entry lasting exactly [duration] ticks to the builder list.
+ *
+ * ```
+ * potionEffect(Effects.NIGHT_VISION, 200)  // "duration": 200
+ * ```
+ */
+fun MutableList<PotionEffect>.potionEffect(type: MobEffectArgument, duration: Int) = potionEffect(type, ConstantContextIntProvider(duration))

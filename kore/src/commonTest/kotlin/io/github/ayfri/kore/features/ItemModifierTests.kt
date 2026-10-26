@@ -263,6 +263,40 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 
+	itemModifier("enchant_with_levels_plain") {
+		enchantWithLevels(levels = 30)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:enchant_with_levels",
+			"levels": 30
+		}
+	""".trimIndent()
+
+	itemModifier("enchant_with_levels_plain_options") {
+		enchantWithLevels(Enchantments.SHARPNESS, levels = 5)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:enchant_with_levels",
+			"levels": 5,
+			"options": "minecraft:sharpness"
+		}
+	""".trimIndent()
+
+	itemModifier("enchant_with_levels_default") {
+		enchantWithLevels()
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:enchant_with_levels",
+			"levels": 0
+		}
+	""".trimIndent()
+
 	itemModifier("exploration_map") {
 		explorationMap(Tags.Worldgen.Structure.MINESHAFT) {
 			decoration = MapDecorationTypes.FRAME
@@ -919,6 +953,32 @@ fun DataPack.itemModifierTests() {
 		}
 	""".trimIndent()
 
+	itemModifier("set_custom_model_data_plain_numbers") {
+		setCustomModelData {
+			floats(0.5f, 1f)
+			colors(0xFF5555)
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_custom_model_data",
+			"colors": {
+				"values": [
+					16733525
+				],
+				"mode": "replace_all"
+			},
+			"floats": {
+				"values": [
+					0.5,
+					1.0
+				],
+				"mode": "replace_all"
+			}
+		}
+	""".trimIndent()
+
 	itemModifier("set_custom_model_data_providers") {
 		setCustomModelData {
 			floats(add(fromInt(score("x", "#a")), constant(0.5f)))
@@ -1024,6 +1084,23 @@ fun DataPack.itemModifierTests() {
 				"minecraft:sharpness": 2
 			},
 			"add": true
+		}
+	""".trimIndent()
+
+	itemModifier("set_enchantments_plain") {
+		setEnchantments {
+			this[Enchantments.SHARPNESS] = 2
+			this[Enchantments.UNBREAKING] = constant(3)
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_enchantments",
+			"enchantments": {
+				"minecraft:sharpness": 2,
+				"minecraft:unbreaking": 3
+			}
 		}
 	""".trimIndent()
 
@@ -1277,6 +1354,40 @@ fun DataPack.itemModifierTests() {
 	itemModifier("set_stew_effect") {
 		setStewEffect {
 			potionEffect(Effects.NIGHT_VISION, constant(200))
+		}
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_stew_effect",
+			"effects": [
+				{
+					"type": "minecraft:night_vision",
+					"duration": 200
+				}
+			]
+		}
+	""".trimIndent()
+
+	itemModifier("set_stew_effect_plain") {
+		setStewEffect(Effects.JUMP_BOOST, 160)
+	}
+
+	itemModifiers.last() assertsIs """
+		{
+			"type": "minecraft:set_stew_effect",
+			"effects": [
+				{
+					"type": "minecraft:jump_boost",
+					"duration": 160
+				}
+			]
+		}
+	""".trimIndent()
+
+	itemModifier("set_stew_effect_plain_list") {
+		setStewEffect {
+			potionEffect(Effects.NIGHT_VISION, 200)
 		}
 	}
 

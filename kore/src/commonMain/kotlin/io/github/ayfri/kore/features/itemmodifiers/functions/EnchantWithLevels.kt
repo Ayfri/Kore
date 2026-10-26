@@ -41,6 +41,26 @@ fun ItemModifier.enchantWithLevels(
 	modifiers += EnchantWithLevels(options = enchantments.toList().ifEmpty { null }, levels = levels).apply(block)
 }
 
+/**
+ * Add an `enchant_with_levels` step spending exactly [levels] levels.
+ *
+ * ```
+ * enchantWithLevels(levels = 30)  // "levels": 30
+ * ```
+ */
+fun ItemModifier.enchantWithLevels(
+	enchantments: List<EnchantmentOrTagArgument>? = null,
+	levels: Int,
+	block: EnchantWithLevels.() -> Unit = {},
+) = enchantWithLevels(enchantments, constant(levels), block)
+
+/** Vararg convenience overload for `enchant_with_levels` spending exactly [levels] levels. */
+fun ItemModifier.enchantWithLevels(
+	vararg enchantments: EnchantmentOrTagArgument,
+	levels: Int,
+	block: EnchantWithLevels.() -> Unit = {},
+) = enchantWithLevels(*enchantments, levels = constant(levels), block = block)
+
 /** Configure the candidate enchantments list. */
 fun EnchantWithLevels.enchantments(block: MutableList<EnchantmentOrTagArgument>.() -> Unit = {}) {
 	options = buildList(block).ifEmpty { null }
