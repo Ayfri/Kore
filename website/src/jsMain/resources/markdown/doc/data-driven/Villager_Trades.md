@@ -289,8 +289,8 @@ tradeSet("farmer/level_1") {
 | Builder                       | Description                                                   |
 |-------------------------------|---------------------------------------------------------------|
 | `amount(value)`               | Rolls exactly `value` trades.                                 |
-| `amount(min, max)`            | Rolls between `min` and `max` trades, both included.          |
-| `amount(range)`               | The same from a range, `amount(1..3)`.                        |
+| `amount(min, max)`            | Rolls between `min` and `max` trades, both included, like `amount(min..max)`. |
+| `amount(range)`               | The same from a range, `amount(1..3)`. Equal ends roll exactly that many, and an inverted range such as `3..1` throws. |
 | `amount(provider)`            | Any int provider (`binomial(4, 0.5f)`), or a `reference(id)` to a provider file. |
 | `randomSequence(name, ns)`    | Seeds the rolls from a named random sequence.                 |
 | `trade(trade)`                | Appends one trade or tag to the pool.                         |

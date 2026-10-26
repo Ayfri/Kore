@@ -7,7 +7,6 @@ import io.github.ayfri.kore.features.predicates.providers.ConstantContextIntProv
 import io.github.ayfri.kore.features.predicates.providers.ContextIntProvider
 import io.github.ayfri.kore.features.predicates.providers.NumberProviderScope
 import io.github.ayfri.kore.features.predicates.providers.constant
-import io.github.ayfri.kore.features.predicates.providers.uniform
 import io.github.ayfri.kore.features.predicates.providers.utils.toUniformProvider
 import io.github.ayfri.kore.generated.arguments.VillagerTradeOrTagArgument
 import io.github.ayfri.kore.generated.arguments.types.TradeSetArgument
@@ -82,10 +81,8 @@ fun TradeSet.amount(value: Int) {
 	amount = constant(value)
 }
 
-/** Rolls between [min] and [max] trades out of the set, both included. */
-fun TradeSet.amount(min: Int, max: Int) {
-	amount = uniform(min, max)
-}
+/** Rolls between [min] and [max] trades out of the set, both included, like `amount(min..max)`. */
+fun TradeSet.amount(min: Int, max: Int) = amount(min..max)
 
 /**
  * Rolls a number of trades drawn uniformly from [range], both ends included.

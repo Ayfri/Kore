@@ -17,6 +17,7 @@ import io.github.ayfri.kore.generated.Items
 import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.generated.VillagerTrades
 import io.github.ayfri.kore.utils.pretty
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 
 fun DataPack.tradeSetTests() {
@@ -110,6 +111,21 @@ fun DataPack.tradeSetTests() {
 			"trades": "tradeSet:emerald_for_wheat"
 		}
 	""".trimIndent()
+
+	tradeSet("equal_bounds_amount") {
+		trades(wheatTrade)
+		amount(2, 2)
+	}
+	tradeSets.last() assertsIs """
+		{
+			"amount": 2,
+			"trades": "tradeSet:emerald_for_wheat"
+		}
+	""".trimIndent()
+
+	shouldThrow<IllegalArgumentException> {
+		tradeSet("inverted_bounds_amount") { amount(3, 1) }
+	}.message assertsIs "Cannot draw from the empty range 3..1."
 
 	val subFolder = tradeSet("farmer/level_1") {
 		trades(Tags.VillagerTrade.Farmer.LEVEL_1)
