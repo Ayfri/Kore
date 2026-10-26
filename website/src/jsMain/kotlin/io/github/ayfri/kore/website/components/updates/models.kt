@@ -77,10 +77,10 @@ data class GitHubRelease(
 }
 
 data class GitHubAsset(
-	val id: Int,
+	val id: Long,
 	val name: String,
 	val browserDownloadUrl: String,
 	val contentType: String,
-	val size: Float,
+	val size: Long,
 	val downloadCount: Int,
 )
