@@ -25,7 +25,7 @@ data class AcaciaFoliagePlacer(
  *
  * ```kotlin
  * tree("acacia") {
- *     acaciaFoliagePlacer(radius = constant(2))
+ *     acaciaFoliagePlacer(radius = uniform(2, 3))
  * }
  * ```
  *
@@ -39,3 +39,15 @@ fun Tree.acaciaFoliagePlacer(
 ) {
 	foliagePlacer = AcaciaFoliagePlacer(radius, offset).apply(block)
 }
+
+/**
+ * Sets [Tree.foliagePlacer] to an [AcaciaFoliagePlacer] of the constant [radius] and [offset].
+ *
+ * ```kotlin
+ * tree("acacia") {
+ *     acaciaFoliagePlacer(radius = 2)
+ * }
+ * ```
+ */
+fun Tree.acaciaFoliagePlacer(radius: Int, offset: Int = 0, block: AcaciaFoliagePlacer.() -> Unit = {}) =
+	acaciaFoliagePlacer(ConstantIntProvider(radius), ConstantIntProvider(offset), block)

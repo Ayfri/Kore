@@ -19,7 +19,7 @@ fun FloatProviderScope.clampedNormal(mean: Float, deviation: Float, min: Float, 
  * It is inlined when serialized, so it produces `1.5` rather than an object with a `type` field.
  *
  * ```kotlin
- * floorLevel = constant(-0.5f)
+ * floorLevel(constant(-0.5f))  // floorLevel(-0.5f) does the same
  * ```
  *
  * Minecraft Wiki: https://minecraft.wiki/w/Custom_world_generation/float_provider

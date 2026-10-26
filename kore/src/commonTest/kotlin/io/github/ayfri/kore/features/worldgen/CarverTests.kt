@@ -8,13 +8,20 @@ import io.github.ayfri.kore.features.tags.carverTag
 import io.github.ayfri.kore.features.worldgen.carver.canyon
 import io.github.ayfri.kore.features.worldgen.carver.carvers
 import io.github.ayfri.kore.features.worldgen.carver.cave
+import io.github.ayfri.kore.features.worldgen.carver.count
+import io.github.ayfri.kore.features.worldgen.carver.distanceFactor
 import io.github.ayfri.kore.features.worldgen.carver.shape
+import io.github.ayfri.kore.features.worldgen.carver.startVerticalRadiusMultiplier
+import io.github.ayfri.kore.features.worldgen.carver.thickness
+import io.github.ayfri.kore.features.worldgen.carver.verticalRotation
+import io.github.ayfri.kore.features.worldgen.carver.yScale
 import io.github.ayfri.kore.features.worldgen.floatproviders.clampedNormal
 import io.github.ayfri.kore.features.worldgen.floatproviders.constant
 import io.github.ayfri.kore.features.worldgen.floatproviders.trapezoid
 import io.github.ayfri.kore.features.worldgen.floatproviders.uniform
 import io.github.ayfri.kore.features.worldgen.heightproviders.constantAboveBottom
 import io.github.ayfri.kore.features.worldgen.heightproviders.uniformHeightProvider
+import io.github.ayfri.kore.features.worldgen.intproviders.constant as intConstant
 import io.github.ayfri.kore.features.worldgen.intproviders.veryBiasedToBottom
 import io.github.ayfri.kore.features.worldgen.verticalanchors.aboveBottom
 import io.github.ayfri.kore.features.worldgen.verticalanchors.absolute
@@ -32,7 +39,7 @@ fun DataPack.carverTests() {
 			horizontalRadiusMultiplier = uniform(0.7f, 1.4f)
 			probability = 0.15
 			roomVerticalRadiusMultiplier = uniform(0.1f, 0.9f)
-			startVerticalRadiusMultiplier = constant(1.5f)
+			startVerticalRadiusMultiplier(1.5f)
 			thickness = trapezoid(0.0f, 3.0f, 1.0f)
 			verticalRadiusMultiplier = uniform(0.8f, 1.3f)
 			weirdThicknessBias = true
@@ -45,13 +52,13 @@ fun DataPack.carverTests() {
 			y = constantAboveBottom(65)
 
 			shape {
-				distanceFactor = constant(0.5f)
+				distanceFactor(0.5f)
 				horizontalRadiusFactor = uniform(0.75f, 1.0f)
 				thickness = trapezoid(0.0f, 6.0f, 2.0f)
 				verticalRadiusCenterFactor = 0.0f
 				verticalRadiusDefaultFactor = 1.0f
 				widthSmoothness = 3
-				yScale = constant(3.0f)
+				yScale(3f)
 			}
 		}
 	}
@@ -155,6 +162,26 @@ fun DataPack.carverTests() {
 			}
 		}
 	""".trimIndent()
+
+	carvers {
+		cave("plain_cave") {
+			count(5)
+			thickness(2f)
+		}
+		canyon("plain_canyon") { verticalRotation(0.5f) }
+	}
+	val plainCaveJson = carvers[carvers.size - 2].generateJson(this)
+	val plainCanyonJson = carvers.last().generateJson(this)
+
+	carvers {
+		cave("provider_cave") {
+			count = intConstant(5)
+			thickness = constant(2f)
+		}
+		canyon("provider_canyon") { verticalRotation = constant(0.5f) }
+	}
+	carvers[carvers.size - 2].generateJson(this) assertsIs plainCaveJson
+	carvers.last().generateJson(this) assertsIs plainCanyonJson
 
 	carverTag("my_carvers") {
 		this += Carvers.CAVE

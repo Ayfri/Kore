@@ -1,5 +1,6 @@
 package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer
 
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
@@ -26,3 +27,31 @@ sealed class FoliagePlacer : IntProviderScope {
 			NamespacedPolymorphicSerializer<FoliagePlacer>(foliagePlacerSealedSerializer())
 	}
 }
+
+/**
+ * Sets [FoliagePlacer.offset] to [value], the vertical offset from the top of the trunk to the foliage.
+ *
+ * ```kotlin
+ * blobFoliagePlacer(radius = 2, height = 3) { offset(uniform(0, 1)) }
+ * ```
+ */
+fun FoliagePlacer.offset(value: IntProvider) {
+	offset = value
+}
+
+/** Sets [FoliagePlacer.offset] to the constant [value]. */
+fun FoliagePlacer.offset(value: Int) = offset(ConstantIntProvider(value))
+
+/**
+ * Sets [FoliagePlacer.radius] to [value], the horizontal radius of the leaves.
+ *
+ * ```kotlin
+ * blobFoliagePlacer(height = 3) { radius(uniform(2, 3)) }
+ * ```
+ */
+fun FoliagePlacer.radius(value: IntProvider) {
+	radius = value
+}
+
+/** Sets [FoliagePlacer.radius] to the constant [value]. */
+fun FoliagePlacer.radius(value: Int) = radius(ConstantIntProvider(value))

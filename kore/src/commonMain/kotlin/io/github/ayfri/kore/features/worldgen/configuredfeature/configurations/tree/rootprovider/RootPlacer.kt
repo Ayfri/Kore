@@ -3,6 +3,7 @@ package io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProvider
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.BlockStateProviderScope
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.SimpleBlockStateProvider
+import io.github.ayfri.kore.features.worldgen.intproviders.ConstantIntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProvider
 import io.github.ayfri.kore.features.worldgen.intproviders.IntProviderScope
 import io.github.ayfri.kore.serializers.GeneratedSealedSerializer
@@ -66,3 +67,17 @@ data class AboveRootPlacement(
 fun RootPlacer.aboveRootPlacement(chance: Double = 0.0, block: AboveRootPlacement.() -> Unit = {}) {
 	aboveRootPlacement = AboveRootPlacement(aboveRootPlacementChance = chance).apply(block)
 }
+
+/**
+ * Sets [RootPlacer.trunkOffsetY] to [value], how far the trunk is moved upwards.
+ *
+ * ```kotlin
+ * mangroveRootPlacer { trunkOffsetY(uniform(1, 3)) }
+ * ```
+ */
+fun RootPlacer.trunkOffsetY(value: IntProvider) {
+	trunkOffsetY = value
+}
+
+/** Sets [RootPlacer.trunkOffsetY] to the constant [value]. */
+fun RootPlacer.trunkOffsetY(value: Int) = trunkOffsetY(ConstantIntProvider(value))

@@ -37,8 +37,8 @@ data class CherryFoliagePlacer(
  * ```kotlin
  * tree("cherry") {
  *     cherryFoliagePlacer {
- *         radius = constant(4)
- *         height = constant(5)
+ *         radius(4)
+ *         height(5)
  *         wideBottomLayerHoleChance = 0.25
  *         cornerHoleChance = 0.25
  *     }
@@ -53,3 +53,17 @@ fun Tree.cherryFoliagePlacer(
 ) {
 	foliagePlacer = CherryFoliagePlacer().apply(block)
 }
+
+/**
+ * Sets [CherryFoliagePlacer.height] to [value], the height of the canopy.
+ *
+ * ```kotlin
+ * cherryFoliagePlacer { height(uniform(4, 5)) }
+ * ```
+ */
+fun CherryFoliagePlacer.height(value: IntProvider) {
+	height = value
+}
+
+/** Sets [CherryFoliagePlacer.height] to the constant [value]. */
+fun CherryFoliagePlacer.height(value: Int) = height(ConstantIntProvider(value))

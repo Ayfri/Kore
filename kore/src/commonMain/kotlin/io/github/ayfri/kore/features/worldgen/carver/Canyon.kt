@@ -87,3 +87,73 @@ fun Canyon.shape(init: CanyonShapeConfig.() -> Unit = {}) {
  */
 fun CarversScope.canyon(fileName: String = "canyon", init: Canyon.() -> Unit = {}) =
 	dp.carver(fileName, Canyon().apply(init))
+
+/**
+ * Sets [Canyon.verticalRotation] to [value], the vertical rotation applied as the canyon extends.
+ *
+ * ```kotlin
+ * verticalRotation(uniform(-0.125f, 0.125f))
+ * ```
+ */
+fun Canyon.verticalRotation(value: FloatProvider) {
+	verticalRotation = value
+}
+
+/** Sets [Canyon.verticalRotation] to the constant [value]. */
+fun Canyon.verticalRotation(value: Float) = verticalRotation(ConstantFloatProvider(value))
+
+/**
+ * Sets [CanyonShapeConfig.distanceFactor] to [value], the length of the canyon.
+ *
+ * ```kotlin
+ * shape { distanceFactor(uniform(0.75f, 1f)) }
+ * ```
+ */
+fun CanyonShapeConfig.distanceFactor(value: FloatProvider) {
+	distanceFactor = value
+}
+
+/** Sets [CanyonShapeConfig.distanceFactor] to the constant [value]. */
+fun CanyonShapeConfig.distanceFactor(value: Float) = distanceFactor(ConstantFloatProvider(value))
+
+/**
+ * Sets [CanyonShapeConfig.horizontalRadiusFactor] to [value], the breadth of the canyon.
+ *
+ * ```kotlin
+ * shape { horizontalRadiusFactor(uniform(0.75f, 1f)) }
+ * ```
+ */
+fun CanyonShapeConfig.horizontalRadiusFactor(value: FloatProvider) {
+	horizontalRadiusFactor = value
+}
+
+/** Sets [CanyonShapeConfig.horizontalRadiusFactor] to the constant [value]. */
+fun CanyonShapeConfig.horizontalRadiusFactor(value: Float) = horizontalRadiusFactor(ConstantFloatProvider(value))
+
+/**
+ * Sets [CanyonShapeConfig.thickness] to [value], the breadth and height of the canyon.
+ *
+ * ```kotlin
+ * shape { thickness(trapezoid(0f, 6f, 2f)) }
+ * ```
+ */
+fun CanyonShapeConfig.thickness(value: FloatProvider) {
+	thickness = value
+}
+
+/** Sets [CanyonShapeConfig.thickness] to the constant [value]. */
+fun CanyonShapeConfig.thickness(value: Float) = thickness(ConstantFloatProvider(value))
+
+/**
+ * Sets [CanyonShapeConfig.yScale] to [value], the vertical scaling of the carved shape.
+ *
+ * ```kotlin
+ * shape { yScale(3f) }
+ * ```
+ */
+fun CanyonShapeConfig.yScale(value: FloatProvider) {
+	yScale = value
+}
+
+/** Sets [CanyonShapeConfig.yScale] to the constant [value]. */
+fun CanyonShapeConfig.yScale(value: Float) = yScale(ConstantFloatProvider(value))

@@ -46,3 +46,35 @@ fun Tree.bendingTrunkPlacer(
 ) {
 	trunkPlacer = BendingTrunkPlacer(baseHeight, heightRandA, heightRandB, bendLength, minHeightForLeaves).apply(block)
 }
+
+/**
+ * Sets [Tree.trunkPlacer] to a [BendingTrunkPlacer] bending the trunk by the constant [bendLength].
+ *
+ * ```kotlin
+ * tree("azalea") {
+ *     bendingTrunkPlacer(baseHeight = 4, heightRandA = 2, bendLength = 2, minHeightForLeaves = 3)
+ * }
+ * ```
+ */
+fun Tree.bendingTrunkPlacer(
+	baseHeight: Int = 0,
+	heightRandA: Int = 0,
+	heightRandB: Int = 0,
+	bendLength: Int,
+	minHeightForLeaves: Int? = null,
+	block: BendingTrunkPlacer.() -> Unit = {},
+) = bendingTrunkPlacer(baseHeight, heightRandA, heightRandB, ConstantIntProvider(bendLength), minHeightForLeaves, block)
+
+/**
+ * Sets [BendingTrunkPlacer.bendLength] to [value], how far the trunk bends.
+ *
+ * ```kotlin
+ * bendingTrunkPlacer(baseHeight = 4) { bendLength(uniform(1, 2)) }
+ * ```
+ */
+fun BendingTrunkPlacer.bendLength(value: IntProvider) {
+	bendLength = value
+}
+
+/** Sets [BendingTrunkPlacer.bendLength] to the constant [value]. */
+fun BendingTrunkPlacer.bendLength(value: Int) = bendLength(ConstantIntProvider(value))

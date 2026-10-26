@@ -36,7 +36,7 @@ data class PoplarTrunkPlacer(
  *         baseHeight = 7
  *         heightRandA = 4
  *         branchAmount = uniform(1, 4)
- *         trunkHeightAboveBranches = constant(4)
+ *         trunkHeightAboveBranches(4)
  *     }
  * }
  * ```
@@ -47,3 +47,31 @@ data class PoplarTrunkPlacer(
 fun Tree.poplarTrunkPlacer(block: PoplarTrunkPlacer.() -> Unit = {}) {
 	trunkPlacer = PoplarTrunkPlacer().apply(block)
 }
+
+/**
+ * Sets [PoplarTrunkPlacer.branchAmount] to [value], the number of branches.
+ *
+ * ```kotlin
+ * poplarTrunkPlacer { branchAmount(uniform(1, 4)) }
+ * ```
+ */
+fun PoplarTrunkPlacer.branchAmount(value: IntProvider) {
+	branchAmount = value
+}
+
+/** Sets [PoplarTrunkPlacer.branchAmount] to the constant [value]. */
+fun PoplarTrunkPlacer.branchAmount(value: Int) = branchAmount(ConstantIntProvider(value))
+
+/**
+ * Sets [PoplarTrunkPlacer.trunkHeightAboveBranches] to [value], the trunk height left above the branches.
+ *
+ * ```kotlin
+ * poplarTrunkPlacer { trunkHeightAboveBranches(4) }
+ * ```
+ */
+fun PoplarTrunkPlacer.trunkHeightAboveBranches(value: IntProvider) {
+	trunkHeightAboveBranches = value
+}
+
+/** Sets [PoplarTrunkPlacer.trunkHeightAboveBranches] to the constant [value]. */
+fun PoplarTrunkPlacer.trunkHeightAboveBranches(value: Int) = trunkHeightAboveBranches(ConstantIntProvider(value))

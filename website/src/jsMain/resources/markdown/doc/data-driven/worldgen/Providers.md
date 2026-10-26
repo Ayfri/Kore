@@ -78,6 +78,10 @@ Reference: [Height provider](https://minecraft.wiki/w/Custom_world_generation/he
 
 ## Int Providers
 
+A plain number replaces `constant(...)` wherever a provider is expected. Most provider fields have a setter taking it, `height(12)` being
+`height = constant(12)` and `thickness(1.5f)` being `thickness = constant(1.5f)`. The fields set through a builder take it through the builder's `Int`
+parameter instead, like the `count` of `count(10)`, the sizes of `cuboid`, the axes of `offset(y = -1)`, the height of `layer(3)` or the `radius` of `disk`. A plain `Int` builds an int provider and a plain `Float` a float provider.
+
 Int providers fill every field expecting a variable count or size: `count()` and `countOnEveryLayer()` on placed features, the `limit` of a
 `capped` processor, the layer heights of a `blockColumn`, and so on.
 
@@ -131,10 +135,10 @@ Float providers fill float fields such as `roomVerticalRadiusMultiplier` and `fl
 | `clampedNormal(mean, deviation, min, max)` | Samples a normal distribution (`mean`/`deviation`) and clamps the result to `[min, max]`. | `feature/dripstone_cluster` `wetness`               |
 
 ```kotlin
-floorLevel = constant(-0.5f)
-pitch = uniform(0.8f, 1.2f)
-roomVerticalRadiusMultiplier = clampedNormal(mean = 0.5f, deviation = 0.2f, min = 0.0f, max = 1.0f)
-thickness = trapezoid(min = 0.0f, max = 2.0f, plateau = 0.5f)
+floorLevel(-0.5f)
+pitch(uniform(0.8f, 1.2f))
+roomVerticalRadiusMultiplier(clampedNormal(mean = 0.5f, deviation = 0.2f, min = 0.0f, max = 1.0f))
+thickness(trapezoid(min = 0.0f, max = 2.0f, plateau = 0.5f))
 ```
 
 The explorer under the [int providers](#int-providers) table also covers the float providers.

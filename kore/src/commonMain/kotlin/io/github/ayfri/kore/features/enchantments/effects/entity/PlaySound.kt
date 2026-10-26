@@ -36,9 +36,31 @@ fun PlaySound.sound(sound: SoundEventArgument, range: Float? = null) {
 	this.sound = listOf(SoundEvent(sound, range))
 }
 
+/**
+ * Sets [PlaySound.pitch] to [value], from `0.00001` to `2`.
+ *
+ * ```kotlin
+ * pitch(uniform(0.8f, 1.2f))
+ * ```
+ */
+fun PlaySound.pitch(value: FloatProvider) {
+	pitch = value
+}
+
 /** Sets [PlaySound.pitch] to a constant [value], from `0.00001` to `2`. */
 fun PlaySound.pitch(value: Float) {
 	pitch = ConstantFloatProvider(value)
+}
+
+/**
+ * Sets [PlaySound.volume] to [value], from `0.00001` to `10`.
+ *
+ * ```kotlin
+ * volume(uniform(0.5f, 1f))
+ * ```
+ */
+fun PlaySound.volume(value: FloatProvider) {
+	volume = value
 }
 
 /** Sets [PlaySound.volume] to a constant [value], from `0.00001` to `10`. */

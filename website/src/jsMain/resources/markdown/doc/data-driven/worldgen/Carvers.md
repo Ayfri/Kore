@@ -5,7 +5,7 @@ nav-title: Carvers
 description: Carve caves and canyons into Minecraft terrain with Kore - probability, height, tunnel count and radius multipliers.
 keywords: minecraft, datapack, kore, worldgen, carver, cave, canyon, ravine
 date-created: 2026-08-17
-date-modified: 2026-10-20
+date-modified: 2026-10-26
 routeOverride: /docs/data-driven/worldgen/carvers
 ---
 
@@ -86,14 +86,17 @@ val cave = carversBuilder.cave("my_cave") { probability = 0.15 }
 
 | Field                           | Type                            | Default        | Vanilla                     | Meaning                                                                       |
 |---------------------------------|---------------------------------|----------------|-----------------------------|-------------------------------------------------------------------------------|
-| `count`                         | Int provider, `0` or more       | `constant(1)`  | `veryBiasedToBottom(0, 14)` | Tunnels per chunk attempt. Higher means more tunnels.                         |
-| `floorLevel`                    | Float provider in `[-1.0, 1.0]` | `constant(0f)` | `uniform(-1f, -0.4f)`       | `0.0` carves ellipsoids, `1.0` carves upper half-ellipsoids for a flat floor. |
-| `horizontalRadiusMultiplier`    | Float provider                  | `constant(1f)` | `uniform(0.7f, 1.4f)`       | Horizontal scaling of tunnels. Higher means wider tunnels, not longer ones.   |
-| `roomVerticalRadiusMultiplier`  | Float provider                  | `constant(1f)` | `uniform(0.1f, 0.9f)`       | Vertical scaling of the rooms tunnels start from. Higher means taller rooms.  |
+| `count`                         | Int provider, `0` or more       | `1`            | `veryBiasedToBottom(0, 14)` | Tunnels per chunk attempt. Higher means more tunnels.                         |
+| `floorLevel`                    | Float provider in `[-1.0, 1.0]` | `0f`           | `uniform(-1f, -0.4f)`       | `0.0` carves ellipsoids, `1.0` carves upper half-ellipsoids for a flat floor. |
+| `horizontalRadiusMultiplier`    | Float provider                  | `1f`           | `uniform(0.7f, 1.4f)`       | Horizontal scaling of tunnels. Higher means wider tunnels, not longer ones.   |
+| `roomVerticalRadiusMultiplier`  | Float provider                  | `1f`           | `uniform(0.1f, 0.9f)`       | Vertical scaling of the rooms tunnels start from. Higher means taller rooms.  |
 | `startVerticalRadiusMultiplier` | Float provider, optional        | `null`         | absent                      | Vertical scaling of the first tunnel segment. Vanilla uses `1.0` when absent. |
-| `thickness`                     | Float provider, `0` or more     | `constant(1f)` | `trapezoid(0f, 3f, 1f)`     | Breadth and height of tunnels. Higher means bigger tunnels.                   |
-| `verticalRadiusMultiplier`      | Float provider                  | `constant(1f)` | `uniform(0.8f, 1.3f)`       | Vertical scaling of tunnels. Higher means taller tunnels, not longer ones.    |
+| `thickness`                     | Float provider, `0` or more     | `1f`           | `trapezoid(0f, 3f, 1f)`     | Breadth and height of tunnels. Higher means bigger tunnels.                   |
+| `verticalRadiusMultiplier`      | Float provider                  | `1f`           | `uniform(0.8f, 1.3f)`       | Vertical scaling of tunnels. Higher means taller tunnels, not longer ones.    |
 | `weirdThicknessBias`            | `Boolean`, optional             | `null`         | `true`                      | Irregular tunnel thickness. Vanilla uses `false` when absent.                 |
+
+Every int and float provider field also has a setter taking a plain number, `count(4)` or `thickness(2f)`, next to the assignment (`count = veryBiasedToBottom(0, 14)`)
+and the provider setter (`floorLevel(uniform(-1f, -0.4f))`).
 
 The Vanilla column is the `cave` carver. `cave_extra_underground` is the same, except for a `probability` of `0.07` and a `y` of
 `uniformHeightProvider(aboveBottom(8), absolute(47))`.
@@ -104,14 +107,14 @@ The Vanilla column is the `cave` carver. `cave_extra_underground` is the same, e
 
 | Field                         | Type                    | Default        | Vanilla                    | Meaning                                                               |
 |-------------------------------|-------------------------|----------------|----------------------------|-----------------------------------------------------------------------|
-| `verticalRotation`            | Float provider          | `constant(0f)` | `uniform(-0.125f, 0.125f)` | Vertical rotation applied as the canyon extends.                      |
-| `distanceFactor`              | Float provider          | `constant(1f)` | `uniform(0.75f, 1f)`       | Length of the canyon. Higher is longer.                               |
-| `horizontalRadiusFactor`      | Float provider          | `constant(1f)` | `uniform(0.75f, 1f)`       | Breadth of the canyon. Higher is wider.                               |
-| `thickness`                   | Float provider          | `constant(1f)` | `trapezoid(0f, 6f, 2f)`    | Breadth and height of the canyon. Higher means a bigger canyon.       |
+| `verticalRotation`            | Float provider          | `0f`           | `uniform(-0.125f, 0.125f)` | Vertical rotation applied as the canyon extends.                      |
+| `distanceFactor`              | Float provider          | `1f`           | `uniform(0.75f, 1f)`       | Length of the canyon. Higher is longer.                               |
+| `horizontalRadiusFactor`      | Float provider          | `1f`           | `uniform(0.75f, 1f)`       | Breadth of the canyon. Higher is wider.                               |
+| `thickness`                   | Float provider          | `1f`           | `trapezoid(0f, 6f, 2f)`    | Breadth and height of the canyon. Higher means a bigger canyon.       |
 | `verticalRadiusCenterFactor`  | `Float`                 | `0f`           | `0f`                       | Extra depth based on horizontal distance from the canyon center.      |
 | `verticalRadiusDefaultFactor` | `Float`                 | `1f`           | `1f`                       | Depth of the canyon. Higher is deeper.                                |
 | `widthSmoothness`             | `Int`, greater than `0` | `1`            | `3`                        | Smoothing of the walls along the vertical axis.                       |
-| `yScale`                      | Float provider          | `constant(1f)` | `constant(3f)`             | Vertical scaling of the carved shape. Higher stretches it vertically. |
+| `yScale`                      | Float provider          | `1f`           | `3f`                       | Vertical scaling of the carved shape. Higher stretches it vertically. |
 
 All fields except `verticalRotation` belong to `shape`.
 
@@ -124,7 +127,7 @@ canyon("my_canyon") {
 	shape {
 		thickness = trapezoid(0.0f, 6.0f, 2.0f)
 		widthSmoothness = 3
-		yScale = constant(3.0f)
+		yScale(3f)
 	}
 }
 ```

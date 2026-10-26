@@ -32,9 +32,9 @@ data class RandomSpreadFoliagePlacer(
  * ```kotlin
  * tree("azalea") {
  *     randomSpreadFoliagePlacer(
- *         radius = constant(3),
- *         offset = constant(0),
- *         foliageHeight = constant(2),
+ *         radius = uniform(3, 4),
+ *         offset = uniform(0, 1),
+ *         foliageHeight = uniform(2, 3),
  *         leafPlacementAttempts = 50,
  *     )
  * }
@@ -52,3 +52,40 @@ fun Tree.randomSpreadFoliagePlacer(
 ) {
 	foliagePlacer = RandomSpreadFoliagePlacer(radius, offset, foliageHeight, leafPlacementAttempts).apply(block)
 }
+
+/**
+ * Sets [Tree.foliagePlacer] to a [RandomSpreadFoliagePlacer] of the constant [radius], [offset] and [foliageHeight].
+ *
+ * ```kotlin
+ * tree("azalea") {
+ *     randomSpreadFoliagePlacer(radius = 3, offset = 0, foliageHeight = 2, leafPlacementAttempts = 50)
+ * }
+ * ```
+ */
+fun Tree.randomSpreadFoliagePlacer(
+	radius: Int,
+	offset: Int = 0,
+	foliageHeight: Int = 0,
+	leafPlacementAttempts: Int = 0,
+	block: RandomSpreadFoliagePlacer.() -> Unit = {},
+) = randomSpreadFoliagePlacer(
+	ConstantIntProvider(radius),
+	ConstantIntProvider(offset),
+	ConstantIntProvider(foliageHeight),
+	leafPlacementAttempts,
+	block,
+)
+
+/**
+ * Sets [RandomSpreadFoliagePlacer.foliageHeight] to [value], the height of the foliage.
+ *
+ * ```kotlin
+ * randomSpreadFoliagePlacer(radius = 3) { foliageHeight(uniform(2, 3)) }
+ * ```
+ */
+fun RandomSpreadFoliagePlacer.foliageHeight(value: IntProvider) {
+	foliageHeight = value
+}
+
+/** Sets [RandomSpreadFoliagePlacer.foliageHeight] to the constant [value]. */
+fun RandomSpreadFoliagePlacer.foliageHeight(value: Int) = foliageHeight(ConstantIntProvider(value))

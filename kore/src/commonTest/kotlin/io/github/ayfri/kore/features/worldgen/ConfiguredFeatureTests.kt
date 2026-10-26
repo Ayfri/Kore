@@ -12,16 +12,27 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.Direction
 import io.github.ayfri.kore.features.worldgen.configuredfeature.VerticalDirection
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.*
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.*
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.acaciaFoliagePlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.blobFoliagePlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.bushFoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.cherryFoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.darkOakFoliagePlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.fancyFoliagePlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.height
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.jungleFoliagePlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.megaPineFoliagePlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.pineFoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.poplarFoliagePlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.radius
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.randomSpreadFoliagePlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.foliageplacer.spruceFoliagePlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.layersfeaturesize.threeLayersFeatureSize
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.layersfeaturesize.twoLayersFeatureSize
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.alterGround
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.rootprovider.aboveRootPlacement
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.rootprovider.mangroveRootPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.rootprovider.mangroveRootPlacement
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.rootprovider.trunkOffsetY
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.attachedToLeaves
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.attachedToLogs
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.beehive
@@ -32,9 +43,16 @@ import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.t
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.placeOnGround
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.shelfMushroom
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.treedecorator.trunkVine
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.bendingTrunkPlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.branchCount
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.branchEndOffsetFromTop
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.branchHorizontalLength
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.cherryTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.darkOakTrunkPlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.extraBranchLength
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.extraBranchSteps
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.poplarTrunkPlacer
+import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.trunkHeightAboveBranches
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configurations.tree.trunkplacer.upwardsBranchingTrunkPlacer
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeatures
 import io.github.ayfri.kore.features.worldgen.configuredfeature.configuredFeaturesBuilder
@@ -1779,6 +1797,31 @@ fun DataPack.configuredFeatureTests() {
 		}
 	""".trimIndent()
 
+	configuredFeaturesBuilder.tree("test_tree_foliage_plain") {
+		blobFoliagePlacer(radius = 2, offset = 0, height = 3)
+	}
+	val plainFoliageJson = configuredFeatures.last().generateJson(this)
+
+	configuredFeaturesBuilder.tree("test_tree_foliage_providers") {
+		blobFoliagePlacer(radius = constant(2), offset = constant(0), height = 3)
+	}
+	configuredFeatures.last().generateJson(this) assertsIs plainFoliageJson
+
+	configuredFeaturesBuilder.tree("test_tree_foliage_setter") {
+		blobFoliagePlacer(height = 3) { radius(2) }
+	}
+	configuredFeatures.last().generateJson(this) assertsIs plainFoliageJson
+
+	configuredFeaturesBuilder.tree("test_tree_foliage_setter_provider") {
+		blobFoliagePlacer(height = 3) { radius(uniform(2, 3)) }
+	}
+	val setterProviderJson = configuredFeatures.last().generateJson(this)
+
+	configuredFeaturesBuilder.tree("test_tree_foliage_provider_argument") {
+		blobFoliagePlacer(radius = uniform(2, 3), height = 3)
+	}
+	configuredFeatures.last().generateJson(this) assertsIs setterProviderJson
+
 	configuredFeaturesBuilder.geode("test_geode_plain_setters") {
 		distributionPoints(3)
 		outerWallDistance(5)
@@ -1803,6 +1846,59 @@ fun DataPack.configuredFeatureTests() {
 	}
 	configuredFeatures.last().generateJson(this) assertsIs plainFallenTreeJson
 
+	treeJson("test_tree_acacia_plain") { acaciaFoliagePlacer(radius = 2, offset = 1) } assertsIs
+		treeJson("test_tree_acacia_providers") { acaciaFoliagePlacer(radius = constant(2), offset = constant(1)) }
+
+	treeJson("test_tree_bush_plain") { bushFoliagePlacer(radius = 2, offset = 1, height = 2) } assertsIs
+		treeJson("test_tree_bush_providers") { bushFoliagePlacer(radius = constant(2), offset = constant(1), height = 2) }
+
+	treeJson("test_tree_dark_oak_plain") { darkOakFoliagePlacer(radius = 2, offset = 1) } assertsIs
+		treeJson("test_tree_dark_oak_providers") { darkOakFoliagePlacer(radius = constant(2), offset = constant(1)) }
+
+	treeJson("test_tree_fancy_plain") { fancyFoliagePlacer(radius = 2, offset = 4, height = 4) } assertsIs
+		treeJson("test_tree_fancy_providers") { fancyFoliagePlacer(radius = constant(2), offset = constant(4), height = 4) }
+
+	treeJson("test_tree_jungle_plain") { jungleFoliagePlacer(radius = 2, offset = 1, height = 2) } assertsIs
+		treeJson("test_tree_jungle_providers") { jungleFoliagePlacer(radius = constant(2), offset = constant(1), height = 2) }
+
+	treeJson("test_tree_mega_pine_plain") { megaPineFoliagePlacer(radius = 2, offset = 1, crownHeight = 3) } assertsIs
+		treeJson("test_tree_mega_pine_providers") {
+			megaPineFoliagePlacer(radius = constant(2), offset = constant(1), crownHeight = constant(3))
+		}
+
+	treeJson("test_tree_pine_plain") { pineFoliagePlacer(radius = 2, offset = 1, height = 3) } assertsIs
+		treeJson("test_tree_pine_providers") {
+			pineFoliagePlacer(radius = constant(2), offset = constant(1), height = constant(3))
+		}
+
+	treeJson("test_tree_spruce_plain") { spruceFoliagePlacer(radius = 2, offset = 1, trunkHeight = 3) } assertsIs
+		treeJson("test_tree_spruce_providers") {
+			spruceFoliagePlacer(radius = constant(2), offset = constant(1), trunkHeight = constant(3))
+		}
+
+	treeJson("test_tree_bending_plain") { bendingTrunkPlacer(baseHeight = 4, heightRandA = 2, heightRandB = 1, bendLength = 3) } assertsIs
+		treeJson("test_tree_bending_providers") {
+			bendingTrunkPlacer(baseHeight = 4, heightRandA = 2, heightRandB = 1, bendLength = constant(3))
+		}
+
+	treeJson("test_tree_cherry_trunk_plain") { cherryTrunkPlacer { branchEndOffsetFromTop(-2) } } assertsIs
+		treeJson("test_tree_cherry_trunk_providers") { cherryTrunkPlacer { branchEndOffsetFromTop = constant(-2) } }
+
+	treeJson("test_tree_upwards_branching_plain") {
+		upwardsBranchingTrunkPlacer {
+			extraBranchLength(2)
+			extraBranchSteps(3)
+		}
+	} assertsIs treeJson("test_tree_upwards_branching_providers") {
+		upwardsBranchingTrunkPlacer {
+			extraBranchLength = constant(2)
+			extraBranchSteps = constant(3)
+		}
+	}
+
+	treeJson("test_tree_root_plain") { rootPlacer = mangroveRootPlacer { trunkOffsetY(2) } } assertsIs
+		treeJson("test_tree_root_providers") { rootPlacer = mangroveRootPlacer { trunkOffsetY = constant(2) } }
+
 	configuredFeaturesBuilder.tree("test_tree") {
 		minimumSize = threeLayersFeatureSize {
 			limit = 5
@@ -1813,13 +1909,13 @@ fun DataPack.configuredFeatureTests() {
 		}
 
 		cherryTrunkPlacer {
-			branchCount = constant(2)
-			branchHorizontalLength = constant(6)
+			branchCount(2)
+			branchHorizontalLength(6)
 			branchStartOffsetFromTop = uniform(-10, -5)
 		}
 
 		cherryFoliagePlacer {
-			height = constant(5)
+			height(5)
 		}
 
 		decorators {
@@ -1898,11 +1994,11 @@ fun DataPack.configuredFeatureTests() {
 
 	configuredFeaturesBuilder.tree("test_tree_alter_ground") {
 		cherryTrunkPlacer {
-			branchCount = constant(1)
-			branchHorizontalLength = constant(2)
+			branchCount(1)
+			branchHorizontalLength(2)
 			branchStartOffsetFromTop = uniform(-3, -1)
 		}
-		cherryFoliagePlacer { height = constant(2) }
+		cherryFoliagePlacer { height(2) }
 		decorators {
 			alterGround {
 				fallback = simpleStateProvider(Blocks.DIRT)
@@ -2161,9 +2257,9 @@ fun DataPack.configuredFeatureTests() {
 			canGrowThrough = listOf(Tags.Block.MANGROVE_LOGS_CAN_GROW_THROUGH)
 		}
 		randomSpreadFoliagePlacer(
-			radius = constant(3),
-			offset = constant(0),
-			foliageHeight = constant(2),
+			radius = 3,
+			offset = 0,
+			foliageHeight = 2,
 			leafPlacementAttempts = 70
 		)
 		decorators {
@@ -2945,7 +3041,7 @@ fun DataPack.configuredFeatureTests() {
 			baseHeight = 7
 			branchAmount = uniform(1, 4)
 			heightRandA = 4
-			trunkHeightAboveBranches = constant(4)
+			trunkHeightAboveBranches(4)
 		}
 		poplarFoliagePlacer {
 			height = uniform(5, 6)
@@ -3119,6 +3215,11 @@ fun DataPack.configuredFeatureTests() {
 			]
 		}
 	""".trimIndent()
+}
+
+private fun DataPack.treeJson(fileName: String, block: Tree.() -> Unit): String {
+	configuredFeaturesBuilder.tree(fileName, block)
+	return configuredFeatures.last().generateJson(this)
 }
 
 class ConfiguredFeatureTests : FunSpec({

@@ -39,3 +39,15 @@ fun Tree.darkOakFoliagePlacer(
 ) {
 	foliagePlacer = DarkOakFoliagePlacer(radius, offset).apply(block)
 }
+
+/**
+ * Sets [Tree.foliagePlacer] to a [DarkOakFoliagePlacer] of the constant [radius] and [offset].
+ *
+ * ```kotlin
+ * tree("dark_oak") {
+ *     darkOakFoliagePlacer(radius = 0, offset = 0)
+ * }
+ * ```
+ */
+fun Tree.darkOakFoliagePlacer(radius: Int, offset: Int = 0, block: DarkOakFoliagePlacer.() -> Unit = {}) =
+	darkOakFoliagePlacer(ConstantIntProvider(radius), ConstantIntProvider(offset), block)

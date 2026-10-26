@@ -26,6 +26,7 @@ import io.github.ayfri.kore.features.predicates.predicate
 import io.github.ayfri.kore.generated.arguments.types.PredicateArgument
 import io.github.ayfri.kore.features.worldgen.blockpredicate.matchingBlocks
 import io.github.ayfri.kore.features.worldgen.configuredfeature.blockstateprovider.simpleStateProvider
+import io.github.ayfri.kore.features.worldgen.floatproviders.uniform
 import io.github.ayfri.kore.generated.*
 import io.github.ayfri.kore.serializers.JsonNamingSnakeCaseStrategy
 import io.github.ayfri.kore.utils.pretty
@@ -626,6 +627,10 @@ fun DataPack.enchantmentTests() {
 
 				ignite(2)
 				playSound(SoundEvents.Entity.FireworkRocket.LAUNCH, 5f)
+				playSound(SoundEvents.Entity.FireworkRocket.LAUNCH, 5f) {
+					pitch(uniform(0.8f, 1.2f))
+					volume(uniform(1f, 2f))
+				}
 
 				replaceBlock {
 					blockState = simpleStateProvider(Blocks.DIAMOND_BLOCK)
@@ -749,6 +754,25 @@ fun DataPack.enchantmentTests() {
 							},
 							"volume": 1.0,
 							"pitch": 1.0
+						}
+					},
+					{
+						"effect": {
+							"type": "minecraft:play_sound",
+							"sound": {
+								"sound_id": "minecraft:entity.firework_rocket.launch",
+								"range": 5.0
+							},
+							"volume": {
+								"type": "minecraft:uniform",
+								"min_inclusive": 1.0,
+								"max_exclusive": 2.0
+							},
+							"pitch": {
+								"type": "minecraft:uniform",
+								"min_inclusive": 0.8,
+								"max_exclusive": 1.2
+							}
 						}
 					},
 					{

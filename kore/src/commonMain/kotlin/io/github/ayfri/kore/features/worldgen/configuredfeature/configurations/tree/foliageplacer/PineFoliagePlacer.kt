@@ -27,7 +27,7 @@ data class PineFoliagePlacer(
  *
  * ```kotlin
  * tree("pine") {
- *     pineFoliagePlacer(radius = constant(1), offset = constant(1), height = uniform(3, 4))
+ *     pineFoliagePlacer(radius = uniform(1, 2), offset = uniform(0, 1), height = uniform(3, 4))
  * }
  * ```
  *
@@ -42,3 +42,29 @@ fun Tree.pineFoliagePlacer(
 ) {
 	foliagePlacer = PineFoliagePlacer(radius, offset, height).apply(block)
 }
+
+/**
+ * Sets [Tree.foliagePlacer] to a [PineFoliagePlacer] of the constant [radius], [offset] and [height].
+ *
+ * ```kotlin
+ * tree("pine") {
+ *     pineFoliagePlacer(radius = 1, offset = 1, height = 3)
+ * }
+ * ```
+ */
+fun Tree.pineFoliagePlacer(radius: Int, offset: Int = 0, height: Int = 0, block: PineFoliagePlacer.() -> Unit = {}) =
+	pineFoliagePlacer(ConstantIntProvider(radius), ConstantIntProvider(offset), ConstantIntProvider(height), block)
+
+/**
+ * Sets [PineFoliagePlacer.height] to [value], the height of the leaves.
+ *
+ * ```kotlin
+ * pineFoliagePlacer(radius = 1) { height(uniform(3, 4)) }
+ * ```
+ */
+fun PineFoliagePlacer.height(value: IntProvider) {
+	height = value
+}
+
+/** Sets [PineFoliagePlacer.height] to the constant [value]. */
+fun PineFoliagePlacer.height(value: Int) = height(ConstantIntProvider(value))

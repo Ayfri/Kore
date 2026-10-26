@@ -27,7 +27,7 @@ data class JungleFoliagePlacer(
  *
  * ```kotlin
  * tree("mega_jungle") {
- *     jungleFoliagePlacer(radius = constant(2), height = 2)
+ *     jungleFoliagePlacer(radius = uniform(2, 3), height = 2)
  * }
  * ```
  *
@@ -42,3 +42,15 @@ fun Tree.jungleFoliagePlacer(
 ) {
 	foliagePlacer = JungleFoliagePlacer(radius, offset, height).apply(block)
 }
+
+/**
+ * Sets [Tree.foliagePlacer] to a [JungleFoliagePlacer] of the constant [radius] and [offset].
+ *
+ * ```kotlin
+ * tree("mega_jungle") {
+ *     jungleFoliagePlacer(radius = 2, height = 2)
+ * }
+ * ```
+ */
+fun Tree.jungleFoliagePlacer(radius: Int, offset: Int = 0, height: Int = 0, block: JungleFoliagePlacer.() -> Unit = {}) =
+	jungleFoliagePlacer(ConstantIntProvider(radius), ConstantIntProvider(offset), height, block)

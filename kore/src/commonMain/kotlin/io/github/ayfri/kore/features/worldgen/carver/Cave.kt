@@ -59,3 +59,101 @@ data class Cave(
  */
 fun CarversScope.cave(fileName: String = "cave", init: Cave.() -> Unit = {}) =
 	dp.carver(fileName, Cave().apply(init))
+
+/**
+ * Sets [Cave.count] to [value], the number of tunnels attempted per chunk.
+ *
+ * ```kotlin
+ * count(veryBiasedToBottom(0, 14))
+ * ```
+ */
+fun Cave.count(value: IntProvider) {
+	count = value
+}
+
+/** Sets [Cave.count] to the constant [value]. */
+fun Cave.count(value: Int) = count(ConstantIntProvider(value))
+
+/**
+ * Sets [Cave.floorLevel] to [value], `0.0` carving ellipsoids and `1.0` flat floors.
+ *
+ * ```kotlin
+ * floorLevel(uniform(-1f, -0.4f))
+ * ```
+ */
+fun Cave.floorLevel(value: FloatProvider) {
+	floorLevel = value
+}
+
+/** Sets [Cave.floorLevel] to the constant [value]. */
+fun Cave.floorLevel(value: Float) = floorLevel(ConstantFloatProvider(value))
+
+/**
+ * Sets [Cave.horizontalRadiusMultiplier] to [value], the horizontal scaling of the tunnels.
+ *
+ * ```kotlin
+ * horizontalRadiusMultiplier(uniform(0.7f, 1.4f))
+ * ```
+ */
+fun Cave.horizontalRadiusMultiplier(value: FloatProvider) {
+	horizontalRadiusMultiplier = value
+}
+
+/** Sets [Cave.horizontalRadiusMultiplier] to the constant [value]. */
+fun Cave.horizontalRadiusMultiplier(value: Float) = horizontalRadiusMultiplier(ConstantFloatProvider(value))
+
+/**
+ * Sets [Cave.roomVerticalRadiusMultiplier] to [value], the vertical scaling of the rooms the tunnels start from.
+ *
+ * ```kotlin
+ * roomVerticalRadiusMultiplier(uniform(0.1f, 0.9f))
+ * ```
+ */
+fun Cave.roomVerticalRadiusMultiplier(value: FloatProvider) {
+	roomVerticalRadiusMultiplier = value
+}
+
+/** Sets [Cave.roomVerticalRadiusMultiplier] to the constant [value]. */
+fun Cave.roomVerticalRadiusMultiplier(value: Float) = roomVerticalRadiusMultiplier(ConstantFloatProvider(value))
+
+/**
+ * Sets [Cave.startVerticalRadiusMultiplier] to [value], the vertical scaling of the tunnel start.
+ *
+ * ```kotlin
+ * startVerticalRadiusMultiplier(1.5f)
+ * ```
+ */
+fun Cave.startVerticalRadiusMultiplier(value: FloatProvider) {
+	startVerticalRadiusMultiplier = value
+}
+
+/** Sets [Cave.startVerticalRadiusMultiplier] to the constant [value]. */
+fun Cave.startVerticalRadiusMultiplier(value: Float) = startVerticalRadiusMultiplier(ConstantFloatProvider(value))
+
+/**
+ * Sets [Cave.thickness] to [value], the breadth and height of the tunnels.
+ *
+ * ```kotlin
+ * thickness(trapezoid(0f, 3f, 1f))
+ * ```
+ */
+fun Cave.thickness(value: FloatProvider) {
+	thickness = value
+}
+
+/** Sets [Cave.thickness] to the constant [value]. */
+fun Cave.thickness(value: Float) = thickness(ConstantFloatProvider(value))
+
+/**
+ * Sets [Cave.verticalRadiusMultiplier] to [value], the vertical scaling of the tunnels.
+ *
+ * ```kotlin
+ * verticalRadiusMultiplier(uniform(0.8f, 1.3f))
+ * ```
+ */
+fun Cave.verticalRadiusMultiplier(value: FloatProvider) {
+	verticalRadiusMultiplier = value
+}
+
+/** Sets [Cave.verticalRadiusMultiplier] to the constant [value]. */
+fun Cave.verticalRadiusMultiplier(value: Float) = verticalRadiusMultiplier(ConstantFloatProvider(value))

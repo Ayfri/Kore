@@ -42,3 +42,33 @@ fun Tree.spruceFoliagePlacer(
 ) {
 	foliagePlacer = SpruceFoliagePlacer(radius, offset, trunkHeight).apply(block)
 }
+
+/**
+ * Sets [Tree.foliagePlacer] to a [SpruceFoliagePlacer] of the constant [radius], [offset] and [trunkHeight].
+ *
+ * ```kotlin
+ * tree("spruce") {
+ *     spruceFoliagePlacer(radius = 2, offset = 0, trunkHeight = 1)
+ * }
+ * ```
+ */
+fun Tree.spruceFoliagePlacer(
+	radius: Int,
+	offset: Int = 0,
+	trunkHeight: Int = 0,
+	block: SpruceFoliagePlacer.() -> Unit = {},
+) = spruceFoliagePlacer(ConstantIntProvider(radius), ConstantIntProvider(offset), ConstantIntProvider(trunkHeight), block)
+
+/**
+ * Sets [SpruceFoliagePlacer.trunkHeight] to [value], the height of the trunk left bare under the leaves.
+ *
+ * ```kotlin
+ * spruceFoliagePlacer(radius = 2) { trunkHeight(uniform(1, 2)) }
+ * ```
+ */
+fun SpruceFoliagePlacer.trunkHeight(value: IntProvider) {
+	trunkHeight = value
+}
+
+/** Sets [SpruceFoliagePlacer.trunkHeight] to the constant [value]. */
+fun SpruceFoliagePlacer.trunkHeight(value: Int) = trunkHeight(ConstantIntProvider(value))

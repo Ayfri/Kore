@@ -27,7 +27,7 @@ data class BlobFoliagePlacer(
  *
  * ```kotlin
  * tree("oak") {
- *     blobFoliagePlacer(radius = constant(2), offset = constant(0), height = 3)
+ *     blobFoliagePlacer(radius = uniform(2, 3), height = 3)
  * }
  * ```
  *
@@ -42,3 +42,15 @@ fun Tree.blobFoliagePlacer(
 ) {
 	foliagePlacer = BlobFoliagePlacer(radius, offset, height).apply(block)
 }
+
+/**
+ * Sets [Tree.foliagePlacer] to a [BlobFoliagePlacer] of the constant [radius] and [offset].
+ *
+ * ```kotlin
+ * tree("oak") {
+ *     blobFoliagePlacer(radius = 2, offset = 0, height = 3)
+ * }
+ * ```
+ */
+fun Tree.blobFoliagePlacer(radius: Int, offset: Int = 0, height: Int = 0, block: BlobFoliagePlacer.() -> Unit = {}) =
+	blobFoliagePlacer(ConstantIntProvider(radius), ConstantIntProvider(offset), height, block)

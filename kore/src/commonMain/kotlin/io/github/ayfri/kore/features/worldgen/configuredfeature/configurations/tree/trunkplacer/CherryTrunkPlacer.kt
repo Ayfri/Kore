@@ -52,3 +52,45 @@ data class CherryTrunkPlacer(
 fun Tree.cherryTrunkPlacer(block: CherryTrunkPlacer.() -> Unit = {}) {
 	trunkPlacer = CherryTrunkPlacer().apply(block)
 }
+
+/**
+ * Sets [CherryTrunkPlacer.branchCount] to [value], the number of branches.
+ *
+ * ```kotlin
+ * cherryTrunkPlacer { branchCount(uniform(1, 3)) }
+ * ```
+ */
+fun CherryTrunkPlacer.branchCount(value: IntProvider) {
+	branchCount = value
+}
+
+/** Sets [CherryTrunkPlacer.branchCount] to the constant [value]. */
+fun CherryTrunkPlacer.branchCount(value: Int) = branchCount(ConstantIntProvider(value))
+
+/**
+ * Sets [CherryTrunkPlacer.branchEndOffsetFromTop] to [value], where branches end relative to the top of the trunk.
+ *
+ * ```kotlin
+ * cherryTrunkPlacer { branchEndOffsetFromTop(uniform(-1, 0)) }
+ * ```
+ */
+fun CherryTrunkPlacer.branchEndOffsetFromTop(value: IntProvider) {
+	branchEndOffsetFromTop = value
+}
+
+/** Sets [CherryTrunkPlacer.branchEndOffsetFromTop] to the constant [value]. */
+fun CherryTrunkPlacer.branchEndOffsetFromTop(value: Int) = branchEndOffsetFromTop(ConstantIntProvider(value))
+
+/**
+ * Sets [CherryTrunkPlacer.branchHorizontalLength] to [value], the horizontal length of the branches.
+ *
+ * ```kotlin
+ * cherryTrunkPlacer { branchHorizontalLength(uniform(2, 4)) }
+ * ```
+ */
+fun CherryTrunkPlacer.branchHorizontalLength(value: IntProvider) {
+	branchHorizontalLength = value
+}
+
+/** Sets [CherryTrunkPlacer.branchHorizontalLength] to the constant [value]. */
+fun CherryTrunkPlacer.branchHorizontalLength(value: Int) = branchHorizontalLength(ConstantIntProvider(value))

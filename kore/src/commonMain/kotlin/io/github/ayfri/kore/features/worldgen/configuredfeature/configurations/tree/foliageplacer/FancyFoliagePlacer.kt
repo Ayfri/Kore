@@ -27,7 +27,7 @@ data class FancyFoliagePlacer(
  *
  * ```kotlin
  * tree("fancy_oak") {
- *     fancyFoliagePlacer(radius = constant(2), offset = constant(4), height = 4)
+ *     fancyFoliagePlacer(radius = uniform(2, 3), offset = uniform(3, 4), height = 4)
  * }
  * ```
  *
@@ -42,3 +42,15 @@ fun Tree.fancyFoliagePlacer(
 ) {
 	foliagePlacer = FancyFoliagePlacer(radius, offset, height).apply(block)
 }
+
+/**
+ * Sets [Tree.foliagePlacer] to a [FancyFoliagePlacer] of the constant [radius] and [offset].
+ *
+ * ```kotlin
+ * tree("fancy_oak") {
+ *     fancyFoliagePlacer(radius = 2, offset = 4, height = 4)
+ * }
+ * ```
+ */
+fun Tree.fancyFoliagePlacer(radius: Int, offset: Int = 0, height: Int = 0, block: FancyFoliagePlacer.() -> Unit = {}) =
+	fancyFoliagePlacer(ConstantIntProvider(radius), ConstantIntProvider(offset), height, block)

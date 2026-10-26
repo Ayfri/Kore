@@ -27,7 +27,7 @@ data class BushFoliagePlacer(
  *
  * ```kotlin
  * tree("jungle_bush") {
- *     bushFoliagePlacer(radius = constant(2), offset = constant(1), height = 2)
+ *     bushFoliagePlacer(radius = uniform(2, 3), offset = uniform(0, 1), height = 2)
  * }
  * ```
  *
@@ -42,3 +42,15 @@ fun Tree.bushFoliagePlacer(
 ) {
 	foliagePlacer = BushFoliagePlacer(radius, offset, height).apply(block)
 }
+
+/**
+ * Sets [Tree.foliagePlacer] to a [BushFoliagePlacer] of the constant [radius] and [offset].
+ *
+ * ```kotlin
+ * tree("jungle_bush") {
+ *     bushFoliagePlacer(radius = 2, offset = 1, height = 2)
+ * }
+ * ```
+ */
+fun Tree.bushFoliagePlacer(radius: Int, offset: Int = 0, height: Int = 0, block: BushFoliagePlacer.() -> Unit = {}) =
+	bushFoliagePlacer(ConstantIntProvider(radius), ConstantIntProvider(offset), height, block)

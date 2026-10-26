@@ -43,3 +43,33 @@ fun Tree.megaPineFoliagePlacer(
 ) {
 	foliagePlacer = MegaPineFoliagePlacer(radius, offset, crownHeight).apply(block)
 }
+
+/**
+ * Sets [Tree.foliagePlacer] to a [MegaPineFoliagePlacer] of the constant [radius], [offset] and [crownHeight].
+ *
+ * ```kotlin
+ * tree("mega_pine") {
+ *     megaPineFoliagePlacer(radius = 1, crownHeight = 5)
+ * }
+ * ```
+ */
+fun Tree.megaPineFoliagePlacer(
+	radius: Int,
+	offset: Int = 0,
+	crownHeight: Int = 0,
+	block: MegaPineFoliagePlacer.() -> Unit = {},
+) = megaPineFoliagePlacer(ConstantIntProvider(radius), ConstantIntProvider(offset), ConstantIntProvider(crownHeight), block)
+
+/**
+ * Sets [MegaPineFoliagePlacer.crownHeight] to [value], the height of the crown.
+ *
+ * ```kotlin
+ * megaPineFoliagePlacer(radius = 1) { crownHeight(uniform(3, 7)) }
+ * ```
+ */
+fun MegaPineFoliagePlacer.crownHeight(value: IntProvider) {
+	crownHeight = value
+}
+
+/** Sets [MegaPineFoliagePlacer.crownHeight] to the constant [value]. */
+fun MegaPineFoliagePlacer.crownHeight(value: Int) = crownHeight(ConstantIntProvider(value))

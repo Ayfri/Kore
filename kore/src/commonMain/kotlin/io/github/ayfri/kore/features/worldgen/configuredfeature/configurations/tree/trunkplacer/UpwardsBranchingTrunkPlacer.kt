@@ -54,3 +54,31 @@ data class UpwardsBranchingTrunkPlacer(
 fun Tree.upwardsBranchingTrunkPlacer(block: UpwardsBranchingTrunkPlacer.() -> Unit = {}) {
 	trunkPlacer = UpwardsBranchingTrunkPlacer().apply(block)
 }
+
+/**
+ * Sets [UpwardsBranchingTrunkPlacer.extraBranchLength] to [value], the extra length of the branches.
+ *
+ * ```kotlin
+ * upwardsBranchingTrunkPlacer { extraBranchLength(uniform(0, 1)) }
+ * ```
+ */
+fun UpwardsBranchingTrunkPlacer.extraBranchLength(value: IntProvider) {
+	extraBranchLength = value
+}
+
+/** Sets [UpwardsBranchingTrunkPlacer.extraBranchLength] to the constant [value]. */
+fun UpwardsBranchingTrunkPlacer.extraBranchLength(value: Int) = extraBranchLength(ConstantIntProvider(value))
+
+/**
+ * Sets [UpwardsBranchingTrunkPlacer.extraBranchSteps] to [value], the extra steps the branches take.
+ *
+ * ```kotlin
+ * upwardsBranchingTrunkPlacer { extraBranchSteps(uniform(1, 4)) }
+ * ```
+ */
+fun UpwardsBranchingTrunkPlacer.extraBranchSteps(value: IntProvider) {
+	extraBranchSteps = value
+}
+
+/** Sets [UpwardsBranchingTrunkPlacer.extraBranchSteps] to the constant [value]. */
+fun UpwardsBranchingTrunkPlacer.extraBranchSteps(value: Int) = extraBranchSteps(ConstantIntProvider(value))

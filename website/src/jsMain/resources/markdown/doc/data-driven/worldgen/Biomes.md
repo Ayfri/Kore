@@ -5,7 +5,7 @@ nav-title: Biomes
 description: Define Minecraft biomes with climate, colors, mob spawns, carvers and features using Kore's type-safe Kotlin DSL.
 keywords: minecraft, datapack, kore, worldgen, biome, carver, spawner, biome effects, climate parameters
 date-created: 2026-02-03
-date-modified: 2026-10-21
+date-modified: 2026-10-26
 routeOverride: /docs/data-driven/worldgen/biomes
 ---
 
@@ -177,7 +177,7 @@ fun DataPack.highlandsBiome(treePlaced: PlacedFeatureArgument, orePlaced: Placed
 	val cave = carversBuilder.cave("highlands_cave") {
 		probability = 0.08
 		y = uniformHeightProvider(absolute(32), absolute(128))
-		floorLevel = constant(-0.2f)
+		floorLevel(-0.2f)
 	}
 
 	biome("highlands") {

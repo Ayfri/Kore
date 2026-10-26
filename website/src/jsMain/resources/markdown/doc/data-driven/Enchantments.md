@@ -413,6 +413,12 @@ playSound(SoundEvents.Entity.FireworkRocket.LAUNCH, range = 16f) {
 	volume(1f)
 	pitch(1.2f)
 }
+
+// Or a float provider for either
+playSound(SoundEvents.Entity.FireworkRocket.LAUNCH) {
+	volume(uniform(0.5f, 1f))
+	pitch(uniform(0.8f, 1.2f))
+}
 ```
 
 ### Replace Block / Disk

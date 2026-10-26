@@ -59,7 +59,7 @@ Trees combine a trunk placer, a foliage placer and block state providers for the
 
 ```kotlin
 tree("my_tree") {
-	blobFoliagePlacer(radius = constant(2), offset = constant(0), height = 3)
+	blobFoliagePlacer(radius = 2, offset = 0, height = 3)
 	foliageProvider = simpleStateProvider(Blocks.OAK_LEAVES)
 	straightTrunkPlacer(baseHeight = 6, heightRandA = 3, heightRandB = 1)
 	trunkProvider = simpleStateProvider(Blocks.OAK_LOG)
@@ -73,6 +73,10 @@ tree("my_tree") {
 }
 ```
 
+Foliage placers take their `radius` and `offset` as int providers or plain `Int`s: `blobFoliagePlacer(radius = 2, height = 3)` writes constants, and
+`blobFoliagePlacer(height = 3) { radius(uniform(2, 3)) }` sets a provider in the block. A placer left to its block, like the poplar one below,
+uses the same setters: `radius(6)` and `height(uniform(5, 6))`.
+
 Every vanilla trunk placer, foliage placer and decorator has its builder, like the poplar ones: a straight trunk branching where the
 rhombus-shaped foliage starts, with shelf mushrooms on the logs.
 
@@ -81,10 +85,11 @@ tree("my_poplar") {
 	poplarTrunkPlacer {
 		baseHeight = 7
 		branchAmount = uniform(1, 4)
-		trunkHeightAboveBranches = constant(4)
+		trunkHeightAboveBranches(4)
 	}
 	poplarFoliagePlacer {
-		height = uniform(5, 6)
+		radius(6)
+		height(uniform(5, 6))
 		sideHoleChance = 0.15
 	}
 	decorators { shelfMushroom(0.4) }
@@ -692,7 +697,7 @@ An ore and a tree, from configured feature to biome.
 ```kotlin
 fun DataPack.createForestFeatures() {
 	val oakTree = configuredFeaturesBuilder.tree("oak_tree") {
-		blobFoliagePlacer(radius = constant(2), offset = constant(0), height = 3)
+		blobFoliagePlacer(radius = 2, offset = 0, height = 3)
 		foliageProvider = simpleStateProvider(Blocks.OAK_LEAVES)
 		straightTrunkPlacer(baseHeight = 5, heightRandA = 2, heightRandB = 0)
 		trunkProvider = simpleStateProvider(Blocks.OAK_LOG)

@@ -30,7 +30,7 @@ data class PoplarFoliagePlacer(
  * ```kotlin
  * tree("poplar") {
  *     poplarFoliagePlacer {
- *         radius = constant(6)
+ *         radius(6)
  *         height = uniform(5, 6)
  *         sideHoleChance = 0.15
  *     }
@@ -43,3 +43,17 @@ data class PoplarFoliagePlacer(
 fun Tree.poplarFoliagePlacer(block: PoplarFoliagePlacer.() -> Unit = {}) {
 	foliagePlacer = PoplarFoliagePlacer().apply(block)
 }
+
+/**
+ * Sets [PoplarFoliagePlacer.height] to [value], the height of the leaves.
+ *
+ * ```kotlin
+ * poplarFoliagePlacer { height(uniform(5, 6)) }
+ * ```
+ */
+fun PoplarFoliagePlacer.height(value: IntProvider) {
+	height = value
+}
+
+/** Sets [PoplarFoliagePlacer.height] to the constant [value]. */
+fun PoplarFoliagePlacer.height(value: Int) = height(ConstantIntProvider(value))
