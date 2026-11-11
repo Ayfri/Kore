@@ -2,31 +2,46 @@ package website
 
 import groovy.json.JsonSlurper
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URI
+import javax.inject.Inject
 
-/** The body of [url], null when the request fails: the fetch tasks then keep the files of their previous run. */
-private fun DefaultTask.download(url: String): ByteArray? = try {
-	val connection = URI(url).toURL().openConnection() as HttpURLConnection
-	connection.connectTimeout = 10_000
-	connection.readTimeout = 30_000
-	connection.setRequestProperty("User-Agent", "KoreWebsite/1.0 (+https://kore.ayfri.com)")
-	if (url.startsWith("https://api.github.com/")) {
-		connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
-		/** `GITHUB_TOKEN` lifts the limit of 60 requests an hour. */
-		System.getenv("GITHUB_TOKEN")?.takeIf { it.isNotBlank() }?.let { connection.setRequestProperty("Authorization", "token $it") }
+private val gitHubTokenRegex = Regex("""(?m)^GITHUB_TOKEN=["']?([^"'\s]+)""")
+
+abstract class SiteDataTask : DefaultTask() {
+	@get:Inject
+	protected abstract val layout: ProjectLayout
+
+	init {
+		group = "kore"
 	}
-	if (connection.responseCode == 200) connection.inputStream.use { it.readBytes() }
-	else null.also { logger.error("$url returned ${connection.responseCode}. Body: ${connection.errorStream?.bufferedReader()?.use { it.readText() }}") }
-} catch (e: IOException) {
-	null.also { logger.error("Failed to fetch $url.", e) }
+
+	/** The body of [url], null when the request fails: the task then keeps the files of its previous run. */
+	protected fun download(url: String): ByteArray? = try {
+		val connection = URI(url).toURL().openConnection() as HttpURLConnection
+		connection.connectTimeout = 10_000
+		connection.readTimeout = 30_000
+		connection.setRequestProperty("User-Agent", "KoreWebsite/1.0 (+https://kore.ayfri.com)")
+		if (url.startsWith("https://api.github.com/")) {
+			connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
+			/** `GITHUB_TOKEN`, from the environment or the `.env` of the repository, lifts the limit of 60 requests an hour. */
+			val token = System.getenv("GITHUB_TOKEN")?.takeIf { it.isNotBlank() }
+				?: layout.settingsDirectory.file(".env").asFile.takeIf { it.exists() }?.let { gitHubTokenRegex.find(it.readText())?.groupValues?.get(1) }
+			token?.let { connection.setRequestProperty("Authorization", "token $it") }
+		}
+		if (connection.responseCode == 200) connection.inputStream.use { it.readBytes() }
+		else null.also { logger.error("$url returned ${connection.responseCode}. Body: ${connection.errorStream?.bufferedReader()?.use { it.readText() }}") }
+	} catch (e: IOException) {
+		null.also { logger.error("Failed to fetch $url.", e) }
+	}
 }
 
-abstract class FetchGitHubReleases : DefaultTask() {
+abstract class FetchGitHubReleases : SiteDataTask() {
 	@get:OutputFile
 	abstract val latestTagFile: RegularFileProperty
 
@@ -39,7 +54,6 @@ abstract class FetchGitHubReleases : DefaultTask() {
 	abstract val sourceFile: RegularFileProperty
 
 	init {
-		group = "kore"
 		description = "Fetches GitHub releases and generates a Kotlin file with the data"
 	}
 
@@ -101,7 +115,7 @@ abstract class FetchGitHubReleases : DefaultTask() {
 	}
 }
 
-abstract class FetchGitHubStars : DefaultTask() {
+abstract class FetchGitHubStars : SiteDataTask() {
 	/** The Kotlin source with the star count, read by the site header. */
 	@get:OutputFile
 	abstract val sourceFile: RegularFileProperty
@@ -111,7 +125,6 @@ abstract class FetchGitHubStars : DefaultTask() {
 	abstract val starsFile: RegularFileProperty
 
 	init {
-		group = "kore"
 		description = "Fetches the GitHub repository star count and generates a Kotlin file with the data"
 	}
 
@@ -133,12 +146,11 @@ abstract class FetchGitHubStars : DefaultTask() {
 	}
 }
 
-abstract class FetchMinecraftVersions : DefaultTask() {
+abstract class FetchMinecraftVersions : SiteDataTask() {
 	@get:OutputFile
 	abstract val versionsFile: RegularFileProperty
 
 	init {
-		group = "kore"
 		description = "Fetches the pack format and Java version of every Minecraft version, read by the doc placeholders"
 	}
 
