@@ -956,6 +956,10 @@ tasks.named("kobwebExport") {
 	dependsOn("fetchGitHubReleases", "fetchGitHubStars", bundleMonaco)
 }
 
+// Kobweb's processor reads annotated functions and `CssStyle` or `Keyframes` properties, never a body. The declaration scan
+// doesn't see such a property, the site styles everything with Compose `StyleSheet`s.
+skipKspUntilDeclarationsChange("kspKotlinJs")
+
 // Ensure generated sources exist before KSP for JS runs
 tasks.matching { it.name == "kspKotlinJs" }.configureEach {
 	dependsOn("fetchGitHubReleases", "fetchGitHubStars", ":playground-examples:generatePlaygroundExamples")

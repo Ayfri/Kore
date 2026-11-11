@@ -32,25 +32,9 @@ pluginManager.withPlugin("com.google.devtools.ksp") {
 		onlyIf("it has symbol processors") { !processors.isEmpty }
 	}
 
-	// The `kore-ksp` processors only read class declarations, while KSP rebuilds its analysis session of the whole module for any
-	// edited file. The declaration scan is textual: when a generated dispatcher stops compiling after a class changed parents,
-	// it missed that change, and `-Pkore.ksp` forces the run.
-	tasks.withType<KspAATask>().matching { it.name == "kspCommonMainKotlinMetadata" }.configureEach {
-		val digestFile = layout.buildDirectory.file("kspDeclarations/$name.sha256")
-		val forced = providers.gradleProperty("kore.ksp").isPresent
-		val generated = kspConfig.kotlinOutputDir.asFileTree
-		val processors = kspConfig.processorClasspath
-		val sources = (kspConfig.sourceRoots + kspConfig.commonSourceRoots).asFileTree.matching { include("**/*.kt") }
-
-		outputs.file(digestFile).withPropertyName("declarationDigest")
-		onlyIf("a class declaration changed since its last run") {
-			val previous = digestFile.get().asFile
-			forced || generated.isEmpty || !previous.exists() || previous.readText() != declarationDigest(sources, processors)
-		}
-		doLast {
-			digestFile.get().asFile.writeText(declarationDigest(sources, processors))
-		}
-	}
+	// The `kore-ksp` processors only read class declarations: a generated dispatcher that stops compiling after a class changed
+	// parents is the sign of a change the scan missed.
+	skipKspUntilDeclarationsChange("kspCommonMainKotlinMetadata")
 }
 
 pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
