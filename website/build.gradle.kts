@@ -10,6 +10,7 @@ import kotlinx.html.style
 import kotlinx.html.unsafe
 import org.commonmark.ext.gfm.tables.TableCell
 import org.commonmark.node.*
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
 import java.net.HttpURLConnection
 import java.net.URI
@@ -711,8 +712,8 @@ kobweb {
 	}
 }
 
-// Monaco's ESM build is bundled ahead of time by esbuild into plain static assets, never by Kobweb's
-// webpack: `kobwebExport` copies exactly one script file, so any webpack code-split chunk would 404 in
+// Monaco's ESM build is bundled ahead of time by esbuild into plain static assets, never with the site
+// script: `kobwebExport` copies exactly one script file, so any code-split chunk would 404 in
 // production, and a static import would instead drag all ~6 MB of Monaco into the main bundle on every page.
 // The scripts are staged next to the Kotlin/JS `node_modules` so bare imports like `monaco-editor/...`
 // resolve, for both esbuild and Node itself.
@@ -987,21 +988,10 @@ tasks.matching { it.name == "kobwebxMarkdownProcess" }.configureEach {
 	outputs.dir(layout.buildDirectory.dir("generated/llms-resources")).withPropertyName("llmsResources")
 }
 
-// The export discards the source map (`includeSourceMap = false`), so building it only slows minification down.
-tasks.withType<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>()
-	.matching { it.name == "jsBrowserProductionWebpack" }
-	.configureEach { sourceMaps = false }
-
 kotlin {
 	configAsKobwebApplication("website")
 
 	js {
-		browser {
-			commonWebpackConfig {
-				devServer?.open = false
-			}
-		}
-
 		compilerOptions {
 			target = "es2015"
 			useEsClasses = true
@@ -1019,10 +1009,8 @@ kotlin {
 			resources.srcDir(playgroundExamplesDir.dir("resources"))
 
 			dependencies {
-				// Minifier for the production bundle, see `webpack.config.d/00-bundle-speed.js`.
-				implementation(devNpm("@swc/core", libs.versions.swc.get()))
-				// Monaco is pre-bundled by esbuild into static assets (see bundleMonaco) and never imported
-				// from Kotlin, so both packages are build-time only.
+				// esbuild bundles the site script and Monaco (see bundleMonaco), which is never imported from Kotlin:
+				// both packages are build-time only.
 				implementation(devNpm("esbuild", libs.versions.esbuild.get()))
 				implementation(devNpm("monaco-editor", libs.versions.monaco.editor.get()))
 			}
@@ -1037,5 +1025,47 @@ kotlin {
 				implementation(npm("marked", libs.versions.marked.get()))
 			}
 		}
+	}
+}
+
+/**
+ * esbuild bundles the modules the Kotlin compiler links, in place of webpack: 1.7 s where webpack takes 10 s for the dev script and
+ * 1 s where it takes 15 s for the minified one, at the same brotli size. Its source maps point at the Kotlin files.
+ */
+mapOf(
+	"Development" to listOf("--sourcemap=linked"),
+	"Production" to listOf("--legal-comments=none", "--minify", "--target=es2020"),
+).forEach { (mode, options) ->
+	val bundle = tasks.register<Exec>("bundle${mode}Site") {
+		group = "kore"
+		description = "Bundles the ${mode.lowercase()} site script with esbuild, where `.kobweb/conf.yaml` reads it."
+
+		val linked = tasks.named<KotlinJsIrLink>("compile${mode}ExecutableKotlinJs").flatMap { it.destinationDirectory }
+		val nodeModules = rootProject.layout.buildDirectory.dir("js/node_modules").get()
+		val script = layout.buildDirectory.file("site-bundle/${mode.lowercase()}/website.js")
+
+		dependsOn(rootProject.tasks.named("kotlinNpmInstall"))
+		inputs.dir(linked).withPropertyName("linked")
+		inputs.property("esbuildVersion", libs.versions.esbuild.get())
+		outputs.dir(script.map { it.asFile.parentFile }).withPropertyName("bundle")
+
+		// The linked modules sit outside the npm workspace, `marked` resolves through NODE_PATH.
+		environment("NODE_PATH", nodeModules.asFile.path)
+		executable(rootProject.extensions.getByType<NodeJsEnvSpec>().executable.get())
+		args(nodeModules.file("esbuild/bin/esbuild").asFile.path, "--bundle", "--format=iife", "--log-level=warning")
+		args(options)
+		argumentProviders += CommandLineArgumentProvider {
+			listOf(linked.get().file("website.mjs").asFile.path, "--outfile=${script.get().asFile.path}")
+		}
+	}
+
+	// Kobweb's start and export tasks depend on the webpack task by name: it stays as an empty shell pulling the bundle in, and the
+	// copy of the linked modules into the npm workspace, made for webpack alone, is skipped with it.
+	tasks.named("js${mode}ExecutableCompileSync") {
+		enabled = false
+	}
+	tasks.named("jsBrowser${mode}Webpack") {
+		enabled = false
+		dependsOn(bundle)
 	}
 }

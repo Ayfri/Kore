@@ -9,7 +9,7 @@ import kotlin.js.Json
 import kotlin.js.Promise
 
 /**
- * Monaco is deliberately **not** declared with `@file:JsModule`, and is not bundled by webpack at all.
+ * Monaco is deliberately **not** declared with `@file:JsModule`, and never goes into the site bundle.
  *
  * Two constraints rule that out. A static module reference puts all ~6 MB of Monaco in the main bundle and
  * evaluates it on every page, injecting its stylesheet into the docs and landing pages too. A dynamic
@@ -366,7 +366,7 @@ private var loading: Promise<Monaco>? = null
  * instant and a re-render mid-download never starts a second load.
  *
  * The bundle is reached through an injected `<script type="module">` rather than a Kotlin-side `import()`:
- * webpack rewrites every `import()` it can see, and this URL must stay a runtime one so the language chunks
+ * the bundler rewrites every `import()` it can see, and this URL must stay a runtime one so the language chunks
  * next to it resolve against `/monaco` in the exported site.
  */
 fun loadMonaco(): Promise<Monaco> = loading ?: Promise { resolve, reject ->

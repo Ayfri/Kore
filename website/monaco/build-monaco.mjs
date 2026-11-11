@@ -1,6 +1,6 @@
 // Pre-bundles Monaco's ESM distribution into static assets under `src/jsMain/resources/public/monaco`.
 // Monaco's AMD build (`min/vs`) is deprecated since 0.53 and its custom workers no longer work, so the ESM
-// build is the only supported path. Bundling it here rather than through Kobweb's webpack keeps Monaco out
+// build is the only supported path. Bundling it here rather than with the site script keeps Monaco out
 // of the main bundle (it would otherwise cost ~6 MB on every page) while still producing plain static files,
 // which is what `kobwebExport` - it copies a single script - can actually ship.
 //
