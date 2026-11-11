@@ -54,7 +54,11 @@ fun ItemTooltipBuilder() {
 	Div({ classes(DocControlsStyle.widget) }) {
 		Div({ classes(DocControlsStyle.panel, DocControlsStyle.stack) }) {
 			ControlField("item") {
-				PillGroup("Item", TooltipItem.entries, item, { it.name.lowercase().replace('_', ' ') }, { "item/${it.id}" }) { item = it }
+				PillGroup("Item", TooltipItem.entries, item, { it.name.lowercase().replace('_', ' ') }, { "item/${it.id}" }) {
+					item = it
+					glint = it.glints
+					rarity = it.rarity
+				}
 			}
 
 			Div({ classes(DocControlsStyle.grid) }) {

@@ -8,6 +8,7 @@ import io.github.ayfri.kore.website.components.common.McSpriteStyle
 import io.github.ayfri.kore.website.utils.alpha
 import io.github.ayfri.kore.website.utils.monoFont
 import io.github.ayfri.kore.website.utils.smMax
+import kotlin.math.round
 import org.jetbrains.compose.web.attributes.maxLength
 import org.jetbrains.compose.web.attributes.placeholder
 import org.jetbrains.compose.web.attributes.step
@@ -89,7 +90,11 @@ fun <T : Any> ToggleGroup(label: String, options: List<T>, selected: Set<T>, tex
 	}
 }
 
-/** A range slider and a number input editing the same [value], labelled by [label]. */
+/** This value on the grid of [step] that starts at [min], then within `min..max`. Six decimals drop float noise like `0.15000000000000002`. */
+private fun Double.snapped(min: Double, max: Double, step: Double) =
+	(round((this - min) / step) * step + min).let { round(it * 1e6) / 1e6 }.coerceAtMost(max).coerceAtLeast(min) + 0.0
+
+/** A range slider and a number input editing the same [value], labelled by [label]. [onChange] only gets values within `min..max` and on the [step]. */
 @Composable
 fun SliderField(inputId: String, label: String, value: Double, min: Double, max: Double, step: Double, onChange: (Double) -> Unit) {
 	Div({ classes(DocControlsStyle.control) }) {
@@ -98,13 +103,13 @@ fun SliderField(inputId: String, label: String, value: Double, min: Double, max:
 			RangeInput(value, min, max, step) {
 				classes(DocControlsStyle.slider)
 				attr("aria-label", "$label slider")
-				onInput { event -> event.value?.toDouble()?.takeUnless { it.isNaN() }?.let(onChange) }
+				onInput { event -> event.value?.toDouble()?.takeUnless { it.isNaN() }?.let { onChange(it.snapped(min, max, step)) } }
 			}
 			NumberInput(value, min, max) {
 				id(inputId)
 				classes(DocControlsStyle.number)
 				step(step)
-				onInput { event -> event.value?.toDouble()?.takeUnless { it.isNaN() }?.let(onChange) }
+				onInput { event -> event.value?.toDouble()?.takeUnless { it.isNaN() }?.let { onChange(it.snapped(min, max, step)) } }
 			}
 		}
 	}

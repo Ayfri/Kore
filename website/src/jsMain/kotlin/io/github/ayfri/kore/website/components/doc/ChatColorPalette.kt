@@ -46,7 +46,7 @@ fun ChatColorPalette() {
 		McChat(McUiStyle.hudChat) {
 			chatColors.forEach { (name, hex) ->
 				McChatLine(McSpan("Color.$name  ${if (copied == name) "Copied" else hex}", hex), attrs = {
-					attr("aria-label", "Copy Color.$name")
+					attr("aria-label", if (copied == name) "Color.$name copied" else "Copy Color.$name")
 					attr("role", "button")
 					attr("tabindex", "0")
 					onClick { copy(name) }
