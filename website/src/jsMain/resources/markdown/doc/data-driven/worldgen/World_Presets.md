@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: World Presets
+title: "Minecraft World Presets: Custom World Types"
 nav-title: World Presets
 description: Add your own world types to the Minecraft world creation screen, and superflat presets to its customization screen, with Kore.
 keywords: minecraft, datapack, kore, worldgen, world preset, world type, flat level generator preset, superflat
 date-created: 2026-02-03
-date-modified: 2026-08-21
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/worldgen/world-presets
 ---
 
@@ -105,4 +105,4 @@ dp.flatLevelGeneratorPresetTag("visible", namespace = "minecraft") {
 - [Dimensions](/docs/data-driven/worldgen/dimensions) - dimension types and the generator builders reused here
 - [Noise & Terrain](/docs/data-driven/worldgen/noise) - the noise settings a preset points at
 - [Tags](/docs/data-driven/tags) - the `normal` and `visible` tags making a preset selectable
-- [World Generation](/docs/data-driven/worldgen) - overview of the worldgen system
+- [Worldgen Overview](/docs/data-driven/worldgen) - overview of the worldgen system

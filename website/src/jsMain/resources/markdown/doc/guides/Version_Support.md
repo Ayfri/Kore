@@ -1,13 +1,12 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Kore Version Support - Minecraft Versions, Versioning and Deprecations
+title: Kore Version Support and Minecraft Compatibility
 nav-title: Version Support
 description: Which Minecraft version each Kore release targets, how to read versions like 2.15.0-26.2, what counts as a breaking change and how deprecations migrate.
 keywords: kore version, kore minecraft version, datapack library versioning, kore breaking changes, kore deprecation, kore snapshot builds, pack format
 date-created: 2026-10-07
-date-modified: 2026-10-21
+date-modified: 2026-11-11
 routeOverride: /docs/guides/version-support
-position: 9
 ---
 
 # Version support and stability
@@ -20,8 +19,17 @@ dependencies {
 }
 ```
 
-The [Version Matrix](/docs/home#version-matrix) lists the latest Kore release for each Minecraft version, built from
-the GitHub releases on every website build.
+The [version matrix](#version-matrix) below lists the latest Kore release for each Minecraft version.
+
+## Version matrix
+
+The matrix has one Kore version per stable Minecraft version, the latest tagged pre-release as a separate `Snapshot`
+row, and the latest continuous `-SNAPSHOT` build from `master` as `Maven Snapshot`. Gradle coordinates link straight to
+Maven Central. It is generated from the GitHub releases and the current project version on every website build, so it
+always reflects the latest published version without manual edits. Each stable Kore version links to its release notes
+on the [Updates](/updates) page. The next section explains how to read these versions and what changes between them.
+
+{{{ .components.doc.VersionMatrix }}}
 
 ## Reading a version
 
@@ -60,7 +68,7 @@ A Kore release targets exactly one Minecraft version. That version decides:
 
 Loading the pack in another Minecraft version only works when nothing it uses changed between the two versions. You
 can widen the declared range with `minFormat`/`maxFormat` and split version-specific files with overlays, both shown in
-[Creating a Datapack](/docs/guides/creating-a-datapack#pack-metadata), but Kore only checks its output against the
+[Pack Setup & Output](/docs/guides/creating-a-datapack#pack-metadata), but Kore only checks its output against the
 targeted version.
 
 Fixes land on the latest release only, they aren't backported to older Minecraft targets. To stay on an older game
@@ -119,5 +127,5 @@ Minecraft part.
 ## What to read next
 
 - [Getting Started](/docs/getting-started) - adding Kore to a project, stable or snapshot
-- [Creating a Datapack](/docs/guides/creating-a-datapack) - pack format ranges and overlays
+- [Pack Setup & Output](/docs/guides/creating-a-datapack) - pack format ranges and overlays
 - [Debugging](/docs/guides/debugging) - finding what broke after an update

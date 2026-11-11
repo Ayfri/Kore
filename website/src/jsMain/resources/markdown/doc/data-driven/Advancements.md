@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Minecraft Advancements with Kore - Type-Safe DSL Guide
+title: "Minecraft Advancements: Criteria, Rewards and Display"
 nav-title: Advancements
-description: Create custom Minecraft advancements with Kore's Kotlin DSL. Covers all triggers, criteria, rewards (functions, loot, recipes), display settings, and frames. Replace hand-written JSON with type-safe Kotlin.
+description: Create Minecraft advancements in Kotlin with triggers, criteria, requirements, rewards for functions, loot and recipes, and display settings.
 keywords: minecraft advancements, datapack advancements, advancement triggers, using_item trigger, inventory_changed, minecraft achievement, kore advancements, custom advancements, advancement criteria, advancement rewards
 date-created: 2024-01-08
-date-modified: 2026-10-23
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/advancements
 ---
 
@@ -13,8 +13,9 @@ routeOverride: /docs/data-driven/advancements
 
 Advancements are a system in Minecraft Java Edition that guides players through the game by setting goals and challenges to complete. They serve as in-game achievements that track player progress across various activities.
 
-The [advancement example](/playground#example=advancement) of the playground runs in your browser and shows the JSON it
-generates.
+Here is a complete pack, the [advancement example](/playground#example=advancement) of the playground, with the JSON files Kore generates for it:
+
+{{{ .components.doc.AdvancementExample }}}
 
 ## Overview
 
@@ -661,7 +662,7 @@ Verify criteria trigger correctly in-game before releasing your data pack.
 
 ## See Also
 
-- [Triggers](/docs/data-driven/advancements/triggers) - Complete trigger reference
+- [Advancement Triggers](/docs/data-driven/advancements/triggers) - Complete trigger reference
 - [Predicates](/docs/data-driven/predicates) - Conditions for advancement criteria
 - [Loot Tables](/docs/data-driven/loot-tables) - Loot rewards
 - [Functions](/docs/commands/functions) - Function rewards

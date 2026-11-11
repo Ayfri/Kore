@@ -1,15 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Minecraft World Generation - Custom Dimensions, Biomes & Noise with Kore
-nav-title: Worldgen
+title: Custom Minecraft World Generation in Kotlin
+nav-title: Worldgen Overview
 description: Build custom Minecraft world generation in Kotlin. Dimensions, biomes, noise, density functions, structures and features, type-safe, no hand-written JSON.
 keywords: minecraft worldgen, datapack worldgen, custom dimension minecraft, custom biome, noise settings minecraft, minecraft noise router, density function, datapack terrain generation, minecraft world preset, custom world generation
 date-created: 2025-08-11
-date-modified: 2026-10-23
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/worldgen
 ---
 
-# World Generation
+# Worldgen Overview
 
 World generation is how Minecraft turns a seed into terrain: noise decides where blocks are solid, biomes decide what they look like and
 what spawns on them, features and structures decorate the result. All of it is data-driven, so a datapack can replace any part of it.
@@ -30,7 +30,7 @@ Reference: [World generation](https://minecraft.wiki/w/World_generation)
 | [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) | Visual, audio and gameplay rules shared by biomes and dimension types    |
 | [Features](/docs/data-driven/worldgen/features)                             | Configured and placed features: trees, ores, vegetation                  |
 | [Noise & Terrain](/docs/data-driven/worldgen/noise)                         | Noises, density functions, noise settings, noise routers, material rules |
-| [Providers](/docs/data-driven/worldgen/providers)                           | Vertical anchors and the height, int and float providers used everywhere |
+| [Height & Number Providers](/docs/data-driven/worldgen/providers)                           | Vertical anchors and the height, int and float providers used everywhere |
 | [Structures](/docs/data-driven/worldgen/structures)                         | Configured structures, template pools, processors and structure sets     |
 | [World Presets](/docs/data-driven/worldgen/world-presets)                   | World types in the world creation screen, and superflat presets          |
 
@@ -188,7 +188,7 @@ instead, wrap the same generator in a [world preset](/docs/data-driven/worldgen/
 - `/locate structure <ns>:<structure>` finds the nearest instance of a structure.
 - Worldgen files are read when the world is created, so `/reload` does not reshape the chunks already generated. Test terrain changes on a
   fresh world.
-- [Test Features](/docs/advanced/test-features) runs GameTest assertions for deterministic validation.
+- [GameTest](/docs/advanced/test-features) runs assertions for deterministic validation.
 
 ## See Also
 

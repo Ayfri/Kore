@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Minecraft Datapack Functions - Create MCFunctions with Kore DSL
+title: "Minecraft Datapack Functions: Load, Tick and Macros"
 nav-title: Functions
-description: Create Minecraft datapack functions with Kore's Kotlin DSL. Build tick.json and load.json tags, organize commands into reusable functions, and generate clean MCFunction output.
+description: Create Minecraft datapack functions in Kotlin, wire them to the tick and load tags, reuse them from other functions and read the generated mcfunction.
 keywords: datapack functions, mcfunction, tick.json datapack, load.json datapack, minecraft function tags, tags/function datapack, kore functions, datapack mcfunction generator, function scheduling, minecraft function creator
 date-created: 2024-04-06
-date-modified: 2026-09-29
+date-modified: 2026-11-11
 routeOverride: /docs/commands/functions
 ---
 
@@ -23,7 +23,7 @@ function("my_function") {
 
 Then in game, call the function with `/function my_datapack:my_function`.
 
-To call functions from other datapacks, see [Bindings](/docs/advanced/bindings).
+To call functions from other datapacks, see [Importing Datapacks](/docs/advanced/bindings).
 
 The `function` builder returns a `FunctionArgument` object that you can reuse to call the function from other functions:
 
@@ -107,7 +107,11 @@ load("my_load_function") {
 }
 ```
 
-# Commands
+Here is a complete pack, the [load and tick example](/playground#example=load-and-tick) of the playground, with a load function and a tick function, and the commands Kore generates for it:
+
+{{{ .components.doc.LoadAndTickExample }}}
+
+## Commands
 
 Many common commands have convenience builders like `say`,
 `teleport`, etc. See the [Commands](/docs/commands/commands) page for a comprehensive guide with examples.
@@ -130,13 +134,13 @@ addLine("say Hello from raw command!")
 > Note: This is not recommended, but can be useful for commands not yet supported by the DSL, or if you
 > use [Macros](/docs/commands/macros).
 
-## Available Commands
+### Available Commands
 
 All commands from the version cited in the [README](https://github.com/Ayfri/Kore/blob/master/README.md) are available.
 For detailed
 documentation on each command, see [Commands](/docs/commands/commands).
 
-## Custom Commands
+### Custom Commands
 
 You can pretty easily add new commands by creating your own builders. For example, imagine you created a mod that adds a new command
 `/my_command` that takes a player name and a message as arguments.
@@ -180,7 +184,7 @@ See the code of the repository for more examples.<br>
 [Link to `time` command.](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/commands/Time.kt)<br>
 [Link to `weather` command.](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/commands/Weather.kt)
 
-## Complex Commands
+### Complex Commands
 
 Some commands are more complex and require more than just a few arguments. For example, the
 [`execute`](/docs/commands/execute) or [`data`](/docs/concepts/data-storage) commands.
@@ -224,11 +228,11 @@ data(self()) {
 }
 ```
 
-# Macros
+## Macros
 
 See [Macros](/docs/commands/macros).
 
-# Generated Functions
+## Generated Functions
 
 The same way the unnamed `load` and `tick` builders generate their own functions, the
 `execute` builder also generates a function if you call multiple commands inside the `run` block.
@@ -270,7 +274,7 @@ different contents throw instead of dropping one of them.
 If you want to turn that into an explicit project pattern, the [Cookbook](/docs/guides/cookbook) shows how to wrap
 reusable logic in `Function` extensions with or without dedicated generated functions.
 
-# Debugging
+## Debugging
 
 You have multiple ways to debug your functions. First, a `debug` function is available, it is pretty much the same as
 `tellraw` but always displaying the message to everyone.

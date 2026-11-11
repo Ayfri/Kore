@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Execute Command - Type-Safe Context, Conditions & Stores in Kore
+title: Execute Command Chains for Minecraft Datapacks
 nav-title: Execute
-description: Master the /execute command with Kore's type-safe DSL. Context subcommands (as, at, positioned), conditions (if/unless), stores (score, bossbar, storage), and the run clause. Full guide with mcfunction examples.
+description: Build /execute chains in type-safe Kotlin with context subcommands (as, at, positioned), if/unless conditions, stores and run, with mcfunction examples.
 keywords: minecraft execute command, execute as at positioned, execute if unless, execute store, datapack execute, kore execute, minecraft command conditions, execute run, context subcommands
 date-created: 2026-06-24
-date-modified: 2026-10-08
+date-modified: 2026-11-11
 routeOverride: /docs/commands/execute
 ---
 
@@ -35,6 +35,10 @@ function("greet_nearby") {
 ```
 
 This generates `execute as @a at @s run say Hello!`.
+
+Here is a complete pack, the [execute chains example](/playground#example=execute-chains) of the playground, with a tick function chaining `execute as ... at ... if score ... run particle`, and the commands Kore generates for it:
+
+{{{ .components.doc.ExecuteChainsExample }}}
 
 ## Context subcommands
 

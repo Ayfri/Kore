@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Dimensions
+title: Custom Minecraft Dimensions and Dimension Types
 nav-title: Dimensions
 description: Create custom Minecraft dimensions and dimension types with Kore - world bounds, lighting rules, terrain generators and biome sources.
 keywords: minecraft, datapack, kore, worldgen, dimension, dimension type, generator, biome source, multi noise, superflat
 date-created: 2026-02-03
-date-modified: 2026-10-26
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/worldgen/dimensions
 ---
 
@@ -209,5 +209,5 @@ Reference: [Debug mode](https://minecraft.wiki/w/Debug_mode)
 - [Biomes](/docs/data-driven/worldgen/biomes) - what a biome source distributes
 - [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - the rules a dimension type sets for the whole world
 - [Noise & Terrain](/docs/data-driven/worldgen/noise) - the noise settings a noise generator points at
-- [World Generation](/docs/data-driven/worldgen) - a complete custom dimension, end to end
+- [Worldgen Overview](/docs/data-driven/worldgen) - a complete custom dimension, end to end
 - [World Presets](/docs/data-driven/worldgen/world-presets) - offering a set of dimensions as a world type

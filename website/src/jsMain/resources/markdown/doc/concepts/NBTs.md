@@ -1,15 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: NBTs
-nav-title: NBTs
-description: Work with Minecraft NBT data in Kore using a shared Kotlin DSL across commands, predicates, and chat components. Includes SNBT helpers, path access, and reuse patterns.
+title: "Minecraft NBT in Kotlin: Builders, SNBT and Paths"
+nav-title: NBT
+description: Build NBT and SNBT in Kotlin with one DSL shared by commands, predicates and chat components, with path access and reusable patterns.
 keywords: minecraft, datapack, kore, nbt, snbt, knbt, chat components, predicates, data command
 date-created: 2026-05-29
-date-modified: 2026-09-29
+date-modified: 2026-11-11
 routeOverride: /docs/concepts/nbts
 ---
 
-# NBTs
+# NBT
 
 NBT (Named Binary Tag) is Minecraft's structured data format. Kore uses it anywhere vanilla expects embedded NBT or
 SNBT,
@@ -273,5 +273,5 @@ In Kore, you usually work with typed `Nbt` objects first, then let Kore serializ
 - [Chat Components](/docs/concepts/chat-components) - includes `NbtComponent`
 - [Commands](/docs/commands/commands) - especially the data command and NBT-carrying commands
 - [Predicates](/docs/data-driven/predicates) - NBT-aware predicate helpers
-- [Components](/docs/concepts/components) - item and custom component structures that often embed NBT-backed data
+- [Item Components](/docs/concepts/components) - item and custom component structures that often embed NBT-backed data
 - [Known Issues](/docs/advanced/known-issues#nbt-and-snbt-via-knbt) - `knbt`-specific constraints

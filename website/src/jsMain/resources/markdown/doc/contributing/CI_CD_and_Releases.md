@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: "Contributing: CI/CD and Releases"
+title: Kore CI/CD, Versioning and Release Process
 nav-title: "CI/CD and Releases"
 description: Project and Minecraft versioning, CI automation, CodeQL scanning, release naming, and operational release practices for Kore maintainers.
 keywords: cd, ci, kore, maintenance, minecraft, releases, versioning
 date-created: 2026-04-10
-date-modified: 2026-10-02
+date-modified: 2026-11-11
 routeOverride: /docs/contributing/ci-cd-and-releases
 ---
 
@@ -34,9 +34,9 @@ and a release that only bumps `minecraft.version` still moves every coordinate f
 
 Observed release tags combine project and Minecraft targets, for example:
 
-- `2.0.0-1.21.11`
-- `1.42.1-1.21.11`
-- `1.41.1-1.21.11-rc3`
+- `2.15.0-26.2`
+- `2.13.1-26.2-pre-3`
+- `2.12.0-26.2-snapshot-8`
 
 This pattern keeps compatibility intent visible directly in release identifiers.
 
@@ -62,8 +62,8 @@ Maintainer notes:
 
 Current repository automation is split across dedicated workflows under `.github/workflows`:
 
-- `ci.yml`: runs `./gradlew testAll` on pushes and pull requests targeting `master`. `testAll` is a root task defined
-  in the `kotest-conventions` convention plugin that aggregates every Kotlin Multiplatform module's `allTests` task
+- `ci.yml`: runs `./gradlew testAll` on pushes and pull requests targeting `master`. `testAll` is a root task registered
+  in the root `build.gradle.kts` that aggregates the `allTests` task of `bindings`, `helpers`, `kore` and `oop`
   (JVM, Node.js, and browser via Karma) - see [Multiplatform Support](/docs/advanced/multiplatform) for what runs where.
   Pull requests run on Ubuntu only; `master` additionally runs the Windows matrix entry.
 - `codeql.yml`: runs GitHub CodeQL analysis for `actions` and `java-kotlin` on pushes, pull requests, manual dispatch,
@@ -107,13 +107,12 @@ Consistent messages improve changelog scanning and release auditability.
 
 - For version bumps: start with test updates, then change version files, then docs.
 - For release issues: check module labels and recent update issues for similar patterns.
-- For contribution workflow details: use [Contributing: Workflow](/docs/contributing/contributing-workflow).
+- For contribution workflow details: use [Contributing](/docs/contributing/contributing).
 
 ## See also
 
-- [Version Matrix](/docs/home#version-matrix) - Kore-to-Minecraft version table generated from GitHub releases at
+- [Version Matrix](/docs/guides/version-support#version-matrix) - Kore-to-Minecraft version table generated from GitHub releases at
   each website build.
 - [Contributing](/docs/contributing/contributing)
 - [Contributing: Architecture and Patterns](/docs/contributing/architecture-and-patterns)
-- [Contributing: Workflow](/docs/contributing/contributing-workflow)
 - [Multiplatform Support](/docs/advanced/multiplatform)

@@ -1,16 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Migrating a Minecraft Datapack to Kore - Guide for Datapack Veterans
-nav-title: Datapack Veterans
+title: Migrate a Minecraft Datapack to Kotlin
+nav-title: Coming from Datapacks
 description: Port an existing hand-written datapack to Kore without a rewrite - vanilla-to-Kotlin mapping, slice-by-slice migration, project structure and common mistakes.
 keywords: datapack migration, migrate datapack to kotlin, mcfunction to kotlin, kore migration guide, datapack architecture, datapack refactor, advanced datapack development
 date-created: 2026-04-22
-date-modified: 2026-10-23
+date-modified: 2026-11-11
 routeOverride: /docs/guides/from-datapacks-to-kore
-position: 4
 ---
 
-# From Datapacks to Kore
+# Coming from Datapacks
 
 This page is for authors who **already ship a working datapack** and want to move it to Kore without losing low-level
 control or freezing development for a rewrite.
@@ -91,7 +90,7 @@ val nearbyActivePlayers = selector("@a[gamemode=!spectator]") {
 }
 ```
 
-If your pack depends on **another** datapack, import it with [Bindings](/docs/advanced/bindings) rather than
+If your pack depends on **another** datapack, import it with [Importing Datapacks](/docs/advanced/bindings) rather than
 re-declaring its IDs as string literals.
 
 ## Project structure that scales
@@ -456,9 +455,9 @@ suspecting Kore:
 
 ## Where to go next
 
-- [Creating a Datapack](/docs/guides/creating-a-datapack) - metadata, output modes, packaging
+- [Pack Setup & Output](/docs/guides/creating-a-datapack) - metadata, output modes, packaging
 - [Runtime Logic](/docs/concepts/runtime-logic) - in-game conditionals and variables
 - [Functions](/docs/commands/functions) - composition and lifecycle hooks
 - [Cookbook](/docs/guides/cookbook) - the individual patterns referenced above
-- [Bindings](/docs/advanced/bindings) - importing external datapacks
+- [Importing Datapacks](/docs/advanced/bindings) - importing external datapacks
 - [Known Issues](/docs/advanced/known-issues) - current limitations

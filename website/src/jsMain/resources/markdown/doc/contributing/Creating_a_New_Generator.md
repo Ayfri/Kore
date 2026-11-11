@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: "Contributing: Creating a New Generator"
+title: Create a New Kore Generator, Step by Step
 nav-title: "Creating a New Generator"
 description: Step-by-step contributor guide for adding a new data-driven generator to Kore, from model and registration to tests and documentation.
 keywords: contributing, datapack, generator, kore, patterns, tests
 date-created: 2026-04-15
-date-modified: 2026-10-21
+date-modified: 2026-11-11
 routeOverride: /docs/contributing/creating-a-new-generator
 ---
 
@@ -191,11 +191,14 @@ in [Contributing: Architecture and Patterns](/docs/contributing/architecture-and
 
 ## 8) Validate before opening the PR
 
-For `kore` changes, the baseline check is:
+For `kore` changes, the baseline check is the JVM test of the class you wrote (`kore` is a Kotlin Multiplatform module, so
+there is no plain `test` task):
 
 ```bash
-./gradlew :kore:test
+./gradlew :kore:jvmTest --tests io.github.ayfri.kore.features.CustomRewardTests
 ```
+
+Run `./gradlew testAll` before opening the PR to cover every module on every target.
 
 Before opening the PR, verify that:
 
@@ -219,4 +222,3 @@ You are usually done when the feature includes all of the following:
 - [Contributing: Architecture and Patterns](/docs/contributing/architecture-and-patterns)
 - [Contributing: Contributing](/docs/contributing/contributing)
 - [Contributing: The Generation Pipeline](/docs/contributing/generation-pipeline)
-- [Contributing: Workflow](/docs/contributing/contributing-workflow)

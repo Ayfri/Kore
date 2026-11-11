@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Minecraft Display Entities - Block, Item and Text Displays with Transformations
+title: "Minecraft Display Entities: Block, Item and Text"
 nav-title: Display Entities
 description: Summon Minecraft block, item and text displays, then scale, rotate and move them with transformations and animate them with interpolation, from Kotlin.
 keywords: minecraft display entity, block_display, item_display, text_display, display transformation, interpolation, billboard, datapack, kore
 date-created: 2024-04-06
-date-modified: 2026-10-22
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/display-entities
 ---
 
@@ -66,6 +66,10 @@ summon(entity = entityDisplay.entityType, pos = vec3(0, 0, 0), nbt = entityDispl
 ```
 
 This summons a snowy grass block at `0 0 0`, scaled by 2 and translated 2 blocks up, facing the camera on both axes.
+
+Here is a complete pack, the [display entities example](/playground#example=display-entities) of the playground, with a text display and a block display, and the commands Kore generates for it:
+
+{{{ .components.doc.DisplayEntitiesExample }}}
 
 ## Block Displays
 

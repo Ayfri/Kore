@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Minecraft Datapack Conversations - Per-Player Dialogue with Kore
+title: Minecraft Datapack NPC Conversations per Player
 nav-title: Conversations
 description: Script NPC dialogue in Minecraft datapacks with Kore, timed lines, click pauses and dialog or chat choices, each player in their own conversation.
 keywords: minecraft conversation, datapack dialogue, npc dialogue, quest giver datapack, dialog choices, clickable chat, per-player timer, datapack cutscene, kore conversation
 date-created: 2026-10-22
-date-modified: 2026-10-22
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/conversations
 ---
 

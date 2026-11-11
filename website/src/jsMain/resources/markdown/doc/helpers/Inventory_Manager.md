@@ -1,17 +1,17 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Inventory Manager
+title: Minecraft Inventory Slot Events and Containers
 nav-title: Inventory Manager
-description: Listen to slot events and control containers (players, blocks) with Kore's Inventory Manager.
+description: Listen to slot events and control player or block containers in Minecraft with Kore's Inventory Manager, keeping slots filled or cleared.
 keywords: minecraft, datapack, kore, inventory, container, slots, events, gui
 date-created: 2025-08-11
-date-modified: 2026-10-08
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/inventory-manager
 ---
 
 # Inventory Manager
 
-Kore’s Inventory Manager lets you declaratively control [inventories](https://minecraft.wiki/w/Inventory) on entities or
+Kore's Inventory Manager lets you declaratively control [inventories](https://minecraft.wiki/w/Inventory) on entities or
 blocks and react to slot events.
 
 - Manage items in any `ContainerArgument` (players, entities, or block containers).
@@ -103,7 +103,7 @@ inventoryManager(chestPos) {
   - Helpers inside the scope:
       - `setItemInSlot()` - Put back the expected item into the slot.
       - `clearAllItemsNotInSlot([targets])` - Clear all other slots.
-      - `killAllItemsNotInSlot()` - Remove dropped items that don’t belong to this slot.
+      - `killAllItemsNotInSlot()` - Remove dropped items that don't belong to this slot.
 - `generateSlotsListeners()` - Emits the `load`/`tick` functions and scoreboard wiring for all registered listeners.
 - `setBlock(block)` - When the container is a position, place a block (e.g., a chest) before managing its contents.
 - `clear(slot)`, `clearAll()`, `clearAll(item)` - Utilities to wipe inventory content.
@@ -125,7 +125,7 @@ dataPack("my_dp") {
 
 ## Full example
 
-This combines a player inventory policy with messaging and a chest that constantly re-seeds its first slot. It mirrors the test coverage used in Kore’s own suite.
+This combines a player inventory policy with messaging and a chest that constantly re-seeds its first slot. It mirrors the test coverage used in Kore's own suite.
 
 ```kotlin
 fun Function.inventoryManagerTests() {
@@ -134,7 +134,7 @@ fun Function.inventoryManagerTests() {
 
     playerInv.slotEvent(HOTBAR[0], Items.NETHER_STAR) {
         onTake {
-            title(self(), TitleLocation.ACTIONBAR, text("Don’t take me", Color.RED))
+            title(self(), TitleLocation.ACTIONBAR, text("Don't take me", Color.RED))
             scoreboard.players.add(self(), counter, 1)
         }
         duringTake { setItemInSlot() }
@@ -165,6 +165,6 @@ fun Function.inventoryManagerTests() {
 ## See also
 
 - [Scheduler](/docs/helpers/scheduler) - Run repeated or delayed logic that complements inventory policies.
-- [Components](/docs/concepts/components) - Define complex items (names, lore, enchantments) you can enforce in slots.
+- [Item Components](/docs/concepts/components) - Define complex items (names, lore, enchantments) you can enforce in slots.
 - [Predicates](/docs/data-driven/predicates) - Validate component-based item properties in other contexts.
 - [Scoreboards](/docs/concepts/scoreboards) - Background knowledge on objectives used under the hood.

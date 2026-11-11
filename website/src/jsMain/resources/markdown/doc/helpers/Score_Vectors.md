@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Score Vectors
+title: "Minecraft Scoreboard Vectors: Dot, Cross, Normalize"
 nav-title: Score Vectors
 description: Runtime 3D vectors on Minecraft scoreboards with Kore - look directions, dot and cross products, exact length, normalize, teleports and motion.
 keywords: minecraft, datapack, kore, helpers, vector, position, motion, velocity, normalize, dash, knockback, teleport, look direction
 date-created: 2026-09-23
-date-modified: 2026-10-24
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/score-vectors
 ---
 

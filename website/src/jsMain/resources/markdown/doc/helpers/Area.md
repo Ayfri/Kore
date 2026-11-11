@@ -1,15 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Area
-nav-title: Area
+title: "Minecraft 3D Areas: Bounding Boxes for Datapacks"
+nav-title: Areas
 description: Axis-aligned 3D bounding box with the Kore helpers module - geometric operations, containment checks, and spatial queries.
 keywords: minecraft, datapack, kore, helpers, area, bounding box, vec3, intersect, union, contains
 date-created: 2026-03-03
-date-modified: 2026-10-07
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/area
 ---
 
-# Area
+# Areas
 
 The `Area` class represents an axis-aligned 3D bounding box defined by two `Vec3` corners. It provides geometric
 operations useful for zone detection, region math, and spatial queries.

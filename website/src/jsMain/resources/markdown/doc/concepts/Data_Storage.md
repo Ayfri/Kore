@@ -1,13 +1,12 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Data Storage - Runtime NBT Variables with /data Command in Kore
+title: "Minecraft Data Storage: Runtime NBT Variables"
 nav-title: Data Storage
-description: Use Minecraft data storage as runtime NBT variables in Kore. Set, modify, copy, and read values with the /data command DSL. Store strings, lists, and compounds beyond integer-only scoreboards.
+description: Use Minecraft data storage for runtime NBT variables, setting, modifying, copying and reading strings, lists and compounds with the /data DSL.
 keywords: minecraft data storage, /data command, datapack nbt storage, data modify, data get, data merge, runtime variables minecraft, kore data, storage macros, datapack variable container
 date-created: 2026-06-24
-date-modified: 2026-06-24
+date-modified: 2026-11-11
 routeOverride: /docs/concepts/data-storage
-position: 3
 ---
 
 # Data Storage
@@ -54,6 +53,10 @@ function("init_state") {
 
 Each `set("path", value)` emits a `data modify storage my_pack:state <path> set value <value>` line.
 
+Here is a complete pack, the [data storage example](/playground#example=data-storage) of the playground, with a storage merged, modified and read into a score, and the commands Kore generates for it:
+
+{{{ .components.doc.DataStorageExample }}}
+
 ### Writing compounds and lists
 
 For structured data, use `merge` with an NBT builder, which writes a whole compound at once:
@@ -70,7 +73,7 @@ function("init_player") {
 }
 ```
 
-See [NBTs](/docs/concepts/nbts) for the full NBT builder DSL.
+See [NBT](/docs/concepts/nbts) for the full NBT builder DSL.
 
 ## Reading values
 
@@ -196,5 +199,5 @@ In practice most packs use both: scoreboards for counters and math, storage for 
 ## See also
 
 - [Runtime Logic](/docs/concepts/runtime-logic) - where storage fits in the compile-time vs runtime model
-- [NBTs](/docs/concepts/nbts) - the NBT builder DSL used by `set` / `merge`
+- [NBT](/docs/concepts/nbts) - the NBT builder DSL used by `set` / `merge`
 - [Execute](/docs/commands/execute) - `store` results into storage, branch with `if data`

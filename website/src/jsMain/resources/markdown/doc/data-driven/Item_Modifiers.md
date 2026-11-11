@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Item Modifiers
+title: "Minecraft Item Modifiers: Loot Functions in Kotlin"
 nav-title: Item Modifiers
 description: Transform item stacks using Kore's type-safe DSL for loot functions - set counts, add enchantments, copy data, and more.
 keywords: minecraft, datapack, kore, item modifiers, loot functions, /item modify, components
 date-created: 2025-08-11
-date-modified: 2026-10-26
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/item-modifiers
 ---
 
@@ -61,6 +61,10 @@ dataPack("my_datapack") {
 ```
 
 This generates `data/my_datapack/item_modifier/fortune_bonus.json`.
+
+Here is a complete pack, the [item modifiers example](/playground#example=item-modifiers) of the playground, with an item modifier and the JSON files Kore generates for it:
+
+{{{ .components.doc.ItemModifiersExample }}}
 
 ## Using Item Modifiers
 
@@ -1117,7 +1121,7 @@ dataPack("legendary_items") {
 ## See Also
 
 - [Predicates](/docs/data-driven/predicates) - Conditions for item functions
-- [Components](/docs/concepts/components) - Understanding item components
+- [Item Components](/docs/concepts/components) - Understanding item components
 - [Loot Tables](/docs/data-driven/loot-tables) - Use item modifiers in loot tables
 - [Commands](/docs/commands/commands) - Using the `/item` command
 - [Villager Trades](/docs/data-driven/villager-trades) - Apply item modifiers to villager trade outputs via

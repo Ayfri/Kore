@@ -9,7 +9,7 @@ import org.w3c.dom.asList
 
 private const val DEFAULT_BASE_URL = "https://kore.ayfri.com"
 
-private val baseUrl get() = AppGlobals["websiteUrl"] ?: DEFAULT_BASE_URL
+val baseUrl get() = AppGlobals["websiteUrl"] ?: DEFAULT_BASE_URL
 
 private fun selectAllInHead(selector: String) = document.head!!.querySelectorAll(selector).asList()
 
@@ -141,6 +141,7 @@ fun setDates(publishDate: String?, modifiedDate: String?) {
 private inline fun setOptionalMeta(selector: String, value: String?, set: (String) -> Unit) =
 	if (value == null) removeAllInHead(selector) else set(value)
 
+/** [crumbs] are the breadcrumbs after Home that have a page, each as its name and absolute URL: a group of the nav has no URL, so it is left out. */
 fun setJsonLd(
 	title: String,
 	description: String,
@@ -148,7 +149,7 @@ fun setJsonLd(
 	modifiedDate: String?,
 	keywords: String,
 	path: String,
-	slugs: List<String>,
+	crumbs: List<Pair<String, String>>,
 ) {
 	val breadcrumbItems = arrayOf(
 		obj {
@@ -157,12 +158,12 @@ fun setJsonLd(
 			name = "Home"
 			item = "$baseUrl/"
 		},
-		*slugs.mapIndexed { index, slug ->
+		*crumbs.mapIndexed { index, (crumbName, url) ->
 			obj {
 				`@type` = "ListItem"
 				position = index + 2
-				name = slug.replace("-", " ").replaceFirstChar { it.uppercase() }
-				item = "$baseUrl/${slugs.take(index + 1).joinToString("/")}"
+				name = crumbName
+				item = url
 			}
 		}.toTypedArray()
 	)
@@ -178,6 +179,11 @@ fun setJsonLd(
 		mainEntityOfPage = obj {
 			`@type` = "WebPage"
 			`@id` = "$baseUrl$path"
+			/** `breadcrumb` is a property of `WebPage` in schema.org, a `TechArticle` has none. */
+			breadcrumb = obj {
+				`@type` = "BreadcrumbList"
+				itemListElement = breadcrumbItems
+			}
 		}
 		publisher = obj {
 			`@type` = "Organization"
@@ -189,10 +195,6 @@ fun setJsonLd(
 			}
 		}
 		this["keywords"] = keywords
-		breadcrumb = obj {
-			`@type` = "BreadcrumbList"
-			itemListElement = breadcrumbItems
-		}
 	}
 
 	upsert("script#page-json-ld", "script", "id" to "page-json-ld", "type" to "application/ld+json").textContent = JSON.stringify(jsonLd)

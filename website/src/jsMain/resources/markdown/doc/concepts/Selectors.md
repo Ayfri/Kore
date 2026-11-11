@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Selectors
+title: "Minecraft Target Selectors: Typed Filters in Kotlin"
 nav-title: Selectors
-description: Build Minecraft target selectors in Kore with typed Kotlin builders. Compose entity filters, sorting, and score-based conditions instead of writing @e[...] strings by hand.
+description: Build Minecraft target selectors with typed Kotlin builders, composing entity filters, sorting and score conditions instead of @e[...] strings.
 keywords: minecraft, datapack, kore, selectors, target selectors, entities, players, commands
 date-created: 2026-04-21
-date-modified: 2026-10-02
+date-modified: 2026-11-11
 routeOverride: /docs/concepts/selectors
 ---
 
@@ -16,9 +16,11 @@ as
 typed builders, so you can compose filters in Kotlin instead of manually writing `@e[...]` strings.
 
 For the vanilla syntax reference, see
-the [Minecraft Wiki target selectors page](https://minecraft.wiki/w/Target_selectors). The
-[selectors example](/playground#example=selectors) of the playground runs in your browser and shows the commands it
-generates.
+the [Minecraft Wiki target selectors page](https://minecraft.wiki/w/Target_selectors).
+
+Here is a complete pack, the [selectors example](/playground#example=selectors) of the playground, with the commands Kore generates for it:
+
+{{{ .components.doc.SelectorsExample }}}
 
 ## Base selector helpers
 
@@ -92,6 +94,10 @@ val entitiesInRoom = allEntities {
 	dz = 8.0
 }
 ```
+
+Combine a base and a few arguments to see the selector Kore writes, arguments sorted by name.
+
+{{{ .components.doc.SelectorBuilder }}}
 
 ## Score-based filtering
 

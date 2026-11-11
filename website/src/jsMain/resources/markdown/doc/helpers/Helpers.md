@@ -1,19 +1,18 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Helpers Utilities
-nav-title: Helpers Utilities
+title: "Helpers Module: Utilities for Minecraft Datapacks"
+nav-title: Helpers Module
 description: Overview of helper-focused utilities in Kore - renderers, displays, interactions, inventories, mannequins, math, NBT paths, raycasts, scheduling, and state.
 keywords: minecraft, datapack, kore, helpers, block id, ansi, markdown, minimessage, raycast, math, vector, area, state, nbt, vfx, particles, text, display, interaction, inventory, mannequin, scheduler, menu, dialog, sidebar
 date-created: 2026-03-31
-date-modified: 2026-10-24
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/utilities
-position: 0
 ---
 
-# Helpers Utilities
+# Helpers Module
 
 The `helpers` module contains utility-style features that build on top of Kore and, when needed, the OOP abstractions.
-These helpers are not centered around long-lived object models, so they now live outside the `oop` module.
+These helpers are not centered around long-lived object models, so they live outside the `oop` module.
 
 ## Why use `helpers`
 
@@ -55,9 +54,7 @@ That makes helpers a good fit for packs that start simple and progressively adop
 
 ## All Features
 
-- **[ANSI Renderer](/docs/helpers/ansi-renderer)** - Convert ANSI SGR escape sequences into Minecraft text components
-  when your source text already contains terminal-style formatting.
-- **[Area](/docs/helpers/area)** - Work with axis-aligned 3D regions for containment checks, intersections, unions,
+- **[Areas](/docs/helpers/area)** - Work with axis-aligned 3D regions for containment checks, intersections, unions,
   and coordinate transforms.
 - **[Block IDs](/docs/helpers/block-ids)** - Read the block at any position as an integer score with one
   `compute block` command and a generated context int provider.
@@ -65,18 +62,14 @@ That makes helpers a good fit for packs that start simple and progressively adop
   dialog or chat choices.
 - **[Display Entities](/docs/helpers/display-entities)** - Configure block, item, and text display entities with shared
   transformations, billboards, brightness, and interpolation settings.
-- **[Interactions](/docs/helpers/interactions)** - Make clickable hitboxes and clickable mannequin NPCs with right and
+- **[Interactions & NPCs](/docs/helpers/interactions)** - Make clickable hitboxes and clickable mannequin NPCs with right and
   left click callbacks, generated as advancements and functions with no tick function.
 - **[Inventory Manager](/docs/helpers/inventory-manager)** - Register slot listeners and container policies for player,
   entity, or block inventories.
 - **[Mannequins](/docs/helpers/mannequins)** - Build mannequin entities with profiles, hidden layers, poses, and hand
   selection.
-- **[Markdown Renderer](/docs/helpers/markdown-renderer)** - Turn Markdown snippets into rich Minecraft text for chat,
-  titles, signs, or boss bars.
 - **[Menus](/docs/helpers/menus)** - Build dialog-based GUIs whose buttons run functions for any player, with
   sub-pages, links, and pause screen or Smithed menu entries.
-- **[MiniMessage Renderer](/docs/helpers/minimessage-renderer)** - Parse Adventure MiniMessage tags into Minecraft
-  text components while keeping authoring ergonomic.
 - **[NBT Paths](/docs/helpers/nbt-paths)** - Build typed NBT paths and resolve trees that mix literal values with
   runtime scores.
 - **[Raycasts](/docs/helpers/raycasts)** - Generate recursive step-based raycasts with callbacks for hits, misses, and
@@ -91,7 +84,11 @@ That makes helpers a good fit for packs that start simple and progressively adop
   scores, and conditional lines.
 - **[State Delegates](/docs/helpers/state-delegates)** - Map scoreboard objectives or NBT storage paths to Kotlin
   properties for terser command-generation code.
-- **[VFX Particles](/docs/helpers/vfx-particles)** - Generate circles, spheres, spirals, helixes, and lines as
+- **[Text Renderers](/docs/helpers/text-renderers)** - Turn
+  [MiniMessage](/docs/helpers/text-renderers#minimessage) tags, [Markdown](/docs/helpers/text-renderers#markdown)
+  snippets, or [ANSI](/docs/helpers/text-renderers#ansi) escape sequences into rich Minecraft text for chat, titles,
+  signs, or boss bars, while keeping authoring ergonomic.
+- **[Particle Shapes](/docs/helpers/vfx-particles)** - Generate circles, spheres, spirals, helixes, and lines as
   reusable particle functions.
 
 ## Helpers vs OOP
@@ -108,4 +105,4 @@ Choose the [`oop` module](/docs/oop/oop-utilities) when you need named gameplay 
 scoreboards, timers, spawners, or state machines.
 
 If you need entities, teams, scoreboards, items, timers, or other object-oriented gameplay abstractions, see the
-[OOP Utilities](/docs/oop/oop-utilities) page.
+[OOP Module](/docs/oop/oop-utilities) page.

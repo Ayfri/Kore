@@ -1,15 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Geometric Particle VFX Engine
-nav-title: VFX Particles
+title: "Minecraft Particle Shapes: Circles, Spheres, Helixes"
+nav-title: Particle Shapes
 description: "Generate geometric particle effects with Kore: circles, lines, spheres, spirals and helixes, in world, relative or local coordinates."
 keywords: minecraft, datapack, kore, helpers, vfx, particles, shape, circle, line, sphere, spiral, helix, geometry, coordinates, relative, local
 date-created: 2026-03-03
-date-modified: 2026-10-22
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/vfx-particles
 ---
 
-# Geometric Particle VFX Engine
+# Particle Shapes
 
 The VFX engine generates [particle](https://minecraft.wiki/w/Commands/particle) commands for geometric shapes.
 Each shape is emitted as a generated function containing pre-computed positions.

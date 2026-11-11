@@ -1,13 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Components
-nav-title: Components
-description: A guide for using components in Minecraft with Kore.
+title: "Minecraft Item Components: Custom Items in Kotlin"
+nav-title: Item Components
+description: Set Minecraft item components in Kotlin to create custom items, patch existing ones and match components in predicates.
 keywords: minecraft, datapack, kore, guide, components
 date-created: 2024-01-08
-date-modified: 2026-10-23
+date-modified: 2026-11-11
 routeOverride: /docs/concepts/components
 ---
+
+# Item Components
 
 In Minecraft, data components are structured key-value properties used to define and store behavior and attributes. They are attached to different things:
 
@@ -17,9 +19,11 @@ In Minecraft, data components are structured key-value properties used to define
   `wolf/variant`, `cat/collar`). These follow the same component mechanics but target entity-specific customization.
 
 This page focuses on using item components with Kore. For the vanilla reference and exhaustive definitions, see
-the [Minecraft Wiki - Data component format](https://minecraft.wiki/w/Data_component_format). The
-[custom item example](/playground#example=custom-item) of the playground builds an item with components and runs in your
-browser.
+the [Minecraft Wiki - Data component format](https://minecraft.wiki/w/Data_component_format).
+
+Here is a complete pack, the [custom item example](/playground#example=custom-item) of the playground, which builds an item with components, with the files Kore generates for it:
+
+{{{ .components.doc.CustomItemExample }}}
 
 The Kore library provides a comprehensive and user-friendly way to work with these components, enabling you to create custom items with ease. This article will guide you through the process of using components with Kore, showcasing examples and best practices.
 
@@ -50,7 +54,7 @@ val attributeModifiersTest = Items.STONE_SWORD {
 
 ### Enchantments
 
-You can add enchantments to items to give them special abilities. Here’s an example of adding the Sharpness enchantment to a stone sword:
+You can add enchantments to items to give them special abilities. Here's an example of adding the Sharpness enchantment to a stone sword:
 
 ```kotlin
 import io.github.ayfri.kore.generated.Enchantments
@@ -75,6 +79,10 @@ val customNameTest = Items.STONE_SWORD {
 	customName(textComponent("Legendary Sword", Color.AQUA))
 }
 ```
+
+Pick an item, a name, a rarity and a lore line to see the tooltip the game draws, and the Kotlin that writes it.
+
+{{{ .components.doc.ItemTooltipBuilder }}}
 
 ### Fireworks
 
@@ -511,11 +519,9 @@ val customItem = Items.DIAMOND_SWORD {
 // minecraft:diamond_sword[mymod:use={function:"datapack:use_weapon",damage:4,cooldown:1.5f}]
 ```
 
-## Entity Variant Components (25w04a+)
+## Entity Variant Components
 
-> *Introduced in snapshot [25w04a](https://www.minecraft.net/en-us/article/minecraft-snapshot-25w04a)*
->
-> Entity variants such as axolotl colours, cat collars or tropical-fish patterns are now exposed as **data components** and can be used on entities, spawn-egg items, mob buckets and paintings. This replaces the old `type_specific` NBT fields.
+Entity variants such as axolotl colours, cat collars or tropical-fish patterns are exposed as **data components**, and can be used on entities, spawn-egg items, mob buckets and paintings.
 
 Kore ships dedicated helpers for each of these components. You can attach them to an
 `Items.*` builder the exact same way you attach any other component:

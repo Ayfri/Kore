@@ -1,13 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Advancements Triggers
-nav-title: Advancements Triggers
-description: A guide for using advancements triggers in Minecraft with Kore.
+title: Minecraft Advancement Triggers and Predicate Fields
+nav-title: Advancement Triggers
+description: Reference of every Minecraft advancement trigger in Kotlin, with the predicate fields shared by player, entity and location conditions.
 keywords: minecraft, datapack, kore, guide, advancements, triggers
 date-created: 2024-08-01
-date-modified: 2026-10-23
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/advancements/triggers
 ---
+
+# Advancement Triggers
 
 ## Predicate fields
 

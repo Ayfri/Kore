@@ -1,15 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Variants
-nav-title: Variants
-description: Define entity, painting and decorated pot pattern variants with Kore's type-safe DSL
+title: Minecraft Mob and Painting Variants in Datapacks
+nav-title: Mob & Painting Variants
+description: Define custom Minecraft variants for cats, cows, chickens, frogs, pigs, wolves, paintings and decorated pots in Kotlin, with spawn conditions.
 keywords: minecraft, datapack, kore, variants, cat, cow, chicken, frog, pig, wolf, zombie nautilus, painting, decorated pot pattern, sound variants
 date-created: 2026-02-03
-date-modified: 2026-10-08
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/variants
 ---
 
-# Variants
+# Mob and Painting Variants
 
 Variants allow you to customize the appearance and spawn conditions of various entities and paintings in Minecraft. Kore provides type-safe
 DSL builders for creating custom variants for cats, cows, chickens, frogs, pigs, wolves, zombie nautiluses, paintings and decorated pot

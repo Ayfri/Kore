@@ -1,7 +1,7 @@
 package io.github.ayfri.kore.website.components.layouts
 
 import io.github.ayfri.kore.website.components.doc.DocArticle
-import io.github.ayfri.kore.website.components.doc.getOrderedDocEntries
+import io.github.ayfri.kore.website.docEntries
 import io.github.ayfri.kore.website.externals.PageSwapEvent
 import kotlinx.browser.sessionStorage
 import kotlinx.browser.window
@@ -29,7 +29,7 @@ object PageTransitions {
 		if (swap.viewTransition == null) return
 		val destination = swap.activation?.entry?.url?.let { URL(it).pathname } ?: return
 
-		val docPaths = getOrderedDocEntries().map(DocArticle::path)
+		val docPaths = docEntries.map(DocArticle::path)
 		val from = docPaths.indexOf(window.location.pathname)
 		val to = docPaths.indexOf(destination)
 		if (from >= 0 && to >= 0 && from != to) {

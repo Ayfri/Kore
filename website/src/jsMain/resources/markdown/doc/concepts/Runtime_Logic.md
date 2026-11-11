@@ -1,13 +1,12 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: "Runtime Logic - Kotlin vs Minecraft: Variables, Conditions & Loops"
+title: "Datapack Runtime Logic: Variables, Conditions, Loops"
 nav-title: Runtime Logic
-description: "The key concept for Kore datapacks: how compile-time Kotlin maps to runtime Minecraft logic. Variables via scoreboards and storage, conditions via execute if/unless, and loops via tick functions and schedulers."
+description: Understand how compile-time Kotlin maps to runtime Minecraft logic, with variables on scoreboards and storage, execute conditions and tick loops.
 keywords: minecraft runtime logic, datapack variables, datapack conditions, datapack loops, kore runtime, datapack tick function, execute if unless, minecraft scoreboard variable, datapack programming, kore compile time
 date-created: 2026-06-24
-date-modified: 2026-06-24
+date-modified: 2026-11-11
 routeOverride: /docs/concepts/runtime-logic
-position: 2
 ---
 
 # Runtime Logic
@@ -197,7 +196,7 @@ val tickFunction = function("countdown_tick") {
 ### `schedule` (loop over time)
 
 `schedule` re-runs a function after a delay - ideal for spacing work across ticks instead of hammering every tick. See
-[Time](/docs/concepts/time) for the `.ticks` / `.seconds` helpers.
+[Time Units](/docs/concepts/time) for the `.ticks` / `.seconds` helpers.
 
 ```kotlin
 val loop = function("spawn_wave") {

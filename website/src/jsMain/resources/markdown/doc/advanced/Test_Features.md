@@ -1,17 +1,17 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Test Features
-nav-title: Test Features
-description: A comprehensive guide for creating test instances and test environments in Minecraft's GameTest framework with Kore.
+title: "Minecraft GameTest: Test Instances and Environments"
+nav-title: GameTest
+description: Write Minecraft GameTest test instances and test environments in Kotlin, with structures, weather and time setups and the test commands to run them.
 keywords: minecraft, datapack, kore, guide, test, testing, environment, instance, gametest, automation
 date-created: 2025-01-08
-date-modified: 2026-10-21
+date-modified: 2026-11-11
 routeOverride: /docs/advanced/test-features
 ---
 
-# Test Features
+# GameTest
 
-Minecraft 1.21.5 (Snapshot 25w03a) introduced a major overhaul to the **GameTest framework** - an automated end-to-end testing system for
+The **GameTest framework** is Minecraft's automated end-to-end testing system for
 datapack functionality. Kore provides a type-safe Kotlin DSL that generates JSON files for the `test_instance` and `test_environment`
 registries.
 

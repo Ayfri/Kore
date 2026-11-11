@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Trial Spawners - Custom Trial Spawner Configurations in Kore
+title: "Custom Minecraft Trial Spawners: Mobs and Rewards"
 nav-title: Trial Spawners
 description: Configure custom Minecraft trial spawners with Kore's Kotlin DSL. Set spawned mobs, their NBT and equipment, mob counts, spawn delay and reward loot tables.
 keywords: minecraft trial spawner, datapack trial_spawner, kore trial spawner, trial spawner configuration, custom trial chamber, ominous trial spawner, spawn_potentials
 date-created: 2026-09-23
-date-modified: 2026-09-23
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/trial-spawners
 ---
 

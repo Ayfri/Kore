@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Entities & Players
+title: Minecraft Entity and Player Handles for Datapacks
 nav-title: Entities & Players
-description: Create and manage entities and players with the Kore OOP module - selectors, execute helpers, batch commands, entity commands, and entity effects.
-keywords: minecraft, datapack, kore, oop, entity, player, commands, execute, batch, effects, teleport, kill, damage
+description: Create and manage entities, players and spawners with the Kore OOP module - selectors, execute helpers, batch commands, effects and wave spawning.
+keywords: minecraft, datapack, kore, oop, entity, player, commands, execute, batch, effects, teleport, kill, damage, spawner, summon, mob, wave
 date-created: 2026-03-03
-date-modified: 2026-10-22
+date-modified: 2026-11-11
 routeOverride: /docs/oop/entities-and-players
 ---
 
@@ -15,7 +15,7 @@ The OOP module models Minecraft entities and players as Kotlin objects with sele
 extension functions.
 
 > [!FOOTPRINT]
-> Nothing of its own: a handle is a selector, and only the commands you call are written. Score operators against a plain `Int` add the `kore_constants` objective, see [Scoreboards](/docs/oop/scoreboards).
+> Nothing of its own: a handle is a selector, and only the commands you call are written. Score operators against a plain `Int` add the `kore_constants` objective, see [OOP Scoreboards](/docs/oop/scoreboards).
 
 ## Creating entities
 
@@ -95,7 +95,7 @@ hold one it behaves like any other `Entity`: every extension on this page applie
 kill @e[limit=1,nbt={UUID:[I;...]},type=minecraft:block_display]
 ```
 
-See [Display Entities](/docs/helpers/display-entities), [Interactions](/docs/helpers/interactions) and
+See [Display Entities](/docs/helpers/display-entities), [Interactions & NPCs](/docs/helpers/interactions) and
 [Mannequins](/docs/helpers/mannequins) for building and spawning them.
 
 ## Reading and reshaping a handle
@@ -144,7 +144,7 @@ function("charge_up") {
 `scoreboard.objective(selector, objective)` returns a `PlayerObjective` supporting the same operations as
 `ScoreboardEntity` (`set`, `add`, `remove`, `reset`, `+=`, `-=`, `min`, `max`, `operation`), so nothing is lost by
 dropping the OOP wrapper here. See
-[Scoreboards → Raw selectors and `@s`](/docs/oop/scoreboards#raw-selectors-and-s).
+[OOP Scoreboards → Raw selectors and `@s`](/docs/oop/scoreboards#raw-selectors-and--s).
 
 The same applies to every other command: pass `self()` directly to `kill(...)`, `tellraw(...)`, `give(...)` and
 friends rather than looking for an `Entity` equivalent.
@@ -346,8 +346,58 @@ dataPack("arena") {
 One reusable handle per gameplay concept, declared once at datapack level, then used across as many functions as
 needed - that is the core value of the OOP entity API.
 
+## Spawners
+
+Spawners wrap [entity summoning](https://minecraft.wiki/w/Commands/summon) into reusable, pre-configured handles.
+
+They are useful whenever the same mob or entity should be spawned multiple times with the same base configuration.
+
+> [!FOOTPRINT]
+> Only the entities you spawn, plus one `spawner_<name>_spawn` function per spawner for your own commands: Kore never calls it, `spawn()` writes the `summon` inline. No objective, storage, forceloaded chunk, tick or load function.
+
+### Registering a spawner
+
+```kotlin
+val zombieSpawner = registerSpawner("zombie", EntityTypes.ZOMBIE) {
+	position = vec3(0, 64, 0)
+}
+```
+
+Registering a spawner once helps keep coordinates, entity type, and spawn behavior in one predictable place.
+
+### Using a spawner
+
+```kotlin
+function("spawn_wave") {
+	with(zombieSpawner) {
+		spawn()                     // summon at configured position
+		spawnAt(vec3(10, 64, 10))   // summon at a specific position
+		spawnMultiple(5)            // summon multiple at configured position
+	}
+}
+```
+
+| Function        | Description                         |
+|-----------------|-------------------------------------|
+| `spawn`         | Summon at the configured position   |
+| `spawnAt`       | Summon at a specific position       |
+| `spawnMultiple` | Summon N entities at configured pos |
+
+### Example: spawning a wave
+
+```kotlin
+function("spawn_wave") {
+	with(zombieSpawner) {
+		spawnMultiple(5)
+		spawnAt(vec3(12, 64, 12))
+	}
+}
+```
+
+This makes spawners a natural fit for waves, encounter scripts, arena refills, or scripted boss phases.
+
 ## See also
 
 - [Items](/docs/oop/items) - Reuse item stacks with `giveItem`, `replaceItem`, or summon-based reward flows.
-- [Events](/docs/oop/events) - Attach gameplay reactions directly to the entity and player handles you define here.
-- [Spawners](/docs/oop/spawners) - Pair selectors and entity utilities with reusable spawning entry points.
+- [Events](/docs/oop/events) - Attach gameplay reactions directly to the entity and player handles you define here, or react to deaths and interactions involving spawned entities.
+- [Teams](/docs/oop/teams) - Assign spawned waves to teams when organizing PvE or faction-based encounters.

@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: NBT Paths
+title: "Minecraft NBT Paths: Typed Paths and Runtime Scores"
 nav-title: NBT Paths
 description: Build typed Minecraft NBT paths and split one NBT tree into static values plus runtime scores with the Kore helpers module.
 keywords: minecraft, datapack, kore, helpers, nbt, path, storage, execute store, resolve, score, macro
 date-created: 2026-09-04
-date-modified: 2026-10-07
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/nbt-paths
 ---
 
@@ -127,5 +127,5 @@ function("teleport_to_score") {
 ## See also
 
 - [Data Storage](/docs/concepts/data-storage) - The core `data` command DSL these helpers wrap.
-- [Scoreboards](/docs/oop/scoreboards) - Fake players and the score handles `resolveNbt` reads from.
+- [OOP Scoreboards](/docs/oop/scoreboards) - Fake players and the score handles `resolveNbt` reads from.
 - [State Delegates](/docs/helpers/state-delegates) - Delegated scores usable as `resolveNbt` values.

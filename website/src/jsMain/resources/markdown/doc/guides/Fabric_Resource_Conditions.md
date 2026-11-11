@@ -1,13 +1,12 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Fabric Resource Conditions
+title: Fabric Resource Conditions for Minecraft Datapacks
 nav-title: Fabric Resource Conditions
 description: "Load Kore-generated recipes, advancements and loot tables conditionally in Fabric mods, gated on mods, tags, registries or feature flags."
 keywords: minecraft, datapack, kore, fabric, resource conditions, datagen, load conditions, mod
 date-created: 2026-07-21
-date-modified: 2026-10-23
+date-modified: 2026-11-11
 routeOverride: /docs/guides/fabric-resource-conditions
-position: 5
 ---
 
 # Fabric Resource Conditions
@@ -21,7 +20,7 @@ worldgen, ...). The array is injected at the JSON root during generation, so the
 datapack for vanilla and a conditionally-loaded one when shipped inside a Fabric mod.
 
 This pairs well with generating straight into Fabric Loom's datagen folder, see
-[Creating a DataPack](/docs/guides/creating-a-datapack#separating-the-folder-name-from-the-namespace).
+[Pack Setup & Output](/docs/guides/creating-a-datapack#separating-the-folder-name-from-the-namespace).
 
 ## Attaching conditions
 

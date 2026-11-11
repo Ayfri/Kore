@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Scoreboard Math Engine
+title: "Minecraft Scoreboard Math: Sine, atan2, Square Root"
 nav-title: Scoreboard Math
 description: Fast fixed-point sine, cosine, atan2, exact integer square root and squared distance on Minecraft scoreboards with Kore, mostly one compute command per call.
 keywords: minecraft, datapack, kore, helpers, math, scoreboard, trigonometry, sine, cosine, atan2, sqrt, fixed point, compute
 date-created: 2026-03-03
-date-modified: 2026-10-24
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/scoreboard-math
 ---
 
@@ -149,4 +149,4 @@ forceloaded chunk at `-30000000 1664`. It has the fixed UUID `4b4f5245-0-0-0-1` 
 - [Score Vectors](/docs/helpers/score-vectors) - Runtime 3D vectors, directions, teleports and motion built on this
   module.
 - [State Delegates](/docs/helpers/state-delegates) - Scoreboard-backed values to feed into these helpers.
-- [Scoreboards](/docs/oop/scoreboards) - Higher-level scoreboard utilities.
+- [OOP Scoreboards](/docs/oop/scoreboards) - Higher-level scoreboard utilities.

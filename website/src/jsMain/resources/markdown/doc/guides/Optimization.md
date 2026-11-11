@@ -1,13 +1,12 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Kore Optimization Passes - Prune Dead Functions From Your Datapack
+title: "Datapack Optimization: Prune and Simplify Functions"
 nav-title: Optimization
-description: Run whole-pack optimization passes before Kore writes your datapack, pruning dead functions, shortening execute chains and sorting selectors, or plug in your own.
+description: Run whole-pack optimization passes before Kore writes your datapack to prune dead functions, shorten execute chains and sort selectors, or add your own.
 keywords: kore optimization, datapack dead code, prune empty mcfunction, datapack size, minecraft datapack optimization, kore configuration passes
 date-created: 2026-09-05
-date-modified: 2026-10-24
+date-modified: 2026-11-11
 routeOverride: /docs/guides/optimization
-position: 8
 ---
 
 # Optimization passes

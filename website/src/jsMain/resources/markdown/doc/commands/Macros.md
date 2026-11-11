@@ -1,22 +1,25 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Macros
+title: "Minecraft Function Macros: Dynamic Commands in Kotlin"
 nav-title: Macros
-description: A guide for using macros in Minecraft functions.
+description: Write Minecraft function macros in Kotlin to pass dynamic arguments at runtime, call functions with parameters and define reusable macro classes.
 keywords: minecraft, datapack, kore, guide, macros, functions
 date-created: 2024-04-06
-date-modified: 2026-10-02
+date-modified: 2026-11-11
 routeOverride: /docs/commands/macros
 ---
 
 # Macros
 
-Macros allow dynamic command arguments that are substituted at runtime. Added in Minecraft 1.20.2, they enable creating
+Macros allow dynamic command arguments that are substituted at runtime. They enable creating
 reusable functions with parameters. They are one of the runtime tools covered
 in [Runtime Logic](/docs/concepts/runtime-logic),
 and their values typically come from [data storage](/docs/concepts/data-storage). For basic command usage, see
-[Commands](/docs/commands/commands). The [macros example](/playground#example=macros) of the playground runs in your
-browser and shows the functions it generates.
+[Commands](/docs/commands/commands).
+
+Here is a complete pack, the [macros example](/playground#example=macros) of the playground, with the functions Kore generates for it:
+
+{{{ .components.doc.MacrosExample }}}
 
 ## Using Macros
 
@@ -46,7 +49,7 @@ eval("command", "arg1", "arg2")
 
 ## Calling functions with macros
 
-You can call a function with macros by using the new `arguments` argument.
+You can call a function with macros by using the `arguments` argument.
 
 ```kotlin
 function("my_function", arguments = nbt { this["bar"] = "baz" })

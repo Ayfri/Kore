@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Chat Components
+title: "Minecraft Text Components: Hover and Click Events"
 nav-title: Chat Components
-description: A guide for creating Chat Components in a Minecraft datapack using Kore.
+description: Build Minecraft text components in Kotlin with plain text, score, entity, NBT and translated parts, plus hover and click events and parsing.
 keywords: minecraft, datapack, kore, guide, chat-components
 date-created: 2024-09-05
-date-modified: 2026-10-07
+date-modified: 2026-11-11
 routeOverride: /docs/concepts/chat-components
 ---
 
@@ -45,7 +45,7 @@ You also have a `containsOnlyText()` function to check if a
 The `PlainTextComponent` displays simple text with optional formatting such as color and bold.<br>
 To create a `PlainTextComponent`, use the `textComponent` function.
 
-### Example
+### Plain Text Example
 
 ```kotlin
 val plainText = textComponent("Hello, world!") {
@@ -61,6 +61,10 @@ See how to set custom colors in the [Colors](/docs/concepts/colors) article.
 
 A line break in the text (`"line 1\nline 2"`) is written as the `\n` escape in commands, since a raw one would split the
 function line in two, and a backslash is written as `\\` so the game doesn't read it as an escape.
+
+Pick a color and styles to see the line as it appears in chat, and the Kotlin that writes it.
+
+{{{ .components.doc.TextComponentBuilder }}}
 
 ### Combined Components
 
@@ -96,7 +100,7 @@ the form `Name1, Name2` etc.<br>
 The `separator` property can be used to change the separator between the names of the entities.<br>
 If no entities are found, the component displays nothing.
 
-### Example
+### Entity Name Example
 
 ```kotlin
 val entityComponent = entityComponent(self())
@@ -109,7 +113,7 @@ In-game example:<br>
 
 The `KeybindComponent` displays a keybind. The keybind is displayed in the player's keybind settings.
 
-### Example
+### Keybind Example
 
 ```kotlin
 val keybindComponent = keybindComponent("key.sprint")
@@ -127,10 +131,10 @@ The `nbt` property can be used to specify the path to the NBT data.<br>
 If `nbt` points to an array, then it will display all the elements joined in the form `Element1, Element2` etc.<br>
 The `separator` property can be used to change the separator between the elements of the array.
 
-If you need a refresher on how Kore builds NBT in general, see [NBTs](/docs/concepts/nbts) for the shared builder DSL,
+If you need a refresher on how Kore builds NBT in general, see [NBT](/docs/concepts/nbts) for the shared builder DSL,
 common helpers, and other contexts that use the same patterns.
 
-### Example
+### Entity Health Example
 
 ```kotlin
 val nbtComponent = nbtComponent("Health", entity = nearestEntity {
@@ -151,7 +155,7 @@ player with that name). It can also be `*` to select the entity seeing the text 
 The `objective` property can be used to specify the name of the objective to display the score of.<br>
 A `value` property can be used to specify a fixed value to display regardless of the score.
 
-### Example
+### Score Example
 
 ```kotlin
 val scoreComponent = scoreComponent("test")
@@ -169,7 +173,7 @@ The
 `entityComponent`, `textComponent`, etc) can be passed directly.<br>
 A `fallback` property can be used to specify a fallback text if the translation key is not found.
 
-### Example
+### Translation Arguments Example
 
 ```kotlin
 // Strings are wrapped as text components automatically.
@@ -220,6 +224,10 @@ val hoverItemComponent = textComponent("Hover over me!") {
 
 In-game output:<br>
 ![Hover Event with an Item Example](/doc/chat-components/hover-item.png)
+
+Here is a complete pack, the [text components example](/playground#example=text-components) of the playground, with tellraw lines using colors, click events and hover events, and the commands Kore generates for it:
+
+{{{ .components.doc.TextComponentsExample }}}
 
 ## Click Event
 

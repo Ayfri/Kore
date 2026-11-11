@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Features
+title: "Minecraft Worldgen Features: Trees, Ores, Vegetation"
 nav-title: Features
 description: Generate trees, ores and vegetation in Minecraft with Kore - configured features, placement modifiers and block state providers.
 keywords: minecraft, datapack, kore, worldgen, configured feature, placed feature, tree, ore, block state provider
 date-created: 2026-02-03
-date-modified: 2026-10-26
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/worldgen/features
 ---
 
@@ -667,7 +667,7 @@ final position.
 `count`, `countOnEveryLayer`, `cuboid`, `heightRange`, `randomChance` and `rarityFilter` have no default, the value is required. `count`,
 `countOnEveryLayer` and `cuboid` take int providers or plain `Int`s (`count(10)` is `count(constant(10))`), `heightRange` takes a height
 provider or a bare vertical anchor (`heightRange(absolute(32))`), `randomChance` a `Float` from `0` to `1` and `rarityFilter` a positive `Int`; `cuboid` also takes optional `includeEdges` and
-`includeInterior` booleans, both `true` in the game when left out; see [Providers](/docs/data-driven/worldgen/providers) for the distributions available. `offset` takes either plain `Int`s for its axes or int providers for them, `0` when left out, and a mix of both wraps the plain ones in `constant(...)`:
+`includeInterior` booleans, both `true` in the game when left out; see [Height & Number Providers](/docs/data-driven/worldgen/providers) for the distributions available. `offset` takes either plain `Int`s for its axes or int providers for them, `0` when left out, and a mix of both wraps the plain ones in `constant(...)`:
 `offset(x = 1)` moves every position the same way, `offset(y = uniform(-2, 2))` scatters it, `offset(x = constant(1), y = uniform(-2, 2))` does both. `randomlySelected { }` takes a block of at least one modifier, built with
 the same builders as the placed feature itself, and picks one of them at random for each position:
 
@@ -742,5 +742,5 @@ fun DataPack.createForestFeatures() {
 
 - [Biomes](/docs/data-driven/worldgen/biomes) - listing placed features per decoration step
 - [Block Predicates](/docs/data-driven/worldgen/block-predicates) - the tests used by placement filters and providers
-- [Providers](/docs/data-driven/worldgen/providers) - height, int and float providers
-- [World Generation](/docs/data-driven/worldgen) - overview of the worldgen system
+- [Height & Number Providers](/docs/data-driven/worldgen/providers) - height, int and float providers
+- [Worldgen Overview](/docs/data-driven/worldgen) - overview of the worldgen system

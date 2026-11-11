@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Multiplatform Support
+title: "Multiplatform Datapacks: Generate on JVM and Node.js"
 nav-title: Multiplatform
 description: Kore's kore, oop, helpers, and bindings modules are Kotlin Multiplatform (JVM + JS). Generate real datapacks on Node.js, or export strings/zip bytes anywhere.
 keywords: kore, multiplatform, kotlin multiplatform, kotlin/js, jvm, kmp, nodejs, exportAsStrings, generateZipBytes, kotest, karma
 date-created: 2026-07-12
-date-modified: 2026-10-21
+date-modified: 2026-11-11
 routeOverride: /docs/advanced/multiplatform
 ---
 
@@ -89,9 +89,9 @@ JavaScript, runs it in a worker and lists the files `exportAsStrings()` returns.
 ## `bindings` on JS
 
 `bindings`' exploration, entity model, and code generation (`KtRenderer`/`KtType`, a hand-rolled common codegen model
-that replaced KotlinPoet) live in `commonMain` and compile for the JS target. The `importDatapacks { }` DSL entry
+instead of KotlinPoet) live in `commonMain` and compile for the JS target. The `importDatapacks { }` DSL entry
 point, GitHub/CurseForge/Modrinth/local downloaders, and disk caching stay `jvmMain`-only, since they depend on
-network I/O. In practice, use `bindings` from the JVM as documented in [Bindings](/docs/advanced/bindings).
+network I/O. In practice, use `bindings` from the JVM as documented in [Importing Datapacks](/docs/advanced/bindings).
 
 ## Testing across platforms
 
@@ -125,6 +125,6 @@ kotlin {
 
 - [Getting Started](/docs/getting-started) - the JVM-first walkthrough (`generate()` / `generateZip()`), works the
   same way on Node.js.
-- [Creating A Datapack](/docs/guides/creating-a-datapack) - output paths and generation options.
-- [Bindings](/docs/advanced/bindings) - the datapack importer, JVM usage.
+- [Pack Setup & Output](/docs/guides/creating-a-datapack) - output paths and generation options.
+- [Importing Datapacks](/docs/advanced/bindings) - the datapack importer, JVM usage.
 - [Known Issues](/docs/advanced/known-issues) - other documented limitations.

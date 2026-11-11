@@ -1,15 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Providers
-nav-title: Providers
+title: Minecraft Worldgen Height and Number Providers
+nav-title: Height & Number Providers
 description: Vertical anchors, height providers, int providers and float providers - the randomized values shared by every Kore worldgen builder.
 keywords: minecraft, datapack, kore, worldgen, vertical anchor, height provider, int provider, float provider, uniform, trapezoid
 date-created: 2026-08-21
-date-modified: 2026-10-26
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/worldgen/providers
 ---
 
-# Providers
+# Height and Number Providers
 
 Most worldgen fields do not take a plain number: they take a **provider**, a small object the game samples at every position. That is how
 one ore configuration can produce veins of varying size, or one carver can dig tunnels at varying heights.

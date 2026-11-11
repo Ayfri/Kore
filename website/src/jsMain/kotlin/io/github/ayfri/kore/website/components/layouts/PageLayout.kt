@@ -1,7 +1,6 @@
 package io.github.ayfri.kore.website.components.layouts
 
 import androidx.compose.runtime.Composable
-import com.varabyte.kobweb.core.AppGlobals
 import com.varabyte.kobweb.core.rememberPageContext
 import io.github.ayfri.kore.website.CodeThemeStyle
 import io.github.ayfri.kore.website.components.common.*
@@ -20,7 +19,6 @@ fun PageLayout(title: String, markdownPath: String? = null, content: @Composable
 	Style(SiteChromeStyle)
 
 	val route = rememberPageContext().route
-	val baseUrl = AppGlobals["websiteUrl"] ?: "https://kore.ayfri.com"
 	val url = URL(baseUrl + route.path)
 	url.search = ""
 	url.hash = ""

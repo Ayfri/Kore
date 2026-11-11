@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Carvers
+title: "Minecraft Carvers: Custom Caves and Canyons"
 nav-title: Carvers
 description: Carve caves and canyons into Minecraft terrain with Kore - probability, height, tunnel count and radius multipliers.
 keywords: minecraft, datapack, kore, worldgen, carver, cave, canyon, ravine
 date-created: 2026-08-17
-date-modified: 2026-10-26
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/worldgen/carvers
 ---
 
@@ -175,5 +175,5 @@ biome("highlands") {
 
 - [Biomes](/docs/data-driven/worldgen/biomes) - listing the carvers a biome runs
 - [Noise & Terrain](/docs/data-driven/worldgen/noise) - the terrain shape the carvers cut through
-- [Providers](/docs/data-driven/worldgen/providers) - height, int and float providers
-- [World Generation](/docs/data-driven/worldgen) - overview of the worldgen system
+- [Height & Number Providers](/docs/data-driven/worldgen/providers) - height, int and float providers
+- [Worldgen Overview](/docs/data-driven/worldgen) - overview of the worldgen system

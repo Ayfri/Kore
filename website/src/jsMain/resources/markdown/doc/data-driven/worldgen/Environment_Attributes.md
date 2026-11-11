@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Environment Attributes
+title: "Minecraft Environment Attributes: Fog, Sky and Music"
 nav-title: Environment Attributes
 description: Data-driven visual, audio and gameplay rules for Minecraft biomes and dimensions - fog, sky, music, mob behavior - with Kore's DSL.
 keywords: minecraft, datapack, kore, worldgen, environment attributes, biome, dimension type, fog, sky color, music, modifiers
 date-created: 2026-02-09
-date-modified: 2026-10-26
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/worldgen/environment-attributes
 ---
 
@@ -15,8 +15,9 @@ Environment attributes are the data-driven knobs controlling how a place in the 
 effect: `visual/sky_color` is the color of the sky, `gameplay/water_evaporates` decides whether a bucket can place water.
 
 Both [biomes](/docs/data-driven/worldgen/biomes) and [dimension types](/docs/data-driven/worldgen/dimensions) declare them in an
-`attributes { }` block, and both use the exact same builders. Everything the removed `effects`, `natural`, `ultrawarm`, `piglin_safe`,
-`bed_works` and `has_raids` fields used to control lives here.
+`attributes { }` block, and both use the exact same builders. They cover the visual, sound and particle
+settings of a biome, and the `natural`, `ultrawarm`, `piglin_safe`, `bed_works` and `has_raids` behaviors of a dimension type:
+neither declares separate `effects` or flag fields.
 
 ```kotlin
 attributes {
@@ -354,4 +355,4 @@ attributes {
 - [Colors](/docs/concepts/colors) - the RGB and ARGB formats used by color attributes
 - [Dimensions](/docs/data-driven/worldgen/dimensions) - dimension-wide base attributes
 - [Timelines](/docs/data-driven/timelines) - animating attributes over time with keyframes and easing
-- [World Generation](/docs/data-driven/worldgen) - overview of the worldgen system
+- [Worldgen Overview](/docs/data-driven/worldgen) - overview of the worldgen system

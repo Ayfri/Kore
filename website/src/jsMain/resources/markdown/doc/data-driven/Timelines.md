@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Timelines
+title: "Minecraft Timelines: Tracks, Keyframes and Markers"
 nav-title: Timelines
-description: Learn how to use timelines in your Kore datapacks
+description: Animate Minecraft environment attributes over a world clock with timelines, tracks, keyframes, easing types and named time markers in Kotlin.
 keywords: minecraft, datapack, kore, timelines, environment attributes, easing, keyframes, time markers, world clock
 date-created: 2026-02-10
-date-modified: 2026-06-16
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/timelines
 ---
 
@@ -14,8 +14,6 @@ routeOverride: /docs/data-driven/timelines
 Timelines control game behaviour and visuals based on a world clock through environment attributes.
 They define tracks that animate environment attributes over time using keyframes and easing functions.
 Optional named **time markers** act as labelled tick positions inside a timeline.
-
-Timelines were added in snapshot [**25w45a**](https://minecraft.wiki/w/Java_Edition_25w45a) (Minecraft 1.21.11).
 
 For a broader overview that covers world clocks, the `/time` command, and the `timeCheck` predicate
 condition together, see [World Clocks](/docs/data-driven/world-clocks).
@@ -45,11 +43,12 @@ The `timeline` function creates and registers a timeline in your DataPack. It pr
 
 ## Timeline Properties
 
-| Property      | Type                           | Description                                                                   |
-|---------------|--------------------------------|-------------------------------------------------------------------------------|
-| `clock`       | `WorldClockArgument`           | **Required.** The world clock this timeline reads from.                       |
-| `periodTicks` | `Int?`                         | Duration in ticks before the timeline loops. Omit for a one-shot timeline.    |
-| `timeMarkers` | `Map<String, TimelineMarker>?` | Named tick positions inside this timeline. See [Time Markers](#time-markers). |
+| Property      | Type                                                            | Description                                                                   |
+|---------------|-----------------------------------------------------------------|-------------------------------------------------------------------------------|
+| `clock`       | `WorldClockArgument`                                            | **Required.** The world clock this timeline reads from.                       |
+| `periodTicks` | `Int?`                                                          | Duration in ticks before the timeline loops. Omit for a one-shot timeline.    |
+| `timeMarkers` | `Map<String, TimelineMarker>?`                                  | Named tick positions inside this timeline. See [Time Markers](#time-markers). |
+| `tracks`      | `Map<EnvironmentAttributeArgument, EnvironmentAttributeTrack>?` | Attribute animations. See [Tracks](#tracks).                                  |
 
 ## Tracks
 
@@ -115,11 +114,13 @@ keyframe(12000) {
 
 Time markers are named tick positions inside a timeline. Commands can jump a clock to a marker
 position via `/time set <timeMarker>`, and they appear in command auto-complete when
-`showInCommands` is `true`.
+`showInCommands` is `true`. They also serve as human-readable labels for `/time query`.
+
+When `showInCommands` is omitted (or `null`), the default game behaviour applies.
 
 ```kotlin
 dataPack.timeline("seasons", clock = seasonClock) {
-	periodTicks = 96000
+	periodTicks = 96000   // 4 × 24000 - one in-game "year"
 
 	timeMarker("spring", ticks = 0, showInCommands = true)
 	timeMarker("summer", ticks = 24000, showInCommands = true)

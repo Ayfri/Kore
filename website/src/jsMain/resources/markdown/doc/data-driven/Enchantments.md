@@ -1,17 +1,17 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Enchantments
+title: "Custom Minecraft Enchantments: Effects and Levels"
 nav-title: Enchantments
 description: Create custom Minecraft enchantments using Kore's type-safe Kotlin DSL with support for all vanilla effect components and level-based values.
 keywords: minecraft, datapack, kore, enchantments, effects, custom enchantments
 date-created: 2025-03-02
-date-modified: 2026-10-26
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/enchantments
 ---
 
 # Enchantments
 
-Enchantments are data-driven definitions that modify item behavior, apply effects, change damage calculations, and alter various game mechanics. In Minecraft Java Edition 1.21+, enchantments are fully customizable through data packs, allowing you to create entirely new enchantments with unique effects.
+Enchantments are data-driven definitions that modify item behavior, apply effects, change damage calculations, and alter various game mechanics. In Minecraft Java Edition, enchantments are fully customizable through data packs, allowing you to create entirely new enchantments with unique effects.
 
 ## Overview
 
@@ -78,6 +78,10 @@ dataPack("my_datapack") {
 This generates `data/my_datapack/enchantment/fire_aspect_plus.json`.
 
 {{{ .components.mc.EnchantmentTooltipMockup }}}
+
+Here is a complete pack, the [custom enchantment example](/playground#example=custom-enchantment) of the playground, with the `fire_aspect_plus` enchantment and the JSON file Kore generates for it:
+
+{{{ .components.doc.CustomEnchantmentExample }}}
 
 ## Basic Properties
 
@@ -656,7 +660,7 @@ dataPack("custom_enchants") {
 ## See Also
 
 - [Predicates](/docs/data-driven/predicates) - Conditions for enchantment effect requirements
-- [Components](/docs/concepts/components) - Item components and matchers
+- [Item Components](/docs/concepts/components) - Item components and matchers
 - [Tags](/docs/data-driven/tags) - Use enchantment and item tags
 - [Villager Trades](/docs/data-driven/villager-trades) - `doubleTradePriceEnchantments` and enchanting villager trade
   outputs

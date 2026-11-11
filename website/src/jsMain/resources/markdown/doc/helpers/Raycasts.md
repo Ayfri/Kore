@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Raycasts
+title: "Minecraft Datapack Raycasts: Steps and Hit Callbacks"
 nav-title: Raycasts
 description: Recursive raycast system with the Kore helpers module - step-based raycasting with block hit, max distance, and per-step callbacks.
 keywords: minecraft, datapack, kore, helpers, raycast, ray, block, hit, step, recursive
 date-created: 2026-03-03
-date-modified: 2026-10-22
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/raycasts
 ---
 
@@ -62,6 +62,10 @@ function("use_ray") {
 }
 ```
 
+Here is a complete pack, the [raycast example](/playground#example=raycast) of the playground, with a raycast drawing particles, and the commands Kore generates for it:
+
+{{{ .components.doc.RaycastExample }}}
+
 ## Callback lifecycle
 
 - `onStep` runs for every successful step before the ray stops.
@@ -109,7 +113,7 @@ precision while also generating more recursive calls.
 
 ## See also
 
-- [Area](/docs/helpers/area) - Define spatial zones that complement what a ray can detect or trigger.
-- [VFX Particles](/docs/helpers/vfx-particles) - Use particles inside `onStep` for visual debugging or beam effects.
+- [Areas](/docs/helpers/area) - Define spatial zones that complement what a ray can detect or trigger.
+- [Particle Shapes](/docs/helpers/vfx-particles) - Use particles inside `onStep` for visual debugging or beam effects.
 - [Entities & Players](/docs/oop/entities-and-players) - Execute raycasts from player or mob contexts with reusable
   selectors.

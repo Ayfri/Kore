@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Tags
+title: "Minecraft Tags: Group Blocks, Items and Entities"
 nav-title: Tags
-description: Create and manage tags for grouping game elements with Kore's type-safe DSL
+description: Create Minecraft datapack tags in Kotlin to group blocks, items, entities and functions, extend vanilla tags and use them in commands and recipes.
 keywords: minecraft, datapack, kore, tags, grouping, blocks, items, entities, functions
 date-created: 2026-02-03
-date-modified: 2026-10-02
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/tags
 ---
 
@@ -13,7 +13,9 @@ routeOverride: /docs/data-driven/tags
 
 Tags are JSON structures used in data packs to group related game elements together. They allow you to reference multiple items, blocks, entities, or other resources as a single unit. Tags are extensively used in commands, loot tables, advancements, recipes, and other data-driven features.
 
-The [tags example](/playground#example=tags) of the playground runs in your browser and shows the JSON it generates.
+Here is a complete pack, the [tags example](/playground#example=tags) of the playground, with the JSON files Kore generates for it:
+
+{{{ .components.doc.TagsExample }}}
 
 ## Basic Usage
 
@@ -356,7 +358,7 @@ With tag references:
 - [Predicates](/docs/data-driven/predicates) - Use tags in predicate conditions
 - [Recipes](/docs/data-driven/recipes) - Use tags for flexible recipe ingredients
 - [Loot Tables](/docs/data-driven/loot-tables) - Use tags in loot conditions
-- [Trims](/docs/data-driven/trims) - Trim material and pattern tags
+- [Armor Trims](/docs/data-driven/trims) - Trim material and pattern tags
 
 ### External Resources
 

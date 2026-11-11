@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Minecraft Predicates - Type-Safe Condition DSL in Kore
+title: "Minecraft Predicates: Type-Safe Conditions in Kotlin"
 nav-title: Predicates
-description: Create Minecraft predicates with Kore's type-safe Kotlin DSL. Covers entity properties, location, weather, time, enchantments, damage, and NBT checks. Use in execute if/unless, loot tables, and advancements.
+description: Write Minecraft predicates in Kotlin for entity, location, weather, time, damage and NBT checks, and use them in execute, loot tables and advancements.
 keywords: minecraft predicates, datapack conditions, execute if predicate, entity properties check, location check, weather check, time check, damage predicate, kore predicates, minecraft condition dsl
 date-created: 2024-01-08
-date-modified: 2026-10-23
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/predicates
 ---
 
@@ -36,6 +36,10 @@ val myPredicate = predicate("test") {
 
 The `predicate` function creates and registers a predicate in your DataPack. It produces a file at
 `data/<namespace>/predicate/<fileName>.json` and returns a `PredicateArgument` that can be used in commands.
+
+Here is a complete pack, the [predicates example](/playground#example=predicates) of the playground, with a predicate used by a command, and the files Kore generates for it:
+
+{{{ .components.doc.PredicatesExample }}}
 
 ## Conditions
 
@@ -724,7 +728,7 @@ function("filter_entities") {
 ### Pairing with Inventory Manager
 
 Predicates excel at validating complex item properties. When you need to both validate and actively manage inventories (
-e.g., keep a GUI slot populated with an item matching specific [Components](/docs/concepts/components)), use them
+e.g., keep a GUI slot populated with an item matching specific [Item Components](/docs/concepts/components)), use them
 alongside the [Inventory Manager](/docs/helpers/inventory-manager).
 
 ## Item Predicates
@@ -814,8 +818,7 @@ generates one. Cyclic references (predicate A references B, which references A) 
 1. **Descriptive names**: Give your predicates names that reflect their purpose (e.g., `is_holding_sword`, `in_rain_at_night`)
 2. **Logical composition**: Use `allOf` and `anyOf` to combine multiple conditions clearly
 3. **Reusability**: Keep predicates focused on a single concern and use `reference` to compose them (inside `allOf` or `anyOf`)
-4. **Context awareness
-   **: Be mindful of which loot context your predicate will be invoked from. Context-dependent conditions will silently fail if required data is missing
+4. **Context awareness**: Be mindful of which loot context your predicate will be invoked from. Context-dependent conditions will silently fail if required data is missing
 5. **Testing**: Test your predicates in-game using `/execute if predicate <name>` to verify they work as expected
 
 Predicates are powerful tools for creating complex conditions in your datapack. They enable sophisticated game mechanics and enhance player experience without requiring custom code.
@@ -825,7 +828,7 @@ Predicates are powerful tools for creating complex conditions in your datapack. 
 - [Loot Tables](/docs/data-driven/loot-tables) - Use predicates as conditions for loot entries
 - [Advancements](/docs/data-driven/advancements) - Use predicates as trigger conditions
 - [Item Modifiers](/docs/data-driven/item-modifiers) - Modify items conditionally with predicates
-- [Components](/docs/concepts/components#component-matchers-item-predicates) - Item predicates and component matchers
+- [Item Components](/docs/concepts/components#component-matchers-item-predicates) - Item predicates and component matchers
   in depth: command-syntax predicates, sub-predicate matchers, existence checks, and a complete tool-upgrade example
 - [Inventory Manager](/docs/helpers/inventory-manager) - Pair predicates with inventory management
 - [Villager Trades](/docs/data-driven/villager-trades) - Gate trade availability via `merchantPredicate`

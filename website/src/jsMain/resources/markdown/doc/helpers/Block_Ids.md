@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Block IDs
+title: Read Minecraft Block IDs as Scoreboard Integers
 nav-title: Block IDs
 description: Read the block under or at any position as an integer score with Kore, one generated context int provider and one compute block command, no setblock tests.
 keywords: minecraft, datapack, kore, helpers, block, id, compute, context provider, match_block, tags, scoreboard
 date-created: 2026-10-24
-date-modified: 2026-10-24
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/block-ids
 ---
 

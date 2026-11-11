@@ -1,15 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: GitHub Actions Publishing
-nav-title: GitHub Actions Publishing
-description: Automatically publish your Kore datapacks using GitHub Actions with mc-publish.
+title: Publish Minecraft Datapacks with GitHub Actions
+nav-title: Publishing with GitHub Actions
+description: Publish your Kore datapack to Modrinth, CurseForge and GitHub Releases from a GitHub Actions workflow with mc-publish, secrets and release triggers.
 keywords: minecraft, datapack, kore, github actions, publishing, automation, ci/cd
 date-created: 2025-09-30
-date-modified: 2026-10-21
+date-modified: 2026-11-11
 routeOverride: /docs/advanced/github-actions-publishing
 ---
 
-# GitHub Actions Publishing
+# Publishing with GitHub Actions
 
 This guide shows you how to automatically publish your Kore-generated datapacks to various platforms using GitHub Actions and the
 `mc-publish` action.
@@ -48,6 +48,9 @@ on:
     types: [ published ]
   workflow_dispatch: # Allow manual triggering
 
+env:
+  PACK_NAME: my_datapack # Same value as `packName` in the `kore { }` block
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -72,11 +75,17 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Generate datapack
-        run: ./gradlew run
+        run: ./gradlew koreBuild
+
+      - name: Zip datapack
+        working-directory: build/kore/${{ env.PACK_NAME }}
+        run: zip -r "$GITHUB_WORKSPACE/${{ env.PACK_NAME }}.zip" .
 
       - name: Publish to platforms
         uses: Kir-Antipov/mc-publish@v3.3
         with:
+          files: ${{ env.PACK_NAME }}.zip
+
           # Modrinth configuration
           modrinth-id: YOUR_PROJECT_ID
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -89,7 +98,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-Ensure to use `datapack.generateZip()` in your build script to generate a zip file containing your datapack.
+`./gradlew koreBuild` runs your `main()` through the [Gradle plugin](/docs/guides/gradle-plugin) and generates the pack
+folder in `build/kore/<packName>`. The `zip` step archives that folder, with `pack.mcmeta` at the root of the archive,
+and `files` uploads the zip.
 
 ## Advanced Configuration
 
@@ -113,8 +124,8 @@ For more control over the publishing process, you can customize various aspects:
 
     # File selection
     files: |
-      out/*.zip
-      !out/*-unfinished.zip
+      ${{ env.PACK_NAME }}.zip
+      !*-unfinished.zip
 
     # Supported game versions
     game-versions: |
@@ -141,21 +152,16 @@ For more control over the publishing process, you can customize various aspects:
 ## Kore-Specific Configuration
 
 Kore generates your datapack from Kotlin code, so the workflow needs a build step that runs your `main()` and produces a
-zip. Make sure your
-entry point calls `datapack.generateZip()` (Kore writes the archive to the `out/` directory by default), then point
-`mc-publish`'s `files` input
-at it:
-
-```yaml
-files: out/*.zip
-```
+zip, then points `mc-publish`'s `files` input at it.
 
 Kore projects come in two flavours depending on the build tool you started from. Use the matching build step.
 
 ### Gradle (Kore-Template)
 
-The default [Kore-Template](https://github.com/Ayfri/Kore-Template) is a Gradle project, so the build step uses the
-Gradle wrapper:
+The default [Kore-Template](https://github.com/Kore-Minecraft/Kore-Template) is a Gradle project built on the
+[Gradle plugin](/docs/guides/gradle-plugin), which has no `run` task: `koreBuild` runs the entry point and generates the
+pack folder in `build/kore/<packName>`. The entry point writes a folder with `generate()` (not `generateZip()`), and the
+workflow zips that folder, from inside it so `pack.mcmeta` sits at the root of the archive:
 
 ```yaml
       - name: Set up JDK {{java.version}}
@@ -164,12 +170,26 @@ Gradle wrapper:
           distribution: 'temurin'
           java-version: {{java.version}}
 
-      - name: Ensure Gradle is executable
-        run: chmod +x gradlew
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Generate datapack
-        run: ./gradlew run
+        run: ./gradlew koreBuild
+
+      - name: Zip datapack
+        working-directory: build/kore/${{ env.PACK_NAME }}
+        run: zip -r "$GITHUB_WORKSPACE/${{ env.PACK_NAME }}.zip" .
 ```
+
+`PACK_NAME` is the workflow-level environment variable from the basic workflow above. It must equal `packName` in the
+`kore { }` block, which is also the name in `dataPack("...")`. Then point
+`mc-publish` at the archive:
+
+```yaml
+files: ${{ env.PACK_NAME }}.zip
+```
+
+The template's own workflow publishes to Modrinth only, with `loaders: datapack`.
 
 ### Kotlin Toolchain (formerly Amper)
 
@@ -177,7 +197,8 @@ Projects configured with the [Kotlin Toolchain](https://kotlinlang.org/docs/mult
 `module.yaml` / `project.yaml`
 setup, previously called Amper) ship a `kotlin` wrapper script instead of `gradlew`. The wrapper downloads the toolchain
 and a JDK on first run,
-so you don't need a separate `setup-java` step:
+so you don't need a separate `setup-java` step. The entry point calls `generateZip()`, which writes the archive to the
+`out/` directory by default, so `mc-publish` reads `files: out/*.zip`:
 
 ```yaml
       - name: Make the Kotlin wrapper executable
@@ -336,7 +357,7 @@ jobs:
 
 ### Common Issues
 
-1. **Missing files**: Ensure you exported the datapack to the correct directory
+1. **Missing files**: Ensure `PACK_NAME` equals `packName`, so the zip step finds `build/kore/<packName>`
 2. **Invalid tokens**: Verify your secrets are correctly set in GitHub
 3. **Permission errors**: Ensure the workflow has `contents: write` permission
 
@@ -362,6 +383,9 @@ on:
     types: [ published ]
   workflow_dispatch:
 
+env:
+  PACK_NAME: my_datapack
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -386,7 +410,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Generate datapack
-        run: ./gradlew run
+        run: ./gradlew koreBuild
+
+      - name: Zip datapack
+        working-directory: build/kore/${{ env.PACK_NAME }}
+        run: zip -r "$GITHUB_WORKSPACE/${{ env.PACK_NAME }}.zip" .
 
       - name: Publish to platforms
         uses: Kir-Antipov/mc-publish@v3.3
@@ -395,7 +423,7 @@ jobs:
           version: ${{ github.ref_name }}
           version-type: release
 
-          files: out/*.zip
+          files: ${{ env.PACK_NAME }}.zip
 
           game-versions: |
             {{mc.version}}
@@ -415,7 +443,7 @@ jobs:
 
 ## See Also
 
-- [Creating a Datapack](/docs/guides/creating-a-datapack)
+- [Pack Setup & Output](/docs/guides/creating-a-datapack)
 - [Configuration](/docs/guides/configuration)
 - [mc-publish Documentation](https://github.com/Kir-Antipov/mc-publish)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)

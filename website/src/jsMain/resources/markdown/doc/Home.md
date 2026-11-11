@@ -1,31 +1,28 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Kore - Type-Safe Minecraft Datapack Generator
-nav-title: Home
-description: Kore is a Kotlin DSL datapack generator for Minecraft Java Edition. Create datapacks with type-safe code instead of writing JSON and MCFunction by hand. Open-source and production-ready.
+title: Type-Safe Minecraft Datapack Generator in Kotlin
+nav-title: Introduction
+description: Kore is a Kotlin DSL that generates Minecraft Java Edition datapacks, so you write type-safe code instead of JSON and mcfunction by hand.
 keywords: minecraft datapack generator, datapack maker, minecraft data pack creator, kotlin datapack, kore, minecraft datapack dsl, datapack development, minecraft java edition, mcfunction generator, datapack library
 date-created: 2024-04-06
-date-modified: 2026-10-21
+date-modified: 2026-11-11
 routeOverride: /docs/home
-position: 0
 ---
 
-# Kore
-
-**Welcome to the Kore wiki!**
+# Kore Documentation
 
 Kore is a Kotlin library for building Minecraft datapacks with a concise, type-safe Kotlin DSL. It focuses on readable builders, stable
-generation of datapack JSON, and tight integration with vanilla concepts (functions, loot tables, predicates, worldgen, ...). Coming from
-raw datapacks? Read [Why Kore](/docs/guides/why-kore) or the migration-focused [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore).
+generation of datapack JSON, and tight integration with vanilla concepts (functions, loot tables, predicates, worldgen, ...).
 
-## Quick start
+## Start here
 
-- **Getting started**: Check out the [Getting Started](/docs/getting-started) guide for a step-by-step introduction to creating your first datapack.
-- **Prerequisites**: Java {{java.version}} (JDK {{java.version}}) and a Kotlin 2.4+ build environment.
-- **Starter template**: use the `Kore Template` for a ready-to-run project: [
-  `Kore Template`](https://github.com/Kore-Minecraft/Kore-Template).
-- **Build faster**: browse the [Cookbook](/docs/guides/cookbook) for practical patterns you can reuse.
-- **Try it first**: the [playground](/playground) runs Kore in your browser, with nothing to install.
+- **New to Kore?** Follow the [Getting Started](/docs/getting-started) guide, a step-by-step introduction to creating your first datapack.
+- **Already writing datapacks by hand?** Read [Coming from Datapacks](/docs/guides/from-datapacks-to-kore), and [Why Kore](/docs/guides/why-kore) for the comparison.
+- **Want to try it first?** The [playground](/playground) runs Kore in your browser, with nothing to install.
+- **Looking for something to copy?** Browse the [Cookbook](/docs/guides/cookbook) for practical patterns you can reuse.
+
+Prerequisites: Java {{java.version}} (JDK {{java.version}}) and a Kotlin 2.4+ build environment. For a ready-to-run project, use the
+[Kore Template](https://github.com/Kore-Minecraft/Kore-Template).
 
 ### Minimal example
 
@@ -41,115 +38,56 @@ fun main() {
 }
 ```
 
-### IDE tooling
-
-Kore Assistant brings gutter icons, hovers, and declaration navigation for the Kore DSL straight into your editor:
-[IntelliJ IDEA](https://plugins.jetbrains.com/plugin/27025-kore-assistant) |
-[VS Code](https://marketplace.visualstudio.com/items?itemName=ayfri.kore-assistant).
-
-## Jump to a topic
+## Browse by topic
 
 {{{ .components.doc.FeatureGrid }}}
 
-Looking for something more specific? The full page list, with search, lives in the sidebar on the left, and the
-[Features](/features) page lists everything Kore covers with in-game previews.
+The sidebar search (Ctrl K) finds any page, and the [Features](/features) page lists everything Kore covers with in-game previews.
 
-## Installable modules
+## Modules
 
-Kore is split into installable modules. Start with `kore`, then add the others depending on the abstractions or tooling
-you need.
+Kore is split into installable modules: start with `kore`, then add the others depending on the abstractions or tooling you need.
 
-All four modules are **Kotlin Multiplatform** (JVM + JS): the same coordinates publish JVM, JS, and common metadata
-variants. File/ZIP/JAR generation works on the JVM and Node.js; browser JS consumers build the DSL and call
-`exportAsStrings()` / `generateZipBytes()` instead. See [Multiplatform Support](/docs/advanced/multiplatform) for
+| Module     | What it adds                                                                                                                         | Artifact                                       | Docs                                         |
+|------------|--------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------|----------------------------------------------|
+| `kore`     | The core DSL to build datapacks.                                                                                                     | `io.github.ayfri.kore:kore:{{kore.release}}`     | [Getting Started](/docs/getting-started)     |
+| `oop`      | Higher-level abstractions for boss bars, cooldowns, entities, game states, scoreboards, spawners, teams, and timers.                 | `io.github.ayfri.kore:oop:{{kore.release}}`      | [OOP Module](/docs/oop/oop-utilities)     |
+| `helpers`  | Renderers, raycasts, scheduler utilities, scoreboard math, state delegates, particle helpers, and related utilities.                 | `io.github.ayfri.kore:helpers:{{kore.release}}`  | [Helpers Module](/docs/helpers/utilities) |
+| `bindings` | Importer of existing datapacks that generates type-safe Kotlin bindings for their functions, resources, and tags.                    | `io.github.ayfri.kore:bindings:{{kore.release}}` | [Importing Datapacks](/docs/advanced/bindings)          |
+
+All four modules are **Kotlin Multiplatform** (JVM + JS): file/ZIP/JAR generation works on the JVM and Node.js, while browser JS consumers
+build the DSL and call `exportAsStrings()` / `generateZipBytes()` instead. See [Multiplatform Support](/docs/advanced/multiplatform) for
 what runs where.
 
-### `kore` - Core DSL
+`{{kore.release}}` targets Minecraft {{mc.version}}: the [version matrix](/docs/guides/version-support#version-matrix) lists the release for
+each Minecraft version, and the [snapshot builds](/docs/getting-started#snapshot-builds-latest-unreleased-changes) section of Getting Started
+shows how to use the latest unreleased changes.
 
-- Build datapacks with the main Kore DSL.
-- Artifact: `io.github.ayfri.kore:kore:{{kore.release}}`
-- Snapshot builds from each commit on `master`: add `https://central.sonatype.com/repository/maven-snapshots/` and use
-  `{{kore.mavenSnapshot}}`
+## Tooling
 
-### `oop` - Object-oriented gameplay utilities
-
-- Add higher-level abstractions for boss bars, cooldowns, entities, game states, scoreboards, spawners, teams, and
-  timers.
-- Especially useful when several gameplay systems need to exchange data cleanly, such as syncing a `Team` with a boss
-  bar or reusing an `Entity` handle across scoreboards and commands.
-- Artifact: `io.github.ayfri.kore:oop:{{kore.release}}`
-- Explore: [OOP Utilities](/docs/oop/oop-utilities)
-
-### `helpers` - Utility-focused helpers
-
-- Add renderers, raycasts, scheduler utilities, scoreboard math, state delegates, particle helpers, and related
-  utilities.
-- These helpers complement the core DSL well for advanced text pipelines, reusable state access, geometric particles, or
-  command-heavy math routines.
-- Artifact: `io.github.ayfri.kore:helpers:{{kore.release}}`
-- Explore: [Helpers Utilities](/docs/helpers/utilities)
-
-### `bindings` - Datapack importer
-
-- Import existing datapacks and generate type-safe Kotlin bindings for their functions, resources, and tags.
-- Artifact: `io.github.ayfri.kore:bindings:{{kore.release}}`
-- Explore: [Bindings](/docs/advanced/bindings)
-
-## Version Matrix
-
-One Kore version per stable Minecraft version, the latest tagged pre-release as a separate `Snapshot` row, and the
-latest continuous `-SNAPSHOT` build from `master` as `Maven Snapshot`. Gradle coordinates link straight to Maven
-Central. Generated from GitHub releases and the current project version on every website build, so it always
-reflects the latest published version without manual edits. Each stable Kore version links to its release notes on
-the [Updates](/updates) page. [Version Support](/docs/guides/version-support) explains how to read these versions and
-what changes between them.
-
-{{{ .components.doc.VersionMatrix }}}
-
-## Contributing to Kore
-
-If you want to contribute to Kore itself, start with [Contributing to Kore](/docs/contributing/contributing), the hub
-for architecture, workflow, issue/PR, and maintainer docs.
-
-Useful contributor-facing internals:
-
-- [Architecture and Patterns](/docs/contributing/architecture-and-patterns) - module boundaries and recurring
-  implementation patterns.
-- [Arguments Internals](/docs/contributing/arguments) - how the typed argument layer, resource wrappers, and literals fit
-  together.
-
-## Short tips
-
-- Keep builders small and reusable; prefer extracting predicates and modifiers.
-- Enable `prettyPrint` in [`Configuration`](/docs/guides/configuration) during development for readable JSON.
-- Reach for [`OOP Utilities`](/docs/oop/oop-utilities) when multiple gameplay features should share the same handles
-  instead of re-building selectors and score names manually.
-- Use [`Components`](/docs/concepts/components) + [`Predicates`](/docs/data-driven/predicates) together for robust item checks and inventory
-  management.
-- Reach for [`NBTs`](/docs/concepts/nbts) when you need to build a payload once and reuse it across commands, chat, or
-  predicates.
-- Use [`Helpers Utilities`](/docs/helpers/utilities) to avoid reimplementing common glue code such as renderers,
-  scheduler patterns, raycasts, or scoreboard-based maths.
-- Hit a wall? Check [Known Issues](/docs/advanced/known-issues) for known workarounds before filing a bug.
-
-## Need help?
-
-- **Discord**: join the [Kore Discord](https://discord.ayfri.com) for questions and to chat with other datapack devs.
-- **Issues & bugs**: report them on the [GitHub repository](https://github.com/Ayfri/Kore/issues).
-- **Stuck on setup?**: the [Getting Started](/docs/getting-started) guide has a dedicated Troubleshooting section.
-- **Read first**: [Kore Hello World](https://ayfri.com/articles/kore-hello-world/), a hands-on intro article.
-
-## Community & source
-
-- **Repository**: [Kore](https://github.com/Ayfri/Kore)
-- **Starter template**: [Kore Template](https://github.com/Kore-Minecraft/Kore-Template)
+- **Kore Assistant**: gutter icons, hovers, and declaration navigation for the Kore DSL in your editor, for
+  [IntelliJ IDEA](https://plugins.jetbrains.com/plugin/27025-kore-assistant) and
+  [VS Code](https://marketplace.visualstudio.com/items?itemName=ayfri.kore-assistant).
+- **Gradle plugin**: generates the datapack, copies it into your worlds and reloads a running server, see
+  [Gradle Plugin](/docs/guides/gradle-plugin).
+- **Starter template**: [Kore Template](https://github.com/Kore-Minecraft/Kore-Template), a ready-to-run project.
 - **LLM-friendly documentation**: [llms.txt](https://kore.ayfri.com/llms.txt) | [llms-full.txt](https://kore.ayfri.com/llms-full.txt) |
   every page also has a plain Markdown copy at its URL with `.md` appended, such as
   [`/docs/getting-started.md`](https://kore.ayfri.com/docs/getting-started.md)
 - **AI Agents skills**: [Kore-Skill](https://github.com/Kore-Minecraft/Kore-Skill) (optional skills pack for AI-assisted
   Kore work)
 
-### Community creations
+## Help and community
+
+- **Discord**: join the [Kore Discord](https://discord.ayfri.com) for questions and to chat with other datapack devs.
+- **Issues & bugs**: report them on the [GitHub repository](https://github.com/Ayfri/Kore/issues).
+- **Known workarounds**: check [Known Issues](/docs/advanced/known-issues) before filing a bug.
+- **Read first**: [Kore Hello World](https://ayfri.com/articles/kore-hello-world/), a hands-on intro article.
+
+To contribute to Kore itself, start with [Contributing to Kore](/docs/contributing/contributing), the hub for architecture, workflow, and
+maintainer docs.
+
+### Built with Kore
 
 Real projects built with Kore, useful to see the DSL used at full project scale:
 
@@ -161,5 +99,3 @@ Real projects built with Kore, useful to see the DSL used at full project scale:
 
 To add your project to the list, open an issue on the
 [repository](https://github.com/Ayfri/Kore/issues) or ping me on [Discord](https://discord.ayfri.com).
-
-For hands-on examples, follow the doc pages above - most pages include runnable snippets and links to test cases in the repository.

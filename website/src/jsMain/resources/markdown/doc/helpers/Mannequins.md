@@ -1,17 +1,17 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: How to Summon a Minecraft Mannequin with a Player Skin
+title: "Minecraft Mannequins: Summon NPCs with Player Skins"
 nav-title: Mannequins
 description: Summon a Minecraft mannequin NPC wearing any player's skin and armor, then set its pose, name, layers and description, as a /summon command or in Kotlin.
 keywords: minecraft mannequin, summon mannequin, mannequin player skin, mannequin profile, mannequin pose, minecraft npc, player statue, datapack, kore
 date-created: 2026-01-25
-date-modified: 2026-10-22
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/mannequins
 ---
 
 # Mannequins
 
-A mannequin (`minecraft:mannequin`, added in Java Edition 1.21.9) is an entity drawn with the player model. It wears any player's skin,
+A mannequin (`minecraft:mannequin`) is an entity drawn with the player model. It wears any player's skin,
 holds a pose like crouching or sleeping and never walks around on its own, which makes it the usual base for NPCs, shopkeepers and
 player statues in a datapack. Mannequins only spawn through commands such as `summon`.
 
@@ -69,7 +69,7 @@ mannequin {
 }
 ```
 
-`property(name, value, signature)` adds a signed `textures` property, the form skin sites export, so the skin no longer depends on the
+`property(name, value, signature)` adds a signed `textures` property, the form skin sites export, so the skin doesn't depend on the
 player:
 
 ```kotlin

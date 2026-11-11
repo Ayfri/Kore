@@ -30,29 +30,30 @@ private val rootRelativeRegex = Regex("""]\(/(?!/)""")
 private val spriteRegex = Regex("""(?<!`)!\[[^\]]*]\(mc:[^)]*\) ?""")
 private val widgetRegex = Regex("""(?m)^\{\{\{\s*([^\s}]+)\s*\}\}\}[ \t]*\r?\n?""")
 
-private val groupLabels = mapOf("data-driven" to "Data-driven", "getting-started" to "Getting started", "oop" to "OOP")
 private val requiredFields = listOf("date-created", "date-modified", "description", "keywords", "nav-title", "root", "routeOverride", "title")
 
 /**
- * Runs inside the `process` callback of Kobweb's markdown plugin: reads the front matter of every doc page, then writes `docEntries.kt`,
- * `docWidgets.kt`, the public resources (`doc-data/<route>.json` with the content of each page, `llms.txt`, `llms-full.txt`, `sitemap.xml`,
+ * Runs inside the `process` callback of Kobweb's markdown plugin: reads the front matter of every doc page and checks it against [navFile] and the
+ * `/docs` links between pages, then writes `docEntries.kt` (the sections and pages in nav order), `docWidgets.kt`, the public resources (`doc-data/<route>.json` with the content of each page, `llms.txt`, `llms-full.txt`, `sitemap.xml`,
  * `markdown-sources.json` and one `.md` copy per page) and, when [renderOgImages] is set, the Open Graph cards.
  * Only holds plain values so the configuration cache can serialize it.
  */
 class DocSiteGenerator(
-	private val docGroupOrder: List<String>,
-	private val featureCards: File,
 	private val gitHubDataDir: File,
 	private val logo: File,
 	private val markdownDir: File,
 	private val minecraftVersion: String,
+	private val navFile: File,
 	private val ogDir: File,
 	private val ogFontsDir: File,
 	private val renderOgImages: Boolean,
 ) {
 	fun generate(scope: ProcessScope, pages: List<MarkdownEntry>) {
 		val docEntries = pages.map { it.toDocEntry() }
-		val sortedEntries = docEntries.sortedWith(entryOrder)
+		val nav = DocNav.read(navFile)
+		nav.check(docEntries)
+		val entriesByPath = docEntries.associateBy { it.path }
+		val sortedEntries = nav.routes.map(entriesByPath::getValue)
 		val releases = ReleaseHistory(readReleases())
 
 		/** The dev server falls back on `minecraft.version`, the deployed site must never show a snapshot as the latest stable release. */
@@ -61,35 +62,41 @@ class DocSiteGenerator(
 		}
 		val docConstants = docConstants(releases)
 
-		val widgets = mapOf("FeatureGrid" to featureGrid(), "VersionMatrix" to versionMatrix(releases))
+		val widgets = mapOf("FeatureGrid" to featureGrid(nav, entriesByPath), "VersionMatrix" to versionMatrix(releases))
 		val routes = sortedEntries.map { it.route }.toSet()
 		val markdownSources = pages.associate { it.filePath to markdownDir.resolve(it.filePath).readText() }
 		checkDocConstants(markdownSources, docConstants)
 		val expandedSources = markdownSources.mapValues { it.value.expandDocConstants(docConstants) }
 
 		val parser = docParser()
+		val docLinks = mutableListOf<DocLinkRef>()
+		val headings = mutableMapOf<String, MutableList<DocHeadingRef>>()
 		val widgetCalls = sortedSetOf<String>()
 		sortedEntries.forEach { entry ->
 			/** The front matter becomes blank lines, so the line numbers of the parsed nodes stay the lines of the file. */
 			val source = expandedSources.getValue(entry.filePath).replace(frontMatterRegex) { "\n".repeat(it.value.count { char -> char == '\n' }) }
-			scope.generatePublicResource("doc-data/${entry.route}.json", DocPageJson(entry.filePath, widgetCalls).write(parser.parse(source)))
+			val json = DocPageJson(entry.filePath, headings.getOrPut(entry.path) { mutableListOf() }, docLinks, entry.path, widgetCalls).write(parser.parse(source))
+			scope.generatePublicResource("doc-data/${entry.route}.json", json)
 		}
+		checkDocLinks(docLinks, headings)
+		/** The `[id, text]` of every `h2` and `h3` by page path, which the doc search fetches the first time it opens. */
+		scope.generatePublicResource(
+			"doc-search.json",
+			JsonOutput.toJson(headings.mapValues { (_, list) -> list.filter { it.level in 2..3 }.map { listOf(it.id, it.text) } }),
+		)
 		scope.generateKotlin("$SITE_PACKAGE/docWidgets.kt", docWidgetsSource(widgetCalls))
 
-		val groupedEntries = sortedEntries.groupBy { it.slugs.getOrNull(1) ?: "other" }
-		/** Single-page sections outside `docGroupOrder` (home, getting started) come first. */
-		val orderedGroups = groupedEntries.keys.sortedBy { if (it in docGroupOrder) groupPriority(it) else -1 }
-		val pageMarkdown = orderedGroups.flatMap { groupedEntries.getValue(it) }.associateWith { it.toMarkdown(expandedSources.getValue(it.filePath), widgets, routes) }
+		val pageMarkdown = sortedEntries.associateWith { it.toMarkdown(expandedSources.getValue(it.filePath), widgets, routes) }
 
-		scope.generatePublicResource("llms.txt", llmsIndex(groupedEntries, orderedGroups, releases))
+		scope.generatePublicResource("llms.txt", llmsIndex(nav, entriesByPath, releases))
 		/** The same pages as the `.md` copies, concatenated in the `llms.txt` order. */
 		scope.generatePublicResource("llms-full.txt", "# Kore documentation\n\n> $SUMMARY\n\n" + pageMarkdown.values.joinToString("\n\n---\n\n") + "\n")
 		pageMarkdown.forEach { (entry, markdown) -> scope.generatePublicResource("${entry.route}.md", markdown + "\n") }
 		scope.generatePublicResource("markdown-sources.json", JsonOutput.toJson(expandedSources))
 		scope.generatePublicResource("sitemap.xml", sitemap(sortedEntries))
-		if (renderOgImages) renderOgCards(sortedEntries)
+		if (renderOgImages) renderOgCards(nav, sortedEntries)
 
-		scope.generateKotlin("$SITE_PACKAGE/docEntries.kt", docEntriesSource(docEntries))
+		scope.generateKotlin("$SITE_PACKAGE/docEntries.kt", nav.kotlinSource(entriesByPath, SITE_PACKAGE))
 	}
 
 	private fun MarkdownEntry.toDocEntry(): DocEntry {
@@ -104,7 +111,6 @@ class DocSiteGenerator(
 			filePath = filePath,
 			keywords = fields.getValue("keywords").split(Regex(""",\s*""")),
 			navTitle = fields.getValue("nav-title"),
-			position = frontMatter["position"]?.firstOrNull()?.toIntOrNull(),
 			slugs = fields.getValue("routeOverride").split("/").drop(1),
 			title = fields.getValue("title"),
 		)
@@ -113,40 +119,6 @@ class DocSiteGenerator(
 	/** `2025-3-7` -> `2025-03-07T00:00:00Z`, the ISO 8601 form of the dates. */
 	private fun String.toIsoDate() = split("-").let { (year, month, day) ->
 		"$year-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00Z"
-	}
-
-	private fun groupPriority(slug: String) = docGroupOrder.indexOf(slug.lowercase()).takeIf { it >= 0 } ?: docGroupOrder.size
-
-	/** Sorts entries by group priority, then optional position, then slug/title names. */
-	private val entryOrder = Comparator<DocEntry> { a, b ->
-		val slugsA = a.slugs.drop(1)
-		val slugsB = b.slugs.drop(1)
-		val maxDepth = minOf(slugsA.size, slugsB.size)
-
-		for (i in 0 until maxDepth) {
-			val slugA = slugsA[i]
-			val slugB = slugsB[i]
-
-			/** A fixed position only applies to leaf entries, where it is set explicitly. */
-			val posA = if (i == slugsA.lastIndex) a.position else null
-			val posB = if (i == slugsB.lastIndex) b.position else null
-
-			val posCompare = compareValues(posA ?: Int.MAX_VALUE, posB ?: Int.MAX_VALUE)
-			if (posCompare != 0) return@Comparator posCompare
-
-			if (i == 0 && slugsA.size > 1 && slugsB.size > 1) {
-				val groupCompare = compareValues(groupPriority(slugA), groupPriority(slugB))
-				if (groupCompare != 0) return@Comparator groupCompare
-			}
-
-			val slugCompare = compareValues(slugA.lowercase(), slugB.lowercase())
-			if (slugCompare != 0) return@Comparator slugCompare
-		}
-
-		val lengthCompare = compareValues(slugsA.size, slugsB.size)
-		if (lengthCompare != 0) return@Comparator lengthCompare
-
-		return@Comparator compareValues(a.navTitle, b.navTitle)
 	}
 
 	private fun readReleases() = gitHubDataDir.resolve("releases.tsv").takeIf { it.exists() }?.readLines().orEmpty()
@@ -188,7 +160,7 @@ class DocSiteGenerator(
 		appendLine("@Composable")
 		appendLine("fun DocWidgetCall(call: String) {")
 		appendLine("\twhen (call) {")
-		calls.forEach { appendLine("\t\t\"${it.replace("\\", "\\\\").replace("\"", "\\\"").replace("$", "\\$")}\" -> ${KobwebCall(it).toFqn(SITE_PACKAGE)}") }
+		calls.forEach { appendLine("\t\t${it.kotlinString()} -> ${KobwebCall(it).toFqn(SITE_PACKAGE)}") }
 		appendLine("\t\telse -> error(\"No doc widget \$call\")")
 		appendLine("\t}")
 		appendLine("}")
@@ -202,15 +174,27 @@ class DocSiteGenerator(
 		releases.stableRows.forEach { appendLine("| ${it.minecraftVersion} | ${it.koreVersion} | Stable | `$MAVEN_KORE:${it.coordinate}` | ${it.published.take(10)} |") }
 	}
 
-	/** The home page topic cards, read from the widget source so the links can't drift from it. */
-	private fun featureGrid() = featureCards.readText()
-		.substringAfter("fun FeatureGrid()")
-		.split("FeatureCard(").drop(1)
-		.mapNotNull { card ->
-			val title = Regex("""title = "([^"]*)"""").find(card)?.groupValues?.get(1) ?: return@mapNotNull null
-			val links = Regex("""FeatureLink\("([^"]*)", "([^"]*)"\)""").findAll(card).joinToString(", ") { "[${it.groupValues[2]}](${it.groupValues[1]})" }
-			"- **$title**: $links"
-		}.joinToString("\n", postfix = "\n")
+	/** The groups of the `reference` section of the nav, the ones the site's `FeatureGrid` lists. */
+	private fun featureGrid(nav: DocNav, entriesByPath: Map<String, DocEntry>): String {
+		val reference = nav.sections.firstOrNull { it.id == "reference" } ?: throw GradleException("nav.json has no 'reference' section, which FeatureGrid lists")
+		return reference.groups.joinToString("\n", postfix = "\n") { group ->
+			"- **${group.title}**: ${group.description} " + group.routes.joinToString(", ") { "[${entriesByPath.getValue(it).navTitle}]($it)" }
+		}
+	}
+
+	private fun checkDocLinks(links: List<DocLinkRef>, headings: Map<String, List<DocHeadingRef>>) {
+		val errors = links.mapNotNull { link ->
+			val where = link.filePath + link.line?.let { " line $it" }.orEmpty()
+			when {
+				link.route !in headings -> "$where: no doc page has the route ${link.route}"
+				link.anchor != null && headings.getValue(link.route).none { it.id == link.anchor } -> "$where: ${link.route} has no heading #${link.anchor}"
+				else -> null
+			}
+		}
+		if (errors.isNotEmpty()) {
+			throw GradleException(errors.joinToString("\n", "Broken doc links:\n"))
+		}
+	}
 
 	private fun checkDocConstants(markdownSources: Map<String, String>, docConstants: Map<String, String>) {
 		val errors = markdownSources.flatMap { (path, source) ->
@@ -261,7 +245,7 @@ class DocSiteGenerator(
 	}
 
 	/** The llmstxt.org index, every page linking to its Markdown copy. */
-	private fun llmsIndex(groupedEntries: Map<String, List<DocEntry>>, orderedGroups: List<String>, releases: ReleaseHistory): String {
+	private fun llmsIndex(nav: DocNav, entriesByPath: Map<String, DocEntry>, releases: ReleaseHistory): String {
 		val latestVersions = releases.latestStable?.let { stable ->
 			val preRelease = releases.latestPreRelease?.let { ", the latest pre-release is `$MAVEN_KORE:${it.coordinate}` for Minecraft ${it.minecraftVersion}" }.orEmpty()
 			"The latest stable release is `$MAVEN_KORE:${stable.coordinate}` for Minecraft ${stable.minecraftVersion}$preRelease."
@@ -277,16 +261,23 @@ class DocSiteGenerator(
 			appendLine("Every documentation page below links to its Markdown copy, the same URL without the `.md` suffix is the HTML page.")
 			appendLine()
 
-			orderedGroups.forEach { group ->
-				appendLine("## ${groupLabels[group] ?: group.replaceFirstChar { it.uppercase() }}")
+			nav.sections.forEach { section ->
+				appendLine("## ${section.title}")
 				appendLine()
 
-				groupedEntries[group]?.forEach { entry ->
-					append("- [${entry.title}]($BASE_URL/${entry.route}.md)")
-					if (entry.desc.isNotBlank()) append(": ${entry.desc}")
+				section.groups.forEach { group ->
+					if (section.grouped) {
+						appendLine("### ${group.title}")
+						appendLine()
+					}
+
+					group.routes.map(entriesByPath::getValue).forEach { entry ->
+						append("- [${entry.title}]($BASE_URL/${entry.route}.md)")
+						if (entry.desc.isNotBlank()) append(": ${entry.desc}")
+						appendLine()
+					}
 					appendLine()
 				}
-				appendLine()
 			}
 
 			appendLine("## Optional")
@@ -327,7 +318,7 @@ class DocSiteGenerator(
 	}
 
 	/** Open Graph cards, `/og/<route>.png` per doc page, `/og/features.png`, `/og/updates.png` and `/og/default.png` for the other pages. */
-	private fun renderOgCards(sortedEntries: List<DocEntry>) {
+	private fun renderOgCards(nav: DocNav, sortedEntries: List<DocEntry>) {
 		val host = BASE_URL.substringAfter("://")
 		val stars = gitHubDataDir.resolve("stars.txt").takeIf { it.exists() }?.readText()?.toIntOrNull()
 		val ogRenderer = OgImageRenderer(ogFontsDir, logo, stars)
@@ -362,52 +353,11 @@ class DocSiteGenerator(
 		sortedEntries.parallelStream().forEach { entry ->
 			ogRenderer.render(
 				ogDir.resolve("${entry.route}.png"),
-				label = entry.slugs.dropLast(1).joinToString(" / ") { it.replace("-", " ") },
+				label = nav.label(entry.path),
 				title = entry.navTitle,
 				description = entry.desc,
 				footer = "$host/${entry.route}",
 			)
 		}
-	}
-
-	private fun docEntriesSource(docEntries: List<DocEntry>) = buildString {
-		appendLine(
-			"""
-			|// This file is generated. Do not modify directly.
-			|
-			|package $SITE_PACKAGE
-			|
-			|import $SITE_PACKAGE.components.doc.DocArticle
-			|
-			|val docEntries = listOf${if (docEntries.isEmpty()) "<DocArticle>" else ""}(
-			""".trimMargin()
-		)
-
-		fun List<String>.asCode() = "listOf(${joinToString { "\"$it\"" }})"
-		fun String.escapeQuotes() = replace("\"", "\\\"")
-
-		docEntries.sortedWith(
-			compareBy(
-				{ it.slugs.firstOrNull() ?: "" },
-				{ it.position ?: Int.MAX_VALUE },
-				{ it.navTitle })
-		).forEach { entry ->
-			appendLine(
-				"""
-				|	DocArticle("/${entry.route}",
-				|	    "${entry.date}",
-				|	    "${entry.title.escapeQuotes()}",
-				|	    "${entry.desc.escapeQuotes()}",
-				|	    "${entry.navTitle.escapeQuotes()}",
-				|	    ${entry.keywords.asCode()},
-				|	    "${entry.dateModified}",
-				|	    ${entry.slugs.asCode()},
-				|	    ${entry.position ?: "null"}
-				|   ),
-				""".trimMargin()
-			)
-		}
-
-		appendLine(")")
 	}
 }

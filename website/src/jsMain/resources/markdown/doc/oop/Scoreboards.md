@@ -1,15 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Scoreboards
-nav-title: Scoreboards
+title: "Datapack Score Handles: Objectives and Operators"
+nav-title: OOP Scoreboards
 description: Object-oriented scoreboard management with the Kore OOP module - objectives, display slots, per-entity score operations, and score arithmetic operators.
 keywords: minecraft, datapack, kore, oop, scoreboard, objective, score, display slot, fake player, operators, constants, expressions, compute, random float
 date-created: 2026-03-03
-date-modified: 2026-10-24
+date-modified: 2026-11-11
 routeOverride: /docs/oop/scoreboards
 ---
 
-# Scoreboards
+# OOP Scoreboards
 
 Wraps [Minecraft scoreboards](https://minecraft.wiki/w/Scoreboard) with two distinct handle types:
 
@@ -28,7 +28,7 @@ That split mirrors how vanilla splits `scoreboard objectives ...` from `scoreboa
 | Create/remove an objective, set its display slot  | `scoreboard("name")` → `Scoreboard`                      |
 | Read or write an OOP `Entity`'s score             | `entity.getScoreEntity("obj")` or `scoreboard.getScore(entity)` |
 | Read or write a whole team's score                | `scoreboard.getScore(team)`                              |
-| Read or write the score of `@s`, or any raw selector | `scoreboard.objective(selector, "obj")` - see [Raw selectors](#raw-selectors-and-s) |
+| Read or write the score of `@s`, or any raw selector | `scoreboard.objective(selector, "obj")` - see [Raw selectors](#raw-selectors-and--s) |
 
 `ScoreboardEntity`, `getScoreEntity`, and `getScore` all require a `Function` context, so call them **inside** a
 `function { }` block, not at datapack top level.

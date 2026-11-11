@@ -25,8 +25,8 @@ plugins {
 group = "io.github.ayfri.kore.website"
 version = "1.0-SNAPSHOT"
 
-val docGroupOrder =
-	listOf("guides", "commands", "data-driven", "concepts", "helpers", "oop", "advanced", "contributing")
+/** The doc sections, groups and page order. Kobweb's markdown tasks only track `.md` files, so it is declared as an input below. */
+val docNav = layout.projectDirectory.file("src/jsMain/resources/markdown/doc/nav.json")
 
 val minecraftVersion = providers.gradleProperty("minecraft.version").orElse("").get()
 
@@ -40,9 +40,6 @@ val playgroundExamplesDir = layout.projectDirectory.dir("playground-examples/bui
 
 /** `public/playground-api.json`, the Kore API the playground editor completes, written by `:playground-examples:generatePlaygroundApiIndex`. */
 val playgroundApiDir = layout.projectDirectory.dir("playground-examples/build/generated/playground-api")
-
-/** The home page widget source the `FeatureGrid` placeholder of the docs is built from. */
-val featureCards = layout.projectDirectory.file("src/jsMain/kotlin/io/github/ayfri/kore/website/components/doc/FeatureCards.kt")
 
 val logo = layout.projectDirectory.file("src/jsMain/resources/public/logo.png")
 
@@ -58,7 +55,6 @@ kobweb {
 	app {
 		globals.set(
 			mapOf(
-				"docGroupOrder" to docGroupOrder.joinToString(","),
 				"minecraftVersion" to minecraftVersion,
 				// Compile backend for /playground. Empty here: the page stays usable and says compiling is off.
 				"playgroundApiUrl" to (findProperty("kore.playgroundApiUrl") as String? ?: ""),
@@ -131,12 +127,11 @@ kobweb {
 
 		/** Built outside the callback, which the configuration cache serializes with what it captures. */
 		val generator = DocSiteGenerator(
-			docGroupOrder = docGroupOrder,
-			featureCards = featureCards.asFile,
 			gitHubDataDir = gitHubDataDir.get().asFile,
 			logo = logo.asFile,
 			markdownDir = projectDir.resolve("src/jsMain/resources/markdown"),
 			minecraftVersion = minecraftVersion,
+			navFile = docNav.asFile,
 			ogDir = ogDir.get(),
 			ogFontsDir = layout.buildDirectory.dir("og-fonts").get().asFile,
 			renderOgImages = renderOgImages,
@@ -211,8 +206,7 @@ tasks.matching { it.name == "jsProcessResources" }.configureEach {
  * and the pack formats, the Open Graph cards show the logo, the star count and the latest release.
  */
 tasks.named("kobwebxMarkdownProcess") {
-	inputs.files(featureCards, logo, fetchGitHubReleases, fetchGitHubStars, fetchMinecraftVersions).withPropertyName("generatorFiles")
-	inputs.property("docGroupOrder", docGroupOrder)
+	inputs.files(docNav, logo, fetchGitHubReleases, fetchGitHubStars, fetchMinecraftVersions).withPropertyName("generatorFiles")
 	inputs.property("minecraftVersion", minecraftVersion)
 	inputs.property("renderOgImages", renderOgImages)
 }

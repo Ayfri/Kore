@@ -1,6 +1,6 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: "Contributing: Architecture and Patterns"
+title: Kore Architecture and Code Patterns for Contributors
 nav-title: "Architecture and Patterns"
 description: Detailed internal architecture, project layout, module responsibilities, and recurring implementation patterns for Kore contributors.
 keywords: architecture, bindings, commands, generator, kore, patterns, serializers, website
@@ -258,6 +258,17 @@ Required frontmatter keys, in alphabetical order:
 - `routeOverride`
 - `title`
 
+`title` is the browser and search result title, to which the site appends ` | Kore`. `nav-title` is the short label of the
+sidebar, the breadcrumbs and the social card. The sidebar tags a page "New" for 14 days after its `date-created`.
+
+A page reaches the sidebar through its route in
+[`markdown/doc/nav.json`](https://github.com/Ayfri/Kore/blob/master/website/src/jsMain/resources/markdown/doc/nav.json):
+four sections (Get started, Guides, Reference, Contributing), each with a [Lucide](https://lucide.dev/icons) icon name
+and a list of routes in display order or, for Reference, groups with a title, a one-line description and a `sprite`, the
+vanilla texture of its topic card (a path like `block/command_block_front`). The sidebar lists the section of the
+current page only, and the same file orders the breadcrumbs, the previous and next links, the topic cards of the docs
+home and `llms.txt`. A page's folder and route play no part in it.
+
 Versions that change with each release are placeholders, a key between double curly braces, expanded at build time
 in prose, links and code blocks, the `.md` copies and `llms-full.txt` included:
 
@@ -275,7 +286,8 @@ in prose, links and code blocks, the `.md` copies and `llms-full.txt` included:
 The values come from the GitHub releases and PixiGeko's `versions_data.json`, fetched once per build directory:
 rerun `fetchGitHubReleases` and `fetchMinecraftVersions` with `--rerun` to refresh a local copy. An unknown key, a
 placeholder in the frontmatter or a heading, a page missing a required frontmatter key, or an export without any
-stable release fails the build.
+stable release fails the build. So do a page missing from `nav.json`, a route listed twice, a nav route no page
+declares, and a `/docs/...` or `#anchor` link whose page or heading doesn't exist, each reported with its page and line.
 
 Doc pages support paragraphs, headings, lists, tables, blockquotes, callouts, fenced code blocks, links, images,
 emphasis, inline code and `<br>`. Other Markdown fails the build with the page path and the line, since the site has
@@ -303,7 +315,12 @@ Embed one the same way, right after the table it illustrates, and write the sent
 fine without it: the `.md` copies and `llms.txt` drop the widget line. The pills, toggle groups, slider and text fields these
 widgets share live in `components/doc/DocControls.kt`: reuse them instead of styling new controls.
 
-Keep routes stable, keep navigation intentional, and update entry pages when a new doc should become discoverable.
+A playground example is embedded with a one-line wrapper in `components/doc/PlaygroundExampleEmbeds.kt` and a
+`{{{ .components.doc.SelectorsExample }}}` line. It shows the example's Kotlin and the files it really generates, so an
+example change updates every page that embeds it.
+
+Keep routes stable: the KDoc of published Kore versions links them, so a page that moves in the nav keeps its route,
+and a page merged into another gets a redirect line in `public/_redirects`.
 
 ### How to write a documentation page
 
@@ -340,5 +357,4 @@ Content rules that keep the docs consistent and trustworthy:
 - [Contributing: Contributing](/docs/contributing/contributing)
 - [Contributing: Creating a New Generator](/docs/contributing/creating-a-new-generator)
 - [Contributing: The Generation Pipeline](/docs/contributing/generation-pipeline)
-- [Contributing: Workflow](/docs/contributing/contributing-workflow)
 - [Multiplatform Support](/docs/advanced/multiplatform)

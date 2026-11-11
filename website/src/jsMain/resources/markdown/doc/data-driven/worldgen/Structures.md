@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Structures
+title: "Custom Minecraft Structures: Jigsaw and Processors"
 nav-title: Structures
 description: Build Minecraft structures with Kore - configured structures, jigsaw template pools, block processors and structure set placement.
 keywords: minecraft, datapack, kore, worldgen, structure, template pool, processor list, jigsaw, structure set
 date-created: 2026-02-03
-date-modified: 2026-10-26
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/worldgen/structures
 ---
 
@@ -458,6 +458,6 @@ Reference: [Structure set](https://minecraft.wiki/w/Structure_set)
 
 - [Biomes](/docs/data-driven/worldgen/biomes) - the biomes a structure restricts itself to
 - [Features](/docs/data-driven/worldgen/features) - the smaller decorations placed alongside structures
-- [Providers](/docs/data-driven/worldgen/providers) - height and int providers used by jigsaw and processors
+- [Height & Number Providers](/docs/data-driven/worldgen/providers) - height and int providers used by jigsaw and processors
 - [Tags](/docs/data-driven/tags) - grouping processor lists, template pools and structures
-- [World Generation](/docs/data-driven/worldgen) - overview of the worldgen system
+- [Worldgen Overview](/docs/data-driven/worldgen) - overview of the worldgen system

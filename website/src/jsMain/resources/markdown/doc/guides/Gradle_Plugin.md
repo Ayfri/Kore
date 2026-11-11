@@ -1,13 +1,12 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Kore Gradle Plugin - Build, Link and Live Reload Your Datapack
+title: "Gradle Plugin: Build, Link and Reload a Datapack"
 nav-title: Gradle Plugin
 description: Generate your Kore datapack from Gradle, copy it straight into your Minecraft worlds, and reload a running server automatically on every source change.
 keywords: kore gradle plugin, minecraft datapack watch mode, datapack live reload, datapack hot reload, gradle continuous build, minecraft rcon reload, datapack development loop
 date-created: 2026-09-04
-date-modified: 2026-10-21
+date-modified: 2026-11-11
 routeOverride: /docs/guides/gradle-plugin
-position: 6
 ---
 
 # Gradle plugin
@@ -206,8 +205,8 @@ kore {
 
 ## What to read next
 
-- [Creating a Datapack](/docs/guides/creating-a-datapack) - what `path`, `folderName` and `generate()` do to the output
+- [Pack Setup & Output](/docs/guides/creating-a-datapack) - what `path`, `folderName` and `generate()` do to the output
   this plugin moves around
 - [Configuration](/docs/guides/configuration) - JSON formatting and generated function naming
-- [GitHub Actions Publishing](/docs/advanced/github-actions-publishing) - automate releases to Modrinth, CurseForge and
+- [Publishing with GitHub Actions](/docs/advanced/github-actions-publishing) - automate releases to Modrinth, CurseForge and
   GitHub

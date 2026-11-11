@@ -10,7 +10,7 @@ import io.github.ayfri.kore.website.docEntries
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.A
-import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.Nav
 import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
 
@@ -19,6 +19,7 @@ object BreadCrumbsStyle : StyleSheet() {
 		alignItems(AlignItems.Center)
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Row)
+		flexWrap(FlexWrap.Wrap)
 		gap(0.5.cssRem)
 		marginBottom(1.cssRem)
 		marginTop(0.5.cssRem)
@@ -50,36 +51,47 @@ object BreadCrumbsStyle : StyleSheet() {
 }
 
 @Composable
-fun Breadcrumbs(slugs: List<String>) {
+fun Breadcrumbs(path: String) {
 	Style(BreadCrumbsStyle)
 
-	Div({
+	val location = docLocation(path)
+	val article = docEntries.find { it.path == path }
+
+	Nav({
+		attr("aria-label", "Breadcrumb")
 		classes(BreadCrumbsStyle.breadcrumbs)
 	}) {
 		A("/", {
+			attr("aria-label", "Home")
 			classes(BreadCrumbsStyle.breadcrumbLink)
 		}) {
 			LucideHouse()
 		}
 
-		slugs.forEachIndexed { index, slug ->
+		if (location == null || article == null) return@Nav
+
+		LucideChevronRight()
+		A(location.section.firstPage.path, {
+			classes(BreadCrumbsStyle.breadcrumbLink)
+		}) {
+			Text(location.section.title)
+		}
+
+		location.group?.let { group ->
 			LucideChevronRight()
-			val path = "/docs/${slugs.take(index + 1).joinToString("/")}"
-			val displayText = slug.replace("-", " ").replaceFirstChar { it.uppercase() }
-			val pathExists = docEntries.any { it.path == path }
-			if (pathExists) {
-				A(path, {
-					classes(BreadCrumbsStyle.breadcrumbLink)
-				}) {
-					Text(displayText)
-				}
-			} else {
-				Span({
-					classes(BreadCrumbsStyle.breadcrumbText)
-				}) {
-					Text(displayText)
-				}
+			Span({
+				classes(BreadCrumbsStyle.breadcrumbText)
+			}) {
+				Text(group.title!!)
 			}
+		}
+
+		LucideChevronRight()
+		Span({
+			attr("aria-current", "page")
+			classes(BreadCrumbsStyle.breadcrumbText)
+		}) {
+			Text(article.navTitle)
 		}
 	}
 }

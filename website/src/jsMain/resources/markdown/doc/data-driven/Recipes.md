@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Recipes
+title: "Minecraft Recipes: Crafting, Smelting and Smithing"
 nav-title: Recipes
-description: Create custom Minecraft recipes using Kore's type-safe Kotlin DSL for crafting, smelting, smithing, and more.
+description: Create custom Minecraft recipes in Kotlin for crafting, brewing, cooking, smithing and stonecutting, with result components and vanilla overrides.
 keywords: minecraft, datapack, kore, recipes, crafting, smelting, smithing, stonecutting
 date-created: 2024-01-08
-date-modified: 2026-10-22
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/recipes
 ---
 
@@ -13,7 +13,9 @@ routeOverride: /docs/data-driven/recipes
 
 Recipes define how items are transformed through crafting tables, furnaces, smithing tables, stonecutters, and other workstations. Kore provides a type-safe DSL to create all vanilla recipe types programmatically.
 
-The [recipes example](/playground#example=recipes) of the playground runs in your browser and shows the JSON it generates.
+Here is a complete pack, the [recipes example](/playground#example=recipes) of the playground, with the JSON files Kore generates for it:
+
+{{{ .components.doc.RecipesExample }}}
 
 ## Overview
 
@@ -475,7 +477,7 @@ This generates:
 ```
 
 The predicate also matches active effects through `effects { ... }`, see
-[Components](/docs/concepts/components). `output` takes an item, an optional `count` and a component patch,
+[Item Components](/docs/concepts/components). `output` takes an item, an optional `count` and a component patch,
 like `result` does on the other recipes.
 
 ## Cooking Recipes
@@ -927,7 +929,7 @@ dataPack("custom_recipes") {
 ## See Also
 
 - [Advancements](/docs/data-driven/advancements) - Unlock recipes as advancement rewards
-- [Components](/docs/concepts/components) - Customize recipe result items
+- [Item Components](/docs/concepts/components) - Customize recipe result items
 - [Commands](/docs/commands/commands) - Give or take recipes with commands
 - [Tags](/docs/data-driven/tags) - Use item tags for flexible ingredient matching
 

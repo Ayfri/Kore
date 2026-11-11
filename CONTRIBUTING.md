@@ -6,7 +6,6 @@ Read the contributor docs before opening a PR:
 
 - [Contributing][contributing-docs]
 - [Architecture and Patterns][architecture-docs]
-- [Workflow][workflow-docs]
 
 If you are adding a new data-driven resource in `kore`, also read [Creating a New Generator][new-generator-docs].
 
@@ -19,7 +18,7 @@ If you are adding a new data-driven resource in `kore`, also read [Creating a Ne
 5. Update documentation when behavior or API changes.
 6. Open a pull request that links the issue, tests, and docs.
 
-Detailed issue and pull-request expectations live in [Workflow][workflow-docs].
+Detailed issue and pull-request expectations live in [Contributing][contributing-docs].
 
 For CI and release details, read:
 
@@ -38,7 +37,6 @@ Examples:
 ## See also
 
 - [README][readme]
-- [Workflow][workflow-docs]
 
 [architecture-docs]: https://kore.ayfri.com/docs/contributing/architecture-and-patterns
 
@@ -49,5 +47,3 @@ Examples:
 [readme]: https://github.com/ayfri/kore/blob/master/README.md
 
 [releases-docs]: https://kore.ayfri.com/docs/contributing/ci-cd-and-releases
-
-[workflow-docs]: https://kore.ayfri.com/docs/contributing/contributing-workflow

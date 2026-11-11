@@ -6,6 +6,7 @@ import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideStar
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.PREFERRED_SOURCE_LINK
+import io.github.ayfri.kore.website.docEntries
 import io.github.ayfri.kore.website.utils.externalTarget
 import io.github.ayfri.kore.website.utils.transition
 import org.jetbrains.compose.web.css.*
@@ -126,8 +127,7 @@ object PageNavigationStyle : StyleSheet() {
 
 @Composable
 fun PageNavigation(currentPath: String, publishDate: String?, modifiedDate: String?, editUrl: String) {
-	val orderedEntries = getOrderedDocEntries()
-	val currentIndex = remember(currentPath) { orderedEntries.indexOfFirst { it.path == currentPath } }
+	val currentIndex = remember(currentPath) { docEntries.indexOfFirst { it.path == currentPath } }
 	if (currentIndex == -1) return
 
 	Style(PageNavigationStyle)
@@ -173,7 +173,7 @@ fun PageNavigation(currentPath: String, publishDate: String?, modifiedDate: Stri
 			classes(PageNavigationStyle.navLinks)
 		}) {
 			if (currentIndex > 0) {
-				val prevEntry = orderedEntries[currentIndex - 1]
+				val prevEntry = docEntries[currentIndex - 1]
 				A(prevEntry.path, {
 					classes(PageNavigationStyle.navLink, PageNavigationStyle.prevPage)
 					title(prevEntry.navTitle)
@@ -183,8 +183,8 @@ fun PageNavigation(currentPath: String, publishDate: String?, modifiedDate: Stri
 				}
 			}
 
-			if (currentIndex < orderedEntries.size - 1) {
-				val nextEntry = orderedEntries[currentIndex + 1]
+			if (currentIndex < docEntries.size - 1) {
+				val nextEntry = docEntries[currentIndex + 1]
 				A(nextEntry.path, {
 					classes(PageNavigationStyle.navLink, PageNavigationStyle.nextPage)
 					title(nextEntry.navTitle)

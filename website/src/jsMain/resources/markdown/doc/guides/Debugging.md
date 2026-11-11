@@ -1,13 +1,12 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Debugging Kore Datapacks - From In-Game Errors Back to Kotlin
+title: "Debug Minecraft Datapacks: From Game Errors to Kotlin"
 nav-title: Debugging
 description: Trace an in-game datapack error back to the Kotlin that wrote it, read generated function names, validate the output with Spyglass and catch load errors in CI.
 keywords: kore debugging, datapack debugging, minecraft function error, failed to load function, spyglass datapack, packtest, debug function, generated_scopes
 date-created: 2026-10-07
-date-modified: 2026-10-21
+date-modified: 2026-11-11
 routeOverride: /docs/guides/debugging
-position: 10
 ---
 
 # Debugging a Kore datapack
@@ -142,7 +141,7 @@ with `-Dpacktest.auto -Dpacktest.auto.annotations`, it exits with the number of 
 resource load error as a GitHub annotation, so a pack that no longer loads fails the build. Its README holds a
 ready-to-copy workflow: point its `cp -r datapack ...` step at your Kore output folder.
 
-For gameplay tests, Kore generates the vanilla GameTest registries, see [Test Features](/docs/advanced/test-features).
+For gameplay tests, Kore generates the vanilla GameTest registries, see [GameTest](/docs/advanced/test-features).
 
 ## Common errors
 

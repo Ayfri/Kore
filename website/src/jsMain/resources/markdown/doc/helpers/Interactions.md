@@ -1,15 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
 title: Clickable Minecraft Interaction Entities
-nav-title: Interactions
+nav-title: Interactions & NPCs
 description: Make clickable Minecraft interaction entities with Kore, with right and left click callbacks generated as advancements and functions and no tick function.
 keywords: minecraft interaction entity, interaction entity, clickable entity, datapack click detection, right click, left click, player_interacted_with_entity, player_hurt_entity, datapack button, minecraft npc, clickable npc, shopkeeper npc, kore interaction
 date-created: 2026-10-22
-date-modified: 2026-10-22
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/interactions
 ---
 
-# Interactions
+# Interactions and NPCs
 
 An interaction (`minecraft:interaction`) is an invisible hitbox the game reports clicks on. It is the usual base for
 buttons, levers and clickable NPC areas in a datapack, since it needs no item, block or mob. Vanilla creates one with

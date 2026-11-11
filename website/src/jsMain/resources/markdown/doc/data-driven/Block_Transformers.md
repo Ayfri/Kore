@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Block Transformers - Strip, Scrape and Till Blocks with Items in Kore
+title: "Minecraft Block Transformers: Strip, Scrape and Till"
 nav-title: Block Transformers
-description: Define block transformer files for Minecraft 26.3+ with Kore's Kotlin DSL. Turn the clicked block into another one with rules, sounds, loot and particles, and link them to item components.
+description: Define block transformers for Minecraft 26.3+ in Kotlin that turn the clicked block into another, with rules, sounds, loot and particles.
 keywords: minecraft block transformer, datapack block_transformer, kore block transformer, custom axe strip logs datapack, block_transformer item component, custom hoe shovel datapack
 date-created: 2026-10-23
-date-modified: 2026-10-23
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/block-transformers
 ---
 
@@ -110,7 +110,7 @@ Inline rule lists on the item component aren't possible because the game only re
 
 ## See Also
 
-- [Components](/docs/concepts/components#block-transformer) - The `blockTransformer` item component
+- [Item Components](/docs/concepts/components#block-transformer) - The `blockTransformer` item component
 - [Features](/docs/data-driven/worldgen/features#block-state-providers) - Block state providers picking the new block state
 - [Loot Tables](/docs/data-driven/loot-tables) - The `loot` dropped by a rule
 

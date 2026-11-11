@@ -1,16 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: OOP Utilities
-nav-title: OOP Utilities
+title: "OOP Module: Gameplay Utilities for Datapacks"
+nav-title: OOP Module
 description: Overview of object-oriented gameplay utilities in the Kore OOP module - entities, teams, scoreboards, items, events, timers, spawners, and state machines.
 keywords: minecraft, datapack, kore, oop, entity, player, commands, teams, scoreboard, items, events, cooldown, bossbar, effects, timer, spawner, gamestate
 date-created: 2026-02-21
-date-modified: 2026-10-21
+date-modified: 2026-11-11
 routeOverride: /docs/oop/oop-utilities
-position: 0
 ---
 
-# OOP Utilities
+# OOP Module
 
 The OOP module provides high-level, object-oriented wrappers around Minecraft systems such as entities, teams,
 scoreboards, timers, and gameplay state.
@@ -28,26 +27,26 @@ dependencies {
 
 Generated resource names for OOP-specific features are centralized in `OopConstants` so they're easy to find and
 override.
-Helper-specific generated names now live in `HelpersConstants` inside the `helpers` module.
+Helper-specific generated names live in `HelpersConstants` inside the `helpers` module.
 
-Utility-style features such as renderers, math helpers, raycasts, areas, state delegates, and VFX now live in the
+Utility-style features such as renderers, math helpers, raycasts, areas, state delegates, and VFX live in the
 [`helpers` module](/docs/helpers/utilities).
 
 ## All Features
 
 - **[Boss Bars](/docs/oop/boss-bars)** - Register, configure, and manage boss bars.
-- **[Cooldowns](/docs/oop/cooldowns)** - Scoreboard-based cooldown system that decrements
-  every [tick](/docs/concepts/time).
 - **[Dynamic Strings](/docs/oop/dynamic-strings)** - NBT-backed string handles with a Kotlin-like API (substring, split, replace, trim, pad).
 - **[Entities & Players](/docs/oop/entities-and-players)** - Create entities and players, execute helpers, batch
-  commands, entity commands, and entity effects.
-- **[Events](/docs/oop/events)** - Advancement-based event system for player and entity actions.
+  commands, entity commands, entity effects, and [reusable spawner handles](/docs/oop/entities-and-players#spawners)
+  for summoning mobs.
+- **[Events](/docs/oop/events)** - Advancement-based event system for player and entity actions, plus
+  [world events](/docs/oop/events#world-events) for tick, weather, day/night, and interval triggers.
 - **[Game State Machine](/docs/oop/game-state-machine)** - Scoreboard-based state machine with transition helpers.
 - **[Items](/docs/oop/items)** - Object-oriented item creation and spawning.
-- **[Scoreboards](/docs/oop/scoreboards)** - Objective management and per-entity score operations.
-- **[Spawners](/docs/oop/spawners)** - Reusable entity spawner handles for summoning mobs.
+- **[OOP Scoreboards](/docs/oop/scoreboards)** - Objective management and per-entity score operations.
 - **[Teams](/docs/oop/teams)** - Object-oriented team management with colors, collision rules, and nametag visibility.
-- **[Timers](/docs/oop/timers)** - Scoreboard-based timers with optional boss bar integration.
+- **[Timers & Cooldowns](/docs/oop/timers)** - Scoreboard-based timers with optional boss bar integration, and
+  [cooldowns](/docs/oop/timers#cooldowns) that decrement every [tick](/docs/concepts/time).
 
 ## Why use `oop`
 

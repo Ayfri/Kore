@@ -1,19 +1,19 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Villager Trades - Custom Trade Sets & Merchant Tables in Kore
+title: "Minecraft Villager Trades: Custom Trade Sets"
 nav-title: Villager Trades
-description: Define custom villager trades and trade sets for Minecraft 26.1+ with Kore's type-safe Kotlin DSL. Configure items, prices, demand, and profession-level trade tables without hand-writing JSON.
+description: Define custom Minecraft 26.1+ villager trades and trade sets in Kotlin, with items, prices, demand and profession-level trade tables, no JSON by hand.
 keywords: minecraft villager trade, custom villager trades, datapack trade_set, datapack villager_trade, kore villager trades, minecraft merchant trades, custom trades datapack, profession trades, villager trade generator
 date-created: 2026-06-15
-date-modified: 2026-10-26
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/villager-trades
 ---
 
 # Villager Trades
 
-Villager trades are data-driven JSON files introduced in Minecraft Java Edition 26.1 that define
+Villager trades are data-driven JSON files that define
 what individual trades a villager can offer and how they are grouped into trade sets per profession level.
-This system fully replaces the old hardcoded trade lists and lets data packs control everything about
+This system lets data packs control everything about
 villager economies - what items are bought and sold, at what quantities, for how many uses, with what
 item modifier functions applied to the output, and under what conditions.
 
@@ -56,6 +56,10 @@ datapack.villagerTrade("wheat_for_emerald") {
     xp(1)
 }
 ```
+
+Here is a complete pack, the [villager trades example](/playground#example=villager-trades) of the playground, with two trades and a trade set, and the JSON files Kore generates for it:
+
+{{{ .components.doc.VillagerTradesExample }}}
 
 ### Item Slots
 

@@ -108,12 +108,23 @@ private object TextMergingVisitor : AbstractVisitor() {
 	}
 }
 
+/** A link to a `/docs/...` route (the page's own for a `#anchor` link) found in the page at [filePath], [line] being null without a source span. */
+internal data class DocLinkRef(val anchor: String?, val filePath: String, val line: Int?, val route: String)
+
+internal data class DocHeadingRef(val id: String, val level: Int, val text: String)
+
 /**
  * Writes a parsed doc page as the JSON array `DocContent` decodes in the site: a string is a text, `[tag, ...children]` an element, and the tags
  * starting with `!` are the other `DocNode`s (`!>` callout, `!a` link, `!c` code, `!d` aligned cell, `!h` heading, `!i` image, `!k` code block,
  * `!s` sprite, `!w` widget). A node the site can't draw fails the build, there is no fallback renderer.
  */
-internal class DocPageJson(private val filePath: String, private val widgets: MutableSet<String>) {
+internal class DocPageJson(
+	private val filePath: String,
+	private val headings: MutableList<DocHeadingRef>,
+	private val links: MutableList<DocLinkRef>,
+	private val path: String,
+	private val widgets: MutableSet<String>,
+) {
 	fun write(document: Node): String {
 		document.accept(SoftLineBreakConversionVisitor)
 		document.accept(TextMergingVisitor)
@@ -124,8 +135,10 @@ internal class DocPageJson(private val filePath: String, private val widgets: Mu
 	private fun element(tag: String, parent: Node?, vararg args: String): String =
 		(listOf(toJson(tag), *args) + parent?.docChildren().orEmpty().map(::node)).joinToString(",", "[", "]")
 
+	private val Node.line: Int?
+		get() = generateSequence(this) { it.parent }.firstNotNullOfOrNull { it.sourceSpans.firstOrNull() }?.lineIndex?.plus(1)
+
 	private fun Node.unsupported(what: String? = this::class.simpleName): Nothing {
-		val line = generateSequence(this) { it.parent }.firstNotNullOfOrNull { it.sourceSpans.firstOrNull() }?.lineIndex?.plus(1)
 		throw GradleException("Doc pages don't support $what (line $line of $filePath)")
 	}
 
@@ -137,10 +150,13 @@ internal class DocPageJson(private val filePath: String, private val widgets: Mu
 		is FencedCodeBlock -> element("!k", null, toJson(node.info?.takeIf { it.isNotBlank() }), toJson(node.literal))
 		is HardLineBreak -> element("br", node)
 		is Heading -> {
-			val id = node.children().joinToString("") {
+			val baseId = node.children().joinToString("") {
 				it.plainText().takeIf { text -> text.isNotBlank() }?.lowercase()?.replace(headingIdSeparator, "-").orEmpty()
 			}.trim('-')
+			/** A title repeated in the page gets `-1`, `-2`... appended, so the outline, the search and the links reach each heading. */
+			val id = generateSequence(0, Int::inc).map { if (it == 0) baseId else "$baseId-$it" }.first { candidate -> headings.none { it.id == candidate } }
 			val headingText = node.plainText()
+			if (id.isNotBlank()) headings += DocHeadingRef(id, node.level, headingText)
 			val icon = brandIcons.firstOrNull { (brand) -> brand in headingText }?.second
 			element("!h", node, node.level.toString(), toJson(id), toJson(icon))
 		}
@@ -163,7 +179,18 @@ internal class DocPageJson(private val filePath: String, private val widgets: Mu
 
 		is Link -> if (node.destination.substringBefore('#').endsWith(".md") && "://" !in node.destination) {
 			node.unsupported("the relative link ${node.destination}, link its /docs route")
-		} else element("!a", node, toJson(node.destination))
+		} else {
+			val route = node.destination.substringBefore('#').ifEmpty { path }
+			if (route.startsWith("/docs/")) {
+				links += DocLinkRef(
+					anchor = node.destination.substringAfter('#', "").ifEmpty { null },
+					filePath = filePath,
+					line = node.line,
+					route = route,
+				)
+			}
+			element("!a", node, toJson(node.destination))
+		}
 		is ListItem -> element("li", node)
 		is OrderedList -> element("ol", node)
 		is Paragraph -> element("p", node)

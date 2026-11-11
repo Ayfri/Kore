@@ -8,11 +8,13 @@ data class DocEntry(
 	val filePath: String,
 	val keywords: List<String>,
 	val navTitle: String,
-	val position: Int?,
 	val slugs: List<String>,
 	val title: String,
 ) {
 	val route = slugs.joinToString("/")
+
+	/** The route as the nav file and the site write it, with the leading slash. */
+	val path = "/$route"
 }
 
 private val stableMinecraftVersionRegex = Regex("""\d+\.\d+(\.\d+)?""")

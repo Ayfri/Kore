@@ -1,16 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Bindings
-nav-title: Bindings
-description: Import existing datapacks and generate Kotlin bindings.
+title: "Import an Existing Minecraft Datapack into Kotlin"
+nav-title: Importing Datapacks
+description: Import an existing Minecraft datapack and generate type-safe Kotlin bindings for its functions, resources and tags (experimental).
 keywords: kore, bindings, import, datapack, github, modrinth, curseforge
 date-created: 2026-01-23
-date-modified: 2026-10-21
+date-modified: 2026-11-11
 routeOverride: /docs/advanced/bindings
-position: 3
 ---
 
-# Bindings (Import Existing Datapacks)
+# Importing Datapacks
 
 > [!WARNING]
 > The bindings module is **experimental**. APIs and generated output may change without notice.
@@ -51,7 +50,7 @@ importDatapacks {
 		packagePrefix = "kore.dependencies"
 	}
 
-	github("pixigeko.minecraft-default-data:1.21.8") {
+	github("pixigeko.minecraft-default-data:{{mc.version}}") {
 		subPath = "data"
 	}
 }
@@ -169,7 +168,7 @@ Patterns:
 - `user.repo:tag:asset.zip`: Specific asset from a release.
 
 ```kotlin
-github("pixigeko.minecraft-default-data:1.21.8")
+github("pixigeko.minecraft-default-data:{{mc.version}}")
 ```
 
 ### Modrinth

@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Sulfur Cube Archetypes - Custom Sulfur Cube Behavior in Kore
+title: "Minecraft Sulfur Cube Archetypes: Custom Behavior"
 nav-title: Sulfur Cube Archetypes
-description: Define custom sulfur cube archetypes for Minecraft 26.2+ with Kore's Kotlin DSL. Configure attribute modifiers, buoyancy, contact damage, explosion, knockback and item contents.
+description: Define custom sulfur cube archetypes for Minecraft 26.2+ in Kotlin with attribute modifiers, buoyancy, contact damage, explosion and knockback.
 keywords: minecraft sulfur cube, datapack sulfur_cube_archetype, kore sulfur cube archetype, custom mob archetype datapack, sulfur cube attribute modifiers
 date-created: 2026-07-29
-date-modified: 2026-09-23
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/sulfur-cube-archetypes
 ---
 

@@ -1,13 +1,12 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Kore Cookbook - Practical Datapack Patterns in Kotlin
+title: "Datapack Cookbook: Practical Kotlin Patterns"
 nav-title: Cookbook
 description: "Working Kore patterns to copy: bootstrap and tick structure, reusable functions, selector and predicate helpers, scheduled actions, and module choice."
 keywords: minecraft datapack patterns, kore examples, kotlin datapack code, datapack bootstrap, reusable mcfunction, datapack selectors, scheduled function, kore cookbook
 date-created: 2026-04-21
-date-modified: 2026-08-05
+date-modified: 2026-11-11
 routeOverride: /docs/guides/cookbook
-position: 3
 ---
 
 # Cookbook
@@ -16,7 +15,7 @@ Short, self-contained answers to questions that come up in every real pack. Each
 Kore version, and says when to prefer it over the alternative.
 
 These are patterns, not a reference: each one links to the page that documents the API in full. If you are porting an
-existing hand-written pack, read [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore) first for the migration
+existing hand-written pack, read [Coming from Datapacks](/docs/guides/from-datapacks-to-kore) first for the migration
 strategy, then use this page for the individual pieces.
 
 ## Structure a pack: bootstrap vs tick
@@ -50,7 +49,7 @@ fun main() = dataPack("arena") {
 Registering objectives inside `tick` would work but wastes a command every tick; anything idempotent and one-time
 belongs in `load`.
 
-See [Functions](/docs/commands/functions) and [Creating a Datapack](/docs/guides/creating-a-datapack).
+See [Functions](/docs/commands/functions) and [Pack Setup & Output](/docs/guides/creating-a-datapack).
 
 ## Reuse logic as a real function or inlined
 
@@ -146,7 +145,7 @@ function("check_weapon") {
 
 Because the predicate is built from `arenaBlade`, changing the item cannot desynchronize the check.
 
-See [Components](/docs/concepts/components), [Predicates](/docs/data-driven/predicates) and
+See [Item Components](/docs/concepts/components), [Predicates](/docs/data-driven/predicates) and
 [Item Modifiers](/docs/data-driven/item-modifiers).
 
 ## Delay an action without duplicating it
@@ -173,7 +172,7 @@ function("trigger_explosion") {
 `schedule` needs a real function reference, which is exactly why this case justifies generating one rather than
 inlining.
 
-See [Commands](/docs/commands/commands), [Helpers Utilities](/docs/helpers/utilities) and
+See [Commands](/docs/commands/commands), [Helpers Module](/docs/helpers/utilities) and
 [Scheduler](/docs/helpers/scheduler).
 
 ## Pick the right module
@@ -191,7 +190,7 @@ Escalate only when the simpler layer starts hurting:
 The failure mode is reaching for `oop` on day one and wrapping everything in abstractions the pack never needed. Write
 it with `kore`, then move up when the duplication is real.
 
-See [Home](/docs/home), [Helpers Utilities](/docs/helpers/utilities) and [OOP Utilities](/docs/oop/oop-utilities).
+See [Introduction](/docs/home), [Helpers Module](/docs/helpers/utilities) and [OOP Module](/docs/oop/oop-utilities).
 
 ## Depend on an existing datapack
 
@@ -207,7 +206,7 @@ Import it with `bindings` and get typed Kotlin constants instead:
 Worth it for large internal libraries or third-party packs you track across versions - a renamed function then becomes a
 compile error rather than a silent no-op in-game.
 
-See [Bindings](/docs/advanced/bindings), which is **experimental**, and [Functions](/docs/commands/functions).
+See [Importing Datapacks](/docs/advanced/bindings), which is **experimental**, and [Functions](/docs/commands/functions).
 
 ## Principles behind these
 

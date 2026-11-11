@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Biomes
+title: "Custom Minecraft Biomes: Climate, Spawns and Features"
 nav-title: Biomes
 description: Define Minecraft biomes with climate, colors, mob spawns, carvers and features using Kore's type-safe Kotlin DSL.
 keywords: minecraft, datapack, kore, worldgen, biome, carver, spawner, biome effects, climate parameters
 date-created: 2026-02-03
-date-modified: 2026-10-26
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/worldgen/biomes
 ---
 
@@ -225,4 +225,4 @@ fun DataPack.highlandsBiome(treePlaced: PlacedFeatureArgument, orePlaced: Placed
 - [Dimensions](/docs/data-driven/worldgen/dimensions) - biome sources placing biomes in a world
 - [Environment Attributes](/docs/data-driven/worldgen/environment-attributes) - the full attribute reference
 - [Features](/docs/data-driven/worldgen/features) - the placed features a biome lists
-- [World Generation](/docs/data-driven/worldgen) - overview of the worldgen system
+- [Worldgen Overview](/docs/data-driven/worldgen) - overview of the worldgen system

@@ -1,15 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Trims
-nav-title: Trims
-description: Create custom armor trim materials and patterns with Kore's type-safe DSL
+title: "Minecraft Armor Trims: Custom Materials and Patterns"
+nav-title: Armor Trims
+description: Create custom Minecraft armor trim materials and patterns in Kotlin, with palette textures and in-game descriptions, and register them in a datapack.
 keywords: minecraft, datapack, kore, trims, armor, trim material, trim pattern, customization
 date-created: 2026-02-03
-date-modified: 2026-10-08
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/trims
 ---
 
-# Trims
+# Armor Trims
 
 Armor trims are a customization system that allows players to add decorative patterns to their armor pieces. Trims consist of two components:
 **materials** (which determine the color/texture) and **patterns** (which determine the shape/design). Kore provides type-safe DSL builders for creating custom trim materials and patterns.

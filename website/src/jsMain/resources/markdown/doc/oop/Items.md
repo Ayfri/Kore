@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Items
+title: "Minecraft Item Stacks: Give, Spawn and Serialize"
 nav-title: Items
-description: Object-oriented item creation, spawning, and NBT serialization with the Kore OOP module.
+description: Create item stacks once in Kotlin with the OOP module, then give them, spawn them as item entities or write them into NBT.
 keywords: minecraft, datapack, kore, oop, items, item stack, summon, give, nbt, data modify
 date-created: 2026-03-03
-date-modified: 2026-10-22
+date-modified: 2026-11-11
 routeOverride: /docs/oop/items
 ---
 
@@ -205,4 +205,4 @@ another.
 
 - [Entities & Players](/docs/oop/entities-and-players) - Give, replace, or spawn item stacks from entity-scoped helpers.
 - [Events](/docs/oop/events) - React to item use or consumption with event-driven logic.
-- [Components](/docs/concepts/components) - Define richer custom names, lore, and metadata for the items you build.
+- [Item Components](/docs/concepts/components) - Define richer custom names, lore, and metadata for the items you build.

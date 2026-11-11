@@ -1,0 +1,175 @@
+{
+	"sections": [
+		{
+			"icon": "Rocket",
+			"id": "start",
+			"pages": [
+				"/docs/home",
+				"/docs/getting-started",
+				"/docs/concepts/runtime-logic",
+				"/docs/guides/creating-a-datapack",
+				"/docs/guides/cookbook",
+				"/docs/oop/oop-utilities",
+				"/docs/helpers/utilities",
+				"/docs/guides/from-datapacks-to-kore",
+				"/docs/guides/why-kore",
+				"/docs/guides/version-support"
+			],
+			"title": "Get started"
+		},
+		{
+			"icon": "BookOpen",
+			"id": "guides",
+			"pages": [
+				"/docs/guides/gradle-plugin",
+				"/docs/guides/configuration",
+				"/docs/guides/debugging",
+				"/docs/guides/optimization",
+				"/docs/advanced/test-features",
+				"/docs/advanced/github-actions-publishing",
+				"/docs/advanced/bindings",
+				"/docs/guides/lantern-load",
+				"/docs/guides/fabric-resource-conditions",
+				"/docs/advanced/multiplatform",
+				"/docs/advanced/known-issues"
+			],
+			"title": "Guides"
+		},
+		{
+			"groups": [
+				{
+					"description": "Write functions and commands, target entities and test conditions.",
+					"pages": [
+						"/docs/commands/functions",
+						"/docs/commands/commands",
+						"/docs/commands/execute",
+						"/docs/concepts/selectors",
+						"/docs/commands/macros",
+						"/docs/data-driven/predicates",
+						"/docs/data-driven/tags",
+						"/docs/helpers/scheduler",
+						"/docs/concepts/time"
+					],
+					"sprite": "block/command_block_front",
+					"title": "Commands & logic"
+				},
+				{
+					"description": "Store numbers, NBT and strings, then compute with them.",
+					"pages": [
+						"/docs/concepts/scoreboards",
+						"/docs/oop/scoreboards",
+						"/docs/helpers/scoreboard-math",
+						"/docs/helpers/score-vectors",
+						"/docs/concepts/data-storage",
+						"/docs/concepts/nbts",
+						"/docs/helpers/nbt-paths",
+						"/docs/helpers/state-delegates",
+						"/docs/oop/dynamic-strings"
+					],
+					"sprite": "item/comparator",
+					"title": "Scores & data"
+				},
+				{
+					"description": "Format chat text and build dialogs, menus, sidebars and boss bars.",
+					"pages": [
+						"/docs/concepts/chat-components",
+						"/docs/concepts/colors",
+						"/docs/helpers/text-renderers",
+						"/docs/data-driven/dialogs",
+						"/docs/helpers/menus",
+						"/docs/helpers/conversations",
+						"/docs/helpers/sidebars",
+						"/docs/oop/boss-bars",
+						"/docs/helpers/inventory-manager"
+					],
+					"sprite": "item/writable_book",
+					"title": "Text & interfaces"
+				},
+				{
+					"description": "Custom items, recipes, loot, enchantments and trades.",
+					"pages": [
+						"/docs/concepts/components",
+						"/docs/oop/items",
+						"/docs/data-driven/recipes",
+						"/docs/data-driven/loot-tables",
+						"/docs/data-driven/item-modifiers",
+						"/docs/data-driven/enchantments",
+						"/docs/data-driven/villager-trades",
+						"/docs/data-driven/slot-sources",
+						"/docs/data-driven/trims",
+						"/docs/data-driven/block-transformers"
+					],
+					"sprite": "item/diamond_sword",
+					"title": "Items & loot"
+				},
+				{
+					"description": "Handle players and mobs, display entities, NPCs, raycasts and particles.",
+					"pages": [
+						"/docs/oop/entities-and-players",
+						"/docs/oop/teams",
+						"/docs/helpers/display-entities",
+						"/docs/helpers/mannequins",
+						"/docs/helpers/interactions",
+						"/docs/helpers/raycasts",
+						"/docs/helpers/vfx-particles",
+						"/docs/helpers/area",
+						"/docs/helpers/block-ids",
+						"/docs/data-driven/variants",
+						"/docs/data-driven/trial-spawners",
+						"/docs/data-driven/sulfur-cube-archetypes"
+					],
+					"sprite": "item/creeper_spawn_egg",
+					"title": "Entities & world"
+				},
+				{
+					"description": "React to what players do and drive timers, game states and world clocks.",
+					"pages": [
+						"/docs/data-driven/advancements",
+						"/docs/data-driven/advancements/triggers",
+						"/docs/oop/events",
+						"/docs/oop/timers",
+						"/docs/oop/game-state-machine",
+						"/docs/data-driven/world-clocks",
+						"/docs/data-driven/timelines"
+					],
+					"sprite": "item/clock_00",
+					"title": "Events & time"
+				},
+				{
+					"description": "Biomes, dimensions, structures, features and terrain noise.",
+					"pages": [
+						"/docs/data-driven/worldgen",
+						"/docs/data-driven/worldgen/structures",
+						"/docs/data-driven/worldgen/biomes",
+						"/docs/data-driven/worldgen/features",
+						"/docs/data-driven/worldgen/dimensions",
+						"/docs/data-driven/worldgen/carvers",
+						"/docs/data-driven/worldgen/noise",
+						"/docs/data-driven/worldgen/providers",
+						"/docs/data-driven/worldgen/block-predicates",
+						"/docs/data-driven/worldgen/environment-attributes",
+						"/docs/data-driven/worldgen/world-presets"
+					],
+					"sprite": "block/grass_block_side",
+					"title": "World generation"
+				}
+			],
+			"icon": "LibraryBig",
+			"id": "reference",
+			"title": "Reference"
+		},
+		{
+			"icon": "GitPullRequest",
+			"id": "contributing",
+			"pages": [
+				"/docs/contributing/contributing",
+				"/docs/contributing/architecture-and-patterns",
+				"/docs/contributing/arguments",
+				"/docs/contributing/creating-a-new-generator",
+				"/docs/contributing/generation-pipeline",
+				"/docs/contributing/ci-cd-and-releases"
+			],
+			"title": "Contributing"
+		}
+	]
+}

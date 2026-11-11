@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Loot Tables
+title: "Minecraft Loot Tables: Pools, Entries and Functions"
 nav-title: Loot Tables
 description: Create and customize Minecraft loot tables using Kore's type-safe Kotlin DSL for drops, container contents, fishing, and more.
 keywords: minecraft, datapack, kore, loot tables, pools, entries, item modifiers, drops
 date-created: 2025-08-11
-date-modified: 2026-10-26
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/loot-tables
 ---
 
@@ -15,8 +15,9 @@ Loot tables are JSON files that dictate what items should generate in various ga
 They control drops from mobs and blocks, contents of naturally generated containers (chests, barrels, dispensers),
 fishing rewards, archaeology brushing results, bartering exchanges, and more.
 
-The [loot table example](/playground#example=loot-table) of the playground runs in your browser and shows the JSON it
-generates.
+Here is a complete pack, the [loot table example](/playground#example=loot-table) of the playground, with the JSON files Kore generates for it:
+
+{{{ .components.doc.LootTableExample }}}
 
 ## Overview
 
@@ -441,7 +442,7 @@ contextIntProvider("always_add_one", 1)               // 1
 contextFloatProvider("always_one_and_a_half", 1.5f)   // 1.5
 ```
 
-The vanilla files are listed in `ContextIntProviders` and `ContextFloatProviders`, e.g. `ContextIntProviders.Compostable.LOW` for `minecraft:compostable/low`. Context providers, including the ones of other provider files, can reference a file of their family by its ID with `reference(id)`, see [Context provider IDs](#context-provider-ids). The item components `cooking_fuel`, `brewing_fuel` and `compostable` take a plain number or such an ID, see [Components](/docs/concepts/components#compostable). A file itself can't be a bare reference because the game reads it as an inline provider, so Kore throws when generating one.
+The vanilla files are listed in `ContextIntProviders` and `ContextFloatProviders`, e.g. `ContextIntProviders.Compostable.LOW` for `minecraft:compostable/low`. Context providers, including the ones of other provider files, can reference a file of their family by its ID with `reference(id)`, see [Context provider IDs](#context-provider-ids). The item components `cooking_fuel`, `brewing_fuel` and `compostable` take a plain number or such an ID, see [Item Components](/docs/concepts/components#compostable). A file itself can't be a bare reference because the game reads it as an inline provider, so Kore throws when generating one.
 
 ## Entries
 

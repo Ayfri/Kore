@@ -1,15 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Minecraft Noise Settings, Density Functions & Material Rules with Kore
-nav-title: Noise
+title: Minecraft Noise Settings and Density Functions
+nav-title: Noise & Terrain
 description: Shape Minecraft terrain from Kotlin - noise definitions, density functions, noise routers and material rules, fully type-safe with Kore.
 keywords: minecraft datapack, kore, worldgen, noise settings, density function, noise router, material rule, terrain generation, perlin noise, octaves
 date-created: 2026-02-03
-date-modified: 2026-10-23
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/worldgen/noise
 ---
 
-# Noise & Terrain
+# Noise and Terrain
 
 Noise, density functions and noise settings are the three layers that shape Minecraft terrain. They build on each other in that order:
 
@@ -475,7 +475,7 @@ noiseRouter {
 Unset fields serialize as `0.0`, which means flat, featureless terrain - so a hand-written router usually starts from the vanilla density
 functions in the generated `DensityFunctions` object.
 
-`finalDensity` no longer adds the `minecraft:beardifier` on its own, so terrain doesn't blend into structures unless the density function
+`finalDensity` doesn't add the `minecraft:beardifier` on its own, so terrain doesn't blend into structures unless the density function
 does it. A pack reusing vanilla terrain adds it, as the vanilla overworld does with an `add` whose `right` is `{ "type": "minecraft:beardifier" }`:
 
 ```kotlin
@@ -657,5 +657,5 @@ settings wiring them together, and the dimension pointing at the result.
 - [Biomes](/docs/data-driven/worldgen/biomes) - the biomes a noise generator distributes over the terrain
 - [Carvers](/docs/data-driven/worldgen/carvers) - the caves cut out of the terrain afterwards
 - [Dimensions](/docs/data-driven/worldgen/dimensions) - the dimension pointing at noise settings
-- [Providers](/docs/data-driven/worldgen/providers) - the vertical anchors used by material rule conditions
-- [World Generation](/docs/data-driven/worldgen) - overview of the worldgen system
+- [Height & Number Providers](/docs/data-driven/worldgen/providers) - the vertical anchors used by material rule conditions
+- [Worldgen Overview](/docs/data-driven/worldgen) - overview of the worldgen system

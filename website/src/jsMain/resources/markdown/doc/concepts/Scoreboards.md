@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Scoreboards
+title: "Datapack Scoreboards: Objectives, Players, Sidebars"
 nav-title: Scoreboards
-description: A guide for managing scoreboards in a Minecraft datapack using Kore.
+description: Create scoreboard objectives, set and operate on player scores and show them in a sidebar in a Minecraft datapack, all in Kotlin.
 keywords: minecraft, datapack, kore, guide, scoreboards
 date-created: 2024-04-06
-date-modified: 2026-09-23
+date-modified: 2026-11-11
 routeOverride: /docs/concepts/scoreboards
 ---
 
@@ -57,6 +57,10 @@ scoreboard {
 	}
 }
 ```
+
+Here is a complete pack, the [scoreboards example](/playground#example=scoreboards) of the playground, with an objective, its display and score operations, and the commands Kore generates for it:
+
+{{{ .components.doc.ScoreboardsExample }}}
 
 ## Manage players
 

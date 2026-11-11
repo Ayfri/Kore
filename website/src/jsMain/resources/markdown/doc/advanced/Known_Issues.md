@@ -1,29 +1,28 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Known Issues
+title: "Known Issues and Limits of the Kotlin Datapack DSL"
 nav-title: Known Issues
 description: Kore-focused limitations, documented DSL constraints, and generation rough edges with links to docs and source.
 keywords: kore, guide, documentation, known issues, compatibility, limitations, workarounds
 date-created: 2025-08-27
-date-modified: 2026-10-23
+date-modified: 2026-11-11
 routeOverride: /docs/advanced/known-issues
 ---
 
 # Known issues and compatibility
 
-This page lists **limitations and rough edges that touch Kore directly**: the `kore` module, **`bindings`**, and *
-*`helpers`** where Kore documents behavior. It is not a general Minecraft gameplay reference.
+This page lists **limitations and rough edges that touch Kore directly**: the `kore` module, **`bindings`**, and **`helpers`** where Kore documents behavior. It is not a general Minecraft gameplay reference.
 
 Each item is tagged:
 
 | Category                        | Meaning                                                                                                                                  |
 |---------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
 | **Kore limitation**             | Kore or a dependency Kore wires in (for example [knbt](https://github.com/BenWoodworth/knbt)) cannot express or round-trip the case yet. |
-| **Documented DSL / helper cap** | Behavior is spelled out in Kore’s own command or helper docs (often because the vanilla command format or text API is narrow).           |
+| **Documented DSL / helper cap** | Behavior is spelled out in Kore's own command or helper docs (often because the vanilla command format or text API is narrow).           |
 | **Generation rough edge**       | `generate()` / `generateZip()` / merge paths behave as implemented; surprising until you read the generation docs.                       |
 
 For the high-level "what Kore does not include,"
-see [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore#what-kore-will-not-do-for-you).
+see [Coming from Datapacks](/docs/guides/from-datapacks-to-kore#what-kore-will-not-do-for-you).
 
 ---
 
@@ -34,13 +33,11 @@ see [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore#what-kore-will-
 **Category:** Kore limitation
 
 Kore builds NBT and SNBT through **[knbt](https://github.com/BenWoodworth/knbt)** (`StringifiedNbt` and builders). Entry
-points include [
-`NbtTagUtils.kt`](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/utils/NbtTagUtils.kt)
+points include [`NbtTagUtils.kt`](https://github.com/Ayfri/Kore/blob/master/kore/src/commonMain/kotlin/io/github/ayfri/kore/utils/NbtTagUtils.kt)
 and the `nbt { }` / `toSnbt()` helpers used across commands and components.
 
-For normal day-to-day usage and examples, start with [NBTs](/docs/concepts/nbts); this section focuses on limitations
-and
-workarounds.
+For normal day-to-day usage and examples, start with [NBT](/docs/concepts/nbts); this section focuses on limitations
+and workarounds.
 
 Implications:
 
@@ -48,7 +45,7 @@ Implications:
   but it means you cannot build a single list that mixes unrelated tag kinds through the normal DSL. See
   the [knbt README](https://github.com/BenWoodworth/knbt/blob/main/README.md) (`NbtList` description).
 - **Exotic SNBT text:** Some SNBT spellings or parser extensions you might see in external tools are **not** necessarily
-  available through Kore’s knbt-backed path. Prefer compounds, homogeneous lists, and literals Kore’s builders support.
+  available through Kore's knbt-backed path. Prefer compounds, homogeneous lists, and literals Kore's builders support.
 
 **Workaround:** Emit a **`literal("...")`** only when you must hand-craft a fragment, or post-process generated files.
 Upgrading or patching **[knbt](https://github.com/BenWoodworth/knbt)** (Kore pins a version in [
@@ -60,8 +57,8 @@ for format-level fixes.
 **Category:** Kore limitation
 
 Kore generates **datapacks** only (`data/`, functions, JSON registries, `pack.mcmeta`). It does **not** emit **resource
-packs** (`assets/`). That scope is stated on the site (for example [Home](/docs/home)) and
-in [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore#what-kore-will-not-do-for-you).
+packs** (`assets/`). That scope is stated on the site (for example [Introduction](/docs/home)) and
+in [Coming from Datapacks](/docs/guides/from-datapacks-to-kore#what-kore-will-not-do-for-you).
 
 **Workaround:** Maintain a separate resource-pack project or tooling; you can still keep both in one Gradle repo.
 
@@ -69,16 +66,16 @@ in [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore#what-kore-will-n
 
 **Category:** Kore limitation
 
-The **`bindings`** module is **experimental**. Official docs: [Bindings](/docs/advanced/bindings). Roadmap and design
+The **`bindings`** module is **experimental**. Official docs: [Importing Datapacks](/docs/advanced/bindings). Roadmap and design
 discussion: [GitHub #176](https://github.com/Ayfri/Kore/issues/176).
 
-Notable constraints from Kore’s own docs and README:
+Notable constraints from Kore's own docs and README:
 
 - Generated APIs may **change** between Kore versions; pin versions and review diffs.
 - **Unknown resource types** are **skipped** so codegen stays
   valid ([Bindings troubleshooting](/docs/advanced/bindings#troubleshooting)).
 - **Macros** in imported `.mcfunction` files are detected via **`$()`-style patterns**, not a full Minecraft
-  parser ([Bindings](/docs/advanced/bindings)).
+  parser ([Importing Datapacks](/docs/advanced/bindings)).
 - **CurseForge** downloads need a **CurseForge API key**; **GitHub** may need a token for rate
   limits ([Download sources](/docs/advanced/bindings#download-sources)).
 
@@ -97,8 +94,7 @@ Decoding support varies by serializer:
 - **Item components** (`ComponentsSerializer`) decode **generically**: each entry becomes a raw `CustomComponent` keyed
   by its component name. This round-trips, but the values stay opaque instead of becoming their typed counterparts (such
   as `DamageComponent`), because `Component` is not a sealed hierarchy and has no name to serializer registry to
-  dispatch
-  on. Typed item-component decoding would require that registry (ideally generated).
+  dispatch on. Typed item-component decoding would require that registry (ideally generated).
 - Book **page** serializers stay **write-only**: they encode what you build in Kotlin but do not decode vanilla
   JSON/SNBT.
 
@@ -112,10 +108,10 @@ Decoding support varies by serializer:
 
 When you define **[custom components](/docs/concepts/components)** backed by NBT, property names sometimes need an
 explicit **`@SerialName("vanilla_json_key")`** because the **KNBT** stack does not always follow the same naming path as
-Kore’s JSON `namingStrategy` for that shape. The guide shows this in context (for example the `UseComponent` example
+Kore's JSON `namingStrategy` for that shape. The guide shows this in context (for example the `UseComponent` example
 with `durability_damages`).
 
-**Workaround:** Copy patterns from [Components](/docs/concepts/components) and match the keys your target **pack format** expects (use Minecraft’s registry JSON or Kore’s generators as reference, not guesswork).
+**Workaround:** Copy patterns from [Item Components](/docs/concepts/components) and match the keys your target **pack format** expects (use Minecraft's registry JSON or Kore's generators as reference, not guesswork).
 
 ---
 
@@ -127,7 +123,7 @@ These are **not Kore bugs**; Kore documents them so authors know what the DSL wi
 
 **Category:** Documented DSL / helper cap
 
-[Macros](/docs/commands/macros) require **Minecraft 1.20.2+** for the feature itself. Kore’s doc lists DSL limits:
+[Macros](/docs/commands/macros) have DSL limits that Kore's doc lists:
 macros only in **functions**, **no type checking**, and macros are **not** threaded through every possible command
 argument slot.
 
@@ -137,9 +133,9 @@ argument slot.
 
 **Category:** Documented DSL / helper cap
 
-The [Markdown renderer](/docs/helpers/markdown-renderer) turns Markdown into **text components**. The helper lists
+The [Markdown renderer](/docs/helpers/text-renderers#markdown) turns Markdown into **text components**. The helper lists
 features Minecraft **cannot** represent (images, tables, fenced code blocks, etc.)
-in [Not supported (Minecraft limitations)](/docs/helpers/markdown-renderer#not-supported-minecraft-limitations).
+in [Not supported (Minecraft limitations)](/docs/helpers/text-renderers#not-supported-minecraft-limitations).
 
 **Workaround:** Stay in the **supported** subset documented on that page, or build **`textComponent`** trees by hand.
 
@@ -148,7 +144,7 @@ in [Not supported (Minecraft limitations)](/docs/helpers/markdown-renderer#not-s
 | Need                  | Where to look                                                                            |
 |-----------------------|------------------------------------------------------------------------------------------|
 | Tune JSON output      | [Configuration](/docs/guides/configuration) (`prettyPrint`, comments, paths)             |
-| Folder vs zip vs jar  | [Creating A Datapack - Generation](/docs/guides/creating-a-datapack#generating-output)          |
-| Import external packs | [Bindings](/docs/advanced/bindings)                                                      |
-| Module layout         | [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore)                            |
+| Folder vs zip vs jar  | [Pack Setup & Output - Generation](/docs/guides/creating-a-datapack#generating-output)          |
+| Import external packs | [Importing Datapacks](/docs/advanced/bindings)                                                      |
+| Module layout         | [Coming from Datapacks](/docs/guides/from-datapacks-to-kore)                            |
 | Report a bug or gap   | [Kore on GitHub](https://github.com/Ayfri/Kore/issues) with pack format and Kore version |

@@ -1,18 +1,18 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Dialogs
+title: "Minecraft Dialogs: Interactive Screens in Kotlin"
 nav-title: Dialogs
-description: Create interactive dialog screens in Minecraft with Kore's comprehensive dialog system.
+description: Build Minecraft dialog screens in Kotlin with body elements, input controls, action buttons and nested dialogs, and open them from commands.
 keywords: minecraft, datapack, kore, dialogs, ui, interactive, forms, confirmation, notice
 date-created: 2025-09-18
-date-modified: 2026-10-21
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/dialogs
 ---
 
 # Dialogs
 
 Minecraft includes a powerful dialog system that allows creating interactive modal windows for displaying information and receiving player
-input. Dialogs are native Minecraft features introduced in Java Edition 1.21.6 that enable sophisticated user interfaces within the game.
+input. Dialogs are native Minecraft features that enable sophisticated user interfaces within the game.
 With **Kore**, you can easily create and manage these dialogs using a comprehensive Kotlin DSL that maps directly to Minecraft's dialog
 format.
 
@@ -70,7 +70,7 @@ dialogs {
 
 ## Dialog Types
 
-Minecraft currently supports five different dialog types:
+Minecraft supports five different dialog types:
 
 ### Confirmation Dialog
 
@@ -103,6 +103,10 @@ val confirmDialog = dialogBuilder.confirmation("delete_world", "Delete World?") 
 ```
 
 {{{ .components.mc.ConfirmationDialogMockup }}}
+
+Here is a complete pack, the [dialogs example](/playground#example=dialogs) of the playground, with a confirmation dialog and the function opening it, and the files Kore generates for it:
+
+{{{ .components.doc.DialogsExample }}}
 
 ### Notice Dialog
 
@@ -618,5 +622,5 @@ load {
 ## See also
 
 - [Advancements](/docs/data-driven/advancements) - Create custom conditions and rewards for dialogs
-- [Components](/docs/concepts/components) - Learn about the component system used in Kore
+- [Item Components](/docs/concepts/components) - Learn about the component system used in Kore
 - [Predicates](/docs/data-driven/predicates) - Create custom conditions for dialogs

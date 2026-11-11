@@ -1,15 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: TimeNumber - Minecraft Ticks, Seconds & Days in Kore
-nav-title: Time
-description: Work with Minecraft time in Kore using TimeNumber. Type-safe ticks, seconds, and days with arithmetic, conversions, and integration with commands, schedulers, and timers.
+title: "Minecraft Time Units: Ticks, Seconds and Days"
+nav-title: Time Units
+description: Convert and combine Minecraft ticks, seconds and days with the typed TimeNumber in Kotlin, for commands, schedulers and timers.
 keywords: minecraft time, ticks to seconds, minecraft tick timer, kore TimeNumber, datapack duration, tick conversion, minecraft time command, schedule delay, minecraft day cycle, time arithmetic
 date-created: 2026-06-16
-date-modified: 2026-10-22
+date-modified: 2026-11-11
 routeOverride: /docs/concepts/time
 ---
 
-# Overview
+# Time Units
 
 Minecraft time is measured in **[ticks](https://minecraft.wiki/w/Tick)** (20 ticks = 1 second, 24 000 ticks = 1 day).
 Kore models this with `TimeNumber`,
@@ -96,6 +96,10 @@ oneDay.inSeconds()        // TimeNumber(1200.0, SECONDS)
 100.ticks.toSeconds()  // TimeNumber(100.0, SECONDS) - still 100, just retagged as "s"
 ```
 
+Enter a duration to see it in every unit, and how a command prints it.
+
+{{{ .components.doc.TimeConverter }}}
+
 ## Usage in commands
 
 Any command that takes a duration accepts `TimeNumber` directly:
@@ -121,6 +125,11 @@ weatherClear(30.seconds)
 // worldborder grow
 worldBorder.add(10.0, 200.ticks)
 ```
+
+Here is a complete pack, the [scheduling example](/playground#example=scheduling) of the playground, which warns players then
+summons TNT 5 seconds later, with the commands Kore generates for it:
+
+{{{ .components.doc.SchedulingExample }}}
 
 ## Further reading
 

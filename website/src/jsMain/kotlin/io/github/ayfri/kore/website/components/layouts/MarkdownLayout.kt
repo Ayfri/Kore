@@ -6,6 +6,7 @@ import com.varabyte.kobweb.compose.css.functions.blur
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideCopy
 import com.varabyte.kobweb.silk.components.icons.lucide.LucidePanelLeftOpen
+import com.varabyte.kobweb.silk.components.icons.lucide.LucideShare2
 import com.varabyte.kobwebx.markdown.markdown
 import io.github.ayfri.kore.website.CodeThemeStyle
 import io.github.ayfri.kore.website.GlobalStyle
@@ -39,6 +40,7 @@ fun MarkdownLayout(@Suppress("UNUSED_PARAMETER") content: @Composable () -> Unit
 	Style(CalloutStyle)
 	Style(DocControlsStyle)
 	Style(DocMockupsStyle)
+	Style(ExampleEmbedStyle)
 	Style(MarkdownLayoutStyle)
 	Style(McPlayerModelStyle)
 	Style(McSpriteStyle)
@@ -56,17 +58,27 @@ fun MarkdownLayout(@Suppress("UNUSED_PARAMETER") content: @Composable () -> Unit
 
 	window.onEvents("resize" to { _: Event -> onMobile = window.innerWidth < MOBILE_BREAKPOINT_PX })
 
-	val copyMarkdownScope = rememberCoroutineScope()
+	val copyScope = rememberCoroutineScope()
 	val markdownResourcePath = context.markdown!!.path
-	val slugs = context.route.path.split("/").drop(1)
+	val navTitle = markdownData["nav-title"]?.get(0)
 
+	var copyToast by remember { mutableStateOf<String?>(null) }
 	var copyToastRevision by remember { mutableIntStateOf(0) }
-	var copyToastVisible by remember { mutableStateOf(false) }
 
 	LaunchedEffect(copyToastRevision) {
 		if (copyToastRevision == 0) return@LaunchedEffect
 		delay(2.seconds)
-		copyToastVisible = false
+		copyToast = null
+	}
+
+	fun copy(toast: String, text: suspend () -> String) {
+		copyScope.launch {
+			runCatching {
+				window.navigator.clipboard.writeText(text()).await()
+				copyToast = toast
+				copyToastRevision++
+			}.onFailure { console.error(it) }
+		}
 	}
 
 	// Set SEO metadata
@@ -80,11 +92,14 @@ fun MarkdownLayout(@Suppress("UNUSED_PARAMETER") content: @Composable () -> Unit
 			modifiedDate = modifiedDate,
 			keywords = markdownData["keywords"]?.get(0) ?: "",
 			path = context.route.path,
-			slugs = slugs
+			crumbs = listOfNotNull(
+				docLocation(context.route.path)?.section?.let { it.title to "$baseUrl${it.firstPage.path}" },
+				navTitle?.let { it to "$baseUrl${context.route.path}" },
+			)
 		)
 	}
 
-	PageLayout(markdownData["nav-title"]?.get(0) ?: "Untitled", markdownPath = context.route.path) {
+	PageLayout(markdownData["title"]?.get(0) ?: navTitle ?: "Untitled", markdownPath = context.route.path) {
 		Button({
 			classes(MarkdownLayoutStyle.revealButton)
 			onClick { revealed = !revealed }
@@ -99,47 +114,7 @@ fun MarkdownLayout(@Suppress("UNUSED_PARAMETER") content: @Composable () -> Unit
 		}) {
 			// Kept in the composition body so it runs after `PageLayout` applied the generic site description.
 			markdownData["description"]?.get(0)?.let(::setDescription)
-			setImage(context.route.path.removePrefix("/"), "${markdownData["nav-title"]?.get(0)} | Kore documentation")
-
-			Div({
-				classes(MarkdownLayoutStyle.breadcrumbRow)
-			}) {
-				Breadcrumbs(slugs.drop(1))
-
-				Div({
-					classes(MarkdownLayoutStyle.copyButtonWrap)
-				}) {
-					if (copyToastVisible) {
-						Div({
-							attr("aria-live", "polite")
-							attr("role", "status")
-							classes(MarkdownLayoutStyle.copyToast)
-						}) {
-							Text("Copied")
-						}
-					}
-
-					Button({
-						attr("aria-label", "Copy Page")
-						attr("title", "Copy Page")
-						classes(MarkdownLayoutStyle.copyMarkdownButton)
-						onClick {
-							copyMarkdownScope.launch {
-								runCatching {
-									val sources = loadMarkdownSources()
-									val text = sources[markdownResourcePath]
-										?: error("No markdown for path: $markdownResourcePath")
-									window.navigator.clipboard.writeText(text).await()
-									copyToastVisible = true
-									copyToastRevision++
-								}.onFailure { console.error(it) }
-							}
-						}
-					}) {
-						LucideCopy()
-					}
-				}
-			}
+			setImage(context.route.path.removePrefix("/"), "$navTitle | Kore documentation")
 
 			if (onMobile) {
 				Div({
@@ -154,6 +129,48 @@ fun MarkdownLayout(@Suppress("UNUSED_PARAMETER") content: @Composable () -> Unit
 				Div({
 					classes(MarkdownLayoutStyle.mainContent)
 				}) {
+					Div({
+						classes(MarkdownLayoutStyle.breadcrumbRow)
+					}) {
+						Breadcrumbs(context.route.path)
+
+						Div({
+							classes(MarkdownLayoutStyle.pageActions)
+						}) {
+							copyToast?.let { toast ->
+								Div({
+									attr("aria-live", "polite")
+									attr("role", "status")
+									classes(MarkdownLayoutStyle.copyToast)
+								}) {
+									Text(toast)
+								}
+							}
+
+							Button({
+								attr("aria-label", "Copy page as Markdown")
+								attr("title", "Copy page as Markdown")
+								classes(MarkdownLayoutStyle.pageAction)
+								onClick {
+									copy("Markdown copied") {
+										loadMarkdownSources()[markdownResourcePath] ?: error("No markdown for path: $markdownResourcePath")
+									}
+								}
+							}) {
+								LucideCopy()
+							}
+
+							Button({
+								attr("aria-label", "Share: copy the link to this page")
+								attr("title", "Share: copy the link to this page")
+								classes(MarkdownLayoutStyle.pageAction)
+								onClick { copy("Link copied") { window.location.href } }
+							}) {
+								LucideShare2()
+							}
+						}
+					}
+
 					DocContent(context.route.path)
 
 					PageNavigation(
@@ -285,13 +302,13 @@ object MarkdownLayoutStyle : StyleSheet() {
 		}
 	}
 
-	val copyButtonWrap by style {
-		display(DisplayStyle.InlineBlock)
-		marginRight(22.percent)
+	val pageActions by style {
+		display(DisplayStyle.Flex)
+		gap(0.4.cssRem)
 		position(Position.Relative)
 	}
 
-	val copyMarkdownButton by style {
+	val pageAction by style {
 		alignItems(AlignItems.Center)
 		backgroundColor(GlobalStyle.secondaryBackgroundColor)
 		border(1.px, LineStyle.Solid, rgba(255, 255, 255, 0.28))
@@ -454,7 +471,8 @@ object MarkdownLayoutStyle : StyleSheet() {
 		justifyContent(JustifyContent.FlexStart)
 		gap(0.5.cssRem)
 		padding(0.5.cssRem)
-		scrollMarginTop(1.5.cssRem)
+		/** The sticky site header is 4.5rem tall, the rest keeps some air above the heading an anchor scrolls to. */
+		scrollMarginTop(5.5.cssRem)
 
 		smMax(self) {
 			padding(0.35.cssRem)

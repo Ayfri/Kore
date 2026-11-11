@@ -1,15 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Colors
+title: "Minecraft Colors: Named, RGB, ARGB and Dye Colors"
 nav-title: Colors
 description: Guide to using colors in Kore, including named colors, RGB/ARGB, dye colors, and how different contexts serialize them.
 keywords: minecraft, kore, colors, rgb, argb, dyes, components, particles
 date-created: 2025-08-11
-date-modified: 2026-10-22
+date-modified: 2026-11-11
 routeOverride: /docs/concepts/colors
 ---
 
-# Overview
+# Colors
 
 Kore provides a unified `Color` API that covers three families of colors used by Minecraft:
 
@@ -23,9 +23,13 @@ For the vanilla reference on color behavior, see the [Minecraft Wiki - Color](ht
 
 - `Color` (sealed interface): umbrella type accepted by most helpers.
 - `FormattingColor`: named chat/formatting colors (e.g. `Color.RED`, `Color.AQUA`).
-- `BossBarColor`: bossbar’s named colors.
+- `BossBarColor`: bossbar's named colors.
 - `RGB` / `ARGB`: numeric colors. `RGB` is `#rrggbb`, `ARGB` is `#aarrggbb`.
 - `DyeColors`: 16 dye colors (white, orange, magenta, …, black) for collars, shulkers, sheep, tropical fish, etc.
+
+Every named chat color as the game draws it, click one to copy its Kotlin name.
+
+{{{ .components.doc.ChatColorPalette }}}
 
 Helpers to create numeric colors:
 
@@ -149,7 +153,7 @@ Different Minecraft systems expect colors in different formats. Kore picks the r
 	  fun setColor(color: BossBarColor) = fn.addLine(..., literal("color"), color)
 	  ```
 
-## Dye colors and where they’re used
+## Dye colors and where they're used
 
 `DyeColors` are used for entity variants and certain item/entity data components:
 

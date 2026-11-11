@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Minecraft Commands in Kore - Type-Safe Command DSL
+title: Minecraft Commands as a Type-Safe Kotlin DSL
 nav-title: Commands
-description: Every Minecraft command in a type-safe Kotlin DSL. From /say, /teleport, and /give to /execute, /data, /scoreboard, and /summon -- all with code examples and generated mcfunction output.
+description: Write any Minecraft command in type-safe Kotlin, from /say, /teleport and /give to /execute, /data and /summon, with the generated mcfunction output.
 keywords: minecraft commands, kore commands, kotlin commands dsl, mcfunction generator, execute command, data command, teleport command, summon command, minecraft command builder, type-safe commands
 date-created: 2026-02-03
-date-modified: 2026-10-24
+date-modified: 2026-11-11
 routeOverride: /docs/commands/commands
 ---
 
@@ -69,7 +69,7 @@ teleport @s 0 100 0 0 90
 
 The
 `give` command adds items directly to a player's inventory. If the inventory is full, items drop on the ground. You can
-specify item count and use [Components](/docs/concepts/components) for custom item data.
+specify item count and use [Item Components](/docs/concepts/components) for custom item data.
 
 ```kotlin
 function("give_items") {
@@ -353,7 +353,7 @@ builds the `Item` compound for you and exposes the common entity tags (`Motion`,
 
 Higher-level spawning options:
 
-- [Spawners](/docs/oop/spawners) - reusable named spawner handles with a fixed type and position.
+- [Spawners](/docs/oop/entities-and-players#spawners) - reusable named spawner handles with a fixed type and position.
 - [Display Entities](/docs/helpers/display-entities) - block, item, and text displays with transformations and interpolation.
 - [Mannequins](/docs/helpers/mannequins) - posable player-model entities.
 
@@ -924,7 +924,7 @@ function("data_merge") {
 }
 ```
 
-This `merge { ... }` block uses the same NBT builder described in [NBTs](/docs/concepts/nbts), so you can reuse the same
+This `merge { ... }` block uses the same NBT builder described in [NBT](/docs/concepts/nbts), so you can reuse the same
 assignment patterns in commands, predicates, and chat-related APIs.
 
 Generated output:

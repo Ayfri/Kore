@@ -357,7 +357,7 @@ val featureCategories = listOf(
 		items = listOf(
 			FeatureItem("Entities & players", "Selector-backed handles with commands, effects and execute helpers built in.", "/docs/oop/entities-and-players"),
 			FeatureItem("Events", "React to player and entity actions through advancement-based listeners.", "/docs/oop/events"),
-			FeatureItem("World events", "Tick, weather and day/night triggers plus configurable intervals.", "/docs/oop/world-events"),
+			FeatureItem("World events", "Tick, weather and day/night triggers plus configurable intervals.", "/docs/oop/events#world-events"),
 			FeatureItem("Game state machine", "Register states, transition between them and run hooks on change.", "/docs/oop/game-state-machine"),
 			FeatureItem("Timers & cooldowns", "Countdown timers, boss bar timers and per-player cooldowns.", "/docs/oop/timers"),
 			FeatureItem("Teams, scoreboards & boss bars", "Create, configure and update them through typed handles and operators.", "/docs/oop/teams"),
@@ -386,7 +386,7 @@ val featureCategories = listOf(
 			FeatureItem("Inventory manager", "Listen to slot events and control player or block containers.", "/docs/helpers/inventory-manager"),
 			FeatureItem("VFX particles", "Circles, lines, spheres, spirals and helixes in world, relative or local space.", "/docs/helpers/vfx-particles", scene = 0),
 			FeatureItem("Displays & mannequins", "Block, item and text displays with transformations and interpolation, plus mannequins.", "/docs/helpers/display-entities"),
-			FeatureItem("Text renderers", "Turn Markdown, MiniMessage or ANSI text into chat components.", "/docs/helpers/minimessage-renderer"),
+			FeatureItem("Text renderers", "Turn Markdown, MiniMessage or ANSI text into chat components.", "/docs/helpers/text-renderers"),
 			FeatureItem("Areas & NBT paths", "3D bounding boxes with spatial queries, and typed NBT paths.", "/docs/helpers/area"),
 		),
 	),

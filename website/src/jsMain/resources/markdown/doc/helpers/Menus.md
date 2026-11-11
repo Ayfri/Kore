@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Minecraft Datapack Menus - Interactive Dialog GUIs with Kore
+title: "Minecraft Datapack Menus: Dialog-Based GUIs"
 nav-title: Menus
 description: "Build interactive Minecraft menus from dialogs with Kore: buttons running functions for any player, sub-pages, links, pause screen and Smithed menu."
 keywords: minecraft menu, datapack menu, dialog menu, datapack gui, minecraft dialog, trigger command, smithed data pack menu, pause screen, kore menu
 date-created: 2026-09-23
-date-modified: 2026-10-07
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/menus
 ---
 
@@ -44,6 +44,10 @@ function("open_kits") { kits.open() }
 ```
 
 {{{ .components.mc.KitsMenuMockup }}}
+
+Here is a complete pack, the [dialog menu example](/playground#example=dialog-menu) of the playground, with the kits menu, its dialogs and its dispatch functions, and the files Kore generates for it:
+
+{{{ .components.doc.DialogMenuExample }}}
 
 > [!FOOTPRINT]
 > - **Objectives:** `<pack>.menu.<name>`, with the `trigger` criterion.

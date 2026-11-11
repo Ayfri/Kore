@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Teams
+title: "Minecraft Teams: Create and Manage Teams in Kotlin"
 nav-title: Teams
-description: Object-oriented team management with the Kore OOP module - create, configure, and manage Minecraft teams.
+description: Create, configure and populate Minecraft teams with the Kore OOP module, and reuse them as selectors, counters and conditions in other features.
 keywords: minecraft, datapack, kore, oop, teams, scoreboard, collision, nametag, friendly fire
 date-created: 2026-03-03
-date-modified: 2026-10-07
+date-modified: 2026-11-11
 routeOverride: /docs/oop/teams
 ---
 
@@ -35,8 +35,12 @@ function("team_setup") {
 The main benefit is that configuration stays grouped by team, which makes lobby setup, role assignment, and PvP rules
 much easier to read than a long list of raw `team modify` commands.
 
+Here is a complete pack, the [teams example](/playground#example=teams) of the playground, with red and blue teams with colors, prefixes and members, and the commands Kore generates for it:
+
+{{{ .components.doc.TeamsExample }}}
+
 Teams can also act as a bridge to other OOP features. Once you have a `Team` handle, you can reuse its members as an
-entity selector for [Scoreboards](/docs/oop/scoreboards), [Boss Bars](/docs/oop/boss-bars), or any API that already
+entity selector for [OOP Scoreboards](/docs/oop/scoreboards), [Boss Bars](/docs/oop/boss-bars), or any API that already
 works with `Entity`.
 
 They also integrate nicely with `execute` conditions and score tracking helpers, which makes it easy to express checks

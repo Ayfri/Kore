@@ -1,16 +1,15 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Creating a Minecraft Datapack with Kore - Metadata, Output & Packaging
-nav-title: Creating a Datapack
+title: "Minecraft Datapack Setup: Namespace, Metadata, Output"
+nav-title: Pack Setup & Output
 description: Shape a Kore datapack end to end - namespace, output folder, pack.mcmeta, overlays and filters, then generate a folder, ZIP or a mod JAR for Fabric or NeoForge.
 keywords: minecraft datapack, kore datapack, pack.mcmeta, pack format, datapack zip, datapack jar, fabric datapack mod, datapack overlays, datapack namespace, generate datapack
 date-created: 2024-02-26
-date-modified: 2026-10-21
+date-modified: 2026-11-11
 routeOverride: /docs/guides/creating-a-datapack
-position: 1
 ---
 
-# Creating a Datapack
+# Pack Setup and Output
 
 Everything in Kore hangs off one object: the `DataPack`. It holds your namespace, your metadata, every function and
 data-driven resource you declare, and it decides what lands on disk.
@@ -25,7 +24,7 @@ need it:
 
 For the gameplay code itself, see [Functions](/docs/commands/functions) and
 [Commands](/docs/commands/commands). If you already maintain large hand-written datapacks and want migration and
-architecture patterns instead of basics, read [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore).
+architecture patterns instead of basics, read [Coming from Datapacks](/docs/guides/from-datapacks-to-kore).
 
 ## Declaring the pack
 
@@ -47,12 +46,14 @@ function and resource that does not set its own.
 
 ```kotlin
 dataPack("my_datapack") {
-	path("%appdata%/.minecraft/saves/my_world/datapacks")
+	path("${System.getenv("APPDATA")}/.minecraft/saves/my_world/datapacks")
 }.generate()
 ```
 
-Pointing `path` straight at a world's `datapacks` folder is the fastest development loop: regenerate, then `/reload`
-in-game.
+`path` takes a literal path: nothing expands `%appdata%`, so read the environment variable in Kotlin (`APPDATA` exists on
+Windows only). Pointing `path` straight at a world's `datapacks` folder is a fast development loop: regenerate, then
+`/reload` in-game. The [Gradle plugin](/docs/guides/gradle-plugin) does the same without hardcoding a path: it copies the
+pack into the worlds you name.
 
 ### Separating the folder name from the namespace
 
@@ -128,9 +129,9 @@ pack {
 }
 ```
 
-### Targeting Minecraft 1.21.9+
+### `min_format` and `max_format`
 
-Since Minecraft 1.21.9 (25w31a), `min_format` and `max_format` are the primary fields in `pack.mcmeta`, and accept a
+From Minecraft 1.21.9 (25w31a) on, `min_format` and `max_format` are the primary fields of `pack.mcmeta`, and accept a
 `[major, minor]` pair to target snapshots or minor versions. Minecraft {{mc.version}} uses data pack format
 `[{{mc.packFormatMajor}}, {{mc.packFormatMinor}}]`:
 
@@ -482,7 +483,7 @@ The resulting `load.json` contains both:
 - [Configuration](/docs/guides/configuration) - JSON formatting and generated function naming
 - [Functions](/docs/commands/functions) - reusable logic, lifecycle tags, and generated functions
 - [Cookbook](/docs/guides/cookbook) - practical patterns once your pack structure is in place
-- [From Datapacks to Kore](/docs/guides/from-datapacks-to-kore) - migration strategy and production workflow
+- [Coming from Datapacks](/docs/guides/from-datapacks-to-kore) - migration strategy and production workflow
 - [Fabric Resource Conditions](/docs/guides/fabric-resource-conditions) - load resources conditionally in a Fabric mod
-- [GitHub Actions Publishing](/docs/advanced/github-actions-publishing) - automate releases to Modrinth, CurseForge and
+- [Publishing with GitHub Actions](/docs/advanced/github-actions-publishing) - automate releases to Modrinth, CurseForge and
   GitHub

@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Slot Sources
+title: "Minecraft Slot Sources: Select Inventory Slots"
 nav-title: Slot Sources
 description: Select inventory slots in Minecraft loot tables, /item and /execute with Kore's type-safe slot source DSL and slot source files.
 keywords: minecraft, datapack, kore, slot sources, slot_source, item command, execute if items, execute if slots, loot tables
 date-created: 2026-10-08
-date-modified: 2026-10-22
+date-modified: 2026-11-11
 routeOverride: /docs/data-driven/slot-sources
 ---
 

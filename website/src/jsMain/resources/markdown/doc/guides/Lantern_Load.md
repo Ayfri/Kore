@@ -1,13 +1,12 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Lantern Load - Datapack Load Order, Versioning and Dependencies
+title: "Lantern Load: Datapack Load Order and Dependencies"
 nav-title: Lantern Load
-description: Generate the full Lantern Load boilerplate from Kotlin, publish your pack version on the load.status scoreboard, and guard against missing or outdated dependencies.
+description: Generate the Lantern Load boilerplate from Kotlin, publish your pack version on the load.status scoreboard and guard against missing dependencies.
 keywords: lantern load kore, minecraft datapack load order, datapack dependencies, load.status scoreboard, datapack versioning, smithed interop, bookshelf dependency
 date-created: 2026-09-05
-date-modified: 2026-09-05
+date-modified: 2026-11-11
 routeOverride: /docs/guides/lantern-load
-position: 7
 ---
 
 # Lantern Load
@@ -172,6 +171,6 @@ dataPack("my_pack") {
 
 ## What to read next
 
-- [Creating a Datapack](/docs/guides/creating-a-datapack) - `path`, `folderName` and `generate()`, the basics this guide builds on
+- [Pack Setup & Output](/docs/guides/creating-a-datapack) - `path`, `folderName` and `generate()`, the basics this guide builds on
 - [Gradle Plugin](/docs/guides/gradle-plugin) - build, link and reload your pack automatically on every change
 - [Fabric Resource Conditions](/docs/guides/fabric-resource-conditions) - gate generated resources on mods, tags or feature flags

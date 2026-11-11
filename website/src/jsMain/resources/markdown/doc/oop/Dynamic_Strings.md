@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Dynamic Strings
+title: "Minecraft Datapack Strings: Split, Replace, Substring"
 nav-title: Dynamic Strings
 description: Manipulate Minecraft datapack strings with a Kotlin-like API - substring, split, join, replace, trim, pad and case conversion backed by NBT storage and macros.
 keywords: minecraft, datapack, kore, oop, string, nbt, storage, macro, substring, split, join, replace, trim, pad, concat
 date-created: 2026-04-16
-date-modified: 2026-10-07
+date-modified: 2026-11-11
 routeOverride: /docs/oop/dynamic-strings
 ---
 
@@ -612,6 +612,6 @@ characters outside the Basic Multilingual Plane do not behave like single charac
 
 ## See also
 
-- [Scoreboards](/docs/oop/scoreboards) – consume the length / find / predicate score holders returned by these helpers.
-- [Macros](/docs/commands/macros) – the underlying mechanism used by every dynamic helper.
-- [Data command](/docs/commands/commands#data-command) – NBT read/write via Kore's `data` command helpers.
+- [OOP Scoreboards](/docs/oop/scoreboards): consume the length / find / predicate score holders returned by these helpers.
+- [Macros](/docs/commands/macros): the underlying mechanism used by every dynamic helper.
+- [Data command](/docs/commands/commands#data-command): NBT read/write via Kore's `data` command helpers.

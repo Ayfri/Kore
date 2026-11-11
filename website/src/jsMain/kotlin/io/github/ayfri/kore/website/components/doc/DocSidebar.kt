@@ -3,9 +3,12 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.blur
+import com.varabyte.kobweb.compose.css.functions.calc
+import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.icons.lucide.LucideX
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.layouts.PageTransitions
+import io.github.ayfri.kore.website.docSections
 import io.github.ayfri.kore.website.utils.smMax
 import io.github.ayfri.kore.website.utils.transition
 import io.github.ayfri.kore.website.utils.viewTransitionClass
@@ -20,6 +23,10 @@ import org.jetbrains.compose.web.dom.Nav
 @Composable
 fun DocSidebar(revealed: Boolean, onClose: () -> Unit) {
 	Style(DocSidebarStyle)
+	Style(DocTreeStyle)
+
+	val path = rememberPageContext().route.path
+	val section = docLocation(path)?.section ?: docSections.first()
 
 	Nav({
 		attr("aria-label", "Documentation")
@@ -29,9 +36,10 @@ fun DocSidebar(revealed: Boolean, onClose: () -> Unit) {
 		Div({
 			classes(DocSidebarStyle.sidebarHeader)
 		}) {
-			Search()
+			Search(onNavigate = onClose)
 
 			Button({
+				attr("aria-label", "Close the navigation")
 				classes(DocSidebarStyle.closeButton)
 				onClick { onClose() }
 			}) {
@@ -39,7 +47,8 @@ fun DocSidebar(revealed: Boolean, onClose: () -> Unit) {
 			}
 		}
 
-		DocTree()
+		DocSectionSwitcher(section)
+		DocTree(section, path)
 	}
 }
 
@@ -58,6 +67,8 @@ data object DocSidebarStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		marginLeft(0.25.cssRem)
+		/** The sticky offset plus 1.5rem kept free under the sidebar. */
+		maxHeight(calc { 100.vh - 6.5.cssRem })
 		padding(0.5.cssRem)
 		position(Position.Sticky)
 		top(5.cssRem)
@@ -70,17 +81,21 @@ data object DocSidebarStyle : StyleSheet() {
 			backdropFilter(BackdropFilter.list(BackdropFilter.of(blur(4.px))))
 			height(100.vh)
 			left(0.px)
+			maxHeight(MaxHeight.Unset)
 			paddingTop(2.cssRem)
 			position(Position.Fixed)
 			top(0.px)
 			translateX((-100).percent)
-			transition(0.3.s, "translate")
+			transition(0.3.s, "translate", "visibility")
+			/** Hidden and not only moved off screen, so the closed drawer's links stay out of the tab order. */
+			visibility(Visibility.Hidden)
 			width(100.percent)
 			zIndex(60)
 		}
 
 		self + className("reveal") style {
 			translateX(0.percent)
+			visibility(Visibility.Visible)
 		}
 	}
 

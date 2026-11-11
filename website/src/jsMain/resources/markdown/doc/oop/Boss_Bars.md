@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Boss Bars
+title: "Minecraft Boss Bars: Register, Show and Update"
 nav-title: Boss Bars
 description: Object-oriented boss bar management with the Kore OOP module - register, configure, show, hide, and update boss bars.
 keywords: minecraft, datapack, kore, oop, bossbar, boss bar, color, style, notched, team, handle, config
 date-created: 2026-03-03
-date-modified: 2026-10-07
+date-modified: 2026-11-11
 routeOverride: /docs/oop/boss-bars
 ---
 

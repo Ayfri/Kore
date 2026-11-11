@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Game State Machine
+title: Minecraft Game State Machine on Scoreboards
 nav-title: Game State Machine
 description: Scoreboard-based game state machine with the Kore OOP module - register states, transition between them, and react to state changes.
 keywords: minecraft, datapack, kore, oop, game state, state machine, scoreboard, transition, lobby
 date-created: 2026-03-03
-date-modified: 2026-10-07
+date-modified: 2026-11-11
 routeOverride: /docs/oop/game-state-machine
 ---
 

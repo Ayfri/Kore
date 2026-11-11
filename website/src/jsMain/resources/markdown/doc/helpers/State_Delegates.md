@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: State Delegates
+title: Kotlin Property Delegates for Datapack State
 nav-title: State Delegates
 description: Kotlin property delegates that map scoreboard objectives or NBT storage to simple var properties with the Kore helpers module.
 keywords: minecraft, datapack, kore, helpers, state, delegate, scoreboard, storage, nbt, property, operators, fake player
 date-created: 2026-03-03
-date-modified: 2026-10-07
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/state-delegates
 ---
 
@@ -75,7 +75,7 @@ function("apply_damage") {
 ```
 
 `*=`, `/=` and `%=` also accept an `Int`, read from a fake-player constant Kore declares once per function. See
-[Scoreboards](/docs/oop/scoreboards#operators) for the emitted commands.
+[OOP Scoreboards](/docs/oop/scoreboards#operators) for the emitted commands.
 
 ### Global scores
 
@@ -282,5 +282,5 @@ function("combo_loops") {
 - [Scoreboard Math](/docs/helpers/scoreboard-math) - Feed delegated scoreboard values into trigonometric or algebraic
   helpers.
 - [Scheduler](/docs/helpers/scheduler) - Pair delegated state with delayed or repeating helper callbacks.
-- [Cooldowns](/docs/oop/cooldowns) - A concrete scoreboard-based gameplay system where delegated state can stay concise.
-- [Scoreboards](/docs/oop/scoreboards) - Broader patterns for organizing objectives and player state.
+- [Cooldowns](/docs/oop/timers#cooldowns) - A concrete scoreboard-based gameplay system where delegated state can stay concise.
+- [OOP Scoreboards](/docs/oop/scoreboards) - Broader patterns for organizing objectives and player state.

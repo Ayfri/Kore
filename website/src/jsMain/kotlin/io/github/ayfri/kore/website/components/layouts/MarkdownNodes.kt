@@ -113,8 +113,11 @@ private fun DocView(node: DocNode) {
 		}
 
 		is DocCode -> Code { Text(node.text) }
-		/** The `language-null` class keeps a fence without a language out of `MarkdownLayoutStyle`'s `code:not([class*=language])` inline code style. */
-		is DocCodeBlock -> CodeBlock(node.text, node.lang ?: "null")
+		/**
+		 * The `language-none` class keeps a fence without a language out of `MarkdownLayoutStyle`'s `code:not([class*=language])` inline code
+		 * style. `none` is the name Prism labels "Plain text", any other one shows up capitalized in the block header.
+		 */
+		is DocCodeBlock -> CodeBlock(node.text, node.lang ?: "none")
 		is DocElement -> TagElement<HTMLElement>(node.tag, null) { node.children.forEach { DocView(it) } }
 		is DocHeading -> TagElement<HTMLHeadingElement>("h${node.level}", {
 			if (node.id.isNotBlank()) attr("id", node.id)

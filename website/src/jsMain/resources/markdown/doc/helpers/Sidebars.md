@@ -1,11 +1,11 @@
 ---
 root: .components.layouts.MarkdownLayout
-title: Minecraft Datapack Sidebar - Custom Scoreboard Lines with Kore
+title: "Minecraft Datapack Sidebars: Custom Scoreboard Lines"
 nav-title: Sidebars
 description: "Build server-style Minecraft sidebars with Kore: up to 15 text lines, right-aligned values, live scores, conditional lines and cheap refreshes."
 keywords: minecraft sidebar, datapack sidebar, scoreboard display, custom scoreboard, scoreboard lines, numberformat, kore sidebar, minigame scoreboard
 date-created: 2026-09-23
-date-modified: 2026-10-07
+date-modified: 2026-11-11
 routeOverride: /docs/helpers/sidebars
 ---
 
@@ -32,6 +32,10 @@ tick { lobby.refresh() }
 ```
 
 {{{ .components.mc.SidebarMockup }}}
+
+Here is a complete pack, the [sidebar example](/playground#example=sidebar) of the playground, with a scoreboard sidebar built with the helpers, and the commands Kore generates for it:
+
+{{{ .components.doc.SidebarExample }}}
 
 `sidebar(...)` only declares the sidebar, commands are emitted where you call its functions.
 
