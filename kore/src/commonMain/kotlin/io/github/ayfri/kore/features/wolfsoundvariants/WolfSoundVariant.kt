@@ -67,7 +67,7 @@ fun WolfSoundVariant.babySounds(block: WolfSoundVariantSounds.() -> Unit) =
  *
  * Produces `data/<namespace>/wolf_sound_variant/<fileName>.json`.
  *
- * Docs: https://kore.ayfri.com/docs/data-driven/wolf-sound-variants
+ * Docs: https://kore.ayfri.com/docs/data-driven/variants
  */
 fun DataPack.wolfSoundVariant(
 	fileName: String = "wolf_sound_variant",
