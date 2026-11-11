@@ -2,6 +2,7 @@ package io.github.ayfri.kore.arguments.numbers.ranges
 
 import io.github.ayfri.kore.arguments.Argument
 import io.github.ayfri.kore.arguments.numbers.toStringTruncatedIfRound
+import io.github.ayfri.kore.arguments.numbers.toStringWithDecimal
 import kotlinx.serialization.Serializable
 
 interface FloatingRange : Range
@@ -22,7 +23,7 @@ data class FloatRange(val start: Double?, val end: Double?) : FloatingRange {
 
 @Serializable(with = Argument.ArgumentSerializer::class)
 data class FloatRangeOrFloat(val range: FloatRange? = null, val double: Double? = null) : FloatingRange {
-	override fun asString() = range?.toString() ?: double.toString()
+	override fun asString() = range?.toString() ?: double?.toStringWithDecimal.toString()
 
 	override fun toString() = asString()
 

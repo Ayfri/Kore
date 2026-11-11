@@ -22,6 +22,7 @@ import io.github.ayfri.kore.generated.Tags
 import io.github.ayfri.kore.utils.nbt
 import io.github.ayfri.kore.utils.set
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 
 fun selectorTests() = dataPack("selector_tests") {
 	selector(SelectorType.ALL_ENTITIES) assertsIs "@e"
@@ -230,5 +231,15 @@ class SelectorSerializationTests : FunSpec({
 	test("selector arguments render sorted by name, empty when unset") {
 		SelectorArguments().asString() assertsIs ""
 		SelectorArguments(z = 3.0, limit = 1, sort = Sort.NEAREST).asString() assertsIs "limit=1,sort=nearest,z=3.0"
+	}
+
+	test("round doubles keep their decimals and ranges drop them on every platform") {
+		SelectorArguments(dx = 1.0, dy = -2.0, dz = 0.0, x = 100.0, y = 64.0, z = -3.0).asString() shouldBe
+			"dx=1.0,dy=-2.0,dz=0.0,x=100.0,y=64.0,z=-3.0"
+		SelectorArguments(xRotation = rangeOrDouble(5.0), yRotation = rangeOrDouble(1.0, 10.0)).asString() shouldBe
+			"x_rotation=5.0,y_rotation=1..10"
+		SelectorArguments(distance = rangeOrDouble(1.0, 10.0)).asString() shouldBe "distance=1..10"
+		SelectorArguments(distance = rangeOrDouble(5.0)).asString() shouldBe "distance=5.0"
+		allEntities { dx = 1.0 }.asString() shouldBe "@e[dx=1.0]"
 	}
 })

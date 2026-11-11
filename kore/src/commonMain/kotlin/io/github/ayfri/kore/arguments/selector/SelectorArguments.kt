@@ -3,6 +3,7 @@ package io.github.ayfri.kore.arguments.selector
 import io.github.ayfri.kore.arguments.Advancement
 import io.github.ayfri.kore.arguments.enums.Gamemode
 import io.github.ayfri.kore.arguments.numbers.ranges.*
+import io.github.ayfri.kore.arguments.numbers.toStringWithDecimal
 import io.github.ayfri.kore.arguments.scores.Scores
 import io.github.ayfri.kore.arguments.scores.SelectorScore
 import io.github.ayfri.kore.generated.arguments.EntityTypeOrTagArgument
@@ -163,9 +164,9 @@ data class SelectorArguments(
 
 		argument("advancements", advancements?.asString())
 		argument("distance", distance?.asString())
-		argument("dx", dx)
-		argument("dy", dy)
-		argument("dz", dz)
+		argument("dx", dx?.toStringWithDecimal)
+		argument("dy", dy?.toStringWithDecimal)
+		argument("dz", dz?.toStringWithDecimal)
 		arguments("gamemode", _gamemodes)
 		argument("level", level?.asString())
 		argument("limit", limit)
@@ -177,11 +178,11 @@ data class SelectorArguments(
 		arguments("tag", _tags)
 		arguments("team", _teams)
 		arguments("type", _types)
-		argument("x", x)
+		argument("x", x?.toStringWithDecimal)
 		argument("x_rotation", xRotation?.asString())
-		argument("y", y)
+		argument("y", y?.toStringWithDecimal)
 		argument("y_rotation", yRotation?.asString())
-		argument("z", z)
+		argument("z", z?.toStringWithDecimal)
 	}.joinToString(",")
 
 	/** Copy all selector argument values from another instance. */
