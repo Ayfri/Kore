@@ -16,14 +16,16 @@ private val declarationLine = Regex("""^\s*(?:package\s|@|\)\s*:)|(?:^|\s)(?:cla
 fun declarationDigest(sources: Iterable<File>, processors: Iterable<File>): String {
 	val digest = MessageDigest.getInstance("SHA-256")
 	processors.sortedBy { it.path }.forEach { digest.update("${it.path}:${it.length()}:${it.lastModified()}".toByteArray()) }
-	sources.sortedBy { it.path }.forEach { file ->
-		digest.update(file.path.toByteArray())
-		var annotated = false
-		file.forEachLine { line ->
-			if (annotated || declarationLine.containsMatchIn(line)) digest.update(line.toByteArray())
-			annotated = line.startsWith("@")
+	sources.sortedBy { it.path }.parallelStream().map { file ->
+		buildString {
+			append(file.path)
+			var annotated = false
+			file.forEachLine { line ->
+				if (annotated || declarationLine.containsMatchIn(line)) append(line)
+				annotated = line.startsWith("@")
+			}
 		}
-	}
+	}.forEachOrdered { digest.update(it.toByteArray()) }
 	return digest.digest().joinToString("") { "%02x".format(it) }
 }
 
