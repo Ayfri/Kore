@@ -126,6 +126,7 @@ kobweb {
 
 	markdown {
 		imports.add("com.varabyte.kobweb.compose.ui.modifiers.*")
+		imports.add("io.github.ayfri.kore.website.components.layouts.*")
 
 		handlers { useSiteComponents() }
 

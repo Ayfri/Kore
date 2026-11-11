@@ -5,7 +5,7 @@ nav-title: "Architecture and Patterns"
 description: Detailed internal architecture, project layout, module responsibilities, and recurring implementation patterns for Kore contributors.
 keywords: architecture, bindings, commands, generator, kore, patterns, serializers, website
 date-created: 2026-04-10
-date-modified: 2026-10-24
+date-modified: 2026-11-11
 routeOverride: /docs/contributing/architecture-and-patterns
 ---
 
@@ -275,6 +275,11 @@ in prose, links and code blocks, the `.md` copies and `llms-full.txt` included:
 The values come from the GitHub releases and PixiGeko's `versions_data.json`, fetched once per build directory:
 rerun `fetchGitHubReleases` and `fetchMinecraftVersions` with `--rerun` to refresh a local copy. An unknown key, a
 placeholder in the frontmatter or a heading, or an export without any stable release fails the build.
+
+Doc pages support paragraphs, headings, lists, tables, blockquotes, callouts, fenced code blocks, links, images,
+emphasis, inline code and `<br>`. Other Markdown fails the build with the page title and the line, since the site has
+no component to draw it: raw HTML other than `<br>`, task list items, an indented code block inside a list or a
+blockquote, and a relative link to a `.md` file (link its `/docs/...` route instead).
 
 An image whose destination starts with `mc:` renders a vanilla texture inline, the path being relative to `textures/`
 without extension, e.g. `![Furnace](mc:block/furnace_front)`. Use it only where seeing the in-game block, item or GUI
