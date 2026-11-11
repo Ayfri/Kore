@@ -71,7 +71,7 @@ fun Header(latestRelease: GitHubRelease? = null) {
 
 	LaunchedEffect(Unit) {
 		val (owner, repo) = GITHUB_LINK.substringAfter("github.com/").split("/")
-		githubStars = fetchGitHubStars(owner, repo)
+		fetchGitHubStars(owner, repo)?.let { githubStars = it }
 	}
 
 	Style(HeaderStyle)
