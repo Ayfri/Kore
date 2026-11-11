@@ -69,7 +69,7 @@ private fun BlockQuote.takeCalloutType(): String? {
 	if (!text.literal.startsWith("[!")) return null
 
 	val type = text.literal.substringAfter("[!").substringBefore("]").uppercase()
-	val remaining = text.literal.substringAfter("]").trim()
+	val remaining = text.literal.substringAfter("]").trimStart()
 	if (remaining.isNotEmpty()) {
 		text.literal = remaining
 		return type
