@@ -27,7 +27,10 @@ import org.w3c.dom.HTMLDivElement
 /** Minecraft's `§` color codes, plus the gray of container labels. */
 object McColor {
 	const val AQUA = "#55ffff"
+	const val BLACK = "#000000"
 	const val BLUE = "#5555ff"
+	const val DARK_AQUA = "#00aaaa"
+	const val DARK_BLUE = "#0000aa"
 	const val DARK_GRAY = "#555555"
 	const val DARK_GREEN = "#00aa00"
 	const val DARK_PURPLE = "#aa00aa"
@@ -41,6 +44,26 @@ object McColor {
 	const val WHITE = "#ffffff"
 	const val YELLOW = "#ffff55"
 }
+
+/** The 16 `FormattingColor`s as their Kotlin constant name and McColor hex, in the order of the enum. */
+internal val chatColors = listOf(
+	"AQUA" to McColor.AQUA,
+	"BLACK" to McColor.BLACK,
+	"BLUE" to McColor.BLUE,
+	"DARK_AQUA" to McColor.DARK_AQUA,
+	"DARK_BLUE" to McColor.DARK_BLUE,
+	"DARK_GRAY" to McColor.DARK_GRAY,
+	"DARK_GREEN" to McColor.DARK_GREEN,
+	"DARK_PURPLE" to McColor.DARK_PURPLE,
+	"DARK_RED" to McColor.DARK_RED,
+	"GOLD" to McColor.GOLD,
+	"GRAY" to McColor.GRAY,
+	"GREEN" to McColor.GREEN,
+	"LIGHT_PURPLE" to McColor.LIGHT_PURPLE,
+	"RED" to McColor.RED,
+	"WHITE" to McColor.WHITE,
+	"YELLOW" to McColor.YELLOW,
+)
 
 /** [pixels] GUI pixels in CSS pixels, at the game's default GUI scale of 2, so vanilla coordinates can be used as is. */
 fun gui(pixels: Number) = (pixels.toDouble() * 2).px

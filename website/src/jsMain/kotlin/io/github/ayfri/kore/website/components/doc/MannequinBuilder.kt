@@ -72,8 +72,6 @@ private fun Enum<*>.label() = name.lowercase().replace('_', ' ').replaceFirstCha
 
 private fun String.snbt() = "\"" + replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r") + "\""
 
-private fun String.kotlin() = "\"" + replace("\\", "\\\\").replace("\"", "\\\"").replace("\$", "\\\$").replace("\n", "\\n").replace("\r", "\\r") + "\""
-
 private fun wrapYaw(degrees: Double) = (((degrees + 180) % 360 + 360) % 360 - 180).roundToInt().toDouble()
 
 private enum class Arms { WIDE, SLIM }

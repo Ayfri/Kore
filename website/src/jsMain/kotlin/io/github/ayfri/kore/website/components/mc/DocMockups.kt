@@ -3,6 +3,7 @@ package io.github.ayfri.kore.website.components.mc
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.css.functions.calc
+import com.varabyte.kobweb.compose.css.functions.min
 import io.github.ayfri.kore.website.GlobalStyle
 import io.github.ayfri.kore.website.components.common.mcTexture
 import io.github.ayfri.kore.website.utils.clipPathInset
@@ -16,7 +17,7 @@ import org.jetbrains.compose.web.dom.*
  * Each one mirrors the code block right above it, so keep both in sync.
  */
 
-private enum class SceneKind {
+internal enum class SceneKind {
 	/** A dialog screen, spanning the whole scene between its header and footer separators. */
 	DIALOG,
 
@@ -29,7 +30,7 @@ private enum class SceneKind {
 
 /** A game screen showing the world from the vanilla title [panorama] face, with a [caption] under it. */
 @Composable
-private fun McScene(caption: String, kind: SceneKind, panorama: Int = 0, height: Int? = null, content: @Composable () -> Unit) {
+internal fun McScene(caption: String, kind: SceneKind, panorama: Int = 0, height: Int? = null, content: @Composable () -> Unit) {
 	Div({ classes(DocMockupsStyle.figure) }) {
 		Div({
 			classes(McUiStyle.world, DocMockupsStyle.scene)
@@ -396,8 +397,9 @@ object DocMockupsStyle : StyleSheet() {
 		flexDirection(FlexDirection.Column)
 	}
 
+	/** Wide enough for the HUD elements, but never wider than the page: on a phone the scene scrolls instead. */
 	val hud by style {
-		minWidth(gui(200))
+		minWidth(min(gui(200), 100.percent))
 	}
 
 	val caption by style {

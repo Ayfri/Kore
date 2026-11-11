@@ -41,21 +41,21 @@ sealed interface OutputState {
 }
 
 /** Picks the Prism grammar from the file extension; unknown extensions stay unhighlighted. */
-private fun grammarOf(file: GeneratedFile) = when (file.extension) {
+internal fun grammarOf(file: GeneratedFile) = when (file.extension) {
 	"json", "mcmeta" -> "json"
 	"mcfunction" -> "mcfunction"
 	else -> null
 }
 
 /** The file as the preview shows it, its JSON re-indented by [indent] spaces, or left as generated when [indent] is null. */
-private fun previewOf(file: GeneratedFile, indent: Int?): String {
+internal fun previewOf(file: GeneratedFile, indent: Int?): String {
 	if (indent == null || grammarOf(file) != "json") return file.content
 
 	return runCatching { JSON.stringify(JSON.parse<Any>(file.content), null, indent) }.getOrDefault(file.content)
 }
 
 /** The file a pack opens on: a function if there is one, else the first resource that is not a tag or `pack.mcmeta`. */
-private fun List<GeneratedFile>.firstShowcase() =
+internal fun List<GeneratedFile>.firstShowcase() =
 	firstOrNull { it.extension == "mcfunction" } ?: firstOrNull { it.path != "pack.mcmeta" && "/tags/" !in it.path } ?: firstOrNull()
 
 /** Bytes as the visitor reads them, so a 12 KB pack does not show up as five digits. */

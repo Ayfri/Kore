@@ -3,6 +3,8 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.LandingVars
+import io.github.ayfri.kore.website.components.common.McSprite
+import io.github.ayfri.kore.website.components.common.McSpriteStyle
 import io.github.ayfri.kore.website.utils.alpha
 import io.github.ayfri.kore.website.utils.monoFont
 import io.github.ayfri.kore.website.utils.smMax
@@ -13,16 +15,28 @@ import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.dom.*
 
-/** A pill button, a toggle with `aria-pressed` when [pressed] is not null. */
+/** [content] under the mono [label], for a control without a `<label>` target of its own. */
 @Composable
-fun Pill(text: String, pressed: Boolean? = null, onClick: () -> Unit) {
+fun ControlField(label: String, content: @Composable () -> Unit) {
+	Div({ classes(DocControlsStyle.control) }) {
+		Span({ classes(DocControlsStyle.controlLabel) }) { Text(label) }
+		content()
+	}
+}
+
+/** A pill button, a toggle with `aria-pressed` when [pressed] is not null, drawing the vanilla texture [sprite] before the text. */
+@Composable
+fun Pill(text: String, pressed: Boolean? = null, sprite: String? = null, onClick: () -> Unit) {
 	Button({
 		classes(DocControlsStyle.pill)
 		if (pressed == true) classes(DocControlsStyle.pillActive)
 		pressed?.let { attr("aria-pressed", it.toString()) }
 		attr("type", "button")
 		onClick { onClick() }
-	}) { Text(text) }
+	}) {
+		sprite?.let { McSprite(it, null) }
+		Text(text)
+	}
 }
 
 /** Pills of which exactly [selected] is pressed, null pressing none. */
@@ -87,6 +101,9 @@ fun TextField(inputId: String, label: String, value: String, placeholder: String
 	}
 }
 
+/** This text as a Kotlin string literal for the code a widget shows, the characters that would end or interpolate it escaped. */
+internal fun String.kotlin() = "\"" + replace("\\", "\\\\").replace("\"", "\\\"").replace("\$", "\\\$").replace("\n", "\\n").replace("\r", "\\r") + "\""
+
 /** Controls shared by the interactive doc widgets, injected by `MarkdownLayout`. */
 object DocControlsStyle : StyleSheet() {
 	val control by style {
@@ -146,14 +163,21 @@ object DocControlsStyle : StyleSheet() {
 	}
 
 	val pill by style {
+		alignItems(AlignItems.Center)
 		backgroundColor(LandingVars.Card.value())
 		border(1.px, LineStyle.Solid, LandingVars.Border.value())
 		borderRadius(999.px)
 		color(LandingVars.Muted.value())
 		cursor(Cursor.Pointer)
+		display(DisplayStyle.LegacyInlineFlex)
 		fontSize(0.8.cssRem)
 		monoFont()
 		padding(0.3.cssRem, 0.8.cssRem)
+
+		child(self, className(McSpriteStyle.sprite)) style {
+			height(16.px)
+			width(16.px)
+		}
 	}
 
 	val pillActive by style {
@@ -162,11 +186,24 @@ object DocControlsStyle : StyleSheet() {
 		color(LandingVars.Text.value())
 	}
 
+	val readout by style {
+		color(LandingVars.Text.value())
+		fontSize(0.9.cssRem)
+		monoFont()
+	}
+
 	val slider by style {
 		accentColor(AccentColor.of(LandingVars.Accent.value()))
 		cursor(Cursor.Pointer)
 		flexGrow(1)
 		margin(0.px)
+		minWidth(0.px)
+	}
+
+	val stack by style {
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
+		gap(0.9.cssRem)
 		minWidth(0.px)
 	}
 
@@ -179,6 +216,15 @@ object DocControlsStyle : StyleSheet() {
 		fontSize(0.85.cssRem)
 		monoFont()
 		padding(0.3.cssRem, 0.5.cssRem)
+		width(100.percent)
+	}
+
+	val widget by style {
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
+		gap(1.cssRem)
+		margin(1.5.cssRem, 0.px)
+		minWidth(0.px)
 		width(100.percent)
 	}
 }

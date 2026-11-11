@@ -23,14 +23,17 @@ fun mcTexture(path: String) = url("$MC_TEXTURES/$path.png")
  * In doc markdown: `![Crafting Table](mc:block/crafting_table_front)`.
  *
  * Grayscale textures the game colors at runtime (leaves, grass) take a [tint], multiplied over the texture and clipped to its alpha.
+ * A null [label] hides the sprite from screen readers, for one sitting next to the text that already names it.
  */
 @Composable
-fun McSprite(path: String, label: String, tint: CSSColorValue? = null) {
+fun McSprite(path: String, label: String?, tint: CSSColorValue? = null) {
 	Span({
 		classes(McSpriteStyle.sprite)
-		attr("aria-label", label)
-		attr("role", "img")
-		attr("title", label)
+		if (label == null) attr("aria-hidden", "true") else {
+			attr("aria-label", label)
+			attr("role", "img")
+			attr("title", label)
+		}
 		style {
 			backgroundImage(mcTexture(path))
 			tint?.let {
