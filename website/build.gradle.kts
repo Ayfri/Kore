@@ -11,7 +11,7 @@ import website.DocSiteGenerator
 import website.FetchGitHubReleases
 import website.FetchGitHubStars
 import website.FetchMinecraftVersions
-import website.useSiteComponents
+import website.emptyDocBodies
 import kotlin.time.Duration.Companion.seconds
 
 plugins {
@@ -125,17 +125,15 @@ kobweb {
 	}
 
 	markdown {
-		imports.add("com.varabyte.kobweb.compose.ui.modifiers.*")
-		imports.add("io.github.ayfri.kore.website.components.layouts.*")
-
-		handlers { useSiteComponents() }
+		/** The `{{{ }}}` widget lines are plain paragraphs for Kobweb, the content generator reads them. */
+		features { kobwebCall.set(false) }
+		handlers { emptyDocBodies() }
 
 		/** Built outside the callback, which the configuration cache serializes with what it captures. */
 		val generator = DocSiteGenerator(
 			docGroupOrder = docGroupOrder,
 			featureCards = featureCards.asFile,
 			gitHubDataDir = gitHubDataDir.get().asFile,
-			logger = logger,
 			logo = logo.asFile,
 			markdownDir = projectDir.resolve("src/jsMain/resources/markdown"),
 			minecraftVersion = minecraftVersion,

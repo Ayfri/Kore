@@ -1,13 +1,11 @@
 package website
 
-import java.io.File
-
 /** A doc page read from its front matter, `slugs` being the route split on `/` after the leading empty segment. */
 data class DocEntry(
 	val date: String,
 	val dateModified: String,
 	val desc: String,
-	val file: File,
+	val filePath: String,
 	val keywords: List<String>,
 	val navTitle: String,
 	val position: Int?,

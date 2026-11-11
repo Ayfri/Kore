@@ -33,8 +33,9 @@ import org.w3c.dom.events.Event
 /** Width under which the doc sidebar is a drawer, so the dimming overlay has to be rendered. */
 private const val MOBILE_BREAKPOINT_PX = 768
 
+/** Kobweb's generated page calls this with an empty body, the page content comes from [DocContent]. */
 @Composable
-fun MarkdownLayout(content: @Composable () -> Unit) {
+fun MarkdownLayout(@Suppress("UNUSED_PARAMETER") content: @Composable () -> Unit) {
 	Style(CalloutStyle)
 	Style(DocControlsStyle)
 	Style(DocMockupsStyle)
@@ -153,7 +154,7 @@ fun MarkdownLayout(content: @Composable () -> Unit) {
 				Div({
 					classes(MarkdownLayoutStyle.mainContent)
 				}) {
-					content()
+					DocContent(context.route.path)
 
 					PageNavigation(
 						currentPath = context.route.path,

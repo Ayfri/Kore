@@ -2,10 +2,10 @@ package website
 
 import com.varabyte.kobwebx.gradle.markdown.MarkdownBlock.ProcessScope
 import com.varabyte.kobwebx.gradle.markdown.MarkdownEntry
+import com.varabyte.kobwebx.gradle.markdown.ext.kobwebcall.KobwebCall
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.gradle.api.GradleException
-import org.gradle.api.logging.Logger
 import java.io.File
 
 /** Also available to the site as `AppGlobals["websiteUrl"]`. */
@@ -19,6 +19,9 @@ private val blankRunRegex = Regex("""\n{3,}""")
 
 /** Also catches the misspellings `docConstantRegex` skips, `{{ kore.release }}` or `{{minecraft.version}}`. */
 private val docConstantLikeRegex = Regex("""\{\{\s*(?:java|kore|mc|minecraft)\b[^}]*}}""")
+
+/** Doc placeholders like `{{kore.release}}`, listed in the "Documentation pages" section of `contributing/Architecture_and_Patterns.md`. */
+private val docConstantRegex = Regex("""\{\{((?:java|kore|mc)\.\w+)}}""")
 private val docLinkRegex = Regex("""]\(/(docs/[^)#\s]*)(#[^)\s]*)?\)""")
 private val fenceRegex = Regex("""(?ms)^[ \t]*(?<fence>`{3,}|~{3,}).*?^[ \t]*\k<fence>[`~]*[ \t]*$""")
 private val frontMatterRegex = Regex("""\A---\r?\n.*?\r?\n---\r?\n""", RegexOption.DOT_MATCHES_ALL)
@@ -28,18 +31,18 @@ private val spriteRegex = Regex("""(?<!`)!\[[^\]]*]\(mc:[^)]*\) ?""")
 private val widgetRegex = Regex("""(?m)^\{\{\{\s*([^\s}]+)\s*\}\}\}[ \t]*\r?\n?""")
 
 private val groupLabels = mapOf("data-driven" to "Data-driven", "getting-started" to "Getting started", "oop" to "OOP")
-private val requiredFields = listOf("date-created", "date-modified", "description", "nav-title", "routeOverride", "title")
+private val requiredFields = listOf("date-created", "date-modified", "description", "keywords", "nav-title", "root", "routeOverride", "title")
 
 /**
- * Runs inside the `process` callback of Kobweb's markdown plugin: reads the front matter of every doc page, then writes `DocConstants.kt`
- * and `docEntries.kt`, the public resources (`llms.txt`, `llms-full.txt`, `sitemap.xml`, `markdown-sources.json` and one `.md` copy per page)
- * and, when [renderOgImages] is set, the Open Graph cards. Only holds plain values so the configuration cache can serialize it.
+ * Runs inside the `process` callback of Kobweb's markdown plugin: reads the front matter of every doc page, then writes `docEntries.kt`,
+ * `docWidgets.kt`, the public resources (`doc-data/<route>.json` with the content of each page, `llms.txt`, `llms-full.txt`, `sitemap.xml`,
+ * `markdown-sources.json` and one `.md` copy per page) and, when [renderOgImages] is set, the Open Graph cards.
+ * Only holds plain values so the configuration cache can serialize it.
  */
 class DocSiteGenerator(
 	private val docGroupOrder: List<String>,
 	private val featureCards: File,
 	private val gitHubDataDir: File,
-	private val logger: Logger,
 	private val logo: File,
 	private val markdownDir: File,
 	private val minecraftVersion: String,
@@ -48,7 +51,7 @@ class DocSiteGenerator(
 	private val renderOgImages: Boolean,
 ) {
 	fun generate(scope: ProcessScope, pages: List<MarkdownEntry>) {
-		val docEntries = pages.mapNotNull { it.toDocEntry() }
+		val docEntries = pages.map { it.toDocEntry() }
 		val sortedEntries = docEntries.sortedWith(entryOrder)
 		val releases = ReleaseHistory(readReleases())
 
@@ -57,41 +60,49 @@ class DocSiteGenerator(
 			throw GradleException("No stable GitHub release in releases.tsv, the doc placeholders would show Minecraft $minecraftVersion as the latest stable version: rerun `fetchGitHubReleases --rerun`.")
 		}
 		val docConstants = docConstants(releases)
-		scope.generateKotlin("$SITE_PACKAGE/DocConstants.kt", docConstantsSource(docConstants))
 
 		val widgets = mapOf("FeatureGrid" to featureGrid(), "VersionMatrix" to versionMatrix(releases))
 		val routes = sortedEntries.map { it.route }.toSet()
-		val markdownSources = pages.associate { it.filePath.replace('\\', '/') to markdownDir.resolve(it.filePath).readText() }
+		val markdownSources = pages.associate { it.filePath to markdownDir.resolve(it.filePath).readText() }
 		checkDocConstants(markdownSources, docConstants)
+		val expandedSources = markdownSources.mapValues { it.value.expandDocConstants(docConstants) }
+
+		val parser = docParser()
+		val widgetCalls = sortedSetOf<String>()
+		sortedEntries.forEach { entry ->
+			/** The front matter becomes blank lines, so the line numbers of the parsed nodes stay the lines of the file. */
+			val source = expandedSources.getValue(entry.filePath).replace(frontMatterRegex) { "\n".repeat(it.value.count { char -> char == '\n' }) }
+			scope.generatePublicResource("doc-data/${entry.route}.json", DocPageJson(entry.filePath, widgetCalls).write(parser.parse(source)))
+		}
+		scope.generateKotlin("$SITE_PACKAGE/docWidgets.kt", docWidgetsSource(widgetCalls))
 
 		val groupedEntries = sortedEntries.groupBy { it.slugs.getOrNull(1) ?: "other" }
 		/** Single-page sections outside `docGroupOrder` (home, getting started) come first. */
 		val orderedGroups = groupedEntries.keys.sortedBy { if (it in docGroupOrder) groupPriority(it) else -1 }
-		val pageMarkdown = orderedGroups.flatMap { groupedEntries.getValue(it) }.associateWith { it.toMarkdown(docConstants, widgets, routes) }
+		val pageMarkdown = orderedGroups.flatMap { groupedEntries.getValue(it) }.associateWith { it.toMarkdown(expandedSources.getValue(it.filePath), widgets, routes) }
 
 		scope.generatePublicResource("llms.txt", llmsIndex(groupedEntries, orderedGroups, releases))
 		/** The same pages as the `.md` copies, concatenated in the `llms.txt` order. */
 		scope.generatePublicResource("llms-full.txt", "# Kore documentation\n\n> $SUMMARY\n\n" + pageMarkdown.values.joinToString("\n\n---\n\n") + "\n")
 		pageMarkdown.forEach { (entry, markdown) -> scope.generatePublicResource("${entry.route}.md", markdown + "\n") }
-		scope.generatePublicResource("markdown-sources.json", JsonOutput.toJson(markdownSources.mapValues { it.value.expandDocConstants(docConstants) }))
+		scope.generatePublicResource("markdown-sources.json", JsonOutput.toJson(expandedSources))
 		scope.generatePublicResource("sitemap.xml", sitemap(sortedEntries))
 		if (renderOgImages) renderOgCards(sortedEntries)
 
 		scope.generateKotlin("$SITE_PACKAGE/docEntries.kt", docEntriesSource(docEntries))
 	}
 
-	private fun MarkdownEntry.toDocEntry(): DocEntry? {
+	private fun MarkdownEntry.toDocEntry(): DocEntry {
 		val fields = requiredFields.associateWith { field ->
-			frontMatter[field]?.firstOrNull() ?: return null.also {
-				logger.warn("Skipping '$filePath', missing required fields in its front matter: ${requiredFields.filter { frontMatter[it] == null }}")
-			}
+			frontMatter[field]?.firstOrNull()
+				?: throw GradleException("'$filePath' misses required fields in its front matter: ${requiredFields.filter { frontMatter[it] == null }}")
 		}
 		return DocEntry(
 			date = fields.getValue("date-created").toIsoDate(),
 			dateModified = fields.getValue("date-modified").toIsoDate(),
 			desc = fields.getValue("description"),
-			file = markdownDir.resolve(filePath),
-			keywords = frontMatter["keywords"]?.firstOrNull()?.split(Regex(""",\s*""")).orEmpty(),
+			filePath = filePath,
+			keywords = fields.getValue("keywords").split(Regex(""",\s*""")),
 			navTitle = fields.getValue("nav-title"),
 			position = frontMatter["position"]?.firstOrNull()?.toIntOrNull(),
 			slugs = fields.getValue("routeOverride").split("/").drop(1),
@@ -166,14 +177,20 @@ class DocSiteGenerator(
 		)
 	}
 
-	private fun docConstantsSource(docConstants: Map<String, String>) = buildString {
+	private fun docWidgetsSource(calls: Set<String>) = buildString {
 		appendLine("// This file is generated. Do not modify directly.")
 		appendLine()
 		appendLine("package $SITE_PACKAGE")
 		appendLine()
-		appendLine("/** Values of the doc placeholders, `{{kore.release}}` reading [koreRelease]. */")
-		appendLine("object DocConstants {")
-		docConstants.forEach { (key, value) -> appendLine("\tconst val ${docConstantProperty(key)} = \"$value\"") }
+		appendLine("import androidx.compose.runtime.Composable")
+		appendLine()
+		appendLine("/** The `{{{ }}}` widgets of the doc pages, keyed on the call as written in the Markdown. */")
+		appendLine("@Composable")
+		appendLine("fun DocWidgetCall(call: String) {")
+		appendLine("\twhen (call) {")
+		calls.forEach { appendLine("\t\t\"${it.replace("\\", "\\\\").replace("\"", "\\\"").replace("$", "\\$")}\" -> ${KobwebCall(it).toFqn(SITE_PACKAGE)}") }
+		appendLine("\t\telse -> error(\"No doc widget \$call\")")
+		appendLine("\t}")
 		appendLine("}")
 	}
 
@@ -203,7 +220,7 @@ class DocSiteGenerator(
 				.filter { docConstantRegex.matchEntire(it.value)?.groupValues?.get(1) !in docConstants }
 				.map { "$path: unknown placeholder ${it.value}" }.toList() +
 				listOfNotNull(
-					docConstantRegex.find(frontMatter)?.let { "$path: ${it.value} in the frontmatter, which no handler expands" },
+					docConstantRegex.find(frontMatter)?.let { "$path: ${it.value} in the frontmatter, which isn't expanded" },
 					docConstantRegex.find(headings)?.let { "$path: ${it.value} in a heading, whose anchor would change on every release" },
 				)
 		}
@@ -229,8 +246,8 @@ class DocSiteGenerator(
 	}
 
 	/** The page as clean Markdown: its own H1 (the frontmatter title when it has none), the description, the update date and the canonical URL, then the body. */
-	private fun DocEntry.toMarkdown(docConstants: Map<String, String>, widgets: Map<String, String>, routes: Set<String>): String {
-		val body = file.readText().replace(frontMatterRegex, "").expandDocConstants(docConstants).toPlainMarkdown(widgets, routes).trim()
+	private fun DocEntry.toMarkdown(expandedSource: String, widgets: Map<String, String>, routes: Set<String>): String {
+		val body = expandedSource.replace(frontMatterRegex, "").toPlainMarkdown(widgets, routes).trim()
 		val ownHeading = body.startsWith("# ")
 		return buildString {
 			appendLine("# ${if (ownHeading) body.substringBefore('\n').removePrefix("# ") else title}")
