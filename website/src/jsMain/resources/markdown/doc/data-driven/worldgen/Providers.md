@@ -122,7 +122,7 @@ count(weightedList {
 count(weightedList(7 to constant(1), 3 to constant(3)))
 ```
 
-Reference: [Int provider](https://minecraft.wiki/w/Custom_world_generation/int_provider)
+Reference: [Int provider](https://minecraft.wiki/w/Configured_feature/int_provider)
 
 ## Float Providers
 
@@ -148,7 +148,7 @@ The explorer under the [int providers](#int-providers) table also covers the flo
 `constant`, `uniform`, `trapezoid` and `clampedNormal` are named the same for ints and floats. A block accepting both, such as
 `largeDripstone { }`, tells them apart by argument type: `constant(3)` builds an int provider and `constant(3f)` a float one.
 
-Reference: [Float provider](https://minecraft.wiki/w/Custom_world_generation/float_provider)
+Reference: [Float provider](https://minecraft.wiki/w/Configured_feature/float_provider)
 
 ## See Also
 

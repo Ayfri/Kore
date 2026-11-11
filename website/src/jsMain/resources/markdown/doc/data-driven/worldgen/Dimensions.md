@@ -154,7 +154,7 @@ dp.dimension("skylands", type = myDimType) {
 ```
 
 References: [Biome source](https://minecraft.wiki/w/Biome_source),
-[Multi-noise biome source parameter list](https://minecraft.wiki/w/Multi-noise_biome_source_parameter_list)
+[Multi-noise biome source parameter list](https://minecraft.wiki/w/Dimension_definition#Multi_noise_parameter_list)
 
 ### Flat Generator
 
