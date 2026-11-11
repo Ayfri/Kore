@@ -19,6 +19,20 @@ repositories {
 	mavenCentral()
 }
 
+/**
+ * The shared test helpers live in `:common-tests`, which depends on this module: used as a dependency, it puts this module's
+ * own jar on its test classpath, so every edit re-zips and re-hashes ~11k classes before a test runs. The tests compile a copy.
+ */
+val syncTestHelpers = tasks.register<Sync>("syncTestHelpers") {
+	from(rootDir.resolve("common-tests/src"))
+	into(layout.buildDirectory.dir("generated/testHelpers"))
+}
+
+/** The IDE import runs this task, so the copy exists before the tests are opened in a fresh checkout. */
+tasks.matching { it.name == "prepareKotlinIdeaImport" }.configureEach {
+	dependsOn(syncTestHelpers)
+}
+
 kotlin {
 	jvm()
 	js {
@@ -47,12 +61,15 @@ kotlin {
 			implementation(libs.ktoml)
 		}
 
-		commonTest.dependencies {
-			implementation(project(":common-tests"))
+		commonTest {
+			kotlin.srcDir(syncTestHelpers.map { it.destinationDir.resolve("commonMain/kotlin") })
 		}
 
-		jvmTest.dependencies {
-			implementation(libs.kotlin.dotenv)
+		jvmTest {
+			dependencies {
+				implementation(libs.kotlin.dotenv)
+			}
+			kotlin.srcDir(syncTestHelpers.map { it.destinationDir.resolve("jvmMain/kotlin") })
 		}
 	}
 }
