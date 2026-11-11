@@ -13,6 +13,18 @@ pluginManager.withPlugin("org.jetbrains.kotlin.plugin.serialization") {
 	}
 }
 
+// Packing a module's compiled output into a local cache entry costs more than its incremental compile (~6s per edit for the
+// ~10k class files of `kore`), and a JS compile or a KSP run restored from the cache has lost its incremental state, so the edit
+// following an undo recompiles the whole module. CI keeps caching them, its Gradle User Home (and so the build cache) is restored
+// between runs.
+if (!providers.environmentVariable("CI").isPresent) {
+	listOf(KotlinCompilationTask::class, KspAATask::class).forEach { type ->
+		tasks.withType(type.java).configureEach {
+			outputs.cacheIf("CI only") { false }
+		}
+	}
+}
+
 // KSP builds a full analysis session (~3s on `kore`) even for a compilation without processors, like most `jvmTest` ones.
 pluginManager.withPlugin("com.google.devtools.ksp") {
 	tasks.withType<KspAATask>().configureEach {

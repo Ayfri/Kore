@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-
 plugins {
 	kotlin("multiplatform")
 	kotlin("plugin.serialization")
@@ -98,12 +96,4 @@ tasks.matching {
 			it.name.contains("SourcesJar", ignoreCase = true))
 }.configureEach {
 	dependsOn("kspCommonMainKotlinMetadata")
-}
-
-// Packing ~10k class files into a local cache entry costs ~6s per edit, more than the incremental compile itself.
-// CI keeps caching them, its Gradle User Home (and so the build cache) is restored between runs.
-if (providers.environmentVariable("CI").orNull == null) {
-	tasks.withType<KotlinCompilationTask<*>>().configureEach {
-		outputs.cacheIf("CI only") { false }
-	}
 }
