@@ -689,13 +689,7 @@ kobweb {
 				).forEach { entry ->
 					appendLine(
 						"""
-						|	DocArticle("/docs/${
-							entry.file.path.substringBeforeLast(".md")
-								.replace(Regex(" |_"), "-")
-								.replace("\\", "/")
-								.substringAfter("doc/")
-								.lowercase()
-						}",
+						|	DocArticle("/${entry.slugs.joinToString("/")}",
 						|	    "${entry.date}",
 						|	    "${entry.title.escapeQuotes()}",
 						|	    "${entry.desc.escapeQuotes()}",
