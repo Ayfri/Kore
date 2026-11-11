@@ -36,6 +36,13 @@ pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
 		}
 
 		targets.withType<KotlinJsIrTarget>().configureEach {
+			// Kotlin 2.4 inlines same-module calls while writing the klib, but an incremental compile doesn't recompile the callers
+			// of an inline function whose body changed, so they keep the old one. Left to the link step, like cross-module calls,
+			// inlining always sees the current body: this is what keeps JS incremental compilation correct.
+			compilerOptions {
+				freeCompilerArgs.add("-Xklib-ir-inliner=disabled")
+			}
+
 			// npm workspace versions land in kotlin-js-store/package-lock.json, so pinning them keeps Kore/Minecraft version bumps out of the lock file.
 			compilations.configureEach {
 				packageJson {
