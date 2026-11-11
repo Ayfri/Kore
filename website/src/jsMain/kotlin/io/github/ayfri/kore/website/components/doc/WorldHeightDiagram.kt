@@ -3,12 +3,10 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.LandingVars
-import io.github.ayfri.kore.website.components.common.CodeBlock
-import io.github.ayfri.kore.website.components.common.Tab
-import io.github.ayfri.kore.website.components.common.Tabs
+import io.github.ayfri.kore.website.components.common.CodeTab
+import io.github.ayfri.kore.website.components.common.CodeTabs
 import io.github.ayfri.kore.website.components.common.mcTexture
 import io.github.ayfri.kore.website.utils.alpha
-import io.github.ayfri.kore.website.utils.highlightCodeIn
 import io.github.ayfri.kore.website.utils.monoFont
 import io.github.ayfri.kore.website.utils.smMax
 import org.jetbrains.compose.web.attributes.step
@@ -20,8 +18,6 @@ import kotlin.math.max
 import kotlin.math.min
 
 private const val COLUMN_REM = 22.0
-private const val HEIGHT_JSON_ID = "world-height-json"
-private const val HEIGHT_KOTLIN_ID = "world-height-kotlin"
 private const val LABEL_GAP_REM = 0.15
 private const val LINE_REM = 1.1
 private const val MAX_Y = 2031
@@ -87,14 +83,16 @@ private data class Anchor(val kind: AnchorKind, val offset: Int) {
 
 /** A real vanilla height range: where it is [file] and [field], and the [dimension] and anchors it uses. */
 private class HeightPreset(
-	val label: String,
+	override val label: String,
 	val file: String,
 	val field: String,
-	val note: String,
+	override val note: String,
 	val dimension: Dimension,
 	val low: Anchor,
 	val high: Anchor,
-)
+) : DocPreset {
+	override val source get() = listOf(file, field)
+}
 
 private val HEIGHT_PRESETS = listOf(
 	HeightPreset(
@@ -214,11 +212,11 @@ fun WorldHeightDiagram() {
 	val label = "${world.label}, from Y ${world.minY} to ${world.top}, sea level ${world.seaLevel}. " +
 		marks.joinToString(". ") { "${it.text}${if (it.outside) ", outside the world, not clamped" else ""}" } + ". $reading"
 
-	Div({ classes(WorldHeightStyle.diagram) }) {
-		HeightPresetRow(preset, preset?.let { it.dimension != world || it.low != low || it.high != high } == true) { chosen ->
+	Div({ classes(DocControlsStyle.widget) }) {
+		PresetRow("Try a vanilla range", "Vanilla presets", HEIGHT_PRESETS, preset, preset?.let { it.dimension != world || it.low != low || it.high != high } == true) { chosen ->
 			if (chosen == preset) {
 				preset = null
-				return@HeightPresetRow
+				return@PresetRow
 			}
 			world = chosen.dimension
 			low = chosen.low
@@ -233,7 +231,7 @@ fun WorldHeightDiagram() {
 
 			Div({ classes(WorldHeightStyle.controls) }) {
 				Div({ classes(WorldHeightStyle.section) }) {
-					Span({ classes(WorldHeightStyle.sectionTitle) }) { Text("Vertical anchors") }
+					Span({ classes(DocControlsStyle.controlLabel) }) { Text("Vertical anchors") }
 					AnchorKind.entries.forEach { kind ->
 						val offset = anchors.getValue(kind)
 						val marker = marks[kind.ordinal]
@@ -246,7 +244,7 @@ fun WorldHeightDiagram() {
 				}
 
 				Div({ classes(WorldHeightStyle.section) }) {
-					Span({ classes(WorldHeightStyle.sectionTitle) }) { Text("Height range, uniformHeightProvider") }
+					Span({ classes(DocControlsStyle.controlLabel) }) { Text("Height range, uniformHeightProvider") }
 					RangeEnd("minInclusive", low, marks[AnchorKind.entries.size]) { low = it }
 					RangeEnd("maxInclusive", high, marks[AnchorKind.entries.size + 1]) { high = it }
 					Div({
@@ -257,33 +255,9 @@ fun WorldHeightDiagram() {
 			}
 		}
 
-		Div({ classes(WorldHeightStyle.caption) }) { Text(world.summary.replace("`", "") + " The bands are stylized, real terrain varies.") }
+		Div({ classes(DocControlsStyle.caption) }) { Text(world.summary.replace("`", "") + " The bands are stylized, real terrain varies.") }
 
-		Tabs(
-			listOf(
-				Tab("Kotlin") { Div({ id(HEIGHT_KOTLIN_ID) }) { key(kotlin) { CodeBlock(kotlin, "kotlin") } } },
-				Tab("JSON") { Div({ id(HEIGHT_JSON_ID) }) { key(json) { CodeBlock(json, "json") } } },
-			),
-		)
-		highlightCodeIn(HEIGHT_KOTLIN_ID, kotlin)
-		highlightCodeIn(HEIGHT_JSON_ID, json)
-	}
-}
-
-@Composable
-private fun HeightPresetRow(selected: HeightPreset?, edited: Boolean, onSelect: (HeightPreset) -> Unit) {
-	Div({ classes(WorldHeightStyle.presets) }) {
-		Span({ classes(WorldHeightStyle.sectionTitle) }) { Text("Try a vanilla range") }
-		PillGroup("Vanilla presets", HEIGHT_PRESETS, selected, HeightPreset::label, onSelect)
-		selected?.let {
-			Div({ classes(WorldHeightStyle.caption) }) {
-				Text("from ")
-				Span({ classes(WorldHeightStyle.captionFile) }) { Text(it.file) }
-				Text(", ")
-				Span({ classes(WorldHeightStyle.captionFile) }) { Text(it.field) }
-				Text(": ${it.note}${if (edited) " (edited)" else ""}")
-			}
-		}
+		CodeTabs("world-height", CodeTab("Kotlin", kotlin, "kotlin"), CodeTab("JSON", json, "json"))
 	}
 }
 
@@ -439,16 +413,6 @@ private object WorldHeightStyle : StyleSheet() {
 		}
 	}
 
-	val caption by style {
-		color(LandingVars.Muted.value())
-		fontSize(0.8.cssRem)
-	}
-
-	val captionFile by style {
-		color(LandingVars.Text.value())
-		monoFont()
-	}
-
 	val chip by style {
 		color(LandingVars.Text.value())
 		fontSize(0.72.cssRem)
@@ -505,15 +469,6 @@ private object WorldHeightStyle : StyleSheet() {
 		minWidth(0.px)
 	}
 
-	val diagram by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		gap(1.cssRem)
-		margin(1.5.cssRem, 0.px)
-		minWidth(0.px)
-		width(100.percent)
-	}
-
 	val labels by style {
 		flexGrow(1)
 		flexShrink(1)
@@ -550,12 +505,6 @@ private object WorldHeightStyle : StyleSheet() {
 		backgroundColor(LandingVars.Accent.value())
 	}
 
-	val presets by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		gap(0.5.cssRem)
-	}
-
 	val rangeEnd by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
@@ -584,12 +533,6 @@ private object WorldHeightStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		gap(0.7.cssRem)
-	}
-
-	val sectionTitle by style {
-		color(LandingVars.Muted.value())
-		fontSize(0.75.cssRem)
-		monoFont()
 	}
 
 	val tick by style {

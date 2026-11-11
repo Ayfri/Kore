@@ -15,6 +15,7 @@ import io.github.ayfri.kore.website.components.mc.McFont
 import io.github.ayfri.kore.website.components.mc.McItemModel
 import io.github.ayfri.kore.website.utils.alpha
 import io.github.ayfri.kore.website.utils.monoFont
+import io.github.ayfri.kore.website.utils.onPointerDrag
 import io.github.ayfri.kore.website.utils.perspective
 import io.github.ayfri.kore.website.utils.smMax
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
@@ -23,8 +24,6 @@ import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.ElementScope
 import org.jetbrains.compose.web.dom.Text
 import org.w3c.dom.HTMLDivElement
-import org.w3c.dom.events.Event
-import org.w3c.dom.events.MouseEvent
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.round
@@ -363,36 +362,8 @@ internal fun DisplayScene(
 				event.preventDefault()
 				onCamera(turn)
 			}
-			ref { stage ->
-				var dragging = false
-				var start = DisplayCamera()
-				var startX = 0
-				var startY = 0
-				val onDown: (Event) -> Unit = { event ->
-					val pointer = event.unsafeCast<MouseEvent>()
-					dragging = true
-					start = cameraState.value
-					startX = pointer.clientX
-					startY = pointer.clientY
-					stage.asDynamic().setPointerCapture(event.asDynamic().pointerId)
-				}
-				val onMove: (Event) -> Unit = { event ->
-					val pointer = event.unsafeCast<MouseEvent>()
-					if (dragging) onCameraState.value?.invoke(
-						start.turned((pointer.clientX - startX) * DRAG_DEGREES_PER_PIXEL, (pointer.clientY - startY) * DRAG_DEGREES_PER_PIXEL)
-					)
-				}
-				val onEnd: (Event) -> Unit = { dragging = false }
-				stage.addEventListener("pointerdown", onDown)
-				stage.addEventListener("pointermove", onMove)
-				stage.addEventListener("pointerup", onEnd)
-				stage.addEventListener("pointercancel", onEnd)
-				onDispose {
-					stage.removeEventListener("pointerdown", onDown)
-					stage.removeEventListener("pointermove", onMove)
-					stage.removeEventListener("pointerup", onEnd)
-					stage.removeEventListener("pointercancel", onEnd)
-				}
+			onPointerDrag({ cameraState.value }) { origin, dx, dy ->
+				onCameraState.value?.invoke(origin.turned(dx * DRAG_DEGREES_PER_PIXEL, dy * DRAG_DEGREES_PER_PIXEL))
 			}
 		}
 	}) {

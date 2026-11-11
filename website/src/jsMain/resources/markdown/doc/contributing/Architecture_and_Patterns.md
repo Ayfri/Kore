@@ -312,8 +312,11 @@ for lines mixing styles, like chat messages built from several text components.
 
 Interactive explainers (sliders that redraw a distribution, for example) live in `components/doc/`, like `ProviderExplorer`.
 Embed one the same way, right after the table it illustrates, and write the sentence introducing it so the page reads
-fine without it: the `.md` copies and `llms.txt` drop the widget line. The pills, toggle groups, slider and text fields these
-widgets share live in `components/doc/DocControls.kt`: reuse them instead of styling new controls.
+fine without it: the `.md` copies and `llms.txt` drop the widget line. The pills, toggle groups, slider and text fields,
+the labelled `ControlField` and the `PresetRow` of vanilla values (a `DocPreset` list) these widgets share live in
+`components/doc/DocControls.kt` (`PillGroup` takes a `sprite` to draw a vanilla texture in each pill), and
+`HighlightedCode`, one highlighted block, and `CodeTabs`, the Kotlin and output tabs under a widget, in
+`components/common/CodeBlock.kt`: reuse them instead of styling new controls.
 
 A playground example is embedded with a one-line wrapper in `components/doc/PlaygroundExampleEmbeds.kt` and a
 `{{{ .components.doc.SelectorsExample }}}` line. It shows the example's Kotlin and the files it really generates, so an

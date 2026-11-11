@@ -3,13 +3,12 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.Overflow
 import com.varabyte.kobweb.compose.css.overflowX
-import io.github.ayfri.kore.website.components.common.CodeBlock
+import io.github.ayfri.kore.website.components.common.HighlightedCode
 import io.github.ayfri.kore.website.components.mc.McChat
 import io.github.ayfri.kore.website.components.mc.McChatLine
 import io.github.ayfri.kore.website.components.mc.McColor
 import io.github.ayfri.kore.website.components.mc.McSpan
 import io.github.ayfri.kore.website.components.mc.chatColors
-import io.github.ayfri.kore.website.utils.highlightCodeIn
 import org.jetbrains.compose.web.dom.*
 
 private const val DEFAULT_TEXT = "Welcome to the server!"
@@ -61,7 +60,6 @@ fun TextComponentBuilder() {
 			}
 		}
 
-		Div({ id(KOTLIN_ID) }) { key(kotlin) { CodeBlock(kotlin, "kotlin") } }
-		highlightCodeIn(KOTLIN_ID, kotlin)
+		HighlightedCode(KOTLIN_ID, kotlin, "kotlin")
 	}
 }

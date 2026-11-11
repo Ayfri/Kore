@@ -24,6 +24,32 @@ fun ControlField(label: String, content: @Composable () -> Unit) {
 	}
 }
 
+/** A real vanilla value a widget can load: its pill [label], and what the caption says, a [note] about the data found in each [source] file or field. */
+interface DocPreset {
+	val label: String
+	val note: String
+	val source: List<String>
+}
+
+/** A mono [title] over the pills of [presets], and once one is [selected] the caption of where it comes from, flagged when [edited] since. */
+@Composable
+fun <T : DocPreset> PresetRow(title: String, groupLabel: String, presets: List<T>, selected: T?, edited: Boolean, onSelect: (T) -> Unit) {
+	Div({ classes(DocControlsStyle.presets) }) {
+		Span({ classes(DocControlsStyle.controlLabel) }) { Text(title) }
+		PillGroup(groupLabel, presets, selected, { it.label }, onSelect = onSelect)
+		selected?.let {
+			Div({ classes(DocControlsStyle.caption) }) {
+				Text("from ")
+				it.source.forEachIndexed { index, source ->
+					if (index > 0) Text(", ")
+					Span({ classes(DocControlsStyle.captionFile) }) { Text(source) }
+				}
+				Text(": ${it.note}${if (edited) " (edited)" else ""}")
+			}
+		}
+	}
+}
+
 /** A pill button, a toggle with `aria-pressed` when [pressed] is not null, drawing the vanilla texture [sprite] before the text. */
 @Composable
 fun Pill(text: String, pressed: Boolean? = null, sprite: String? = null, onClick: () -> Unit) {
@@ -39,15 +65,15 @@ fun Pill(text: String, pressed: Boolean? = null, sprite: String? = null, onClick
 	}
 }
 
-/** Pills of which exactly [selected] is pressed, null pressing none. */
+/** Pills of which exactly [selected] is pressed, null pressing none, each drawing the texture [sprite] returns for its option. */
 @Composable
-fun <T : Any> PillGroup(label: String, options: List<T>, selected: T?, text: (T) -> String, onSelect: (T) -> Unit) {
+fun <T : Any> PillGroup(label: String, options: List<T>, selected: T?, text: (T) -> String, sprite: (T) -> String? = { null }, onSelect: (T) -> Unit) {
 	Div({
 		classes(DocControlsStyle.group)
 		attr("aria-label", label)
 		attr("role", "group")
 	}) {
-		options.forEach { option -> Pill(text(option), option == selected) { onSelect(option) } }
+		options.forEach { option -> Pill(text(option), option == selected, sprite(option)) { onSelect(option) } }
 	}
 }
 
@@ -106,6 +132,16 @@ internal fun String.kotlin() = "\"" + replace("\\", "\\\\").replace("\"", "\\\""
 
 /** Controls shared by the interactive doc widgets, injected by `MarkdownLayout`. */
 object DocControlsStyle : StyleSheet() {
+	val caption by style {
+		color(LandingVars.Muted.value())
+		fontSize(0.8.cssRem)
+	}
+
+	val captionFile by style {
+		color(LandingVars.Text.value())
+		monoFont()
+	}
+
 	val control by style {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
@@ -184,6 +220,12 @@ object DocControlsStyle : StyleSheet() {
 		backgroundColor(LandingVars.Accent.value().alpha(0.18))
 		border(1.px, LineStyle.Solid, LandingVars.Accent.value())
 		color(LandingVars.Text.value())
+	}
+
+	val presets by style {
+		display(DisplayStyle.Flex)
+		flexDirection(FlexDirection.Column)
+		gap(0.5.cssRem)
 	}
 
 	val readout by style {

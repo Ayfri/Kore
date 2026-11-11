@@ -1116,7 +1116,6 @@ object FeatureVisualsStyle : StyleSheet() {
 		width(gui(142))
 		mcBackground("map/map_background")
 		boxSizing(BoxSizing.BorderBox)
-		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val mapCanvas by style {
@@ -1343,7 +1342,6 @@ object FeatureVisualsStyle : StyleSheet() {
 		transition(0.2.s, "box-shadow")
 		width(7.5.percent)
 		mcBackground("block/target_side", size = BackgroundSize.Cover, position = CSSPosition.Center)
-		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val blockHit by style {

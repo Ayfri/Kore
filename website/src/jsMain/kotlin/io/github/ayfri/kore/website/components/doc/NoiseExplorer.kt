@@ -3,11 +3,9 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.LandingVars
-import io.github.ayfri.kore.website.components.common.CodeBlock
+import io.github.ayfri.kore.website.components.common.CodeTab
+import io.github.ayfri.kore.website.components.common.CodeTabs
 import io.github.ayfri.kore.website.components.common.McSprite
-import io.github.ayfri.kore.website.components.common.Tab
-import io.github.ayfri.kore.website.components.common.Tabs
-import io.github.ayfri.kore.website.utils.highlightCodeIn
 import io.github.ayfri.kore.website.utils.monoFont
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.AlignItems
@@ -32,8 +30,6 @@ private const val SEA_LEVEL = 63
 private const val SURFACE_Y = 72
 private const val TERRAIN_COLUMNS = 256
 private const val TERRAIN_ROWS = 64
-private const val NOISE_JSON_ID = "noise-explorer-json"
-private const val NOISE_KOTLIN_ID = "noise-explorer-kotlin"
 private const val DISCLAIMER = "Same algorithm and octave scales as the game, with another seed, so features match in size but not in place. " +
 	"Noise coordinates are block coordinates here (xz_scale 1). Values are clamped to -1..1 for the colors."
 
@@ -285,7 +281,10 @@ private data class NoiseConfig(val baseOctave: Int, val modifiers: List<Double>,
 	}
 }
 
-private class NoisePreset(val name: String, val config: NoiseConfig, val note: String)
+private class NoisePreset(val name: String, val config: NoiseConfig, override val note: String) : DocPreset {
+	override val label get() = name
+	override val source get() = listOf("worldgen/noise/$name.json")
+}
 
 private val NOISE_PRESETS = listOf(
 	NoisePreset(
@@ -408,11 +407,11 @@ fun NoiseExplorer() {
 	val kotlin = config.kotlin(preset?.name ?: "my_noise")
 	val json = config.json()
 
-	Div({ classes(NoiseExplorerStyle.explorer) }) {
-		NoisePresetRow(preset, preset?.let { it.config != config } == true) { chosen ->
+	Div({ classes(DocControlsStyle.widget) }) {
+		PresetRow("Try a vanilla noise", "Vanilla noises", NOISE_PRESETS, preset, preset?.let { it.config != config } == true) { chosen ->
 			if (chosen == preset) {
 				preset = null
-				return@NoisePresetRow
+				return@PresetRow
 			}
 			preset = chosen
 			config = chosen.config
@@ -461,31 +460,9 @@ fun NoiseExplorer() {
 			}
 		}
 
-		Div({ classes(NoiseExplorerStyle.caption) }) { Text(DISCLAIMER) }
+		Div({ classes(DocControlsStyle.caption) }) { Text(DISCLAIMER) }
 
-		Tabs(
-			listOf(
-				Tab("Kotlin") { Div({ id(NOISE_KOTLIN_ID) }) { key(kotlin) { CodeBlock(kotlin, "kotlin") } } },
-				Tab("JSON") { Div({ id(NOISE_JSON_ID) }) { key(json) { CodeBlock(json, "json") } } },
-			),
-		)
-		highlightCodeIn(NOISE_KOTLIN_ID, kotlin)
-		highlightCodeIn(NOISE_JSON_ID, json)
-	}
-}
-
-@Composable
-private fun NoisePresetRow(selected: NoisePreset?, edited: Boolean, onSelect: (NoisePreset) -> Unit) {
-	Div({ classes(NoiseExplorerStyle.presets) }) {
-		Span({ classes(NoiseExplorerStyle.presetsLabel) }) { Text("Try a vanilla noise") }
-		PillGroup("Vanilla noises", NOISE_PRESETS, selected, NoisePreset::name, onSelect)
-		selected?.let {
-			Div({ classes(NoiseExplorerStyle.caption) }) {
-				Text("from ")
-				Span({ classes(NoiseExplorerStyle.captionFile) }) { Text("worldgen/noise/${it.name}.json") }
-				Text(": ${it.note}${if (edited) " (edited)" else ""}")
-			}
-		}
+		CodeTabs("noise-explorer", CodeTab("Kotlin", kotlin, "kotlin"), CodeTab("JSON", json, "json"))
 	}
 }
 
@@ -596,7 +573,7 @@ private fun NoiseTerrainView(sampler: NoiseSampler, seed: Int, config: NoiseConf
 		Span { McSprite("block/sand", "Sand"); Text("sand") }
 		Span { McSprite("block/water_still", "Water", Color("#3f76e4")); Text("water") }
 	}
-	Div({ classes(NoiseExplorerStyle.caption) }) {
+	Div({ classes(DocControlsStyle.caption) }) {
 		Text("density = noise(x, y, 0) + ($SURFACE_Y - y) / 32, sea level $SEA_LEVEL: positive is stone, negative is air or water")
 	}
 }
@@ -672,16 +649,6 @@ private object NoiseExplorerStyle : StyleSheet() {
 		aspectRatio(AspectRatio.of(4, 1))
 	}
 
-	val caption by style {
-		color(LandingVars.Muted.value())
-		fontSize(0.8.cssRem)
-	}
-
-	val captionFile by style {
-		color(LandingVars.Text.value())
-		monoFont()
-	}
-
 	val controls by style {
 		display(DisplayStyle.Flex)
 		flexBasis(18.cssRem)
@@ -690,15 +657,6 @@ private object NoiseExplorerStyle : StyleSheet() {
 		flexShrink(1)
 		gap(0.9.cssRem)
 		minWidth(0.px)
-	}
-
-	val explorer by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		gap(1.cssRem)
-		margin(1.5.cssRem, 0.px)
-		minWidth(0.px)
-		width(100.percent)
 	}
 
 	val legend by style {
@@ -743,18 +701,6 @@ private object NoiseExplorerStyle : StyleSheet() {
 		color(LandingVars.Muted.value())
 		fontSize(0.75.cssRem)
 		minWidth(0.px)
-		monoFont()
-	}
-
-	val presets by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		gap(0.5.cssRem)
-	}
-
-	val presetsLabel by style {
-		color(LandingVars.Muted.value())
-		fontSize(0.75.cssRem)
 		monoFont()
 	}
 

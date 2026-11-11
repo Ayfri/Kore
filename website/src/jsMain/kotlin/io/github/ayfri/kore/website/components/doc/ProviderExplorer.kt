@@ -3,12 +3,10 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.LandingVars
-import io.github.ayfri.kore.website.components.common.CodeBlock
+import io.github.ayfri.kore.website.components.common.CodeTab
+import io.github.ayfri.kore.website.components.common.CodeTabs
 import io.github.ayfri.kore.website.components.common.McSprite
-import io.github.ayfri.kore.website.components.common.Tab
-import io.github.ayfri.kore.website.components.common.Tabs
 import io.github.ayfri.kore.website.utils.alpha
-import io.github.ayfri.kore.website.utils.highlightCodeIn
 import io.github.ayfri.kore.website.utils.monoFont
 import io.github.ayfri.kore.website.utils.smMax
 import org.jetbrains.compose.web.css.*
@@ -29,8 +27,6 @@ private const val FLOAT_BINS = 40
 private const val FLOAT_STEP = 0.025
 private const val MAX_SPRITES = 16
 private const val ROLL_COUNT = 8
-private const val KOTLIN_CODE_ID = "provider-explorer-kotlin"
-private const val JSON_CODE_ID = "provider-explorer-json"
 
 private typealias Values = Map<String, Double>
 
@@ -347,16 +343,18 @@ private class Sprite(val path: String, val label: String, val stacked: Boolean =
 
 /** A real vanilla provider: where it is [file] and [field], what it rolls ([unit], [note]) and how a roll is drawn ([sprite]). */
 private class Preset(
-	val label: String,
+	override val label: String,
 	val file: String,
 	val field: String,
-	val note: String,
+	override val note: String,
 	val kind: ProviderKind,
 	val key: String,
 	val values: Values,
 	val unit: Pair<String, String>? = null,
 	val sprite: Sprite? = null,
-)
+) : DocPreset {
+	override val source get() = listOf(file, field)
+}
 
 private val PRESETS = listOf(
 	Preset(
@@ -540,8 +538,8 @@ fun ProviderExplorer() {
 	val kotlin = spec.kotlin(values)
 	val json = spec.json(values)
 
-	Div({ classes(ProviderExplorerStyle.explorer) }) {
-		PresetRow(preset, preset?.values?.any { (name, value) -> values[name] != value } == true) { chosen ->
+	Div({ classes(DocControlsStyle.widget) }) {
+		PresetRow("Try a vanilla value", "Vanilla presets", PRESETS, preset, preset?.values?.any { (name, value) -> values[name] != value } == true) { chosen ->
 			if (chosen == preset) {
 				preset = null
 				return@PresetRow
@@ -586,31 +584,7 @@ fun ProviderExplorer() {
 
 		RollStrip(rolls, spec.kind, preset?.sprite, histogram.from, histogram.to) { rerolls++ }
 
-		Tabs(
-			listOf(
-				Tab("Kotlin") { Div({ id(KOTLIN_CODE_ID) }) { key(kotlin) { CodeBlock(kotlin, "kotlin") } } },
-				Tab("JSON") { Div({ id(JSON_CODE_ID) }) { key(json) { CodeBlock(json, "json") } } },
-			),
-		)
-		highlightCodeIn(KOTLIN_CODE_ID, kotlin)
-		highlightCodeIn(JSON_CODE_ID, json)
-	}
-}
-
-@Composable
-private fun PresetRow(selected: Preset?, edited: Boolean, onSelect: (Preset) -> Unit) {
-	Div({ classes(ProviderExplorerStyle.presets) }) {
-		Span({ classes(ProviderExplorerStyle.presetsLabel) }) { Text("Try a vanilla value") }
-		PillGroup("Vanilla presets", PRESETS, selected, Preset::label, onSelect)
-		selected?.let {
-			Div({ classes(ProviderExplorerStyle.caption) }) {
-				Text("from ")
-				Span({ classes(ProviderExplorerStyle.captionFile) }) { Text(it.file) }
-				Text(", ")
-				Span({ classes(ProviderExplorerStyle.captionFile) }) { Text(it.field) }
-				Text(": ${it.note}${if (edited) " (edited)" else ""}")
-			}
-		}
+		CodeTabs("provider-explorer", CodeTab("Kotlin", kotlin, "kotlin"), CodeTab("JSON", json, "json"))
 	}
 }
 
@@ -653,7 +627,7 @@ private fun RollStrip(rolls: List<Double>, kind: ProviderKind, sprite: Sprite?, 
 
 	Div({ classes(DocControlsStyle.panel, ProviderExplorerStyle.rolls) }) {
 		Div({ classes(ProviderExplorerStyle.rollsHeader) }) {
-			Span({ classes(ProviderExplorerStyle.rollsTitle) }) { Text("$ROLL_COUNT rolls") }
+			Span({ classes(DocControlsStyle.controlLabel) }) { Text("$ROLL_COUNT rolls") }
 			Pill("Reroll", onClick = onReroll)
 		}
 		Div({ classes(if (stacked) ProviderExplorerStyle.rollStacks else ProviderExplorerStyle.rollGrid) }) {
@@ -674,7 +648,7 @@ private fun SpriteRoll(count: Int, sprite: Sprite) {
 		Span({ classes(ProviderExplorerStyle.rollValue) }) { Text(count.toString()) }
 		Div({ classes(ProviderExplorerStyle.sprites) }) {
 			repeat(count.coerceIn(0, MAX_SPRITES)) { McSprite(sprite.path, sprite.label, sprite.tint) }
-			if (count > MAX_SPRITES) Span({ classes(ProviderExplorerStyle.rollMore) }) { Text("+${count - MAX_SPRITES}") }
+			if (count > MAX_SPRITES) Span({ classes(DocControlsStyle.controlLabel) }) { Text("+${count - MAX_SPRITES}") }
 		}
 	}
 }
@@ -684,7 +658,7 @@ private fun StackRoll(count: Int, sprite: Sprite) {
 	Div({ classes(ProviderExplorerStyle.rollStack) }) {
 		Div({ classes(ProviderExplorerStyle.stack) }) {
 			repeat(count.coerceIn(0, MAX_SPRITES)) { McSprite(sprite.path, sprite.label, sprite.tint) }
-			if (count > MAX_SPRITES) Span({ classes(ProviderExplorerStyle.rollMore) }) { Text("+${count - MAX_SPRITES}") }
+			if (count > MAX_SPRITES) Span({ classes(DocControlsStyle.controlLabel) }) { Text("+${count - MAX_SPRITES}") }
 		}
 		Span({ classes(ProviderExplorerStyle.rollValue) }) { Text(count.toString()) }
 	}
@@ -758,40 +732,9 @@ private object ProviderExplorerStyle : StyleSheet() {
 		justifyContent(JustifyContent.Center)
 	}
 
-	val caption by style {
-		color(LandingVars.Muted.value())
-		fontSize(0.8.cssRem)
-	}
-
-	val captionFile by style {
-		color(LandingVars.Text.value())
-		monoFont()
-	}
-
-	val explorer by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		gap(1.cssRem)
-		margin(1.5.cssRem, 0.px)
-		minWidth(0.px)
-		width(100.percent)
-	}
-
 	val fill by style {
 		backgroundColor(LandingVars.Accent.value())
 		height(100.percent)
-	}
-
-	val presets by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		gap(0.5.cssRem)
-	}
-
-	val presetsLabel by style {
-		color(LandingVars.Muted.value())
-		fontSize(0.75.cssRem)
-		monoFont()
 	}
 
 	val reading by style {
@@ -815,12 +758,6 @@ private object ProviderExplorerStyle : StyleSheet() {
 		smMax(self) {
 			gridTemplateColumns("minmax(0, 1fr)")
 		}
-	}
-
-	val rollMore by style {
-		color(LandingVars.Muted.value())
-		fontSize(0.75.cssRem)
-		monoFont()
 	}
 
 	val rollStack by style {
@@ -856,12 +793,6 @@ private object ProviderExplorerStyle : StyleSheet() {
 		alignItems(AlignItems.Center)
 		display(DisplayStyle.Flex)
 		justifyContent(JustifyContent.SpaceBetween)
-	}
-
-	val rollsTitle by style {
-		color(LandingVars.Muted.value())
-		fontSize(0.75.cssRem)
-		monoFont()
 	}
 
 	val sprites by style {

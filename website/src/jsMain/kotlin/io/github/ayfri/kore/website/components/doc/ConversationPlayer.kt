@@ -143,10 +143,10 @@ fun ConversationPlayer() {
 
 	Div({ classes(DocControlsStyle.panel, ConversationPlayerStyle.player) }) {
 		Div({ classes(ConversationPlayerStyle.controls) }) {
-			ConversationField("Choice style") {
+			ControlField("Choice style") {
 				PillGroup("Choice style", ConversationChoiceStyle.entries, player.choiceStyle, { it.label }) { player.switchStyle(it) }
 			}
-			ConversationField("Speed of the pauses") {
+			ControlField("Speed of the pauses") {
 				PillGroup("Speed of the pauses", ConversationSpeed.entries, player.speed, { it.label }) { player.speed = it }
 			}
 		}
@@ -172,17 +172,9 @@ fun ConversationPlayer() {
 			Span { Text("inventory: ${if (player.quest == 1) "iron pickaxe" else "empty"}") }
 		}
 
-		Div({ classes(ConversationPlayerStyle.caption) }) {
+		Div({ classes(DocControlsStyle.caption) }) {
 			Text("A replay of the quest above, one player's state: a click during the lines does nothing, a click during the choice shows it again.")
 		}
-	}
-}
-
-@Composable
-private fun ConversationField(label: String, content: @Composable () -> Unit) {
-	Div({ classes(DocControlsStyle.control) }) {
-		Span({ classes(DocControlsStyle.controlLabel) }) { Text(label) }
-		content()
 	}
 }
 
@@ -192,11 +184,6 @@ private object ConversationPlayerStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		flexWrap(FlexWrap.Wrap)
 		gap(0.5.cssRem)
-	}
-
-	val caption by style {
-		color(LandingVars.Muted.value())
-		fontSize(0.8.cssRem)
 	}
 
 	val controls by style {

@@ -1,8 +1,7 @@
 package io.github.ayfri.kore.website.components.doc
 
 import androidx.compose.runtime.*
-import io.github.ayfri.kore.website.components.common.CodeBlock
-import io.github.ayfri.kore.website.utils.highlightCodeIn
+import io.github.ayfri.kore.website.components.common.HighlightedCode
 import org.jetbrains.compose.web.dom.*
 import kotlin.math.round
 
@@ -41,15 +40,11 @@ fun TimeConverter() {
 			Readout("wholeTicks()", ticks.toInt().toString())
 		}
 
-		Div({ id(COMMAND_ID) }) { key(command) { CodeBlock(command, "mcfunction") } }
-		highlightCodeIn(COMMAND_ID, command)
+		HighlightedCode(COMMAND_ID, command, "mcfunction")
 	}
 }
 
 @Composable
 private fun Readout(label: String, text: String) {
-	Div({ classes(DocControlsStyle.control) }) {
-		Span({ classes(DocControlsStyle.controlLabel) }) { Text(label) }
-		Span({ classes(DocControlsStyle.readout) }) { Text(text) }
-	}
+	ControlField(label) { Span({ classes(DocControlsStyle.readout) }) { Text(text) } }
 }

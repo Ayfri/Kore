@@ -422,7 +422,6 @@ object DocMockupsStyle : StyleSheet() {
 			position = CSSPosition(0.px, 100.percent),
 			repeat = BackgroundRepeat.RepeatX,
 		)
-		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val dialogBody by style {
@@ -441,7 +440,6 @@ object DocMockupsStyle : StyleSheet() {
 		height(gui(33))
 		justifyContent(JustifyContent.Center)
 		mcBackground("gui/inworld_footer_separator", size = BackgroundSize.of(gui(32), gui(2)), repeat = BackgroundRepeat.RepeatX)
-		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val buttonGrid by style {
@@ -509,7 +507,6 @@ object DocMockupsStyle : StyleSheet() {
 		top(gui(-1))
 		width(gui(8))
 		mcBackground("gui/sprites/widget/slider_handle")
-		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val checkboxRow by style {
@@ -572,14 +569,12 @@ object DocMockupsStyle : StyleSheet() {
 		height(gui(9))
 		width(gui(10))
 		mcBackground("gui/sprites/container/villager/trade_arrow")
-		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val scroller by style {
 		height(gui(27))
 		width(gui(6))
 		mcBackground("gui/sprites/container/villager/scroller_disabled")
-		imageRendering(ImageRendering.Pixelated)
 	}
 
 	/** Leaves room above the inventory for the tooltip pushed up by the screen's bottom. */
@@ -591,14 +586,12 @@ object DocMockupsStyle : StyleSheet() {
 		height(gui(24))
 		width(gui(24))
 		mcBackground("gui/sprites/container/slot_highlight_back")
-		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val slotHighlightFront by style {
 		height(gui(24))
 		width(gui(24))
 		mcBackground("gui/sprites/container/slot_highlight_front")
-		imageRendering(ImageRendering.Pixelated)
 		pointerEvents(PointerEvents.None)
 	}
 
@@ -611,7 +604,6 @@ object DocMockupsStyle : StyleSheet() {
 		height(gui(14))
 		width(gui(14))
 		mcBackground("gui/sprites/container/furnace/lit_progress")
-		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val furnaceArrow by style {
@@ -623,6 +615,5 @@ object DocMockupsStyle : StyleSheet() {
 		height(gui(16))
 		width(gui(24))
 		mcBackground("gui/sprites/container/furnace/burn_progress")
-		imageRendering(ImageRendering.Pixelated)
 	}
 }

@@ -3,17 +3,15 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.LandingVars
-import io.github.ayfri.kore.website.components.common.CodeBlock
+import io.github.ayfri.kore.website.components.common.CodeTab
+import io.github.ayfri.kore.website.components.common.CodeTabs
 import io.github.ayfri.kore.website.components.common.MC_TEXTURES
-import io.github.ayfri.kore.website.components.common.Tab
-import io.github.ayfri.kore.website.components.common.Tabs
 import io.github.ayfri.kore.website.components.mc.McHeldItem
 import io.github.ayfri.kore.website.components.mc.McPlayerModel
 import io.github.ayfri.kore.website.components.mc.McPlayerPose
 import io.github.ayfri.kore.website.components.mc.McSkin
 import io.github.ayfri.kore.website.components.mc.McSkinLayer
-import io.github.ayfri.kore.website.utils.highlightCodeIn
-import io.github.ayfri.kore.website.utils.monoFont
+import io.github.ayfri.kore.website.utils.onPointerDrag
 import kotlinx.browser.window
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.await
@@ -25,8 +23,6 @@ import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.dom.*
 import org.khronos.webgl.Int8Array
 import org.w3c.dom.Image
-import org.w3c.dom.events.Event
-import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
@@ -34,10 +30,8 @@ import kotlin.coroutines.resume
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
 
-private const val COMMAND_ID = "mannequin-command"
 private const val DESCRIPTION_PLACEHOLDER = "NPC"
 private const val DRAG_DEGREES_PER_PIXEL = 0.6
-private const val KOTLIN_ID = "mannequin-kotlin"
 private const val LOOKUP_DEBOUNCE_MS = 400
 private const val NAME_LENGTH = 16
 private const val POSES_SCALE = 6
@@ -249,35 +243,11 @@ fun MannequinBuilder() {
 	val command = settings.command()
 	val kotlin = settings.kotlin()
 
-	Div({ classes(MannequinBuilderStyle.builder) }) {
+	Div({ classes(DocControlsStyle.widget) }) {
 		Div({ classes(MannequinBuilderStyle.layout) }) {
 			Div({
 				classes(DocControlsStyle.panel, MannequinBuilderStyle.stage)
-				ref { stage ->
-					var dragging = false
-					var startX = 0
-					var startYaw = 0.0
-					val onDown: (Event) -> Unit = { event ->
-						dragging = true
-						startX = event.unsafeCast<MouseEvent>().clientX
-						startYaw = settings.yaw
-						stage.asDynamic().setPointerCapture(event.asDynamic().pointerId)
-					}
-					val onMove: (Event) -> Unit = { event ->
-						if (dragging) settings = settings.copy(yaw = wrapYaw(startYaw + (event.unsafeCast<MouseEvent>().clientX - startX) * DRAG_DEGREES_PER_PIXEL))
-					}
-					val onEnd: (Event) -> Unit = { dragging = false }
-					stage.addEventListener("pointerdown", onDown)
-					stage.addEventListener("pointermove", onMove)
-					stage.addEventListener("pointerup", onEnd)
-					stage.addEventListener("pointercancel", onEnd)
-					onDispose {
-						stage.removeEventListener("pointerdown", onDown)
-						stage.removeEventListener("pointermove", onMove)
-						stage.removeEventListener("pointerup", onEnd)
-						stage.removeEventListener("pointercancel", onEnd)
-					}
-				}
+				onPointerDrag({ settings.yaw }) { yaw, dx, _ -> settings = settings.copy(yaw = wrapYaw(yaw + dx * DRAG_DEGREES_PER_PIXEL)) }
 			}) {
 				McPlayerModel(
 					skin = skin,
@@ -294,7 +264,7 @@ fun MannequinBuilder() {
 			}
 
 			Div({ classes(DocControlsStyle.panel, MannequinBuilderStyle.controls) }) {
-				Field("Skin") {
+				ControlField("Skin") {
 					PillGroup("Skin", SkinChoice.entries, settings.skin, SkinChoice::label) { settings = settings.copy(skin = it) }
 				}
 				if (settings.skin == SkinChoice.PLAYER) {
@@ -302,10 +272,10 @@ fun MannequinBuilder() {
 						settings = settings.copy(name = it.filter(::isNameChar).take(NAME_LENGTH))
 					}
 				}
-				if (found != null) Field("Arms in the preview") {
+				if (found != null) ControlField("Arms in the preview") {
 					PillGroup("Arms in the preview", Arms.entries, settings.arms, { it.label() }) { settings = settings.copy(arms = it) }
 				}
-				Field("Pose") {
+				ControlField("Pose") {
 					PillGroup("Pose", McPlayerPose.entries, settings.pose, { it.label() }) { settings = settings.copy(pose = it) }
 				}
 				TextField("mannequin-custom-name", "Custom name", settings.customName, "", TEXT_LENGTH) {
@@ -316,15 +286,15 @@ fun MannequinBuilder() {
 					settings = settings.copy(description = it)
 				}
 				Pill("Hide description", settings.hideDescription) { settings = settings.copy(hideDescription = !settings.hideDescription) }
-				Field("Hidden layers") {
+				ControlField("Hidden layers") {
 					ToggleGroup("Hidden layers", HiddenLayer.entries, settings.hiddenLayers, { it.label() }) { layer ->
 						settings = settings.copy(hiddenLayers = if (layer in settings.hiddenLayers) settings.hiddenLayers - layer else settings.hiddenLayers + layer)
 					}
 				}
-				Field("Main hand") {
+				ControlField("Main hand") {
 					PillGroup("Main hand", Hand.entries, settings.mainHand, { it.label() }) { settings = settings.copy(mainHand = it) }
 				}
-				Field("Main hand item") {
+				ControlField("Main hand item") {
 					PillGroup("Main hand item", Item.entries, settings.item, Item::label) { settings = settings.copy(item = it) }
 				}
 				Pill("Immovable", settings.immovable) { settings = settings.copy(immovable = !settings.immovable) }
@@ -332,14 +302,7 @@ fun MannequinBuilder() {
 			}
 		}
 
-		Tabs(
-			listOf(
-				Tab("Command") { Div({ id(COMMAND_ID) }) { key(command) { CodeBlock(command, "mcfunction") } } },
-				Tab("Kotlin") { Div({ id(KOTLIN_ID) }) { key(kotlin) { CodeBlock(kotlin, "kotlin") } } },
-			),
-		)
-		highlightCodeIn(COMMAND_ID, command)
-		highlightCodeIn(KOTLIN_ID, kotlin)
+		CodeTabs("mannequin", CodeTab("Command", command, "mcfunction"), CodeTab("Kotlin", kotlin, "kotlin"))
 	}
 }
 
@@ -358,24 +321,7 @@ fun MannequinPoses() {
 	}
 }
 
-@Composable
-private fun Field(label: String, content: @Composable () -> Unit) {
-	Div({ classes(DocControlsStyle.control) }) {
-		Span({ classes(DocControlsStyle.controlLabel) }) { Text(label) }
-		content()
-	}
-}
-
 private object MannequinBuilderStyle : StyleSheet() {
-	val builder by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		gap(1.cssRem)
-		margin(1.5.cssRem, 0.px)
-		minWidth(0.px)
-		width(100.percent)
-	}
-
 	val caption by style {
 		color(LandingVars.Muted.value())
 		fontSize(0.8.cssRem)

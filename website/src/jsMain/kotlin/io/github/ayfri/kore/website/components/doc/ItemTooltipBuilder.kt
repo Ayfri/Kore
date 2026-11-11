@@ -3,14 +3,13 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.Overflow
 import com.varabyte.kobweb.compose.css.overflowX
-import io.github.ayfri.kore.website.components.common.CodeBlock
+import io.github.ayfri.kore.website.components.common.HighlightedCode
 import io.github.ayfri.kore.website.components.mc.DocMockupsStyle
 import io.github.ayfri.kore.website.components.mc.McColor
 import io.github.ayfri.kore.website.components.mc.McLine
 import io.github.ayfri.kore.website.components.mc.McStack
 import io.github.ayfri.kore.website.components.mc.McTooltip
 import io.github.ayfri.kore.website.components.mc.gui
-import io.github.ayfri.kore.website.utils.highlightCodeIn
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 
@@ -55,15 +54,7 @@ fun ItemTooltipBuilder() {
 	Div({ classes(DocControlsStyle.widget) }) {
 		Div({ classes(DocControlsStyle.panel, DocControlsStyle.stack) }) {
 			ControlField("item") {
-				Div({
-					classes(DocControlsStyle.group)
-					attr("aria-label", "Item")
-					attr("role", "group")
-				}) {
-					TooltipItem.entries.forEach { choice ->
-						Pill(choice.name.lowercase().replace('_', ' '), choice == item, "item/${choice.id}") { item = choice }
-					}
-				}
+				PillGroup("Item", TooltipItem.entries, item, { it.name.lowercase().replace('_', ' ') }, { "item/${it.id}" }) { item = it }
 			}
 
 			Div({ classes(DocControlsStyle.grid) }) {
@@ -94,7 +85,6 @@ fun ItemTooltipBuilder() {
 			}
 		}
 
-		Div({ id(KOTLIN_ID) }) { key(kotlin) { CodeBlock(kotlin, "kotlin") } }
-		highlightCodeIn(KOTLIN_ID, kotlin)
+		HighlightedCode(KOTLIN_ID, kotlin, "kotlin")
 	}
 }

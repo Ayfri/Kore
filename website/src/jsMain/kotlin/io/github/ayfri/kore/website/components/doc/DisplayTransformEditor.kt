@@ -3,12 +3,10 @@ package io.github.ayfri.kore.website.components.doc
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.compose.css.*
 import io.github.ayfri.kore.website.LandingVars
-import io.github.ayfri.kore.website.components.common.CodeBlock
-import io.github.ayfri.kore.website.components.common.Tab
-import io.github.ayfri.kore.website.components.common.Tabs
+import io.github.ayfri.kore.website.components.common.CodeTab
+import io.github.ayfri.kore.website.components.common.CodeTabs
 import io.github.ayfri.kore.website.utils.Details
 import io.github.ayfri.kore.website.utils.Summary
-import io.github.ayfri.kore.website.utils.highlightCodeIn
 import io.github.ayfri.kore.website.utils.monoFont
 import io.github.ayfri.kore.website.utils.smMax
 import org.jetbrains.compose.web.css.*
@@ -17,9 +15,6 @@ import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.dom.*
 import kotlin.math.pow
 import kotlin.math.round
-
-private const val DISPLAY_COMMAND_ID = "display-command"
-private const val DISPLAY_KOTLIN_ID = "display-kotlin"
 
 private fun rounded(value: Double, decimals: Int) = 10.0.pow(decimals).let { round(value * it) / it + 0.0 }
 
@@ -118,15 +113,15 @@ fun DisplayTransformEditor() {
 
 	Div({
 		id("display-transform-editor")
-		classes(DisplayEditorStyle.editor)
+		classes(DocControlsStyle.widget)
 	}) {
 		Div({ classes(DisplayEditorStyle.toolbar) }) {
-			DisplayField("Display type") {
+			ControlField("Display type") {
 				PillGroup("Display type", DisplayKind.entries, kind, { it.entity }) { kind = it }
 			}
-			DisplayField("Billboard") {
+			ControlField("Billboard") {
 				PillGroup("Billboard", DisplayBillboard.entries, billboard, { it.name.lowercase() }) { billboard = it }
-				Div({ classes(DisplayEditorStyle.effect) }) { Text(billboard.effect) }
+				Div({ classes(DisplayEditorStyle.hint) }) { Text(billboard.effect) }
 			}
 		}
 
@@ -183,25 +178,10 @@ fun DisplayTransformEditor() {
 			}
 		}
 
-		Tabs(
-			listOf(
-				Tab("Kotlin") { Div({ id(DISPLAY_KOTLIN_ID) }) { key(kotlin) { CodeBlock(kotlin, "kotlin") } } },
-				Tab("Command") { Div({ id(DISPLAY_COMMAND_ID) }) { key(command) { CodeBlock(command, "mcfunction") } } },
-			),
-		)
+		CodeTabs("display", CodeTab("Kotlin", kotlin, "kotlin"), CodeTab("Command", command, "mcfunction"))
 		Div({ classes(DisplayEditorStyle.hint) }) {
 			Text("Both tabs round rotations to 4 decimals, so the command is equivalent to Kore's output, not identical to it.")
 		}
-		highlightCodeIn(DISPLAY_KOTLIN_ID, kotlin)
-		highlightCodeIn(DISPLAY_COMMAND_ID, command)
-	}
-}
-
-@Composable
-private fun DisplayField(label: String, content: @Composable () -> Unit) {
-	Div({ classes(DocControlsStyle.control) }) {
-		Span({ classes(DocControlsStyle.controlLabel) }) { Text(label) }
-		content()
 	}
 }
 
@@ -252,20 +232,6 @@ private object DisplayEditorStyle : StyleSheet() {
 		display(DisplayStyle.Flex)
 		flexDirection(FlexDirection.Column)
 		gap(0.7.cssRem)
-	}
-
-	val editor by style {
-		display(DisplayStyle.Flex)
-		flexDirection(FlexDirection.Column)
-		gap(1.cssRem)
-		margin(1.5.cssRem, 0.px)
-		minWidth(0.px)
-		width(100.percent)
-	}
-
-	val effect by style {
-		color(LandingVars.Muted.value())
-		fontSize(0.85.cssRem)
 	}
 
 	val group by style {

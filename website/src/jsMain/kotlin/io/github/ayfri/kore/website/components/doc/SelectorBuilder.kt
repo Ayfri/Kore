@@ -1,8 +1,7 @@
 package io.github.ayfri.kore.website.components.doc
 
 import androidx.compose.runtime.*
-import io.github.ayfri.kore.website.components.common.CodeBlock
-import io.github.ayfri.kore.website.utils.highlightCodeIn
+import io.github.ayfri.kore.website.components.common.HighlightedCode
 import org.jetbrains.compose.web.dom.*
 
 private const val SELECTOR_KOTLIN_ID = "selector-builder-kotlin"
@@ -101,15 +100,7 @@ fun SelectorBuilder() {
 
 			if (base.takesType) {
 				ControlField("type") {
-					Div({
-						classes(DocControlsStyle.group)
-						attr("aria-label", "Entity type")
-						attr("role", "group")
-					}) {
-						MobType.entries.forEach { mob ->
-							Pill(mob.label, mob == type, mob.sprite) { type = mob.takeUnless { it == type } }
-						}
-					}
+					PillGroup("Entity type", MobType.entries, type, MobType::label, MobType::sprite) { chosen -> type = chosen.takeUnless { it == type } }
 				}
 			}
 
@@ -140,9 +131,7 @@ fun SelectorBuilder() {
 			}
 		}
 
-		Div({ id(SELECTOR_TEXT_ID) }) { key(selector) { CodeBlock(selector, "mcfunction") } }
-		Div({ id(SELECTOR_KOTLIN_ID) }) { key(kotlin) { CodeBlock(kotlin, "kotlin") } }
-		highlightCodeIn(SELECTOR_TEXT_ID, selector)
-		highlightCodeIn(SELECTOR_KOTLIN_ID, kotlin)
+		HighlightedCode(SELECTOR_TEXT_ID, selector, "mcfunction")
+		HighlightedCode(SELECTOR_KOTLIN_ID, kotlin, "kotlin")
 	}
 }

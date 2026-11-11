@@ -77,15 +77,18 @@ fun StyleScope.pixelTranslate(x: CSSLengthOrPercentageNumericValue, y: CSSLength
 /** Half of the parent's size rounded to whole pixels, for `left` and `top`, see [pixelTranslate]. */
 val PIXEL_HALF = round(50.percent, 1.px)
 
-/** A `background` of pixel-art [textures] (from `textures/`, the first on top), stretched over the element by default. */
+/** A `background` of pixel-art [textures] (from `textures/`, the first on top), stretched over the element by default and drawn unsmoothed. */
 fun StyleScope.mcBackground(
 	vararg textures: String,
 	size: BackgroundSize = BackgroundSize.of(100.percent, 100.percent),
 	position: CSSPosition = CSSPosition(0.px, 0.px),
 	repeat: BackgroundRepeat? = null,
-) = background(Background.list(*textures.reversed().map {
-	Background.of(BackgroundImage.of(mcTexture(it)), repeat, size, BackgroundPosition.of(position))
-}.toTypedArray()))
+) {
+	background(Background.list(*textures.reversed().map {
+		Background.of(BackgroundImage.of(mcTexture(it)), repeat, size, BackgroundPosition.of(position))
+	}.toTypedArray()))
+	imageRendering(ImageRendering.Pixelated)
+}
 
 /** A 9-slice `border-image` of the pixel-art [texture], cut [slice] texture pixels from each edge and filling its middle. */
 fun StyleScope.mcBorderImage(texture: String, slice: Int) =
@@ -541,7 +544,6 @@ object McUiStyle : StyleSheet() {
 		}
 		position(Position.Absolute)
 		mcBackground("misc/enchanted_glint_item", size = BackgroundSize.of(gui(64)))
-		imageRendering(ImageRendering.Pixelated)
 		inset(0.px)
 		maskSize(BackgroundSize.of(100.percent, 100.percent))
 		mixBlendMode(MixBlendMode.PlusLighter)
@@ -568,7 +570,6 @@ object McUiStyle : StyleSheet() {
 		height(gui(18))
 		width(gui(20))
 		mcBackground("gui/sprites/recipe_book/button")
-		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val container by style {
@@ -616,7 +617,6 @@ object McUiStyle : StyleSheet() {
 		position(Position.Relative)
 		width(gui(160))
 		mcBackground("gui/sprites/toast/advancement")
-		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val bossBar by style {
@@ -726,13 +726,14 @@ object McUiStyle : StyleSheet() {
 		paddingRight(gui(4))
 	}
 
-	/** Open menus blur the world and darken it with the tiled `inworld_menu_background`. */
+	/** Open menus blur the world and darken it with the tiled `inworld_menu_background`, which stays smoothed at its 2x scale. */
 	val menuBackground by style {
 		(self + before) style {
 			position(Position.Absolute)
 			zIndex(-1)
 			backdropFilter(BackdropFilter.of(blur(gui(3))))
 			mcBackground("gui/inworld_menu_background", size = BackgroundSize.of(gui(32)))
+			imageRendering(ImageRendering.Auto)
 			content("")
 			inset(0.px)
 		}
@@ -750,28 +751,24 @@ object McUiStyle : StyleSheet() {
 		height(gui(9))
 		width(gui(9))
 		mcBackground("gui/sprites/hud/food_full", "gui/sprites/hud/food_empty", size = BackgroundSize.of(100.percent))
-		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val experienceBar by style {
 		height(gui(5))
 		width(gui(182))
 		mcBackground("gui/sprites/hud/experience_bar_background", size = BackgroundSize.of(100.percent))
-		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val hotbarBackground by style {
 		height(gui(22))
 		width(gui(182))
 		mcBackground("gui/sprites/hud/hotbar", size = BackgroundSize.of(100.percent))
-		imageRendering(ImageRendering.Pixelated)
 	}
 
 	val hotbarSelection by style {
 		height(gui(23))
 		width(gui(24))
 		mcBackground("gui/sprites/hud/hotbar_selection", size = BackgroundSize.of(100.percent))
-		imageRendering(ImageRendering.Pixelated)
 	}
 
 	/** HUD placements follow the game, inside a positioned [world]: boss bars from the top, the sidebar centered on the right edge. */
